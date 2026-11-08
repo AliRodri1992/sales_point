@@ -9,6 +9,15 @@ on:
       - '.github/workflows/email-templates-ci.yml'
       - 'app/controllers/admin/email_*'
       - 'app/controllers/concerns/email_template*'
+      - 'app/controllers/concerns/admin/email_setting*'
+      - 'app/models/email_setting_audit.rb'
+      - 'app/mailers/application_mailer.rb'
+      - 'app/javascript/controllers/email_branding*'
+      - 'app/javascript/controllers/email_sender*'
+      - 'db/migrate/*email*'
+      - 'db/schema.rb'
+      - 'config/locales/email_template*'
+      - 'config/locales/email_setting*'
       - 'app/controllers/concerns/admin/email_template*'
       - 'app/models/email_template*'
       - 'app/models/email_sender_setting.rb'
@@ -52,7 +61,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version-file: .ruby-version
+          ruby-version: .ruby-version
           bundler-cache: true
       - name: Lint email modules and regression specs
         run: |

@@ -15,6 +15,21 @@ module EmailTemplateVersionActions
 
   private
 
+  def restore_published_version!
+    EmailTemplate.transaction do
+      @template.with_lock do
+        if @template.versions.exists?(status: 'draft')
+          raise ArgumentError, t('admin.email_templates.restore_existing_draft')
+        end
+
+        draft = @template.new_draft!(actor: current_user)
+        draft.update!(@version.attributes.slice(*%w[subject preheader html_body text_body allowed_variables]))
+        @template.audit!(action: 'restored', actor: current_user, version: draft)
+      end
+    end
+  end
+
+
   def load_comparison_versions
     @versions = @template.versions.order(version_number: :desc).to_a
     @left = @template.versions.find(params[:left])

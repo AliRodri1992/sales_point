@@ -69,8 +69,14 @@ module Admin
       authorize @template, :update?
       raise Pundit::NotAuthorizedError unless @version.status == 'draft'
 
-      if @version.update(draft_attributes)
+      saved = EmailTemplate.transaction do
+        next false unless @version.update(draft_attributes)
+
+        @template.update!(updated_by: current_user)
         @template.audit!(action: 'draft_updated', actor: current_user, version: @version)
+        true
+      end
+      if saved
         notify_email_template('draft_updated')
         redirect_to edit_admin_email_template_path(@template),
                     flash: { swal_message: t('admin.email_templates.draft_updated_toast') }
@@ -100,16 +106,7 @@ module Admin
       authorize @template, :update?
       raise ArgumentError, t('admin.email_templates.restore_not_published') unless @version.status == 'published'
 
-      draft = EmailTemplate.transaction do
-        @template.with_lock do
-          raise ArgumentError, t('admin.email_templates.restore_existing_draft') if @template.versions.exists?(status: 'draft')
-
-          restored = @template.new_draft!(actor: current_user)
-          restored.update!(@version.attributes.slice(*%w[subject preheader html_body text_body allowed_variables]))
-          @template.audit!(action: 'restored', actor: current_user, version: restored)
-          restored
-        end
-      end
+      restore_published_version!
       notify_email_template('restored')
       redirect_to edit_admin_email_template_path(@template),
                   flash: { swal_message: t('admin.email_templates.restored') }

@@ -27,6 +27,7 @@ RSpec.describe EmailTemplates::Dispatcher do
       expect(ciphertext).not_to include('secret.person@example.org')
       data = EmailTemplates::EncryptedPayload.decrypt(ciphertext)
       expect(data[:recipient]).to eq('secret.person@example.org')
+      expect(data[:version_id]).to eq(template.published_version_id)
     end
     described_class.call(
       key: template.key, locale: template.locale,

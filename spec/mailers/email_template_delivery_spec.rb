@@ -80,10 +80,33 @@ RSpec.describe 'Published email template delivery', type: :mailer do
     expect(email.text_part.body.decoded).to include('Usuario de ejemplo')
   end
 
+  it 'rejects test delivery after a template is deactivated' do
+    publish
+    template.update!(status: 'inactive', enabled: false)
+    expect do
+      EmailTemplateTestMailer.sample(template.id, 'preview@example.org').message
+    end.to raise_error(ArgumentError, 'Template must be published')
+  end
+
   it 'does not send preview mail from unpublished content' do
     expect do
       EmailTemplateTestMailer.sample(template.id, 'preview@example.org').message
     end.to raise_error(ArgumentError, 'Template must be published')
+  end
+
+  it 'renders the original version when a newer published version exists' do
+    publish
+    first = template.published_version
+    next_draft = template.new_draft!(actor: nil)
+    next_draft.update!(subject: 'Updated {{recipient_name}}')
+    next_draft.publish!(actor: nil)
+
+    mail = EmailTemplates::TransactionalMailer.notification(
+      template.id, 'buyer@example.org', { recipient_name: 'Buyer' }, nil, first.id
+    ).message
+
+    expect(mail.subject).to eq('Hello Buyer')
+    expect(template.reload.published_version_id).not_to eq(first.id)
   end
 
   it 'decrypts queued payloads and delivers both message parts' do

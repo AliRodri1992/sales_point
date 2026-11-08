@@ -11,7 +11,9 @@ module EmailTemplates
 
       template.with_lock do
         check_limit!(template, actor)
-        job = EmailTemplates::TestDeliveryJob.perform_later(template.id, actor.id, recipient)
+        job = EmailTemplates::TestDeliveryJob.perform_later(
+          template.id, actor.id, recipient, template.published_version_id
+        )
         raise ArgumentError, 'Unable to enqueue test email' unless job
 
         template.audit!(action: 'test_queued', actor:)

@@ -2,11 +2,16 @@
 
 module EmailTemplates
   class TransactionalMailer < ApplicationMailer
-    def notification(template_id, recipient, values, organization_id = nil)
+    def notification(template_id, recipient, values, organization_id = nil, version_id = nil)
       template = EmailTemplate.published.find(template_id)
-      raise ArgumentError, 'Template has no published version' unless template.published_version
+      version = version_id ? template.versions.find_by!(id: version_id, status: 'published') : template.published_version
+      raise ArgumentError, 'Template has no published version' unless version
 
-      subject, html, plain = template.render_with(values.deep_symbolize_keys)
+      if organization_id && template.organization_id && template.organization_id != organization_id
+        raise ActiveRecord::RecordNotFound, 'Email template tenant mismatch'
+      end
+
+      subject, html, plain = Renderer.new(source: version, values: values.deep_symbolize_keys).render
       organization = organization_id ? Organization.find(organization_id) : template.organization
       headers = Sender.headers_for(organization:)
       mail(to: recipient, subject:, **headers) do |format|

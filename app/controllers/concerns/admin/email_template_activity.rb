@@ -11,14 +11,19 @@ module Admin
         return render :new, status: :unprocessable_content
       end
 
-      return render :new, status: :unprocessable_content unless @template.save
+      saved = EmailTemplate.transaction do
+        next false unless @template.save
+
+        draft = @template.new_draft!(actor: current_user)
+        @template.audit!(action: 'created', actor: current_user, version: draft)
+        true
+      end
+      return render :new, status: :unprocessable_content unless saved
 
       finish_template_creation
     end
 
     def finish_template_creation
-      draft = @template.new_draft!(actor: current_user)
-      @template.audit!(action: 'created', actor: current_user, version: draft)
       notify_email_template('created')
       destination = if policy(@template).update?
                       edit_admin_email_template_path(@template)

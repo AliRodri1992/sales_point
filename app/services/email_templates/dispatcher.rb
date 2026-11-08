@@ -10,7 +10,8 @@ module EmailTemplates
 
       branding = EmailTemplates::Branding.values(organization: organization || template.organization)
       ciphertext = EncryptedPayload.encrypt(
-        template_id: template.id, recipient:, organization_id: organization&.id,
+        template_id: template.id, version_id: template.published_version_id,
+        recipient:, organization_id: organization&.id,
         values: values.symbolize_keys.merge(branding)
       )
       EmailTemplates::DeliveryJob.perform_later(ciphertext)

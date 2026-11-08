@@ -11,8 +11,8 @@ module EmailTemplates
       template&.audit!(action: 'test_failed', actor:, metadata: { error_class: error.class.name })
     end
 
-    def perform(template_id, actor_id, recipient)
-      EmailTemplateTestMailer.sample(template_id, recipient).deliver_now
+    def perform(template_id, actor_id, recipient, version_id = nil)
+      EmailTemplateTestMailer.sample(template_id, recipient, version_id).deliver_now
       template = EmailTemplate.find(template_id)
       template.audit!(action: 'test_delivered', actor: User.find_by(id: actor_id))
     end

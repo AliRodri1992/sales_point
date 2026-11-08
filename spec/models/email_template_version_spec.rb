@@ -94,6 +94,17 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(global.reload.published_version).to eq(source)
   end
 
+  it 'protects essential security links in global published versions' do
+    global = EmailTemplate.create!(
+      key: 'password_recovery', name: 'Password recovery', locale: 'en',
+      category: 'security', subject: 'Recover', html_body: '<p>Recover</p>',
+      text_body: 'Recover', status: 'draft', enabled: false
+    )
+    draft = global.new_draft!(actor: nil)
+    expect { draft.publish!(actor: nil) }.to raise_error(ActiveRecord::RecordInvalid)
+    expect(draft.errors[:html_body]).to be_present
+  end
+
   it 'rejects locally authored security templates without required recovery links' do
     local = EmailTemplate.create!(
       organization: create(:organization), key: 'password_recovery', name: 'Recover access',
@@ -133,5 +144,4 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(version.update(subject: 'Hello', preheader: "Preview\r\nInjected")).to be(false)
     expect(version.errors[:preheader]).to be_present
   end
-
 end

@@ -78,8 +78,6 @@ class EmailTemplateVersion < ApplicationRecord
   end
 
   def required_customization_variables
-    return if email_template.organization_id.nil?
-
     required = EmailTemplate::REQUIRED_CUSTOMIZATION_VARIABLES.fetch(email_template.key, [])
     required.each { |variable| validate_required_security_variable(variable) }
   end
