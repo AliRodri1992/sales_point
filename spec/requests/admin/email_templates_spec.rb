@@ -967,6 +967,8 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(SystemRolePermission.where(system_role: role, permission: archive_permission)).to be_empty
     expect(administrator.reload.permission?('email_templates.archive')).to be(false)
     expect(EmailTemplatePolicy.new(administrator, own).destroy?).to be(false)
+    get admin_email_template_path(own)
+    expect(response).to have_http_status(:ok), "Unexpected show redirect: #{response.location}"
     delete admin_email_template_path(own)
     expect(response).to have_http_status(:forbidden), "Redirected to: #{response.location}"
     expect(own.reload.status).to eq('draft')
