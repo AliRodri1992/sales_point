@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class GoodsReceiptItem < ApplicationRecord
+  include RestrictsClosedBranchMutations
   include HasPolymorphicNotes
 
   belongs_to :goods_receipt
