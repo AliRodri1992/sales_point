@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class EmailTemplatesQuery
-  def initialize(scope, filters)
+  def initialize(scope, filters, include_archived: false)
     @scope = scope
     @filters = filters
+    @include_archived = include_archived
   end
 
   def call
@@ -34,6 +35,7 @@ class EmailTemplatesQuery
 
   def filter_status(scope)
     return scope.where(status: @filters[:status]) if @filters[:status].in?(EmailTemplate::STATUSES)
+    return scope if @include_archived
 
     scope.where.not(status: 'archived')
   end

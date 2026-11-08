@@ -9,7 +9,7 @@ class User < ApplicationRecord
 
   # Form-only selections are validated by the admin account writer.
   # Declaring the virtual attribute lets ActiveModel format field errors.
-  attr_accessor :branch_role_assignments
+  attr_accessor :branch_role_assignments, :email_template_policy_snapshot
 
   belongs_to :language,
              optional: true

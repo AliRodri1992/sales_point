@@ -28,6 +28,16 @@ RSpec.describe EmailTemplatesQuery do
 
   let(:filtered_scope) { EmailTemplate.where(key: %w[query_global query_own]) }
 
+  it 'includes archived entries in filtered status counters' do
+    global.update!(status: 'archived')
+    counts = described_class.new(
+      filtered_scope, { category: 'security', locale: 'es' }, include_archived: true
+    ).call.group(:status).count
+
+    expect(counts).to include('archived' => 1, 'draft' => 2)
+    expect(described_class.new(filtered_scope, category: 'security').call).not_to include(global)
+  end
+
   it 'filters global, customized and organization-authored templates by origin' do
     expect(described_class.new(filtered_scope, origin: 'system').call).to include(global)
     expect(described_class.new(filtered_scope, origin: 'customized').call).to contain_exactly(customized)

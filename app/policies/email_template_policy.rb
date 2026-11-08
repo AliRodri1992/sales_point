@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class EmailTemplatePolicy < ApplicationPolicy
+  ListingSnapshot = Struct.new(:active_admin, :super_admin, :permissions, :organization_ids, keyword_init: true)
   def index?
     allowed?('email_templates.access')
   end
@@ -72,6 +73,9 @@ class EmailTemplatePolicy < ApplicationPolicy
   private
 
   def allowed?(permission)
+    snapshot = user&.email_template_policy_snapshot
+    return snapshot.active_admin && snapshot.permissions.include?(permission) if snapshot
+
     user&.active? && user.admin? && user.permission?(permission)
   end
 
@@ -82,7 +86,14 @@ class EmailTemplatePolicy < ApplicationPolicy
   end
 
   def same_tenant?
-    return user.role?('super_admin') if record.organization_id.nil?
+    snapshot = user&.email_template_policy_snapshot
+    if record.organization_id.nil?
+      return snapshot.super_admin if snapshot
+
+      return user.role?('super_admin')
+    end
+
+    return snapshot.organization_ids.include?(record.organization_id) if snapshot
 
     user.organization_memberships.accessible.exists?(organization_id: record.organization_id)
   end
