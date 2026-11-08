@@ -6,7 +6,7 @@ class Branch < ApplicationRecord
   # Only the initial placeholder branch created during account registration can
   # be saved before the business has completed its address setup.
   include BranchLifecycle
-  attr_accessor :registration_bootstrap
+  attr_accessor :registration_bootstrap, :lifecycle_created_by
 
   has_many :phones, as: :phoneable, dependent: :restrict_with_exception
   accepts_nested_attributes_for :phones,
