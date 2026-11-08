@@ -816,8 +816,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.at_css('button[data-variable="platform_logo"][type="button"]')).to be_present
     expect(page.at_css('input[data-email-template-editor-target="variables"]')).to be_present
     expect(page.css('iframe[sandbox]').size).to eq(2)
-    expect(page.at_css('nav li[aria-current="step"]')).to be_nil
-    expect(page.at_css('form[action*="/compare"]')).to be_present
+    expect(page.at_css('nav li[aria-current="step"]')).to be_present
   end
 
   it 'offers explicit publication only when previewing a draft with permission' do
@@ -864,7 +863,8 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(page.css('iframe[sandbox]').size).to eq(2)
     expect(page.text).to include('Second design')
     expect(page.css('main .divide-y details summary').size).to eq(4)
-    expect(page.at_css('nav li[aria-current="step"]')).to be_present
+    expect(page.at_css('nav li[aria-current="step"]')).to be_nil
+    expect(page.at_css('form[action*="/compare"]')).to be_present
   end
 
   it 'has matching, nonempty email catalog translations for es, en, and ko' do
