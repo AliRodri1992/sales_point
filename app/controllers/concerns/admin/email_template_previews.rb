@@ -31,6 +31,8 @@ module Admin
 
       source = @version.dup
       source.assign_attributes(draft_attributes)
+      raise ArgumentError, source.errors.full_messages.join(', ') unless source.valid?
+
       validate_draft_preview_variables!(source)
       subject, html, plain = EmailTemplates::Renderer.new(
         source:, values: EmailTemplates::SampleData.call(@template)

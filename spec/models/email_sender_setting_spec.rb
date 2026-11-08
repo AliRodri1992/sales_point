@@ -26,10 +26,13 @@ RSpec.describe EmailSenderSetting, type: :model do
     end
   end
 
-  it 'allows an unverified sender to be saved without falsely becoming deliverable' do
-    sender = described_class.create!(display_name: 'Tenant', default_locale: 'es', domain_status: 'unverified')
+  it 'requires a sender address without falsely marking it verified' do
+    sender = described_class.new(display_name: 'Tenant', default_locale: 'es', domain_status: 'unverified')
+    expect(sender).not_to be_valid
+    expect(sender.errors[:from_address]).to be_present
 
-    expect(sender.from_address).to be_nil
+    sender.from_address = 'alerts@example.org'
+    expect(sender.save).to be(true)
     expect(EmailTemplates::Sender.verified?(sender)).to be_falsey
   end
 end

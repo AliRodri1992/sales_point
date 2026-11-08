@@ -63,7 +63,7 @@
                       class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-100' %>
       <% end %>
       <% if policy(@template).update? %>
-        <%= link_to edit_admin_email_template_path(@template),
+        <%= button_to start_draft_admin_email_template_path(@template), method: :post,
                     class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
           <%= delta_icon('pencil-square', class: 'size-4') %>
           <%= t('admin.email_templates.edit') %>
@@ -166,7 +166,7 @@
             <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.detail_no_version') %></h3>
             <p class="max-w-md text-sm leading-6 text-slate-600"><%= t('admin.email_templates.detail_no_version_hint') %></p>
             <% if policy(@template).update? %>
-              <%= link_to t('admin.email_templates.edit'), edit_admin_email_template_path(@template),
+              <%= button_to t('admin.email_templates.edit'), start_draft_admin_email_template_path(@template), method: :post,
                           class: 'mt-1 inline-flex min-h-11 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 px-4 text-sm font-semibold text-emerald-800 hover:bg-emerald-100' %>
             <% end %>
           </div>
@@ -234,13 +234,14 @@
             <p class="mt-1 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.send_test_hint') %></p>
           </header>
           <% if test_available %>
-            <%= form_with url: send_test_admin_email_template_path(@template), method: :post, class: 'space-y-4 p-5', data: { turbo_submits_with: t('admin.email_templates.send_test') } do |f| %>
+            <%= form_with url: send_test_admin_email_template_path(@template), method: :post, html: { novalidate: true }, class: 'space-y-4 p-5', data: { turbo_submits_with: t('admin.email_templates.send_test') } do |f| %>
               <div class="min-w-0">
-                <%= f.label :email, t('admin.email_templates.test_recipient'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-                <%= f.email_field :email, required: true, maxlength: 254, autocomplete: 'email',
-                                  value: (current_user.email unless current_user.role?('super_admin')),
+                <%= f.label :email, required_field_label(t('admin.email_templates.test_recipient')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+                <%= f.email_field :email, maxlength: 254, autocomplete: 'email',
+                                  value: @test_recipient.email, aria: { invalid: @test_recipient.errors[:email].any? },
                                   readonly: !current_user.role?('super_admin'), placeholder: t('admin.email_templates.recipient_placeholder'),
                                   class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+                 <%= error_message_for(@test_recipient, :email, label: t('admin.email_templates.test_recipient')) %>
               </div>
               <% unless current_user.role?('super_admin') %>
                 <p class="text-xs leading-5 text-slate-500"><%= t('admin.email_templates.test_self_only') %></p>

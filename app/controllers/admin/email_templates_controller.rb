@@ -20,10 +20,10 @@ module Admin
 
     def show
       authorize @template
-      @versions = policy(@template).versions? ? @template.versions.order(version_number: :desc) : []
-      @can_view_audits = policy(EmailTemplateAudit).index?
-      @audits = @can_view_audits ? @template.audits.includes(:actor).order(created_at: :desc).limit(30) : []
-      load_show_preview if policy(@template).preview? && @template.published_version
+      @test_recipient = EmailTemplates::TestRecipient.new(
+        email: (current_user.email unless current_user.role?('super_admin')), actor: current_user
+      )
+      load_show_details
     end
 
     def new
@@ -34,8 +34,17 @@ module Admin
 
     def edit
       authorize @template, :update?
-      @draft = @template.versions.where(status: 'draft').order(version_number: :desc).first ||
-               @template.new_draft!(actor: current_user)
+      @draft = @template.versions.where(status: 'draft').order(version_number: :desc).first
+      return if @draft
+
+      redirect_to admin_email_template_path(@template), status: :see_other,
+                  flash: { swal_message: t('admin.email_templates.create_draft_first') }
+    end
+
+    def start_draft
+      authorize @template, :update?
+      @template.new_draft!(actor: current_user) unless @template.versions.where(status: 'draft').exists?
+      redirect_to edit_admin_email_template_path(@template), status: :see_other
     end
 
     def create
@@ -102,8 +111,11 @@ module Admin
 
     def send_test
       authorize @template, :send_test?
+      @test_recipient = EmailTemplates::TestRecipient.new(email: params[:email], actor: current_user)
+      return render_invalid_test unless @test_recipient.valid?
+
       EmailTemplates::TestDelivery.call(
-        template: @template, actor: current_user, recipient: params[:email]
+        template: @template, actor: current_user, recipient: @test_recipient.email
       )
       notify_email_template('test_queued')
       redirect_to admin_email_template_path(@template),
@@ -114,11 +126,28 @@ module Admin
         'Template not published' => t('admin.email_templates.test_not_published'),
         'Test email limit reached' => t('admin.email_templates.test_limit_reached')
       }.fetch(e.message, e.message)
-      redirect_to admin_email_template_path(@template),
-                  flash: { swal_message: message, swal_icon: 'error' }
+      unless @template.status == 'published' && @template.published_version.present?
+        return redirect_to admin_email_template_path(@template),
+                           flash: { swal_message: message, swal_icon: 'error' }
+      end
+
+      @test_recipient.errors.add(:email, message)
+      render_invalid_test
     end
 
     private
+
+    def load_show_details
+      @versions = policy(@template).versions? ? @template.versions.order(version_number: :desc) : []
+      @can_view_audits = policy(EmailTemplateAudit).index?
+      @audits = @can_view_audits ? @template.audits.includes(:actor).order(created_at: :desc).limit(30) : []
+      load_show_preview if policy(@template).preview? && @template.published_version
+    end
+
+    def render_invalid_test
+      load_show_details
+      render :show, status: :unprocessable_content
+    end
 
     def load_template
       @template = policy_scope(EmailTemplate).find(params[:id])

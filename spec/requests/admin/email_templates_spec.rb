@@ -315,9 +315,13 @@ RSpec.describe 'Admin email templates', type: :request do
     template = create_template(organization:)
     get admin_email_template_path(template)
     expect(response).to have_http_status(:ok)
-    expect { get edit_admin_email_template_path(template) }.to change(template.versions, :count).by(1)
-    expect(response).to have_http_status(:ok)
     expect { get edit_admin_email_template_path(template) }.not_to change(template.versions, :count)
+    expect(response).to redirect_to(admin_email_template_path(template))
+    expect { post start_draft_admin_email_template_path(template) }.to change(template.versions, :count).by(1)
+    expect(response).to redirect_to(edit_admin_email_template_path(template))
+    expect { post start_draft_admin_email_template_path(template) }.not_to change(template.versions, :count)
+    get edit_admin_email_template_path(template)
+    expect(response).to have_http_status(:ok)
   end
 
   it 'saves valid draft content and audits the edit' do
@@ -415,7 +419,8 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to redirect_to(admin_email_template_path(template))
     expect(template.audits.where(action: 'test_sent')).to exist
     post send_test_admin_email_template_path(template), params: { email: 'invalid' }
-    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.invalid_recipient'))
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Nokogiri::HTML(response.body).at_css('#email_templates_test_recipient_email_error')).to be_present
   end
 
   it 'never selects a draft version owned by a different template' do
@@ -780,7 +785,7 @@ RSpec.describe 'Admin email templates', type: :request do
     get admin_email_templates_path
 
     doc = Nokogiri::HTML(response.body)
-    expect(doc.at_css("a[href='#{edit_admin_email_template_path(template)}']")).to be_present
+    expect(doc.at_css("form[action='#{start_draft_admin_email_template_path(template)}']")).to be_present
     archive_action = "form[action='#{archive_admin_email_template_path(template)}'] " \
                      "input[name='_method'][value='patch']"
     expect(doc.at_css(archive_action)).to be_present

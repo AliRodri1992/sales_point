@@ -85,7 +85,7 @@ module ApplicationHelper
   def error_message_for(object, attribute, label: nil)
     return '' unless object && object.errors[attribute].any?
 
-    model = object.class.name.underscore
+    model = object.class.name.underscore.tr('/', '_')
     name = label || validation_attribute_name(object, attribute)
     messages = object.errors[attribute].uniq
 

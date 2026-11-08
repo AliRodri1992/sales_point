@@ -31,6 +31,7 @@ Rails.application.routes.draw do
         post 'preview_draft/:version_id', action: :preview_draft, as: :preview_draft
         get :compare
         post :send_test
+        post :start_draft
       end
     end
     resource :email_branding_settings, only: %i[edit update]

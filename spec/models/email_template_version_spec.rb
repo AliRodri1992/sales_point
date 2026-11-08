@@ -30,6 +30,7 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(draft.version_number).to eq(published.version_number + 1)
     expect(draft.status).to eq('draft')
     expect(draft.subject).to eq(published.subject)
+    expect(draft.preheader).to eq(published.preheader)
   end
 
   it 'normalizes editor variable lists' do

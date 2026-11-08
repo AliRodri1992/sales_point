@@ -103,7 +103,7 @@
                     <% end %>
                   <% end %>
                   <% if policy(template).update? %>
-                    <%= link_to edit_admin_email_template_path(template), data: { turbo_frame: '_top', tooltip: t('admin.email_templates.edit') },
+                    <%= button_to start_draft_admin_email_template_path(template), method: :post, data: { turbo_frame: '_top', tooltip: t('admin.email_templates.edit') },
                                 aria: { label: t('admin.email_templates.edit_named', name: template.name) },
                                 class: 'inline-flex size-10 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100' do %>
                       <%= delta_icon('pencil-square', class: 'size-5') %>
