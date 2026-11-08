@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_08_030000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -99,6 +99,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_030000) do
     t.string "name"
     t.string "address"
     t.boolean "status"
+    t.string "operational_status", default: "preparing", null: false
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -109,7 +110,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_030000) do
     t.index "organization_id, lower((name)::text)", name: "idx_branches_org_name_active", unique: true, where: "((organization_id IS NOT NULL) AND (deleted_at IS NULL))"
     t.index ["deleted_at"], name: "index_branches_on_deleted_at"
     t.index ["organization_id"], name: "index_branches_on_organization_id"
+    t.index ["organization_id", "operational_status"], name: "idx_branches_organization_operational_status"
+    t.check_constraint "operational_status IN (\'preparing\', \'active\', \'suspended\', \'closed\')", name: "branches_operational_status_valid"
     t.check_constraint "code IS NULL OR code::text ~ '^[A-Z0-9_-]{1,30}$'::text", name: "branches_valid_code"
+  end
+
+  create_table "branch_status_transitions", force: :cascade do |t|
+    t.bigint "branch_id", null: false
+    t.bigint "changed_by_id"
+    t.string "from_status"
+    t.string "to_status", null: false
+    t.text "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id", "created_at"], name: "idx_branch_status_transitions_chronological"
+    t.index ["branch_id"], name: "index_branch_status_transitions_on_branch_id"
+    t.index ["changed_by_id"], name: "index_branch_status_transitions_on_changed_by_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -2371,6 +2387,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_030000) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "countries"
   add_foreign_key "branches", "organizations"
+  add_foreign_key "branch_status_transitions", "branches"
+  add_foreign_key "branch_status_transitions", "users", column: "changed_by_id"
   add_foreign_key "clients", "sat_fiscal_regimes"
   add_foreign_key "conversation_participants", "conversations"
   add_foreign_key "conversation_participants", "users"
