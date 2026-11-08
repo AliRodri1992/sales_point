@@ -16,6 +16,14 @@ RSpec.describe 'Audited users access boundaries', type: :request do
     user
   end
 
+  it 'prevents the last administrator from removing their own administrative role' do
+    patch admin_user_path(administrator), params: { user: { system_role_ids: [''] } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Nokogiri::HTML(response.body).at_css('#user_system_role_ids_error')).to be_present
+    expect(administrator.reload).to be_admin
+  end
+
   it 'rejects global role changes for an account shared by two organizations' do
     target = add_member(create(:user, email: 'shared-global@example.com'))
     add_member(target, organization: create(:organization))
