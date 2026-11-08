@@ -25,9 +25,9 @@ module RestrictsClosedBranchMutations
     owner = branch_record_owner
     return yield unless owner.is_a?(Branch) && owner.persisted?
 
-    locked = Branch.not_deleted.find(owner.id)
+    locked = Branch.with_deleted.find(owner.id)
     locked.with_lock do
-      if locked.closed?
+      if locked.closed? || locked.deleted_at.present?
         errors.add(:base, I18n.t('admin.branch_lifecycle.errors.closed_readonly'))
         raise ActiveRecord::RecordInvalid, self
       end
