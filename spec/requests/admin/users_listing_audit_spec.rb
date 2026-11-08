@@ -44,7 +44,10 @@ RSpec.describe 'Audited users listing', type: :request do
     get admin_users_path
 
     document = Nokogiri::HTML(response.body)
-    expect(document.at_css('form[action="/admin/users"]')['data-turbo-frame']).to eq('_top')
+    filters = document.at_css('form[action="/admin/users"]')
+    expect(filters['data-turbo-frame']).to eq('_top')
+    expect(filters['data-controller']).to include('users-filters')
+    expect(filters['data-action']).to include('change->users-filters#filterChanged')
     sort = document.css('a').find { |link| link['href']&.include?('sort=users') }
     expect(sort['data-turbo-frame']).to eq('_top')
     deletion = document.css('a').find { |link| link['href']&.include?("users/#{target.id}/status/edit") }
