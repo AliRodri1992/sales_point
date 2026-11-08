@@ -56,4 +56,14 @@ RSpec.describe EmailSenderSetting, type: :model do
     expect(sender.save).to be(true)
     expect(EmailTemplates::Sender.verified?(sender)).to be_falsey
   end
+  it 'trims the display name before validating its presence' do
+    sender = described_class.new(display_name: '  Delta Store  ', from_address: 'shop@example.org')
+    expect(sender).to be_valid
+    expect(sender.display_name).to eq('Delta Store')
+
+    sender.display_name = '   '
+    expect(sender).not_to be_valid
+    expect(sender.errors[:display_name]).to be_present
+  end
+
 end
