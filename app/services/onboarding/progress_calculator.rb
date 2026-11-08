@@ -41,7 +41,7 @@ module Onboarding
     end
 
     def branch_section
-      branch = @organization.branches.not_deleted.where(status: true).first
+      branch = @organization.branches.not_deleted.where(operational_status: %w[preparing active]).first
       return section(:branches, 0) unless branch
 
       branch_percentage = percentage_for([branch.name])
@@ -58,7 +58,7 @@ module Onboarding
     end
 
     def terminal_section
-      configured = @organization.branches.not_deleted.where(status: true)
+      configured = @organization.branches.not_deleted.where(operational_status: %w[preparing active])
                                 .joins(:terminals).merge(Terminal.active_records).exists?
       section(:terminals, configured ? 100 : 0)
     end
