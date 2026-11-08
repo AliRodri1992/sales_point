@@ -2,6 +2,7 @@ en:
   admin:
     branch_lifecycle:
       title: "Operational status"
+      global_summary: "Organization-wide totals; these figures do not change with filters."
       initial_hint: "New branches start in preparation. Activate them after completing setup."
       edit_hint: "Manage the operational status from the branch details page, not from this form."
       changed: "Branch status updated"
