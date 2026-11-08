@@ -79,22 +79,24 @@ RSpec.describe Branch, type: :model do
     expect(branch).to be_valid
   end
 
-  it 'protects the last active branch and requires reassignment before deactivation' do
-    organization = create(:organization)
+  it 'protects the last active branch during an audited suspension' do
+    organization = create(:organization, onboarding_status: 'completed')
     branch = create(:branch, organization:, name: 'Central')
     fallback = create(:branch, organization:, name: 'Fallback')
-    person = create(:user)
-    create(:organization_membership, organization:, user: person)
-    role = create(:user_role, user: person, branch:, system_role: create(:system_role, :branch))
+    admin = create(:user, system_roles: [create(:system_role, :system, code: 'administrator')])
+    create(:organization_membership, organization:, user: admin)
 
-    expect(branch.update(status: false)).to be(false)
-    expect(branch.errors[:status]).to be_present
+    expect do
+      Branches::TransitionStatus.call(branch:, actor: admin, to: 'suspended', reason: 'Maintenance')
+    end.not_to raise_error
+    expect(branch.reload).to be_suspended
+    expect(branch.status).to be(false)
 
-    role.update!(deleted_at: Time.current)
-    expect(branch.update(status: false)).to be(true)
-
-    expect(fallback.update(status: false)).to be(false)
-    expect(fallback.errors[:status]).to be_present
+    expect do
+      Branches::TransitionStatus.call(branch: fallback, actor: admin, to: 'suspended',
+                                      reason: 'Maintenance')
+    end.to raise_error(Branches::TransitionStatus::InvalidTransition)
+    expect(fallback.reload).to be_active
   end
 
   it 'prevents soft deletion while a branch still has assigned users' do
@@ -108,21 +110,38 @@ RSpec.describe Branch, type: :model do
     expect(branch.reload.deleted_at).to be_nil
   end
 
-  it 'does not allow deactivation with live terminals or untransferred stock' do
+  it 'prevents closure with terminal activity or stock' do
     organization = create(:organization)
     branch = create(:branch, organization:, name: 'Operations')
     create(:branch, organization:, name: 'Available')
+    admin = create(:user, system_roles: [create(:system_role, :system, code: 'administrator')])
+    create(:organization_membership, organization:, user: admin)
     terminal = Terminal.create!(branch:, name: 'Cash register', code: 'POS-01', status: 'active')
 
-    expect(branch.update(status: false)).to be(false)
-    expect(branch.errors[:status]).to be_present
+    expect do
+      Branches::TransitionStatus.call(branch:, actor: admin, to: 'closed', reason: 'Closure')
+    end.to raise_error(Branches::TransitionStatus::InvalidTransition)
 
     terminal.update!(status: 'inactive')
     product = create(:product, organization:)
     inventory = Inventory.create!(branch:, organization:, product:, stock: 7, min_stock: 0)
-    expect(branch.update(status: false)).to be(false)
+    expect do
+      Branches::TransitionStatus.call(branch:, actor: admin, to: 'closed', reason: 'Closure')
+    end.to raise_error(Branches::TransitionStatus::InvalidTransition)
 
     inventory.update!(stock: 0)
-    expect(branch.update(status: false)).to be(true)
+    expect do
+      Branches::TransitionStatus.call(branch:, actor: admin, to: 'closed', reason: 'Closure')
+    end.not_to raise_error
+    expect(branch.reload).to be_closed
+    expect(branch.branch_status_transitions.last.to_status).to eq('closed')
   end
+
+  it 'rejects a lifecycle change outside the transition service' do
+    branch = create(:branch)
+    expect(branch.update(operational_status: 'closed')).to be(false)
+    expect(branch.errors[:operational_status]).to be_present
+    expect(branch.reload).to be_active
+  end
+
 end
