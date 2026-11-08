@@ -26,14 +26,14 @@ module EmailTemplates
         return Rails.application.routes.url_helpers.rails_blob_url(setting.logo, host:, protocol: 'https')
       end
 
-      ActionController::Base.helpers.image_url('LOGOTIPO COMPLETO.jpeg', host: base_url).gsub(' ', '%20')
+      ActionController::Base.helpers.image_url('delta-pos-email-logo.png', host: base_url)
     end
 
     def self.platform_logo_url
       host = ENV['DELTA_POS_PUBLIC_HOST'].presence ||
              Rails.application.config.action_mailer.default_url_options&.dig(:host) ||
              'www.example.com'
-      ActionController::Base.helpers.image_url('LOGOTIPO COMPLETO.jpeg', host: "https://#{host}").gsub(' ', '%20')
+      ActionController::Base.helpers.image_url('delta-pos-email-logo.png', host: "https://#{host}")
     end
 
     def self.organization_name(local, organization)
