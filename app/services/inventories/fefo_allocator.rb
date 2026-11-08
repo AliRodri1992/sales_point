@@ -29,7 +29,7 @@ module Inventories
 
     def allocate_lots
       remaining = @quantity
-      @inventory.inventory_lots.saleable.lock.each do |lot|
+      @inventory.inventory_lots.saleable.each do |lot|
         next if remaining.zero?
 
         quantity = [remaining, lot.quantity].min
