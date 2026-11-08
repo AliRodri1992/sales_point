@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Inventory < ApplicationRecord
+  include RestrictsClosedBranchMutations
   belongs_to :organization
   belongs_to :branch
   belongs_to :product
