@@ -16,7 +16,7 @@ module EmailTemplates
         privacy_url: setting_value(local, global, :privacy_url, 'https://example.org/privacy'),
         **color_and_footer_values(local, global),
         platform_logo: platform_logo_url,
-        organization_logo: asset_logo(local),
+        organization_logo: asset_logo(local&.logo&.attached? ? local : global),
         logo_url: platform_logo_url
       }
     end

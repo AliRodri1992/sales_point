@@ -5,7 +5,7 @@ module EmailTemplateVersionActions
   def compare
     authorize @template, :versions?
     load_comparison_versions
-    return redirect_same_version if @left.id == @right.id
+    return redirect_same_version unless @left && @right && @left.id != @right.id
 
     @comparison_previews = [@left, @right].to_h do |version|
       [version.id, comparison_preview(version)]
@@ -59,8 +59,8 @@ module EmailTemplateVersionActions
 
   def load_comparison_versions
     @versions = @template.versions.order(version_number: :desc).to_a
-    @left = @template.versions.find(params[:left])
-    @right = @template.versions.find(params[:right])
+    @left = @template.versions.find_by(id: params[:left])
+    @right = @template.versions.find_by(id: params[:right])
   end
 
   def handle_publish_validation_error(error)

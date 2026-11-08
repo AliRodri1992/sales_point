@@ -22,6 +22,8 @@ es:
           deactivated: "Plantilla desactivada: %{name}"
           test_queued: "Prueba de %{name} enviada a la cola"
     email_templates:
+      current_published: "Versión actualmente publicada"
+      last_published: "Última versión publicada"
       stale_draft: "El borrador fue modificado en otra sesión. Recarga la página antes de guardar."
       unsaved_warning: "Tienes cambios sin guardar. ¿Quieres salir y descartarlos?"
       restore_existing_draft: "Ya existe un borrador en edición. Publícalo antes de restaurar otra versión."

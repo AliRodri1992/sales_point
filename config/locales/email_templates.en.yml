@@ -22,6 +22,8 @@ en:
           deactivated: "Template deactivated: %{name}"
           test_queued: "Test delivery for %{name} queued"
     email_templates:
+      current_published: "Currently published version"
+      last_published: "Last published version"
       stale_draft: "This draft was updated in another session. Reload the page before saving."
       unsaved_warning: "You have unsaved changes. Leave this page and discard them?"
       restore_existing_draft: "An editable draft already exists. Publish it before restoring another version."

@@ -3,6 +3,7 @@
 module EmailTemplates
   class DeliveryJob < ApplicationJob
     queue_as :mailers
+    self.enqueue_after_transaction_commit = true
 
     retry_on StandardError, wait: :polynomially_longer, attempts: 3
     discard_on ActiveJob::DeserializationError

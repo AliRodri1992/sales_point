@@ -4,6 +4,7 @@ module EmailTemplates
   # Record delivery only after the mail adapter accepts the test message.
   class TestDeliveryJob < ApplicationJob
     queue_as :mailers
+    self.enqueue_after_transaction_commit = true
 
     retry_on StandardError, wait: :polynomially_longer, attempts: 3 do |job, error|
       template = EmailTemplate.find_by(id: job.arguments.first)

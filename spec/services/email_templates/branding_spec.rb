@@ -35,6 +35,15 @@ RSpec.describe EmailTemplates::Branding do
     expect(described_class.platform_logo_url).to include('delta-pos-email-logo')
   end
 
+  it 'uses a configured global organization logo when no local logo is present' do
+    global = EmailBrandingSetting.create!(display_name: 'Global Store')
+    global.logo.attach(io: StringIO.new('image data'), filename: 'logo.png', content_type: 'image/png')
+
+    values = described_class.values(organization:)
+    expect(values[:organization_logo]).to include('/rails/active_storage/blobs/')
+    expect(values[:platform_logo]).to include('delta-pos-email-logo')
+  end
+
   it 'combines local identity with global contact fallbacks' do
     EmailBrandingSetting.create!(
       display_name: 'Platform', support_email: 'help@platform.example', support_url: 'https://platform.example/help'
