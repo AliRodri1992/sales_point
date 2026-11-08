@@ -25,6 +25,7 @@ RSpec.describe UserInvitationMailer, type: :mailer do
     expect(html).to include('https://example.com/invitations/accept')
     expect(html).to include('Crear mi contraseña')
     expect(html).to include('delta-pos-email-logo')
+    expect(html).to include('width="320"')
     expect(html).to include(organization.name)
     expect(html).to include(user.email)
     expect(email.text_part.body.decoded).to include(organization.name)

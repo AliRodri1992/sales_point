@@ -461,6 +461,7 @@ RSpec.describe 'Admin email templates', type: :request do
   it 'starts new templates with an editable branded email in the active locale' do
     %w[es en ko].each do |locale|
       expect(EmailTemplates::DraftStarter.html(locale)).to include('src="{{platform_logo}}"')
+      expect(EmailTemplates::DraftStarter.html(locale)).to include('width="320"')
       expect(EmailTemplates::DraftStarter.html(locale)).to include('{{recipient_name}}')
       expect(EmailTemplates::DraftStarter.plain(locale)).to include('{{recipient_name}}')
     end
@@ -471,6 +472,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:redirect)
     template = EmailTemplate.find_by!(key: 'new_branded', organization:)
     expect(template.html_body).to include('{{platform_logo}}')
+    expect(template.html_body).to include('width="320"')
     expect(template.text_body).to include('{{organization_name}}')
     expect(template.versions.order(:version_number).last.allowed_variables)
       .to include('platform_logo', 'recipient_name', 'organization_name')
