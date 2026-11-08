@@ -16,6 +16,7 @@ on:
       - 'app/javascript/controllers/email_sender*'
       - 'db/migrate/*email*'
       - 'db/schema.rb'
+      - 'db/migrate/*optimistic_lock*'
       - 'config/locales/email_template*'
       - 'config/locales/email_setting*'
       - 'app/controllers/concerns/admin/email_template*'

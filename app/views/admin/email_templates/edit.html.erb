@@ -24,6 +24,7 @@
                         email_template_preview_url_value: preview_draft_admin_email_template_path(@template, version_id: @draft.id),
                         email_template_preview_error_value: t('admin.email_templates.preview_error'),
                         email_template_preview_loading_value: t('admin.email_templates.preview_loading') } do |f| %>
+    <%= f.hidden_field :lock_version %>
     <section class="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="template-editor-title">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
         <div class="min-w-0">

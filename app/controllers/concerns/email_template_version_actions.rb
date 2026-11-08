@@ -31,6 +31,10 @@ module EmailTemplateVersionActions
       @draft = @version
       render :edit, status: :unprocessable_content
     end
+  rescue ActiveRecord::StaleObjectError
+    @draft = @version
+    @draft.errors.add(:subject, :stale_draft)
+    render :edit, status: :conflict
   end
 
   private
@@ -40,6 +44,7 @@ module EmailTemplateVersionActions
       next false unless @version.update(draft_attributes)
 
       @template.update!(updated_by: current_user)
+      @template.touch
       @template.audit!(action: 'draft_updated', actor: current_user, version: @version)
       true
     end

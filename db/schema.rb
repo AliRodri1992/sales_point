@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_09_030000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_040000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -406,6 +406,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_030000) do
 
   create_table "email_template_versions", force: :cascade do |t|
     t.bigint "email_template_id", null: false
+    t.integer "lock_version", default: 0, null: false
     t.integer "version_number", null: false
     t.string "status", default: "draft", null: false
     t.string "subject", null: false

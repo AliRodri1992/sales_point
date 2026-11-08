@@ -22,6 +22,7 @@ en:
           deactivated: "Template deactivated: %{name}"
           test_queued: "Test delivery for %{name} queued"
     email_templates:
+      stale_draft: "This draft was updated in another session. Reload the page before saving."
       unsaved_warning: "You have unsaved changes. Leave this page and discard them?"
       restore_existing_draft: "An editable draft already exists. Publish it before restoring another version."
       test_enqueue_failed: "The test email could not be queued. Please try again."
@@ -428,6 +429,8 @@ en:
               published_identity_immutable: "A published template's identity cannot be changed."
         email_template_version:
           attributes:
+            subject:
+              stale_draft: "was changed in another session; reload this page"
             allowed_variables:
               undeclared_placeholders: "must include every variable used in the content"
             base:
