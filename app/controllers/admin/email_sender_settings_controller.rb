@@ -10,8 +10,7 @@ module Admin
     def edit
       verify_permission!
       @sender = EmailSenderSetting.find_or_initialize_by(organization: current_organization)
-      @audits = EmailSettingAudit.where(organization: current_organization, setting_type: 'sender')
-                                 .includes(:actor).order(created_at: :desc).limit(20)
+      load_sender_editor
     end
 
     def update
@@ -35,9 +34,16 @@ module Admin
     private
 
     def render_sender_errors
+      load_sender_editor
+      render :edit, status: :unprocessable_content
+    end
+
+    def load_sender_editor
+      @sender_ready = EmailTemplates::Sender.verified?(@sender)
+      global = EmailSenderSetting.find_by(organization_id: nil)
+      @global_sender_ready = EmailTemplates::Sender.verified?(global)
       @audits = EmailSettingAudit.where(organization: current_organization, setting_type: 'sender')
                                  .includes(:actor).order(created_at: :desc).limit(20)
-      render :edit, status: :unprocessable_content
     end
 
     def verify_permission!
