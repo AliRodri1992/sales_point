@@ -223,6 +223,7 @@ RSpec.describe 'Admin email templates', type: :request do
       expect(back['class']).to include('ml-auto', 'border-slate-200')
       expect(back.text.strip).to eq(I18n.t('admin.email_templates.back'))
       expect(header.element_children.first.css('a[data-loading-message]')).to be_empty
+      expect(header.element_children.first.at_css('h1')).to be_present
     end
   end
 
