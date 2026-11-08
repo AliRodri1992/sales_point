@@ -2,6 +2,8 @@ en:
   admin:
     branch_lifecycle:
       title: "Operational status"
+      created_reason: "Branch registration"
+      audit_immutable: "Branch lifecycle audit events cannot be changed or deleted."
       loading_results: "Updating branches…"
       global_summary: "Organization-wide totals; these figures do not change with filters."
       initial_hint: "New branches start in preparation. Activate them after completing setup."
@@ -86,3 +88,7 @@ en:
         assigned_team: "Reassign or remove branch users first."
         outstanding_stock: "Transfer or reconcile inventory before closing."
         last_active_branch: "An operating organization must retain an active branch."
+  activerecord:
+    attributes:
+      branch:
+        operational_status: "Operational status"
