@@ -6,6 +6,7 @@ en:
       initial_hint: "New branches start in preparation. Activate them after completing setup."
       edit_hint: "Manage the operational status from the branch details page, not from this form."
       changed: "Branch status updated"
+      onboarding_reason: "Automatic activation after completing initial setup"
       reason: "Reason for change"
       history: "Status history"
       system_actor: "System"
