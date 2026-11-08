@@ -113,7 +113,8 @@
             </div>
             <%= transition_form.submit t("admin.branch_lifecycle.actions.#{next_status}"),
                                        class: next_status == 'closed' ? 'catalog-button border-rose-600 text-rose-700' :
-                                         'catalog-button catalog-button-primary' %>
+                                         'catalog-button catalog-button-primary',
+                                       disabled: blockers.any? %>
           <% end %>
         <% end %>
       <% end %>
