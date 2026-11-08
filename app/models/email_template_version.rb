@@ -24,6 +24,7 @@ class EmailTemplateVersion < ApplicationRecord
   validates :text_body, length: { maximum: 100_000 }
   validate :variables_are_safe
   validate :declared_variables
+  validate :single_line_header_fields
   validate :only_one_draft_per_template, if: -> { status == 'draft' && email_template_id.present? }
   validate :required_customization_variables, if: -> { status == 'published' }
   validate :published_version_is_immutable, on: :update
@@ -48,6 +49,12 @@ class EmailTemplateVersion < ApplicationRecord
   end
 
   private
+
+  def single_line_header_fields
+    %i[subject preheader].each do |attribute|
+      errors.add(attribute, :invalid) if public_send(attribute).to_s.match?(/[\r\n]/)
+    end
+  end
 
   def only_one_draft_per_template
     other_drafts = self.class.where(email_template_id:, status: 'draft').where.not(id: id)
