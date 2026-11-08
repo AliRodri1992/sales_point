@@ -44,6 +44,17 @@ RSpec.describe 'Admin archived user restoration', type: :request do
     expect(user.reload).to be_deleted
   end
 
+  it 'filters archived accounts without exposing other organizations' do
+    found = create(:user, status: :deleted, deleted_at: Time.current, email: 'archived-find@example.com')
+    create(:organization_membership, user: found, organization:, account_status: :deleted)
+
+    get admin_user_restorations_path, params: { q: 'archived-find' }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(found.email)
+    expect(response.body).not_to include(user.email)
+  end
+
   it 'rejects an archived account from another organization' do
     user.organization_memberships.find_by!(organization:).update!(organization: create(:organization))
     post admin_user_restoration_path(user), params: { reason: 'Review' }
