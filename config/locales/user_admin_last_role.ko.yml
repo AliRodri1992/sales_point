@@ -1,0 +1,8 @@
+ko:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            system_role_ids:
+              last_administrator: "조직에 활성 관리자가 최소 한 명은 남아 있어야 합니다."
