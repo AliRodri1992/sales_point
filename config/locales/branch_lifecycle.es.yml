@@ -1,6 +1,9 @@
 es:
   admin:
     branch_lifecycle:
+      pending_for: "Pendientes para %{action}"
+      resolve_blocker: "Resolver"
+      unavailable: "Resuelve primero las condiciones pendientes"
       title: "Estado operativo"
       created_reason: "Registro de sucursal"
       audit_immutable: "Los eventos de auditoría de sucursales no pueden modificarse ni eliminarse."
@@ -67,6 +70,7 @@ es:
         suspended: "No se permiten nuevas operaciones; pueden regularizarse pendientes."
         closed: "La sucursal no admite nuevas operaciones. Su historial permanece disponible."
       errors:
+        operational_address_required: "La sucursal activa o suspendida debe conservar un domicilio válido."
         missing_organization: "La organización debe estar activa."
         missing_name: "El nombre de la sucursal debe contener entre 3 y 150 caracteres."
         active_terminals: "Desactiva las terminales habilitadas antes de suspender o cerrar."
