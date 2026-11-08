@@ -20,7 +20,7 @@ export default class extends Controller {
     const desktop = device === "desktop"
     if (!this.hasFrameTarget || !this.hasDesktopButtonTarget || !this.hasMobileButtonTarget) return
 
-    this.frameTarget.classList.toggle("max-w-[720px]", desktop)
+    this.frameTarget.classList.toggle("max-w-[920px]", desktop)
     this.frameTarget.classList.toggle("max-w-[375px]", !desktop)
     this.desktopButtonTarget.setAttribute("aria-pressed", String(desktop))
     this.mobileButtonTarget.setAttribute("aria-pressed", String(!desktop))
