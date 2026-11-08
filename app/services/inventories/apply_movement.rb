@@ -4,7 +4,14 @@ module Inventories
   class ApplyMovement
     def self.call(inventory:, quantity:, kind:, **options)
       inventory.branch.with_lock do
-        if kind.to_s == 'sale' && !inventory.branch.operationally_active?
+        operation = kind.to_s
+        permitted = case inventory.branch.operational_status
+                    when 'active' then true
+                    when 'preparing' then operation == 'adjustment'
+                    when 'suspended' then operation != 'sale'
+                    else false
+                    end
+        unless permitted
           inventory.errors.add(:branch, :invalid)
           raise ActiveRecord::RecordInvalid, inventory
         end
