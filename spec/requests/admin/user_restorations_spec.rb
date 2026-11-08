@@ -36,6 +36,16 @@ RSpec.describe 'Admin archived user restoration', type: :request do
     expect(UserStatusEvent.find_by!(user:, organization:).reason).to eq('Authorized review')
   end
 
+  it 'creates a fresh invitation when restoring a pending account' do
+    expect do
+      post admin_user_restoration_path(user), params: { reason: 'Reactivación autorizada' }
+    end.to change(UserInvitation, :count).by(1)
+
+    expect(response).to redirect_to(admin_user_path(user))
+    expect(user.reload).to be_pending
+    expect(user.user_invitations.last).to be_usable
+  end
+
   it 'reports a missing reason without restoring the account' do
     post admin_user_restoration_path(user), params: { reason: '' }
     expect(response).to have_http_status(:unprocessable_content)
