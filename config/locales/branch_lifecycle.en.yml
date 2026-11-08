@@ -29,6 +29,8 @@ en:
         missing_address: "A complete, valid address is required."
         missing_code: "Enter a branch code before activation."
         missing_team: "Assign at least one authorized user to the branch."
+      missing_currency: "Configure an active base currency before activating this branch."
+      delete_requires_preparing: "Only branches still in preparation may be deleted."
         open_operations: "Resolve active operations before closing."
         assigned_team: "Reassign or remove branch users first."
         outstanding_stock: "Transfer or reconcile inventory before closing."
