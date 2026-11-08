@@ -7,7 +7,7 @@ class EmailSenderSettingPolicy < ApplicationPolicy
 
   def update?
     user&.active? && user.admin? && user.permission?('email_settings.manage') &&
-      record.organization_id.present? &&
-      user.organization_memberships.accessible.exists?(organization_id: record.organization_id)
+      (record.organization_id.nil? ? user.role?('super_admin') :
+        user.organization_memberships.accessible.exists?(organization_id: record.organization_id))
   end
 end

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class EmailTemplate < ApplicationRecord
+  include EmailTemplateDraftContent
+
   CRITICAL_GLOBAL_KEYS = %w[
     user_invitation user_invitation_resend user_welcome password_recovery
     password_changed account_suspended account_reactivated security_alert
@@ -97,16 +99,6 @@ class EmailTemplate < ApplicationRecord
         )
       end
     end
-  end
-
-  def draft_content(source)
-    title = source&.subject || subject
-    body = source&.html_body || html_body
-    plain = source&.text_body || text_body
-    variables = source&.allowed_variables.presence ||
-                [title, source&.preheader, body, plain].join(' ').scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq
-    { subject: title, preheader: source&.preheader.to_s, html_body: body, text_body: plain,
-      allowed_variables: variables }
   end
 
   def audit!(action:, actor:, version: nil, metadata: {})

@@ -49,5 +49,4 @@ RSpec.describe EmailTemplate, type: :model do
     expect(template.category).to eq('transactional')
     expect(template.errors[:subject]).to be_present
   end
-
 end

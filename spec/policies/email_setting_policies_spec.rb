@@ -27,6 +27,13 @@ RSpec.describe 'Email settings policies' do
     expect(EmailSenderSettingPolicy.new(user, EmailSenderSetting.new).update?).to be(false)
   end
 
+  it 'permits global sender configuration only for super administrators' do
+    global = EmailSenderSetting.new
+    expect(EmailSenderSettingPolicy.new(user, global).update?).to be(false)
+    role.update!(code: 'super_admin')
+    expect(EmailSenderSettingPolicy.new(user, global).update?).to be(true)
+  end
+
   it 'protects global branding from ordinary administrators' do
     expect(EmailBrandingSettingPolicy.new(user, EmailBrandingSetting.new(organization:)).edit?).to be(true)
     foreign = EmailBrandingSetting.new(organization: foreign_organization)

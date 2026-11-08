@@ -8,13 +8,13 @@ module Admin
     before_action :authenticate_user!
 
     def edit
-      @sender = EmailSenderSetting.find_or_initialize_by(organization: current_organization)
+      @sender = EmailSenderSetting.find_or_initialize_by(organization: selected_organization)
       authorize @sender, :edit?
       load_sender_editor
     end
 
     def update
-      @sender = EmailSenderSetting.find_or_initialize_by(organization: current_organization)
+      @sender = EmailSenderSetting.find_or_initialize_by(organization: selected_organization)
       authorize @sender, :update?
       saved = EmailSenderSetting.transaction do
         next false unless @sender.update(sender_params)
@@ -24,7 +24,9 @@ module Admin
       end
       if saved
         notify_email_setting('sender_updated', @sender)
-        redirect_to edit_admin_email_sender_settings_path,
+        destination = selected_organization.nil? ? edit_admin_email_sender_settings_path(global: '1') :
+                                                edit_admin_email_sender_settings_path
+        redirect_to destination,
                     flash: { swal_message: t('admin.email_templates.saved') }
       else
         render_sender_errors
@@ -44,11 +46,15 @@ module Admin
       @global_sender_ready = EmailTemplates::Sender.verified?(global)
       @can_view_audits = policy(EmailSettingAudit).index?
       @audits = if @can_view_audits
-                  policy_scope(EmailSettingAudit).where(organization: current_organization, setting_type: 'sender')
+                  policy_scope(EmailSettingAudit).where(organization: selected_organization, setting_type: 'sender')
                                                  .includes(:actor).order(created_at: :desc).limit(20)
                 else
                   []
                 end
+    end
+
+    def selected_organization
+      params[:global] == '1' && current_user.role?('super_admin') ? nil : current_organization
     end
 
     def sender_params

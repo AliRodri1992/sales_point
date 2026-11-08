@@ -9,6 +9,8 @@ module Admin
       EmailSettingNotification.with(action:, record: setting, user: current_user)
                               .deliver(current_user, enqueue_job: false)
       current_user.broadcast_notifications_refresh
+    rescue StandardError => error
+      Rails.logger.error("Email notification delivery failed: #{error.class}")
     end
   end
 end

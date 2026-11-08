@@ -65,5 +65,4 @@ RSpec.describe EmailSenderSetting, type: :model do
     expect(sender).not_to be_valid
     expect(sender.errors[:display_name]).to be_present
   end
-
 end

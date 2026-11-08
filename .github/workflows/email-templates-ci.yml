@@ -20,6 +20,7 @@ on:
       - 'config/locales/email_setting*'
       - 'app/controllers/concerns/admin/email_template*'
       - 'app/models/email_template*'
+      - 'app/models/concerns/email_template*'
       - 'app/models/email_sender_setting.rb'
       - 'app/models/email_branding_setting.rb'
       - 'app/services/email_templates/**'

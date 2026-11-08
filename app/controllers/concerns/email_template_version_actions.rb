@@ -13,7 +13,31 @@ module EmailTemplateVersionActions
     render :compare
   end
 
+  def update_draft
+    authorize @template, :update?
+    raise Pundit::NotAuthorizedError unless @version.status == 'draft'
+
+    if save_draft_changes
+      notify_email_template('draft_updated')
+      redirect_to edit_admin_email_template_path(@template),
+                  flash: { swal_message: t('admin.email_templates.draft_updated_toast') }
+    else
+      @draft = @version
+      render :edit, status: :unprocessable_content
+    end
+  end
+
   private
+
+  def save_draft_changes
+    EmailTemplate.transaction do
+      next false unless @version.update(draft_attributes)
+
+      @template.update!(updated_by: current_user)
+      @template.audit!(action: 'draft_updated', actor: current_user, version: @version)
+      true
+    end
+  end
 
   def restore_published_version!
     EmailTemplate.transaction do
@@ -28,7 +52,6 @@ module EmailTemplateVersionActions
       end
     end
   end
-
 
   def load_comparison_versions
     @versions = @template.versions.order(version_number: :desc).to_a

@@ -65,27 +65,6 @@ module Admin
       save_new_template
     end
 
-    def update_draft
-      authorize @template, :update?
-      raise Pundit::NotAuthorizedError unless @version.status == 'draft'
-
-      saved = EmailTemplate.transaction do
-        next false unless @version.update(draft_attributes)
-
-        @template.update!(updated_by: current_user)
-        @template.audit!(action: 'draft_updated', actor: current_user, version: @version)
-        true
-      end
-      if saved
-        notify_email_template('draft_updated')
-        redirect_to edit_admin_email_template_path(@template),
-                    flash: { swal_message: t('admin.email_templates.draft_updated_toast') }
-      else
-        @draft = @version
-        render :edit, status: :unprocessable_content
-      end
-    end
-
     def publish
       authorize @template, :publish?
       EmailTemplate.transaction do
