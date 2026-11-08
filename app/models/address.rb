@@ -4,7 +4,7 @@ class Address < ApplicationRecord
   include AddressLocation
   include RestrictsClosedBranchMutations
 
-  has_paper_trail if: ->(record) { record.addressable_type == 'Supplier' }
+  has_paper_trail if: ->(record) { record.addressable_type.in?(%w[Supplier Branch]) }
 
   belongs_to :addressable, polymorphic: true
   belongs_to :country
@@ -17,6 +17,8 @@ class Address < ApplicationRecord
 
   validates :purpose, inclusion: { in: PURPOSES }
   validate :single_primary_address
+  validate :protect_operational_branch_address_removal
+  before_destroy :prevent_operational_branch_address_destroy
 
   def restore_safely
     return false if deleted_at.nil?
@@ -117,6 +119,20 @@ class Address < ApplicationRecord
   end
 
   private
+
+  def protect_operational_branch_address_removal
+    return unless addressable.is_a?(Branch) && addressable.operational_status.in?(%w[active suspended])
+    return unless deleted_at.present? || marked_for_destruction?
+
+    errors.add(:base, I18n.t('admin.branch_lifecycle.errors.operational_address_required'))
+  end
+
+  def prevent_operational_branch_address_destroy
+    return unless addressable.is_a?(Branch) && addressable.operational_status.in?(%w[active suspended])
+
+    errors.add(:base, I18n.t('admin.branch_lifecycle.errors.operational_address_required'))
+    throw :abort
+  end
 
   def clear_unused_supplier_fields
     return unless %w[Supplier Branch].include?(addressable_type) && country
