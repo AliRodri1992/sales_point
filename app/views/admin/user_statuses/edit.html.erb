@@ -46,7 +46,9 @@
       <p class="rounded-xl bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-900"><%= t('admin.users.status_management.warning') %></p>
       <div class="flex flex-wrap justify-end gap-3">
         <%= link_to t('admin.users.form.buttons.back'), admin_user_path(@user), class: 'rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold' %>
-        <%= form.submit t('admin.users.status_management.confirm'), class: 'cursor-pointer rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white' %>
+        <%= form.submit t('admin.users.status_management.confirm'),
+                         data: { turbo_confirm: @target == 'deleted' ? t('admin.users.status_management.warning') : nil },
+                         class: "cursor-pointer rounded-xl px-5 py-3 text-sm font-semibold text-white #{@target == 'deleted' ? 'bg-rose-700 hover:bg-rose-800' : 'bg-emerald-700 hover:bg-emerald-800'}" %>
       </div>
     <% end %>
   </section>
