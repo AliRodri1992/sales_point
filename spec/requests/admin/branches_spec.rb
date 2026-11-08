@@ -566,7 +566,7 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'rejects removing a branch with assigned users' do
-      branch = create(:branch, organization:, name: 'Assigned office')
+      branch = create(:branch, organization:, name: 'Assigned office', operational_state: 'preparing')
       person = create(:user)
       create(:organization_membership, user: person, organization:)
       create(:user_role, user: person, branch:, system_role: branch_role)
