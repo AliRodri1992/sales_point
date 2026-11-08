@@ -95,8 +95,8 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page).to have_css('[data-user-access-target="emailError"]:not(.hidden)', text: /invalid/i)
 
     click_button 'Create user'
-    expect(page).to have_current_path(new_admin_user_path)
-    expect(page).to have_css('[data-user-access-target="emailError"]:not(.hidden)')
+    expect(page).to have_css('#user_email.input-field-error')
+    expect(page).to have_css('#user_email_error', text: /Email address/)
   end
 
   scenario 'edits branch access through accessible accordion checkboxes' do

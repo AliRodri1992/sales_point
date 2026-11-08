@@ -118,13 +118,8 @@ export default class extends Controller {
   submit(event) {
     const fields = [this.hasEmailTarget ? this.emailTarget : null, this.hasUserTypeTarget ? this.userTypeTarget : null]
       .filter(Boolean)
-    const invalid = fields.find((field) => !this.renderFieldError(field, true))
-    if (invalid) {
-      event.preventDefault()
-      const wrapper = invalid.closest("[data-controller='delta-select']")
-      ;(wrapper?.querySelector("button[data-delta-select-generated]") || invalid).focus()
-      return
-    }
+    // Inline feedback is advisory; the model remains the authoritative validator.
+    fields.forEach((field) => this.renderFieldError(field, true))
     if (!this.hasSubmitButtonTarget || this.submitting) return
     this.submitting = true
     this.submitButtonTarget.disabled = true
