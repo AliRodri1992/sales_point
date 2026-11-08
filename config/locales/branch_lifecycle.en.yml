@@ -33,6 +33,7 @@ en:
       edit_hint: "Manage the operational status from the branch details page, not from this form."
       changed: "Branch status updated"
       onboarding_reason: "Automatic activation after completing initial setup"
+      next_status: "Change status to"
       reason: "Reason for change"
       history: "Status history"
       system_actor: "System"
