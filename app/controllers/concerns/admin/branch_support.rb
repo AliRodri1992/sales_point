@@ -15,7 +15,6 @@ module Admin
       render json: suggestion
     end
 
-
     private
 
     def valid_postal_lookup_params?
@@ -43,6 +42,5 @@ module Admin
 
       user.broadcast_notifications_refresh
     end
-
   end
 end
