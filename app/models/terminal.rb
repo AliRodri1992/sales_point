@@ -35,6 +35,9 @@ class Terminal < ApplicationRecord
   def branch_active_when_terminal_activated
     return unless active? && (new_record? || will_save_change_to_status?)
 
-    errors.add(:branch, :invalid) unless branch&.operationally_active?
+    return if branch&.operationally_active?
+    return if branch&.preparing? && !branch.organization&.onboarding_completed?
+
+    errors.add(:branch, :invalid)
   end
 end
