@@ -11,11 +11,12 @@ module CatalogDesignHelper
   end
 
   def catalog_errors(record)
-    return if record.errors.empty?
+    messages = record.errors[:base].uniq
+    return if messages.empty?
 
-    content_tag(:div, class: 'catalog-error', role: 'alert', tabindex: '-1') do
-      safe_join([content_tag(:strong, t('admin.catalog_design.fix_errors')),
-                 content_tag(:ul, safe_join(record.errors.full_messages.map { |message| content_tag(:li, message) }))])
+    content_tag(:div, class: 'rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700',
+                      role: 'alert') do
+      safe_join(messages.map { |message| content_tag(:p, message) })
     end
   end
 

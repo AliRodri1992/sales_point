@@ -215,6 +215,15 @@ RSpec.describe 'Admin::Products', type: :request do
            params: { product: { code: '', name: '', price: 10 } }
 
       expect(response).to have_http_status(:unprocessable_content)
+
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('.catalog-error')).to be_nil
+      expect(document.text).not_to include(I18n.t('admin.catalog_design.fix_errors'))
+      %w[product_name_error product_code_error].each do |id|
+        expect(document.at_css("##{id}")).to be_present
+      end
+      expect(document.at_css('#product_name_error').text).to include('Name')
+      expect(document.at_css('#product_code_error').text).to include('Code')
     end
   end
 

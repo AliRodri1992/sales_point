@@ -81,6 +81,17 @@ RSpec.describe 'Commercial catalog administration', type: :request do
     expect(promotion.promotion_benefits.sole.value).to eq(15)
   end
 
+  it 'shows name and code errors beside each field without a duplicate summary' do
+    post admin_price_lists_path, params: { price_list: { name: '', code: '', currency: 'MXN', status: 'draft' } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('.catalog-error')).to be_nil
+    expect(document.text).not_to include(I18n.t('admin.catalog_design.fix_errors'))
+    expect(document.at_css('#price_list_name_error')).to be_present
+    expect(document.at_css('#price_list_code_error')).to be_present
+  end
+
   it 'previews prices without consuming promotions or accepting a foreign option' do
     get quote_admin_product_path(product), params: { quantity: 2 }
     expect(response).to have_http_status(:ok)
