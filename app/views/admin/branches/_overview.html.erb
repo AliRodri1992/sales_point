@@ -11,13 +11,13 @@
       <span class="branch-overview-dot branch-overview-dot-active" aria-hidden="true"></span>
       <%= t('admin.catalog_design.active') %>
     </dt>
-    <dd class="font-jakarta text-sm font-bold tabular-nums text-emerald-700"><%= @branch_counts.fetch(true, 0) %></dd>
+    <dd class="font-jakarta text-sm font-bold tabular-nums text-emerald-700"><%= @branch_counts.fetch('active', 0) %></dd>
   </div>
   <div class="branch-overview-item">
     <dt class="branch-overview-label">
       <span class="branch-overview-dot branch-overview-dot-inactive" aria-hidden="true"></span>
       <%= t('admin.catalog_design.inactive') %>
     </dt>
-    <dd class="font-jakarta text-sm font-bold tabular-nums text-slate-700"><%= @branch_counts.fetch(false, 0) %></dd>
+    <dd class="font-jakarta text-sm font-bold tabular-nums text-slate-700"><%= @branch_counts.fetch('suspended', 0) + @branch_counts.fetch('closed', 0) + @branch_counts.fetch('preparing', 0) %></dd>
   </div>
 </dl>
