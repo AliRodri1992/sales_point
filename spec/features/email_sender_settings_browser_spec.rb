@@ -33,7 +33,7 @@ RSpec.describe 'Sender settings editor', type: :feature, js: true do
 
     expect(page).to have_css('#sender-preview-title')
     fill_in 'email_sender_setting_display_name', with: 'North Shop'
-    fill_in 'email_sender_setting_from_address', with: 'info@north.example'
+    fill_in 'email_sender_setting_from_address', with: 'INFO@NORTH.EXAMPLE'
     fill_in 'email_sender_setting_reply_to', with: 'support@north.example'
 
     expect(page).to have_css('[data-email-sender-target="previewName"]', text: 'North Shop')

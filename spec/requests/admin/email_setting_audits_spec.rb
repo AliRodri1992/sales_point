@@ -293,5 +293,4 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(EmailSenderSetting.find_by(organization:)).to be_nil
     expect(EmailSettingAudit.where(organization:, setting_type: 'sender')).to be_empty
   end
-
 end

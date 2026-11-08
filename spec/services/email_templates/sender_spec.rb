@@ -54,5 +54,4 @@ RSpec.describe EmailTemplates::Sender do
     expect(headers[:from]).to include('notice@platform.example')
     expect(headers[:from]).not_to include('wrong.example')
   end
-
 end

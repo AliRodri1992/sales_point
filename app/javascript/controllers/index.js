@@ -179,6 +179,9 @@ application.register("email-template-detail", EmailTemplateDetailController)
 import EmailBrandingController from "./email_branding_controller"
 application.register("email-branding", EmailBrandingController)
 
+import EmailSenderController from "./email_sender_controller"
+application.register("email-sender", EmailSenderController)
+
 import RolePermissionsController from "./role_permissions_controller"
 application.register("role-permissions", RolePermissionsController)
 

@@ -17,8 +17,8 @@ export default class extends Controller {
 
   updatePreview() {
     const name = this.nameTarget.value.trim() || this.defaultNameValue
-    const from = this.fromTarget.value.trim() || this.defaultFromValue
-    const reply = this.replyTarget.value.trim() || this.defaultReplyValue
+    const from = this.fromTarget.value.trim().toLowerCase() || this.defaultFromValue
+    const reply = this.replyTarget.value.trim().toLowerCase() || this.defaultReplyValue
     const locale = this.localeTarget.selectedOptions[0]?.textContent || ""
 
     this.previewNameTarget.textContent = name
@@ -26,7 +26,7 @@ export default class extends Controller {
     this.previewReplyTarget.textContent = reply
     this.previewLocaleTarget.textContent = locale
 
-    const address = this.fromTarget.value.trim()
+    const address = this.fromTarget.value.trim().toLowerCase()
     const domain = /^[^\s@]+@([^\s@]+\.[^\s@]+)$/.exec(address)?.[1]
     this.previewDomainTarget.textContent = domain || this.defaultDomainValue
   }
