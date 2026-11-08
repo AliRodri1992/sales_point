@@ -29,6 +29,7 @@ RSpec.describe 'Admin branch role assignment management', type: :request do
   end
 
   it 'replaces only local branch assignments, leaving foreign organization roles untouched' do
+    target.update!(user_type: 'customer')
     foreign_branch = create(:branch, organization: other_organization, name: 'Sucursal Externa')
     create(:organization_membership, user: target, organization: other_organization)
     removed_assignment = create(:user_role, user: target, system_role: branch_role, branch:)

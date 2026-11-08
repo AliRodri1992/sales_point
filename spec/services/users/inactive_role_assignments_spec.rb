@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Retained inactive role assignments' do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, user_type: 'customer') }
   let(:organization) { create(:organization) }
   let(:global_role) { create(:system_role, :system) }
   let(:branch_role) { create(:system_role, :branch) }

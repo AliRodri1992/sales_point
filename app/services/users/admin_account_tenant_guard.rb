@@ -20,6 +20,13 @@ module Users
       reject_shared_change?(:system_role_ids)
     end
 
+    def delegated_employee_allowed?
+      return true unless @user.new_record? && @user.employee? && @actor && !@actor.admin?
+
+      @user.errors.add(:user_type, I18n.t('admin.users.ui.delegated_employee_restricted'))
+      false
+    end
+
     def last_admin_role_safe?(role_ids)
       return true if @user.new_record? || role_ids.nil? || !@user.admin?
 

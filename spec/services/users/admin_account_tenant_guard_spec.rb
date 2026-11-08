@@ -41,7 +41,12 @@ RSpec.describe Users::AdminAccountTenantGuard do
     candidate = create(:user, system_roles: [administrator_role])
     create(:organization_membership, user: candidate, organization:, account_status: :active)
 
-    expect(remove_administrative_roles.save).to be(true)
+    staff = create(:system_role, :system, code: 'staff')
+    writer = Users::AdminAccountWriter.new(
+      user: target, organization:, actor: target, attributes: { system_role_ids: [staff.id] }
+    )
+
+    expect(writer.save).to be(true)
     expect(target.reload).not_to be_admin
     expect(candidate.reload).to be_admin
   end

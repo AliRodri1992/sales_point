@@ -89,10 +89,7 @@ module Users
     end
 
     def valid_access_selection?(role_ids, branch_roles)
-      if @user.new_record? && @user.employee? && @actor && !@actor.admin?
-        @user.errors.add(:user_type, I18n.t('admin.users.ui.delegated_employee_restricted'))
-        return false
-      end
+      return false unless delegated_employee_allowed?
 
       return invalid_role_error?(:system_role_ids) if role_ids == :invalid
       return invalid_role_error?(:branch_role_assignments) unless branch_roles.valid?
