@@ -17,11 +17,13 @@ module Inventories
     def call
       raise ArgumentError, 'Quantity must be positive' unless @quantity.positive?
 
-      @inventory.with_lock do
-        raise ArgumentError, 'Insufficient inventory' if @inventory.stock < @quantity
+      @inventory.branch.with_lock do
+        @inventory.with_lock do
+          raise ArgumentError, 'Insufficient inventory' if @inventory.stock < @quantity
 
-        remaining = allocate_lots
-        raise ArgumentError, 'No unexpired stock sufficient for this quantity' if remaining.positive?
+          remaining = allocate_lots
+          raise ArgumentError, 'No unexpired stock sufficient for this quantity' if remaining.positive?
+        end
       end
     end
 
@@ -38,16 +40,20 @@ module Inventories
     end
 
     def self.consume_lot!(inventory:, lot:, quantity:, user:, **options)
-      inventory.with_lock do
-        kind = options.fetch(:kind, 'sale')
-        validate_lot!(inventory:, lot:, quantity:, kind:)
-        remaining = lot.quantity - quantity
-        lot.update!(quantity: remaining, status: remaining.zero? ? :depleted : :available)
-        consume_serials!(lot, quantity, kind) if inventory.product.tracking_mode == 'serial'
-        Inventories::ApplyMovement.call(
-          inventory:, quantity: -quantity, kind:, user:,
-          inventory_lot: lot, **options.except(:kind)
-        )
+      inventory.branch.with_lock do
+        inventory.with_lock do
+          lot.with_lock do
+            kind = options.fetch(:kind, 'sale')
+            validate_lot!(inventory:, lot:, quantity:, kind:)
+            remaining = lot.quantity - quantity
+            lot.update!(quantity: remaining, status: remaining.zero? ? :depleted : :available)
+            consume_serials!(lot, quantity, kind) if inventory.product.tracking_mode == 'serial'
+            Inventories::ApplyMovement.call(
+              inventory:, quantity: -quantity, kind:, user:,
+              inventory_lot: lot, **options.except(:kind)
+            )
+          end
+        end
       end
     end
 
