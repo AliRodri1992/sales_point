@@ -80,7 +80,7 @@
                   <%= form_with url: adjust_admin_branch_inventory_path(@branch, inventory),
                                 html: { novalidate: true },
                                 class: 'flex flex-wrap items-start gap-2' do |form| %>
-                    <% if inventory.product.tracking_lot? %>
+                    <% if inventory.product.tracking_lot? || inventory.inventory_lots.any? %>
                       <div class="catalog-field">
                         <%= label_tag "inventory-lot-#{inventory.id}",
                                       branch_required_label(t('admin.branch_lifecycle.inventory_lot_label')),
