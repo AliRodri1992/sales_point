@@ -18,7 +18,22 @@ RSpec.describe Inventories::FefoAllocator do
     )
   end
 
-  it 'consumes the soonest-expiring lot first' do
+  it 'rolls back lot changes if its branch has been suspended' do
+    admin = create(:user, system_roles: [create(:system_role, :system, code: 'administrator')])
+    create(:organization_membership, organization: inventory.organization, user: admin)
+    Branches::TransitionStatus.call(
+      branch: inventory.branch, actor: admin, to: 'suspended', reason: 'Maintenance'
+    )
+
+    expect do
+      described_class.call(inventory:, quantity: 1, user:)
+    end.to raise_error(ActiveRecord::RecordInvalid)
+    expect(inventory.reload.stock).to eq(5)
+    expect(earlier.reload.quantity).to eq(2)
+    expect(later.reload.quantity).to eq(3)
+  end
+
+
     described_class.call(inventory:, quantity: 1, user:)
 
     expect(earlier.reload.quantity).to eq(1)
