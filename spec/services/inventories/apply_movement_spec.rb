@@ -3,6 +3,14 @@
 require 'rails_helper'
 
 RSpec.describe Inventories::ApplyMovement do
+  def suspend_branch(office)
+    admin = create(:user, system_roles: [create(:system_role, :system, code: 'administrator')])
+    create(:organization_membership, organization: office.organization, user: admin)
+    Branches::TransitionStatus.call(
+      branch: office, actor: admin, to: 'suspended', reason: 'Maintenance'
+    )
+  end
+
   it 'records an adjustment and changes only its branch inventory' do
     inventory = create(:inventory, stock: 15)
     movement = described_class.call(inventory:, quantity: -4, kind: 'adjustment')
@@ -56,10 +64,11 @@ RSpec.describe Inventories::ApplyMovement do
   end
 
   it 'permits stock reconciliation but blocks inbound transfers while suspended' do
-    branch = create(:branch, status: false)
+    branch = create(:branch)
     product = create(:product, organization: branch.organization)
     inventory = create(:inventory, branch:, organization: branch.organization,
                                    product:, stock: 5)
+    suspend_branch(branch)
 
     expect do
       described_class.call(inventory:, quantity: 2, kind: 'transfer_in')
@@ -72,9 +81,10 @@ RSpec.describe Inventories::ApplyMovement do
   end
 
   it 'blocks a sale from a suspended branch without changing stock' do
-    office = create(:branch, status: false)
+    office = create(:branch)
     item = create(:product, organization: office.organization)
     inventory = create(:inventory, branch: office, organization: office.organization, product: item, stock: 10)
+    suspend_branch(office)
 
     expect do
       described_class.call(inventory:, quantity: -1, kind: 'sale')
