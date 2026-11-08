@@ -9,7 +9,7 @@ RSpec.describe Branch, type: :model do
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_length_of(:name).is_at_least(2).is_at_most(100) }
+    it { is_expected.to validate_length_of(:name).is_at_least(3).is_at_most(150) }
     it 'stores a primary mobile in the polymorphic phones association' do
       branch = build(:branch)
       mobile = branch.phones.build(number: '55 1234 5678', kind: 'mobile', primary: true)
@@ -49,4 +49,52 @@ RSpec.describe Branch, type: :model do
       expect(branch).to be_valid
     end
   end
+  it 'requires an address when registering a branch directly through the model' do
+    branch = build(:branch, :without_address)
+
+    expect(branch).not_to be_valid
+    expect(branch.errors[:address]).to be_present
+  end
+
+  it 'enforces the branch name length on the model without browser constraints' do
+    branch = build(:branch, name: 'AB')
+    expect(branch).not_to be_valid
+    expect(branch.errors[:name]).to be_present
+
+    branch.name = 'A' * 151
+    expect(branch).not_to be_valid
+
+    branch.name = 'A' * 150
+    expect(branch).to be_valid
+  end
+
+  it 'protects the last active branch and requires reassignment before deactivation' do
+    organization = create(:organization)
+    branch = create(:branch, organization:, name: 'Central')
+    fallback = create(:branch, organization:, name: 'Fallback')
+    person = create(:user)
+    create(:organization_membership, organization:, user: person)
+    role = create(:user_role, user: person, branch:, system_role: create(:system_role, :branch))
+
+    expect(branch.update(status: false)).to be(false)
+    expect(branch.errors[:status]).to be_present
+
+    role.update!(deleted_at: Time.current)
+    expect(branch.update(status: false)).to be(true)
+
+    expect(fallback.update(status: false)).to be(false)
+    expect(fallback.errors[:status]).to be_present
+  end
+
+  it 'prevents soft deletion while a branch still has assigned users' do
+    branch = create(:branch)
+    person = create(:user)
+    create(:organization_membership, organization: branch.organization, user: person)
+    create(:user_role, user: person, branch:, system_role: create(:system_role, :branch))
+
+    expect(branch.update(deleted_at: Time.current)).to be(false)
+    expect(branch.errors[:base]).to be_present
+    expect(branch.reload.deleted_at).to be_nil
+  end
 end
+

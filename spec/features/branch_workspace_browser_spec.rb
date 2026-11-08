@@ -138,7 +138,7 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
     expect(record).to have_attributes(contact_email: 'airport@example.com', notes: 'Deliveries at gate two.')
   end
 
-  scenario 'updates geographic options and preserves other criteria when a country badge is removed' do
+  scenario 'resets dependent location filters when removing a country badge' do
     country = create(:country, name: 'United States', iso_alpha2: 'US', iso_alpha3: 'USA', iso_numeric: '840')
     office = create(:branch, organization:, name: 'Austin office')
     office.address.update!(country:, city: 'Austin', state: 'Texas', postal_code: '78701')
@@ -154,8 +154,8 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
     expect(page).to have_css('#branch-filter-badges [data-filter-key="city"]')
     find('#branch-filter-badges [data-filter-key="country_id"]').click
     expect(page).to have_no_css('#branch-filter-badges [data-filter-key="country_id"]')
-    expect(page).to have_css('#branch-filter-badges [data-filter-key="state"]')
-    expect(page).to have_css('#branch-filter-badges [data-filter-key="city"]')
+    expect(page).to have_no_css('#branch-filter-badges [data-filter-key="state"]')
+    expect(page).to have_no_css('#branch-filter-badges [data-filter-key="city"]')
     within('#branches_list') { expect(page).to have_link(office.name, exact: true) }
   end
 

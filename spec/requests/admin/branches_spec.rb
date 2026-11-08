@@ -477,7 +477,8 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
 
     it 'builds an address when an invalid update targets a branch without one' do
-      branch = create(:branch, :without_address, organization:)
+      branch = create(:branch, organization:)
+      branch.address.destroy!
 
       patch admin_branch_path(branch), params: { branch: { name: '' } }
 
@@ -487,4 +488,61 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response.body).to include("action=\"/admin/branches/#{branch.id}\"")
     end
   end
+  describe 'Branch model validation feedback' do
+    it 'shows mandatory stars and disables native HTML5 form validation' do
+      get new_admin_branch_path
+
+      page = Nokogiri::HTML(response.body)
+      form = page.at_css('form[action="/admin/branches"]')
+      expect(form['novalidate']).to be_present
+      expect(page.at_css('label[for="branch_name"]').text).to include('*')
+      expect(page.at_css('label[for="branch_address_attributes_country_id"]').text).to include('*')
+      expect(page.at_css('label[for="branch_address_attributes_street"]').text).to include('*')
+      expect(page.at_css('input#branch_name')['required']).to be_nil
+      expect(page.at_css('input#branch_address_attributes_street')['required']).to be_nil
+      expect(page.at_css('input#branch_code')['pattern']).to be_nil
+      expect(response.body).to include('branch-required-mark')
+    end
+
+    it 'rejects missing mandatory address on the server and displays its field error' do
+      expect do
+        post admin_branches_path, params: { branch: { name: 'New branch', status: true } }
+      end.not_to change(Branch, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('#branch_address_error')).to be_present
+      expect(document.at_css('#branch_address_error').text)
+        .to include(I18n.t('admin.branches.form.fields.country'))
+    end
+
+    it 'keeps malformed email and address messages below each input' do
+      post admin_branches_path, params: {
+        branch: {
+          name: 'AB', contact_email: 'bad-email',
+          address_attributes: { street: '', city: '', country_id: '', postal_code: '' }
+        }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      %w[branch_name branch_contact_email address_street address_city address_country].each do |id|
+        expect(document.at_css("##{id}_error")).to be_present
+      end
+    end
+
+    it 'rejects removing a branch with assigned users' do
+      branch = create(:branch, organization:, name: 'Assigned office')
+      person = create(:user)
+      create(:organization_membership, user: person, organization:)
+      create(:user_role, user: person, branch:, system_role: branch_role)
+
+      delete admin_branch_path(branch)
+
+      expect(response).to redirect_to(admin_branch_path(branch))
+      expect(flash[:alert]).to be_present
+      expect(branch.reload.deleted_at).to be_nil
+    end
+  end
+
 end

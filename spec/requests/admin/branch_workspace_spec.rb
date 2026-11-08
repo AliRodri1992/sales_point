@@ -250,4 +250,18 @@ RSpec.describe 'Branch directory and workspace', type: :request do
       '#branch-detail-operations'
     )
   end
+  it 'requires reassignment before deactivating a branch and displays the status error' do
+    role = create(:system_role, :branch)
+    person = create(:user)
+    create(:organization_membership, user: person, organization:)
+    create(:user_role, user: person, branch: central, system_role: role)
+
+    patch admin_branch_path(central), params: { branch: { status: false } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(central.reload.status).to be(true)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('#branch_status_error')).to be_present
+  end
 end
+

@@ -109,8 +109,8 @@ module Admin
     def destroy
       authorize @branch
       unless @branch.update(deleted_at: Time.current)
-        return redirect_to admin_branch_path(@branch), alert: @branch.errors.full_messages.to_sentence,
-                                                       status: :see_other
+        return redirect_to admin_branch_path(@branch, branch_directory_parameters),
+                           alert: @branch.errors.full_messages.to_sentence, status: :see_other
       end
       render_destroyed_branch
     end

@@ -24,7 +24,8 @@ module CatalogDesignHelper
     label ||= t("admin.catalog_design.#{attribute}")
     content_tag(:div, class: 'catalog-field') do
       safe_join([form.label(attribute, label),
-                 form.public_send(type, attribute, **options, aria: { invalid: record.errors[attribute].any? }),
+                 form.public_send(type, attribute, **options.except(:aria),
+                                  aria: options.fetch(:aria, {}).merge(invalid: record.errors[attribute].any?)),
                  error_message_for(record, attribute)])
     end
   end
