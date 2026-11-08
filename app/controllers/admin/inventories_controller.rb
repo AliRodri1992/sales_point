@@ -9,6 +9,10 @@ module Admin
     before_action :set_inventory, only: %i[update adjust]
 
     def index
+      load_inventory_list
+    end
+
+    def load_inventory_list
       @inventories = @branch.inventories.includes(:product).order('products.name')
       load_recent_movements
     end
@@ -35,18 +39,28 @@ module Admin
     def create
       return head :forbidden if @branch.closed? || @branch.suspended?
 
-      build_inventory.save!
-      redirect_to admin_branch_inventories_path(@branch)
+      @new_inventory = build_inventory
+      if @new_inventory.save
+        redirect_to admin_branch_inventories_path(@branch), status: :see_other
+      else
+        render_inventory_errors
+      end
     rescue ActiveRecord::RecordInvalid => e
-      redirect_to admin_branch_inventories_path(@branch), alert: e.record.errors.full_messages.to_sentence
+      @new_inventory = e.record
+      render_inventory_errors
     end
 
     def build_inventory
-      product = current_organization.products.not_deleted.find(inventory_params[:product_id])
+      product = current_organization.products.not_deleted.find_by(id: inventory_params[:product_id])
       @branch.inventories.new(inventory_params.except(:product_id)).tap do |inventory|
         inventory.organization = current_organization
         inventory.product = product
       end
+    end
+
+    def render_inventory_errors
+      load_inventory_list
+      render :index, status: :unprocessable_content
     end
 
     def update
@@ -60,12 +74,23 @@ module Admin
 
     def adjust
       Inventories::ApplyMovement.call(
-        inventory: @inventory, quantity: params.require(:quantity),
+        inventory: @inventory, quantity: params[:quantity],
         kind: 'adjustment', user: current_user, reference: params[:reference]
       )
-      redirect_to admin_branch_inventories_path(@branch)
+      redirect_to admin_branch_inventories_path(@branch), status: :see_other
     rescue ActiveRecord::RecordInvalid, ArgumentError => e
-      redirect_to admin_branch_inventories_path(@branch), alert: e.message
+      @adjustment_inventory_id = @inventory.id
+      @adjustment_value = params[:quantity]
+      @adjustment_error = quantity_error_message(e)
+      load_inventory_list
+      render :index, status: :unprocessable_content
+    end
+
+    def quantity_error_message(error)
+      return t('admin.branch_lifecycle.inventory_quantity_invalid') if error.is_a?(ArgumentError)
+
+      messages = error.record.errors[:quantity]
+      messages.any? ? messages.join(', ') : t('admin.branch_lifecycle.inventory_quantity_rejected')
     end
 
     private
