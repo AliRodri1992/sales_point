@@ -44,6 +44,7 @@ class Branch < ApplicationRecord
 
   normalizes :name, with: ->(value) { value.strip }
   validate :preserve_operational_history, if: -> { will_save_change_to_deleted_at? && deleted_at.present? }
+  validate :prepare_only_deletion, if: -> { will_save_change_to_deleted_at? && deleted_at.present? }
 
   scope :not_deleted, -> { where(deleted_at: nil) }
 
@@ -117,6 +118,10 @@ class Branch < ApplicationRecord
       terminals.active_records.exists? ||
       purchase_requests.exists?(status: %w[draft submitted]) ||
       purchase_orders.exists?(status: %w[draft pending_approval approved ordered partially_received])
+  end
+
+  def prepare_only_deletion
+    errors.add(:base, I18n.t('admin.branch_lifecycle.errors.delete_requires_preparing')) unless preparing?
   end
 
   def preserve_operational_history
