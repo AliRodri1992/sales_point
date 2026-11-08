@@ -14,6 +14,7 @@ module Admin
     include EmailTemplatePersonalization
     include EmailTemplateActivity
     include EmailTemplateTestSending
+    include EmailTemplateVersionActions
 
     def index
       authorize EmailTemplate
@@ -86,17 +87,9 @@ module Admin
       redirect_to admin_email_template_path(@template),
                   flash: { swal_message: t('admin.email_templates.published') }
     rescue ActiveRecord::RecordInvalid => e
-      if e.record.is_a?(EmailTemplateVersion) && policy(@template).update?
-        @draft = @version
-        @draft.status = 'draft'
-        render :edit, status: :unprocessable_content
-      else
-        redirect_to admin_email_template_path(@template),
-                    flash: { swal_message: e.message, swal_icon: 'error' }
-      end
+      handle_publish_validation_error(e)
     rescue ArgumentError => e
-      redirect_to admin_email_template_path(@template),
-                  flash: { swal_message: e.message, swal_icon: 'error' }
+      redirect_publish_error(e.message)
     end
 
     def restore
@@ -115,27 +108,17 @@ module Admin
                   flash: { swal_message: e.message, swal_icon: 'error' }
     end
 
-    def compare
-      authorize @template, :versions?
-      @versions = @template.versions.order(version_number: :desc).to_a
-      @left = @template.versions.find(params[:left])
-      @right = @template.versions.find(params[:right])
-      if @left.id == @right.id
-        redirect_to admin_email_template_path(@template),
-                    flash: { swal_message: t('admin.email_templates.compare_distinct'), swal_icon: 'error' }
-        return
-      end
-
-      @comparison_previews = [@left, @right].to_h { |version| [version.id, comparison_preview(version)] }
-      render :compare
-    end
-
     private
 
     def load_show_details
       @versions = policy(@template).versions? ? @template.versions.order(version_number: :desc) : []
       @can_view_audits = policy(EmailTemplateAudit).index?
-      @audits = @can_view_audits ? @template.audits.includes(:actor, :email_template_version).order(created_at: :desc).limit(30) : []
+      @audits = if @can_view_audits
+                  @template.audits.includes(:actor, :email_template_version)
+                           .order(created_at: :desc).limit(30)
+                else
+                  []
+                end
       load_show_preview if policy(@template).preview? && @template.published_version
     end
 
