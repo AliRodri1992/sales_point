@@ -2,8 +2,15 @@
 
 module BranchesHelper
   def branch_operational_status(branch)
+    colors = {
+      'preparing' => 'bg-slate-100 text-slate-700',
+      'active' => 'bg-emerald-100 text-emerald-800',
+      'suspended' => 'bg-amber-100 text-amber-800',
+      'closed' => 'bg-slate-200 text-slate-800'
+    }
+    styles = 'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold'
     content_tag(:span, t("admin.branch_lifecycle.statuses.#{branch.operational_status}"),
-                class: 'branch-status-card')
+                class: "#{styles} #{colors.fetch(branch.operational_status)}")
   end
 
   def branch_required_label(text)
