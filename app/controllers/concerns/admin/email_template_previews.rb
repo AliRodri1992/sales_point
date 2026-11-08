@@ -11,11 +11,7 @@ module Admin
     def preview
       authorize @template, :preview?
       authorize @template, :versions? if params[:version_id].present?
-      @version = if params[:version_id].present?
-                   @template.versions.find(params[:version_id])
-                 else
-                   @template.published_version
-                 end
+      @version = saved_preview_version
       raise ActiveRecord::RecordNotFound unless @version
 
       @subject, @html, @plain = EmailTemplates::Renderer.new(
@@ -47,10 +43,16 @@ module Admin
 
     private
 
+    def saved_preview_version
+      return @template.published_version if params[:version_id].blank?
+
+      @template.versions.find(params[:version_id])
+    end
+
     def redirect_invalid_saved_preview
+      message = t('admin.email_templates.detail_preview_error')
       redirect_to admin_email_template_path(@template), status: :see_other,
-                  flash: { swal_message: t('admin.email_templates.detail_preview_error'),
-                           swal_icon: 'error' }
+                  flash: { swal_message: message, swal_icon: 'error' }
     end
 
     def render_invalid_preview(source)
