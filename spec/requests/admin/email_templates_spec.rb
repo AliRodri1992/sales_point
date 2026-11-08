@@ -774,19 +774,19 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(doc.at_css('turbo-frame#email_templates_list')).to be_present
   end
 
-  it 'exposes authorized edit and removal actions from the catalog' do
+  it 'exposes authorized edit and archive actions from the catalog' do
     template = create_template(organization:)
     get admin_email_templates_path
 
     doc = Nokogiri::HTML(response.body)
     expect(doc.at_css("a[href='#{edit_admin_email_template_path(template)}']")).to be_present
-    delete_action = "form[action='#{admin_email_template_path(template)}'] input[name='_method'][value='delete']"
-    expect(doc.at_css(delete_action)).to be_present
+    archive_action = "form[action='#{archive_admin_email_template_path(template)}'] input[name='_method'][value='patch']"
+    expect(doc.at_css(archive_action)).to be_present
 
     archive_permission = Permission.find_by!(code: 'email_templates.archive')
     SystemRolePermission.where(system_role: role, permission: archive_permission).destroy_all
     get admin_email_templates_path
-    expect(Nokogiri::HTML(response.body).at_css("form[action='#{admin_email_template_path(template)}']")).to be_nil
+    expect(Nokogiri::HTML(response.body).at_css("form[action='#{archive_admin_email_template_path(template)}']")).to be_nil
   end
 
   it 'removes a template without erasing its immutable history' do
@@ -837,4 +837,80 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include(I18n.t('admin.email_templates.categories.transactions'))
   end
+  it 'personalizes a global published template for the current organization only' do
+    global = EmailTemplate.create!(
+      organization: nil, key: 'welcome_alert', name: 'Global welcome',
+      locale: 'es', category: 'transactional', status: 'draft', enabled: false,
+      subject: 'Global greeting', html_body: '<p>Hello {{recipient_name}}</p>',
+      text_body: 'Hello {{recipient_name}}'
+    )
+    global.new_draft!(actor: administrator).publish!(actor: administrator)
+
+    post personalize_admin_email_template_path(global)
+
+    local = EmailTemplate.find_by!(organization:, key: global.key, locale: global.locale)
+    expect(response).to redirect_to(edit_admin_email_template_path(local))
+    expect(local).to have_attributes(status: 'draft', enabled: false, source_template_id: global.id)
+    expect(local.versions.pluck(:status)).to eq(['draft'])
+    expect(local.versions.first.html_body).to eq(global.published_version.html_body)
+    expect(local.audits.where(action: 'personalized')).to exist
+    expect(global.reload).to have_attributes(status: 'published', enabled: true)
+    expect(EmailTemplate.resolve(key: global.key, locale: 'es', organization:)).to eq(global)
+
+    post personalize_admin_email_template_path(global)
+    expect(EmailTemplate.where(organization:, key: global.key, locale: global.locale).count).to eq(1)
+
+    local.versions.first.publish!(actor: administrator)
+    expect(EmailTemplate.resolve(key: global.key, locale: 'es', organization:)).to eq(local)
+    expect(EmailTemplate.resolve(key: global.key, locale: 'es', organization: other_organization)).to eq(global)
+
+    patch archive_admin_email_template_path(local)
+    expect(EmailTemplate.resolve(key: global.key, locale: 'es', organization:)).to eq(global)
+    expect(local.reload.status).to eq('archived')
+
+    patch reactivate_admin_email_template_path(local)
+    expect(local.reload).to have_attributes(status: 'draft', enabled: false)
+    expect(local.audits.where(action: 'reactivated')).to exist
+    expect(EmailTemplate.resolve(key: global.key, locale: 'es', organization:)).to eq(global)
+  end
+
+  it 'rejects customizing an unpublished template and archiving critical global emails' do
+    global = EmailTemplate.create!(
+      organization: nil, key: 'user_invitation', name: 'Access invitation',
+      locale: 'ko', category: 'security', status: 'draft', enabled: false,
+      subject: 'Invite', html_body: '<p>Invite</p>', text_body: 'Invite'
+    )
+
+    post personalize_admin_email_template_path(global)
+    expect(response).to have_http_status(:forbidden)
+    global.new_draft!(actor: administrator).publish!(actor: administrator)
+
+    patch archive_admin_email_template_path(global)
+    expect(response).to have_http_status(:forbidden)
+    expect(global.reload).to have_attributes(status: 'published', enabled: true)
+  end
+
+  it 'filters templates by their original source and shows a creation action for globals' do
+    global = EmailTemplate.create!(
+      organization: nil, key: 'global_origin', name: 'Global origin', locale: 'en',
+      category: 'transactional', status: 'draft', enabled: false,
+      subject: 'Global', html_body: '<p>Global</p>', text_body: 'Global'
+    )
+    global.new_draft!(actor: administrator).publish!(actor: administrator)
+    post personalize_admin_email_template_path(global)
+    local = EmailTemplate.find_by!(organization:, key: global.key, locale: global.locale)
+
+    get admin_email_templates_path, params: { origin: 'customized' }
+    page = Nokogiri::HTML(response.body)
+    expect(page.text).to include(local.name)
+    expect(page.text).not_to include('unrelated_not_existing')
+    expect(page.at_css('select[name="origin"] option[selected]')['value']).to eq('customized')
+    expect(page.text).to include(I18n.t('admin.email_templates.origins.customized'))
+
+    get admin_email_templates_path, params: { origin: 'system' }
+    doc = Nokogiri::HTML(response.body)
+    expect(doc.at_css("form[action='#{personalize_admin_email_template_path(global)}']")).to be_present
+    expect(doc.at_css("form[action='#{archive_admin_email_template_path(global)}']")).to be_present
+  end
+
 end

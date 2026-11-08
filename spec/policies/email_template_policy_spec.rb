@@ -68,4 +68,28 @@ RSpec.describe EmailTemplatePolicy do
     expect(described_class.new(nil, template_for(organization)).index?).to be_falsey
     expect(described_class::Scope.new(nil, EmailTemplate).resolve).to be_empty
   end
+  it 'allows published global copies but protects essential global emails' do
+    global = template_for(nil)
+    global.status = 'published'
+    global.enabled = true
+    global.id = 87
+    version = EmailTemplateVersion.new(email_template: global, version_number: 1, status: 'published',
+                                        subject: 'Hello', html_body: '<p>Hello</p>', text_body: 'Hello')
+    allow(global).to receive(:published_version).and_return(version)
+    expect(described_class.new(user, global).personalize?).to be(true)
+
+    global.key = 'user_invitation'
+    expect(described_class.new(user, global).archive?).to be(false)
+    expect(described_class.new(user, global).destroy?).to be(false)
+  end
+
+  it 'allows restoring archived organization templates but prevents publishing until restored' do
+    template = template_for(organization)
+    template.status = 'archived'
+    policy = described_class.new(user, template)
+    expect(policy.reactivate?).to be(true)
+    expect(policy.update?).to be(false)
+    expect(policy.publish?).to be(false)
+  end
+
 end

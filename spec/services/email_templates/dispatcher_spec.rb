@@ -33,4 +33,15 @@ RSpec.describe EmailTemplates::Dispatcher do
       recipient: 'secret.person@example.org', values: { recipient_name: 'Example' }
     )
   end
+  it 'uses organization branding even when the global template is selected' do
+    organization = create(:organization)
+    expect(EmailTemplates::Branding).to receive(:values).with(organization:).and_call_original
+    allow(EmailTemplates::DeliveryJob).to receive(:perform_later)
+
+    described_class.call(
+      key: template.key, locale: template.locale, organization:,
+      recipient: 'example@example.org', values: { recipient_name: 'Example' }
+    )
+  end
+
 end

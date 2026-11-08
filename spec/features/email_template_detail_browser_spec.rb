@@ -12,7 +12,7 @@ RSpec.describe 'Email template detail preview', type: :feature, js: true do
   before do
     create(:organization_membership, user: admin, organization:)
     create(:user_role, user: admin, system_role: role)
-    %w[email_templates.access email_templates.preview email_templates.versions].each do |code|
+    %w[email_templates.access email_templates.preview email_templates.versions email_templates.create].each do |code|
       permission = Permission.find_or_create_by!(code:) do |item|
         item.name = code
         item.module_name = 'Communication'
@@ -82,4 +82,16 @@ RSpec.describe 'Email template detail preview', type: :feature, js: true do
     JS
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
   end
+  scenario 'keeps the global customization action in the detail header' do
+    template = EmailTemplate.create!(
+      key: 'workflow_example', locale: 'en', name: 'Workflow example',
+      category: 'transactional', status: 'draft', enabled: false,
+      subject: 'Welcome', html_body: '<p>Hello</p>', text_body: 'Hello'
+    )
+    template.new_draft!(actor: admin).publish!(actor: admin)
+
+    visit admin_email_template_path(template)
+    expect(page).to have_css('main > header form[action*="/personalize"]')
+  end
+
 end
