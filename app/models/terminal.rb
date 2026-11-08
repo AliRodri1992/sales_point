@@ -8,6 +8,8 @@ class Terminal < ApplicationRecord
     inactive: 'inactive'
   }
 
+  validate :branch_active_when_terminal_activated
+
   validates :name, presence: true, length: { in: 2..80 }, on: %i[create update]
   validates :code,
             presence: true,
@@ -26,4 +28,12 @@ class Terminal < ApplicationRecord
   validates :name, presence: true, length: { in: 2..80 }, on: :onboardingstep3
 
   scope :active_records, -> { where(deleted_at: nil, status: :active) }
+
+  private
+
+  def branch_active_when_terminal_activated
+    return unless active? && (new_record? || will_save_change_to_status?)
+
+    errors.add(:branch, :invalid) unless branch&.operationally_active?
+  end
 end
