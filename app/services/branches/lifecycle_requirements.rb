@@ -33,7 +33,7 @@ module Branches
 
     def closure_blockers
       blockers = suspension_blockers
-      blockers << :outstanding_stock if branch.inventories.where('stock > 0').exists?
+      blockers << :outstanding_stock if outstanding_inventory?
       blockers << :pending_requests if branch.purchase_requests.where(status: OPEN_REQUESTS).exists?
       blockers << :pending_orders if branch.purchase_orders.where(status: OPEN_ORDERS).exists?
       returns = PurchaseReturn.joins(:goods_receipt)
@@ -48,6 +48,16 @@ module Branches
     attr_reader :branch, :actor
 
     def organization = branch.organization
+
+    def outstanding_inventory?
+      return true if branch.inventories.where('stock > 0').exists?
+
+      lots = InventoryLot.joins(:inventory).where(inventories: { branch_id: branch.id })
+      return true if lots.where('inventory_lots.quantity > 0').exists?
+
+      InventorySerial.joins(inventory_lot: :inventory)
+                     .where(inventories: { branch_id: branch.id }, status: %w[available quarantined]).exists?
+    end
 
     def manager_assigned?
       return false unless organization
