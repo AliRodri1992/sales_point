@@ -1,5 +1,5 @@
 <% content_for :title, t('admin.branches.index.page_title') %>
-<div class="catalog-workspace branch-workspace" data-controller="branch-directory" data-action="click->branch-directory#navigate:capture turbo:frame-load->branch-directory#navigated popstate@window->branch-directory#restore" aria-busy="false">
+<div class="catalog-workspace branch-workspace" data-controller="branch-directory" data-action="click->branch-directory#navigate:capture turbo:frame-load->branch-directory#navigated turbo:fetch-request-error->branch-directory#navigationFailed turbo:frame-missing->branch-directory#navigationFailed popstate@window->branch-directory#restore" aria-busy="false">
   <header class="catalog-header branch-page-header">
     <p class="catalog-eyebrow"><%= t('admin.branch_workspace.eyebrow') %></p>
     <div class="branch-page-title-row">
