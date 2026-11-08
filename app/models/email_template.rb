@@ -27,6 +27,8 @@ class EmailTemplate < ApplicationRecord
   scope :published, -> { where(status: 'published', enabled: true, deleted_at: nil) }
   scope :visible_to, ->(organization) { where(organization_id: [nil, organization&.id]) }
 
+  before_validation :normalize_identity
+
   validates :key, :locale, :name, :category, :subject, :html_body, :text_body, presence: true
   validates :status, inclusion: { in: STATUSES }
   validates :locale, inclusion: { in: %w[es en ko] }
@@ -39,6 +41,7 @@ class EmailTemplate < ApplicationRecord
   validates :subject, length: { maximum: 250 }
   validates :html_body, length: { maximum: 300_000 }
   validates :text_body, length: { maximum: 100_000 }
+  validate :single_line_subject
   validate :published_version_belongs_to_template
   validate :valid_customization_source
   validate :identity_immutable_after_publish, on: :update
@@ -116,6 +119,15 @@ class EmailTemplate < ApplicationRecord
   end
 
   private
+
+  def normalize_identity
+    self.name = name.strip if name.is_a?(String)
+    self.category = category.strip if category.is_a?(String)
+  end
+
+  def single_line_subject
+    errors.add(:subject, :invalid) if subject.to_s.match?(/[\r\n]/)
+  end
 
   def valid_customization_source
     return unless source_template
