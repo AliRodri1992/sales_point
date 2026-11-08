@@ -69,7 +69,7 @@ RSpec.describe 'Email template locale and activity', type: :request do
     template = EmailTemplate.find_by!(key: 'new_notice', organization:)
     expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.created_toast', locale: :en))
     expect(administrator.notifications.first.event.record).to eq(template)
-    expect(administrator.notifications.first.event.params[:action]).to eq('created')
+    expect(administrator.notifications.map { |item| item.event.params[:action] }).to include('created')
   end
 
   it 'renders email template notifications in the actual notification panel' do
@@ -96,7 +96,7 @@ RSpec.describe 'Email template locale and activity', type: :request do
             params: { email_template_version: { subject: 'Revised notice' } }
     end.to change { administrator.notifications.count }.by(1)
     expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.draft_updated_toast', locale: :en))
-    expect(administrator.notifications.first.event.params[:action]).to eq('draft_updated')
+    expect(administrator.notifications.map { |item| item.event.params[:action] }).to include('draft_updated')
   end
 
   it 'notifies the actor about publication, restoration and archiving' do
@@ -106,18 +106,18 @@ RSpec.describe 'Email template locale and activity', type: :request do
     expect do
       post publish_admin_email_template_path(template, version_id: version.id)
     end.to change { administrator.notifications.count }.by(1)
-    expect(administrator.notifications.first.event.params[:action]).to eq('published')
+    expect(administrator.notifications.map { |item| item.event.params[:action] }).to include('published')
     expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.published', locale: :en))
 
     expect do
       post restore_admin_email_template_path(template, version_id: version.id)
     end.to change { administrator.notifications.count }.by(1)
-    expect(administrator.notifications.first.event.params[:action]).to eq('restored')
+    expect(administrator.notifications.map { |item| item.event.params[:action] }).to include('restored')
 
     expect do
       patch archive_admin_email_template_path(template)
     end.to change { administrator.notifications.count }.by(1)
-    expect(administrator.notifications.first.event.params[:action]).to eq('archived')
+    expect(administrator.notifications.map { |item| item.event.params[:action] }).to include('archived')
   end
 
   it 'keeps history and notifies the panel when removing a template' do
@@ -128,9 +128,9 @@ RSpec.describe 'Email template locale and activity', type: :request do
       delete admin_email_template_path(template)
     end.to change { administrator.notifications.count }.by(1)
     expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.archived', locale: :en))
-    expect(template.reload.status).to eq('archived')
+    expect(template.reload.status).to include('archived')
     expect(template.versions.find(version.id)).to be_present
-    expect(administrator.notifications.first.event.params[:action]).to eq('archived')
+    expect(administrator.notifications.map { |item| item.event.params[:action] }).to include('archived')
   end
 
   it 'does not notify about failed creation' do

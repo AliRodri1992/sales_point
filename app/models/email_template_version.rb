@@ -38,6 +38,12 @@ class EmailTemplateVersion < ApplicationRecord
         version: version_number, subject:, html_body:, text_body:, updated_by: actor
       )
     end
+  rescue ActiveRecord::RecordInvalid
+    # Keep the editable draft and its field errors after a failed publish attempt.
+    self.status = 'draft'
+    self.published_by = nil
+    self.published_at = nil
+    raise
   end
 
   private

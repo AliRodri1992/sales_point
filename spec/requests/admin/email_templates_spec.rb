@@ -952,9 +952,9 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.audits.where(action: 'created')).to exist
     expect(template.audits.where(action: 'archived')).to exist
     get admin_email_templates_path
-    expect(response.body).not_to include(template.name)
+    expect(Nokogiri::HTML(response.body).css('tbody tr').map(&:text).join).not_to include(template.name)
     get admin_email_templates_path, params: { status: 'archived' }
-    expect(response.body).to include(template.name)
+    expect(Nokogiri::HTML(response.body).css('tbody tr').map(&:text).join).to include(template.name)
   end
 
   it 'rejects removing other organizations templates and missing permissions' do
@@ -964,6 +964,9 @@ RSpec.describe 'Admin email templates', type: :request do
     own = create_template(organization:)
     archive_permission = Permission.find_by!(code: 'email_templates.archive')
     SystemRolePermission.where(system_role: role, permission: archive_permission).destroy_all
+    expect(SystemRolePermission.where(system_role: role, permission: archive_permission)).to be_empty
+    expect(administrator.reload.permission?('email_templates.archive')).to be(false)
+    expect(EmailTemplatePolicy.new(administrator, own).destroy?).to be(false)
     delete admin_email_template_path(own)
     expect(response).to have_http_status(:forbidden)
     expect(own.reload.status).to eq('draft')
