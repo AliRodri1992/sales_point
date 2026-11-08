@@ -263,10 +263,6 @@
       </section>
     </div>
 
-    <% if can_change_lifecycle %>
-      <%= render 'change_history' %>
-    <% end %>
-
     <% if @branch_operation_counts %>
       <aside class="catalog-aside branch-detail-aside">
         <section class="catalog-card" id="branch-detail-operations"
@@ -297,4 +293,7 @@
       </aside>
     <% end %>
   </div>
+  <% if can_change_lifecycle %>
+    <%= render 'change_history' %>
+  <% end %>
 </div>
