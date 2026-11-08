@@ -94,8 +94,12 @@ RSpec.describe Users::AccountRestoration do
 
   it 'preserves foreign branch assignments while resetting a shared globally deleted account' do
     foreign_organization = create(:organization)
-    foreign_member = create(:organization_membership, user:, organization: foreign_organization,
-                           account_status: :suspended)
+    foreign_member = create(
+      :organization_membership,
+      user:,
+      organization: foreign_organization,
+      account_status: :suspended
+    )
     local = create(:branch, organization:)
     foreign = create(:branch, organization: foreign_organization)
     branch_role = create(:system_role, :branch, code: 'historical_shared_branch')
