@@ -38,8 +38,18 @@
   <% if policy(@user).manage_status? || policy(@user).resend_invitation? %>
     <% transitions = allowed_user_transitions(@user, organization: current_organization) %>
     <% if member_status == 'pending' && policy(@user).resend_invitation? %>
-      <%= button_to t('admin.users.status_management.resend'), admin_user_invitation_path(@user), method: :post,
-                    class: 'rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800' %>
+      <% if Users::InvitationEligibility.ready?(user: @user, organization: current_organization) %>
+        <%= button_to t('admin.users.status_management.resend'), admin_user_invitation_path(@user), method: :post,
+                      class: 'rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800' %>
+      <% else %>
+        <p role="status" class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <%= t('admin.users.ui.invitation_not_ready') %>
+          <% if policy(@user).update? %>
+            <%= link_to t('admin.users.actions.edit'), edit_admin_user_path(@user),
+                        class: 'ml-2 font-semibold underline underline-offset-2' %>
+          <% end %>
+        </p>
+      <% end %>
     <% end %>
     <% if transitions.any? %>
       <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
@@ -95,6 +105,9 @@
         <div>
           <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.users.show.status') %></dt>
           <dd class="mt-2"><%= user_status_badge(member_status) %></dd>
+          <% unless @user.active? && @user.deleted_at.nil? %>
+            <dd class="mt-2 text-xs font-medium text-amber-800"><%= t('admin.users.ui.effective_access_unavailable') %></dd>
+          <% end %>
         </div>
         <div>
           <dt class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.users.show.sign_in_count') %></dt>

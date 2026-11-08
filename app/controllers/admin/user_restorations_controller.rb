@@ -16,8 +16,10 @@ module Admin
       @restoration_form = restoration_service(user)
       return render_invalid_restoration(user) unless @restoration_form.call
 
-      queue_pending_invitation(user)
-      redirect_to admin_user_path(user), notice: t('admin.users.status_management.restored')
+      invitation_queued = queue_pending_invitation(user)
+      message = invitation_queued ? t('admin.users.status_management.restored') :
+                                    t('admin.users.ui.restored_needs_roles')
+      redirect_to admin_user_path(user), notice: message
     rescue Users::InvitationDispatcher::DeliveryError
       redirect_to admin_user_path(user), alert: t('admin.users.status_management.invitation_delivery_failed')
     rescue ArgumentError, Users::OrganizationCapacity::CapacityExceeded => e
@@ -63,12 +65,11 @@ module Admin
     end
 
     def queue_pending_invitation(user)
-      return unless user.pending?
-      return unless user.organization_memberships.active.exists?(
-        organization: current_organization, account_status: 'pending'
-      )
+      return false unless user.pending?
+      return false unless Users::InvitationEligibility.ready?(user:, organization: current_organization)
 
       Users::InvitationDispatcher.call(user:, organization: current_organization)
+      true
     end
 
     def render_invalid_restoration(user)

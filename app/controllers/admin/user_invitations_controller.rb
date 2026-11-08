@@ -15,8 +15,13 @@ module Admin
     end
 
     rescue_from Users::InvitationDispatcher::DeliveryError, with: :delivery_failed
+    rescue_from ArgumentError, with: :invitation_unavailable
 
     private
+
+    def invitation_unavailable
+      redirect_to admin_user_path(params[:user_id]), alert: t('admin.users.ui.invitation_not_ready')
+    end
 
     def delivery_failed
       message = t('admin.users.status_management.invitation_delivery_failed')
@@ -33,13 +38,13 @@ module Admin
       membership = user.organization_memberships.active.find_by(organization: current_organization)
       allowed = membership&.account_pending? && current_user.permission?('users.resend_invitation')
       raise Pundit::NotAuthorizedError unless allowed
-
-      other_memberships = user.organization_memberships.active.where.not(organization: current_organization)
-      raise Pundit::NotAuthorizedError if other_memberships.exists?
+      raise Pundit::NotAuthorizedError unless Users::InvitationEligibility.ready?(
+        user:, organization: current_organization
+      )
     end
 
     def resend_limited?(user)
-      user.user_invitations.where.not(delivery_status: 'failed')
+      user.user_invitations.where(organization: current_organization).where.not(delivery_status: 'failed')
           .exists?(['created_at > ?', 60.seconds.ago])
     end
 
