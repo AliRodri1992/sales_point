@@ -69,18 +69,24 @@ class Branch < ApplicationRecord
   end
 
   def protect_branch_deactivation
-    errors.add(:status, I18n.t('admin.branch_workspace.active_team_block')) if user_roles.active.exists?
+    errors.add(:status, I18n.t('admin.branch_workspace.active_team_block')) if active_team_assigned?
     errors.add(:status, I18n.t('admin.branch_workspace.active_operations_block')) if active_branch_operations?
-    return unless organization && organization.branches.not_deleted.where(status: true).where.not(id: id).none?
+    errors.add(:status, I18n.t('admin.branch_workspace.last_active_block')) if last_active_branch?
+  end
 
-    errors.add(:status, I18n.t('admin.branch_workspace.last_active_block'))
+  def active_team_assigned?
+    user_roles.active.exists?
+  end
+
+  def last_active_branch?
+    organization && organization.branches.not_deleted.where(status: true).where.not(id: id).none?
   end
 
   def active_branch_operations?
     inventories.where('stock > 0').exists? ||
       terminals.active_records.exists? ||
-      purchase_requests.where(status: %w[draft submitted]).exists? ||
-      purchase_orders.where(status: %w[draft pending_approval approved ordered partially_received]).exists?
+      purchase_requests.exists?(status: %w[draft submitted]) ||
+      purchase_orders.exists?(status: %w[draft pending_approval approved ordered partially_received])
   end
 
   def preserve_operational_history

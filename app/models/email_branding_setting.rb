@@ -23,7 +23,8 @@ class EmailBrandingSetting < ApplicationRecord
     return unless logo.attached?
 
     allowed = %w[image/png image/jpeg image/webp]
-    valid_logo = allowed.include?(logo.blob.content_type) && logo.blob.byte_size.positive? && logo.blob.byte_size <= 2.megabytes
+    valid_logo = allowed.include?(logo.blob.content_type) &&
+                 logo.blob.byte_size.positive? && logo.blob.byte_size <= 2.megabytes
     errors.add(:logo, :invalid) unless valid_logo
   end
 

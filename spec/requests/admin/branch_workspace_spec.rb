@@ -276,5 +276,4 @@ RSpec.describe 'Branch directory and workspace', type: :request do
     expect(document.at_css('#branch_status_error').text)
       .to include(I18n.t('admin.branch_workspace.active_operations_block'))
   end
-
 end

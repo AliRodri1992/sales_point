@@ -330,5 +330,4 @@ RSpec.describe Address, type: :model do
     expect(address.addressable).to be_a(Branch)
     expect(address.addressable.reload.address).to eq(address)
   end
-
 end

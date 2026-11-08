@@ -23,7 +23,7 @@ class EmailTemplateVersion < ApplicationRecord
   validates :html_body, length: { maximum: 300_000 }
   validates :text_body, length: { maximum: 100_000 }
   validate :variables_are_safe
-  validate :declared_variables, if: -> { status == 'published' }
+  validate :declared_variables
   validate :required_customization_variables, if: -> { status == 'published' }
   validate :published_version_is_immutable, on: :update
   before_destroy :protect_published_version

@@ -55,10 +55,11 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(version.update(allowed_variables: ['unknown_variable'])).to be(false)
   end
 
-  it 'requires every placeholder to be declared before publishing' do
+  it 'validates undeclared placeholders on the draft model before saving' do
     version = template.new_draft!(actor: nil)
-    version.update!(subject: 'Hello {{recipient_name}}', allowed_variables: [])
-    expect { version.publish!(actor: nil) }.to raise_error(ActiveRecord::RecordInvalid)
+    expect(version.update(subject: 'Hello {{recipient_name}}', allowed_variables: [])).to be(false)
+    expect(version.errors[:allowed_variables]).to be_present
+    expect(version.reload.subject).to eq('Draft')
     expect(template.reload.published_version).to be_nil
   end
 
