@@ -33,7 +33,18 @@ RSpec.describe Purchases::Receive do
     )
   end
 
-  it 'creates a partial receipt and a transactional inventory movement' do
+  it 'rejects all new receipts on a suspended branch, including damaged-only deliveries' do
+    admin = create(:user, system_roles: [create(:system_role, :system, code: 'administrator')])
+    create(:organization_membership, organization:, user: admin)
+    Branches::TransitionStatus.call(branch:, actor: admin, to: 'suspended', reason: 'Maintenance')
+
+    expect do
+      receive(quantity: 3, accepted: 0, damaged: 3)
+    end.to raise_error(ArgumentError, /Branch must be active/)
+    expect(order.goods_receipts).to be_empty
+  end
+
+
     receipt = receive(quantity: 6, accepted: 5, damaged: 1)
     inventory = Inventory.find_by!(branch:, product:)
 
