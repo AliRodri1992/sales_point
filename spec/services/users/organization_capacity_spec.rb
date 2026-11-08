@@ -36,8 +36,9 @@ RSpec.describe Users::OrganizationCapacity do
     end
 
     I18n.with_locale(:es) do
+      message = I18n.t('user_capacity.errors.exceeded', limit: 2)
       expect { described_class.new(organization:).ensure_available! }
-        .to raise_error(Users::OrganizationCapacity::CapacityExceeded, I18n.t('user_capacity.errors.exceeded', limit: 2))
+        .to raise_error(Users::OrganizationCapacity::CapacityExceeded, message)
     end
   end
 

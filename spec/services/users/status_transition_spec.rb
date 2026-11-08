@@ -48,6 +48,25 @@ RSpec.describe Users::StatusTransition do
     expect { transition }.to raise_error(Pundit::NotAuthorizedError)
   end
 
+  it 'rejects permission inherited only from another tenant in a direct service call' do
+    foreign = create(:organization)
+    foreign_branch = create(:branch, organization: foreign, operational_state: 'active')
+    branch_role = create(:system_role, :branch)
+    actor.user_roles.destroy_all
+    create(:user_role, user: actor, branch: foreign_branch, system_role: branch_role)
+    %w[users.access users.suspend].each do |code|
+      permission = Permission.find_or_create_by!(code:) do |record|
+        record.name = code
+        record.module_name = 'Usuarios'
+        record.status = :active
+      end
+      SystemRolePermission.find_or_create_by!(system_role: branch_role, permission:)
+    end
+
+    expect { transition }.to raise_error(Pundit::NotAuthorizedError)
+    expect(membership.reload).to be_account_active
+  end
+
   it 'does not allow an administrator to suspend a peer administrator' do
     create(:user_role, user:, system_role: role)
     expect { transition }.to raise_error(Pundit::NotAuthorizedError)
