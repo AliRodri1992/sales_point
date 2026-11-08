@@ -57,12 +57,7 @@ module Admin
 
     def show
       authorize @branch
-      @branch_team_count = Branch.team_assignments(current_organization)
-                                 .where(branch_id: @branch.id).distinct.count(:user_id)
-      return unless policy(@branch).update?
-
-      @branch_operation_counts = { products: @branch.inventories.distinct.count(:product_id),
-                                   terminals: @branch.terminals.count }
+      load_branch_detail
     end
 
     def new
@@ -112,12 +107,13 @@ module Admin
                                       to: params[:to_status], reason: params[:reason])
       redirect_to admin_branch_path(@branch, branch_directory_parameters),
                   flash: { swal_message: t('admin.branch_lifecycle.changed') }, status: :see_other
-    rescue Branches::TransitionStatus::InvalidTransition => e
-      redirect_to admin_branch_path(@branch, branch_directory_parameters),
-                  alert: e.message, status: :see_other
-    rescue ActiveRecord::RecordInvalid => e
-      redirect_to admin_branch_path(@branch, branch_directory_parameters),
-                  alert: e.record.errors.full_messages.to_sentence, status: :see_other
+    rescue Branches::TransitionStatus::InvalidTransition, ActiveRecord::RecordInvalid => e
+      @transition_error = e.is_a?(ActiveRecord::RecordInvalid) ? e.record.errors.full_messages.to_sentence : e.message
+      @transition_to = params[:to_status].to_s
+      @transition_reason = params[:reason].to_s
+      @branch.reload
+      load_branch_detail
+      render :show, status: :unprocessable_content
     end
 
     def destroy
@@ -130,6 +126,15 @@ module Admin
     end
 
     private
+
+    def load_branch_detail
+      @branch_team_count = Branch.team_assignments(current_organization)
+                                 .where(branch_id: @branch.id).distinct.count(:user_id)
+      return unless policy(@branch).update?
+
+      @branch_operation_counts = { products: @branch.inventories.distinct.count(:product_id),
+                                   terminals: @branch.terminals.count }
+    end
 
     def valid_postal_lookup_params?
       params[:country] == 'MX' && /\A\d{5}\z/.match?(params[:postal_code].to_s)
