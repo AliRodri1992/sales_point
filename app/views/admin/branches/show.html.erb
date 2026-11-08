@@ -1,5 +1,6 @@
 <% content_for :title, "#{@branch.name} | #{t('admin.branches.index.title')}" %>
 <% can_manage_branch = policy(@branch).update? %>
+<% can_change_lifecycle = policy(@branch).manage? %>
 <% address = @branch.address %>
 <% mobile = branch_mobile(@branch) %>
 <% note_body = @branch.note_body %>
@@ -46,7 +47,7 @@
       <h2 id="branch-lifecycle-title" class="font-jakarta text-base font-bold"><%= t('admin.branch_lifecycle.title') %></h2>
       <p class="catalog-hint"><%= t("admin.branch_lifecycle.descriptions.#{@branch.operational_status}") %></p>
       <% if @transition_error.present? %><p class="catalog-error" role="alert"><%= @transition_error %></p><% end %>
-      <% if can_manage_branch %>
+      <% if can_change_lifecycle %>
         <% allowed = Branches::TransitionStatus::ALLOWED.fetch(@branch.operational_status, []) %>
         <% allowed.each do |next_status| %>
           <%= form_with url: transition_status_admin_branch_path(@branch, branch_directory_parameters),
