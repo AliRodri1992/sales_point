@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_08_030000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -428,12 +428,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
     t.bigint "created_by_id"
     t.bigint "updated_by_id"
     t.bigint "published_version_id"
+    t.bigint "source_template_id"
     t.index ["created_by_id"], name: "index_email_templates_on_created_by_id"
     t.index ["key", "locale"], name: "idx_email_templates_global_unique", unique: true, where: "(organization_id IS NULL)"
     t.index ["locale", "enabled"], name: "idx_email_templates_available_locale", where: "(deleted_at IS NULL)"
     t.index ["organization_id", "key", "locale"], name: "idx_email_templates_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
     t.index ["organization_id", "status", "updated_at"], name: "idx_email_templates_tenant_status"
     t.index ["organization_id"], name: "index_email_templates_on_organization_id"
+    t.index ["source_template_id"], name: "idx_email_templates_source_template"
     t.index ["updated_by_id"], name: "index_email_templates_on_updated_by_id"
     t.check_constraint "status::text = ANY (ARRAY['draft'::character varying, 'published'::character varying, 'inactive'::character varying, 'archived'::character varying]::text[])", name: "chk_email_templates_status"
   end
@@ -2390,6 +2392,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_190100) do
   add_foreign_key "email_template_versions", "users", column: "created_by_id"
   add_foreign_key "email_template_versions", "users", column: "published_by_id"
   add_foreign_key "email_templates", "email_template_versions", column: "published_version_id", on_delete: :nullify
+  add_foreign_key "email_templates", "email_templates", column: "source_template_id"
   add_foreign_key "email_templates", "organizations"
   add_foreign_key "email_templates", "users", column: "created_by_id"
   add_foreign_key "email_templates", "users", column: "updated_by_id"
