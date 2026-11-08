@@ -29,6 +29,35 @@ RSpec.describe 'Email template detail preview', type: :feature, js: true do
     Warden.test_reset!
   end
 
+  scenario 'shows the published email as a large desktop-first reading workspace' do
+    template = EmailTemplate.create!(
+      organization:, key: 'wide_preview', locale: 'en', name: 'Wide preview',
+      category: 'transactional', status: 'draft', enabled: false,
+      subject: 'Welcome', html_body: '<p>Hello {{recipient_name}}</p>',
+      text_body: 'Hello {{recipient_name}}'
+    )
+    template.new_draft!(actor: admin).publish!(actor: admin)
+    page.driver.browser.manage.window.resize_to(1440, 900)
+
+    visit admin_email_template_path(template)
+
+    expect(page).to have_css('#email-template-show-frame[sandbox]')
+    stage = find('section[aria-labelledby="email-template-content-title"]')
+    expect(stage).to have_css('[data-email-template-detail-target="frame"].max-w-\\[920px\\]')
+    expect(page).to have_css('#email-template-show-frame')
+    expect(page.evaluate_script(<<~JS)).to be(true)
+      (() => {
+        const card = document.querySelector('section[aria-labelledby="email-template-content-title"]')
+        const frame = document.querySelector('[data-email-template-detail-target="frame"]')
+        const iframe = document.querySelector('#email-template-show-frame')
+        return card.getBoundingClientRect().width > 1200 &&
+          frame.getBoundingClientRect().width >= 850 &&
+          iframe.getBoundingClientRect().height >= 800
+      })()
+    JS
+    expect(page).to have_css('#email-template-versions-title')
+  end
+
   scenario 'previews a published email at mobile width without horizontal overflow' do
     template = EmailTemplate.create!(
       organization:, key: 'detail_preview', locale: 'en', name: 'Detail preview',
