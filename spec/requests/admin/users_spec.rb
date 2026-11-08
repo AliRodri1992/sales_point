@@ -189,6 +189,7 @@ RSpec.describe 'Admin::Users', type: :request do
     end
   end
 
+  describe 'Protected administrative roles' do
     it 'prevents ordinary administrators from assigning or revoking elevated system roles' do
       privileged = create(:system_role, :system, code: 'super_admin')
       normal = create(:system_role, :system, code: 'cashier')
@@ -257,6 +258,8 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(previous.reload.deleted_at).to be_present
       expect(target.user_roles.active.where(system_role: staff).count).to eq(1)
     end
+
+  end
 
   describe 'PATCH /admin/users/:id' do
     it 'updates a user and sends the success notification message' do

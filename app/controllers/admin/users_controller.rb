@@ -6,6 +6,7 @@ module Admin
     before_action :authenticate_user!
     before_action { head :forbidden unless current_organization }
     include CatalogNavigation
+    include Admin::UserFormSetup
 
     before_action :set_user, only: %i[show edit update destroy]
     before_action :load_form_options, only: %i[new create edit update]
@@ -130,24 +131,6 @@ module Admin
 
       fields = params[:user] || {}
       raise Pundit::NotAuthorizedError if fields.key?(:system_role_ids) || fields.key?(:branch_role_assignments)
-    end
-
-    def account_writer
-      Users::AdminAccountWriter.new(
-        user: @user, organization: current_organization, attributes: user_params, actor: current_user
-      )
-    end
-
-    def load_form_options
-      @languages = Language.selectable.or(Language.where(id: @user&.language_id)).order(:name)
-      @themes = Theme.all
-      @roles = SystemRole.selectable_for(@user).system
-      unless current_user.role?('super_admin')
-        @roles = @roles.where.not(code: SystemRole::ADMINISTRATIVE_CODES)
-      end
-      @roles = @roles.order(:name)
-      @branches = Users::BranchRoleAssignments.branch_options(user: @user, organization: current_organization)
-      @branch_roles = SystemRole.selectable_for(@user).branch.order(:name)
     end
 
     def invitation_delivery_failed

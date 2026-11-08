@@ -85,10 +85,7 @@ module ApplicationHelper
     return '' unless object && object.errors[attribute].any?
 
     model = object.class.name.underscore
-    model_attribute = "errors.attributes.#{model}.#{attribute}"
-    general_attribute = "errors.attributes.#{attribute}"
-    fallback = I18n.t(general_attribute, default: object.class.human_attribute_name(attribute))
-    name = label || I18n.t(model_attribute, default: fallback)
+    name = label || validation_attribute_name(object, attribute)
     messages = object.errors[attribute].uniq
 
     safe_join(messages.each_with_index.map do |message, index|
@@ -97,6 +94,13 @@ module ApplicationHelper
                   class: 'mt-1 text-xs text-rose-600',
                   data: { server_field_error: true })
     end)
+  end
+
+  def validation_attribute_name(object, attribute)
+    model_attribute = "errors.attributes.#{object.class.name.underscore}.#{attribute}"
+    general_attribute = "errors.attributes.#{attribute}"
+    fallback = I18n.t(general_attribute, default: object.class.human_attribute_name(attribute))
+    I18n.t(model_attribute, default: fallback)
   end
 
   def sort_link(column, title = nil, frame: nil)
