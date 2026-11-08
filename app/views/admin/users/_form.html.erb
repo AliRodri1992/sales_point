@@ -22,11 +22,9 @@
 
   <%= form_with model: @user, url: editing ? admin_user_path(@user) : admin_users_path,
                 html: { novalidate: true }, data: { controller: 'user-access',
-                        action: 'submit->user-access#submit turbo:submit-end->user-access#resetSubmission input->user-access#formChanged change->user-access#formChanged focusout->user-access#validateField',
+                        action: 'submit->user-access#submit turbo:submit-end->user-access#resetSubmission input->user-access#formChanged change->user-access#formChanged',
                         empty_value: t('admin.users.ui.not_provided'),
-                        role_warning: t('admin.users.ui.no_role_warning'),
-                        validation_blank: t('errors.messages.blank'),
-                        validation_invalid: t('errors.messages.invalid') }, class: editing ? 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]' : 'mx-auto w-full max-w-6xl' do |form| %>
+                        role_warning: t('admin.users.ui.no_role_warning') }, class: editing ? 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]' : 'mx-auto w-full max-w-6xl' do |form| %>
     <div class="min-w-0 space-y-5">
       <%= catalog_errors(@user) %>
 
@@ -75,11 +73,10 @@
           <div class="min-w-0">
             <%= form.label :email, t('admin.users.form.fields.email'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
             <%= form.email_field :email, autocomplete: 'email', maxlength: 254, inputmode: 'email',
-                                 data: { user_access_target: 'email', validation_field: 'email' },
+                                 data: { user_access_target: 'email' },
                                  aria: { invalid: @user.errors[:email].any? },
                                  class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :email)} px-3.5 py-2.5 text-sm text-slate-800" %>
             <%= error_message_for(@user, :email) %>
-            <p class="mt-1 hidden text-xs font-medium text-rose-600" data-user-access-target="emailError" role="alert"></p>
           </div>
           <div class="min-w-0">
             <%= form.label :username, t('admin.users.form.fields.username'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
@@ -95,12 +92,11 @@
               <%= form.select :user_type, options_for_select(
                 User.user_types.keys.map { |type| [t("admin.users.user_types.#{type}"), type] }, @user.user_type),
                 { include_blank: t('admin.users.form.fields.user_type_placeholder') },
-                data: { user_access_target: 'userType', validation_field: 'user_type' },
+                data: { user_access_target: 'userType' },
                 class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :user_type)} px-3.5 py-2.5 text-sm",
                 aria: { invalid: @user.errors[:user_type].any? } %>
             </div>
             <%= error_message_for(@user, :user_type) %>
-            <p class="mt-1 hidden text-xs font-medium text-rose-600" data-user-access-target="userTypeError" role="alert"></p>
           </div>
           <div class="min-w-0">
             <span class="mb-1.5 block text-sm font-semibold text-slate-700"><%= t('admin.users.form.fields.status') %></span>

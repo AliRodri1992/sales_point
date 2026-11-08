@@ -190,6 +190,23 @@ RSpec.describe 'Admin::Users', type: :request do
       )
     end
 
+    it 'does not apply browser required checks to any user form field' do
+      get new_admin_user_path
+
+      document = Nokogiri::HTML(response.body)
+      form = document.at_css('form[data-controller="user-access"]')
+      expect(form).to be_present
+      expect(form['novalidate']).not_to be_nil
+      expect(form.css('input[required], select[required], textarea[required]')).to be_empty
+      expect(form.css('[data-validation-field], [data-user-access-target="emailError"]')).to be_empty
+      expect(form.css('[data-user-access-target="userTypeError"]')).to be_empty
+
+      target = add_member(create(:user, email: 'edit-without-required@example.com'))
+      get edit_admin_user_path(target)
+      edit_form = Nokogiri::HTML(response.body).at_css('form[data-controller="user-access"]')
+      expect(edit_form.css('input[required], select[required], textarea[required]')).to be_empty
+    end
+
     it 're-renders the form with validation errors and no required attributes' do
       post admin_users_path,
            params: { user: { email: '', password: 'pw', password_confirmation: 'pw',

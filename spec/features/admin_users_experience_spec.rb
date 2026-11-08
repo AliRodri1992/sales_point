@@ -91,12 +91,13 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
 
     fill_in 'Email address', with: 'invalid-address'
     find('#user_email').send_keys(:tab)
-    expect(page).to have_css('[data-user-access-target="emailError"]:not(.hidden)', text: /Email address/)
-    expect(page).to have_css('[data-user-access-target="emailError"]:not(.hidden)', text: /invalid/i)
+    expect(page).to have_no_css('[data-user-access-target="emailError"]')
+    expect(page).to have_no_css('#user_email_error')
 
     click_button 'Create user'
     expect(page).to have_css('#user_email.input-field-error')
     expect(page).to have_css('#user_email_error', text: /Email address/)
+    expect(page).to have_no_css('[data-user-access-target="emailError"]')
   end
 
   scenario 'edits branch access through accessible accordion checkboxes' do

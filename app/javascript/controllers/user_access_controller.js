@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = [
     "role", "summary", "empty", "submitButton", "email", "username",
     "userType", "language", "theme", "themeSwatch", "themeLabel",
-    "emailError", "userTypeError", "branchRole", "roleWarning",
+    "branchRole", "roleWarning",
     "reviewEmail", "reviewUsername", "reviewUserType", "reviewLanguage",
     "reviewTheme", "reviewRoles", "reviewBranches"
   ]
@@ -52,35 +52,8 @@ export default class extends Controller {
     return this.roleTargets.filter((role) => role.querySelector("input")?.checked)
   }
 
-  formChanged(event) {
+  formChanged() {
     this.updateReview()
-    if (event.target.matches("[data-validation-field]")) {
-      this.renderFieldError(event.target, false)
-      event.target.closest(".min-w-0")?.querySelectorAll("[data-server-field-error]")
-        .forEach((message) => { message.hidden = true })
-    }
-  }
-
-  validateField(event) {
-    if (event.target.matches("[data-validation-field]")) this.renderFieldError(event.target, true)
-  }
-
-  renderFieldError(field, show) {
-    const target = field.dataset.validationField === "email" ? this.emailErrorTarget : this.userTypeErrorTarget
-    let issue = ""
-    if (field.value.trim() === "") issue = this.element.dataset.validationBlank
-    else if (field.type === "email" && field.validity.typeMismatch) issue = this.element.dataset.validationInvalid
-
-    const label = this.element.querySelector(`label[for="${field.id}"]`)?.textContent?.trim() || field.name
-    target.textContent = issue ? `${label} ${issue}` : ""
-    target.classList.toggle("hidden", !show || !issue)
-    field.setAttribute("aria-invalid", String(show && Boolean(issue)))
-    if (field.tagName === "SELECT") {
-      const button = field.closest("[data-controller='delta-select']")
-        ?.querySelector("button[data-delta-select-generated]")
-      button?.classList.toggle("border-rose-500", show && Boolean(issue))
-    }
-    return !issue
   }
 
   updateReview() {
@@ -115,11 +88,7 @@ export default class extends Controller {
     return option?.value ? option.textContent.trim() : ""
   }
 
-  submit(event) {
-    const fields = [this.hasEmailTarget ? this.emailTarget : null, this.hasUserTypeTarget ? this.userTypeTarget : null]
-      .filter(Boolean)
-    // Inline feedback is advisory; the model remains the authoritative validator.
-    fields.forEach((field) => this.renderFieldError(field, true))
+  submit() {
     if (!this.hasSubmitButtonTarget || this.submitting) return
     this.submitting = true
     this.submitButtonTarget.disabled = true
