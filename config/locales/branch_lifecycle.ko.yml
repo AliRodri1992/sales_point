@@ -4,6 +4,11 @@ ko:
       pending_for: "%{action} 전 확인 사항"
       resolve_blocker: "해결"
       unavailable: "남은 조건을 먼저 해결하세요"
+      audit_yes: "예"
+      audit_no: "아니요"
+      audit_availability: "기록 상태"
+      audit_removed: "삭제됨"
+      audit_present: "사용 중"
       changes_title: "지점 데이터 변경 내역"
       changes_hint: "지점 정보, 주소, 전화번호 및 메모의 최근 변경 사항입니다."
       audit_subjects:
