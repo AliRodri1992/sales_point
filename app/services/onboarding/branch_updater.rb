@@ -14,8 +14,7 @@ module Onboarding
 
     def call
       branch = @branch ||
-               @organization.branches.not_deleted.where(operational_status: %w[preparing active]).first ||
-               @organization.branches.not_deleted.first
+               @organization.branches.not_deleted.where(operational_status: %w[preparing active]).first
       return false unless branch
 
       address_attrs = %i[id street exterior_number interior_number neighborhood city state country_id postal_code]
