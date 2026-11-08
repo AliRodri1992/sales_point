@@ -36,6 +36,18 @@ RSpec.describe 'Branch inventory field validations', type: :request do
     expect(response.body).to include('inventory-min_stock-error', 'inventory-max_stock-error')
   end
 
+  it 'asks for a lot even on untracked products when receipt lots exist' do
+    inventory = create(:inventory, organization:, branch:, stock: 2)
+    InventoryLot.create!(
+      organization:, inventory:, code: 'RECORDED-LOT-001', quantity: 2, status: :available
+    )
+
+    get admin_branch_inventories_path(branch)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('inventory_lot_id')
+  end
+
   it 'offers lot selection and updates lot and aggregate stock together' do
     product = create(:product, organization:, tracking_mode: 'lot')
     inventory = create(:inventory, organization:, branch:, product:, stock: 5)
