@@ -1,0 +1,8 @@
+en:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            system_role_ids:
+              last_administrator: "must leave at least one active administrator in the organization."
