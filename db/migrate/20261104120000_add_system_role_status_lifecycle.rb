@@ -10,8 +10,8 @@ class AddSystemRoleStatusLifecycle < ActiveRecord::Migration[8.1]
       t.string :to_status, null: false
       t.text :reason, null: false
       t.jsonb :impact, null: false, default: {}
-      t.datetime :created_at, null: false
-      t.datetime :deleted_at
+      t.timestamp :created_at, null: false
+      t.timestamp :deleted_at
       t.index %i[system_role_id created_at], name: 'index_role_status_events_on_role_and_created_at'
     end
   end

@@ -9,7 +9,7 @@ class CreateVersionsForSupplierAudits < ActiveRecord::Migration[8.1]
       t.string :whodunnit
       t.text :object
       t.text :object_changes
-      t.datetime :created_at
+      t.timestamp :created_at
     end
 
     add_index :versions, %i[item_type item_id]

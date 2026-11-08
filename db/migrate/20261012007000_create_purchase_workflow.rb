@@ -10,7 +10,7 @@ class CreatePurchaseWorkflow < ActiveRecord::Migration[8.1]
       t.string :status, null: false, default: 'draft'
       t.date :needed_on
       t.datetime :submitted_at
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :purchase_requests, %i[organization_id code], unique: true
@@ -19,7 +19,7 @@ class CreatePurchaseWorkflow < ActiveRecord::Migration[8.1]
       t.references :purchase_request, null: false, foreign_key: true
       t.references :product, null: false, foreign_key: true
       t.decimal :quantity, precision: 14, scale: 3, null: false
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_check_constraint :purchase_request_items, 'quantity > 0', name: 'chk_purchase_request_quantity'
@@ -32,7 +32,7 @@ class CreatePurchaseWorkflow < ActiveRecord::Migration[8.1]
       t.string :code, null: false
       t.string :status, null: false, default: 'draft'
       t.date :valid_until
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :purchase_quotations, %i[organization_id code], unique: true
@@ -46,7 +46,7 @@ class CreatePurchaseWorkflow < ActiveRecord::Migration[8.1]
       t.decimal :unit_price, precision: 14, scale: 4, null: false
       t.decimal :discount_percent, precision: 6, scale: 3, null: false, default: 0
       t.integer :lead_time_days, null: false, default: 0
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
 
@@ -67,7 +67,7 @@ class CreatePurchaseWorkflow < ActiveRecord::Migration[8.1]
       t.date :expected_on
       t.datetime :approved_at
       t.datetime :cancelled_at
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :purchase_orders, %i[organization_id code], unique: true
@@ -81,7 +81,7 @@ class CreatePurchaseWorkflow < ActiveRecord::Migration[8.1]
       t.decimal :unit_price, precision: 14, scale: 4, null: false
       t.decimal :discount_percent, precision: 6, scale: 3, null: false, default: 0
       t.decimal :nonrecoverable_tax, precision: 14, scale: 4, null: false, default: 0
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
 
@@ -90,7 +90,7 @@ class CreatePurchaseWorkflow < ActiveRecord::Migration[8.1]
       t.references :purchase_order, null: false, foreign_key: true
       t.references :decided_by, null: false, foreign_key: { to_table: :users }
       t.string :decision, null: false
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
 

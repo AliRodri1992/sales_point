@@ -14,7 +14,7 @@ class CreatePurchaseReceivingTraceability < ActiveRecord::Migration[8.1]
       t.string :idempotency_key, null: false, limit: 100
       t.string :status, null: false, default: 'posted'
       t.datetime :received_at, null: false
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :goods_receipts, %i[organization_id idempotency_key], unique: true,
@@ -29,7 +29,7 @@ class CreatePurchaseReceivingTraceability < ActiveRecord::Migration[8.1]
       t.string :lot_code, limit: 100
       t.date :expires_on
       t.decimal :landed_unit_cost, precision: 18, scale: 6, null: false, default: 0
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_check_constraint :goods_receipt_items,
@@ -45,7 +45,7 @@ class CreatePurchaseReceivingTraceability < ActiveRecord::Migration[8.1]
       t.date :expires_on
       t.string :status, null: false, default: 'available'
       t.decimal :quantity, precision: 14, scale: 3, null: false, default: 0
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :inventory_lots, %i[inventory_id code], unique: true, where: 'deleted_at IS NULL'
@@ -56,7 +56,7 @@ class CreatePurchaseReceivingTraceability < ActiveRecord::Migration[8.1]
       t.references :inventory_lot, null: false, foreign_key: true
       t.string :serial_number, null: false
       t.string :status, null: false, default: 'available'
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :inventory_serials, %i[organization_id serial_number],
@@ -69,7 +69,7 @@ class CreatePurchaseReceivingTraceability < ActiveRecord::Migration[8.1]
       t.string :status, null: false, default: 'draft'
       t.string :reason, null: false, default: 'damaged'
       t.datetime :processed_at
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
 
@@ -77,7 +77,7 @@ class CreatePurchaseReceivingTraceability < ActiveRecord::Migration[8.1]
       t.references :purchase_return, null: false, foreign_key: true
       t.references :goods_receipt_item, null: false, foreign_key: true
       t.decimal :quantity, precision: 14, scale: 3, null: false
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_check_constraint :purchase_return_items, 'quantity > 0',
@@ -93,7 +93,7 @@ class CreatePurchaseReceivingTraceability < ActiveRecord::Migration[8.1]
       t.decimal :freight_amount, precision: 18, scale: 6, null: false
       t.decimal :insurance_amount, precision: 18, scale: 6, null: false
       t.decimal :landed_unit_cost, precision: 18, scale: 6, null: false
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :purchase_cost_allocations, :goods_receipt_item_id,

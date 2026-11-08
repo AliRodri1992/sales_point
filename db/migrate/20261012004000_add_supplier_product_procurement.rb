@@ -19,7 +19,7 @@ class AddSupplierProductProcurement < ActiveRecord::Migration[8.1]
       t.integer :lead_time_days, null: false, default: 0
       t.boolean :preferred, null: false, default: false
       t.boolean :active, null: false, default: true
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
 
@@ -40,8 +40,8 @@ class AddSupplierProductProcurement < ActiveRecord::Migration[8.1]
       t.decimal :freight_amount, precision: 14, scale: 4, null: false, default: 0
       t.decimal :nonrecoverable_tax, precision: 14, scale: 4, null: false, default: 0
       t.date :effective_on, null: false
-      t.datetime :deleted_at
-      t.datetime :created_at, null: false
+      t.timestamp :deleted_at
+      t.timestamp :created_at, null: false
     end
     add_index :supplier_product_prices, %i[supplier_product_id effective_on created_at],
               name: 'idx_supplier_prices_history'

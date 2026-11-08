@@ -10,7 +10,7 @@ class CreateUserSecurityIncidents < ActiveRecord::Migration[8.1]
       t.text :description, null: false
       t.text :resolution
       t.datetime :resolved_at
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :user_security_incidents, [:organization_id, :user_id, :resolved_at],

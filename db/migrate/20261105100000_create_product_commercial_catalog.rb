@@ -10,7 +10,7 @@ class CreateProductCommercialCatalog < ActiveRecord::Migration[8.1]
       t.string :sku, limit: 50
       t.jsonb :options, null: false, default: {}
       t.string :status, null: false, default: 'active'
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :product_variants, [:organization_id, :sku], unique: true, where: "sku IS NOT NULL AND sku <> ''"
@@ -21,7 +21,7 @@ class CreateProductCommercialCatalog < ActiveRecord::Migration[8.1]
       t.string :name, null: false, limit: 100
       t.decimal :units, precision: 18, scale: 6, null: false, default: 1
       t.string :status, null: false, default: 'active'
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_check_constraint :product_presentations, 'units > 0', name: 'presentation_positive_units'
@@ -34,7 +34,7 @@ class CreateProductCommercialCatalog < ActiveRecord::Migration[8.1]
       t.string :value, null: false, limit: 100
       t.string :symbology, null: false, default: 'code128'
       t.boolean :primary, null: false, default: false
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :product_barcodes, [:organization_id, :value], unique: true
@@ -48,7 +48,7 @@ class CreateProductCommercialCatalog < ActiveRecord::Migration[8.1]
       t.string :status, null: false, default: 'draft'
       t.datetime :starts_at
       t.datetime :ends_at
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :price_lists, [:organization_id, :code], unique: true
@@ -63,7 +63,7 @@ class CreateProductCommercialCatalog < ActiveRecord::Migration[8.1]
       t.decimal :price, precision: 12, scale: 2, null: false
       t.datetime :starts_at
       t.datetime :ends_at
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :price_list_items, [:organization_id, :id], unique: true
@@ -81,7 +81,7 @@ class CreateProductCommercialCatalog < ActiveRecord::Migration[8.1]
       t.string :status, null: false, default: 'pending'
       t.text :reason, null: false
       t.datetime :approved_at
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_check_constraint :price_change_events, 'new_price >= 0', name: 'price_change_positive_price'
@@ -95,7 +95,7 @@ class CreateProductCommercialCatalog < ActiveRecord::Migration[8.1]
       t.datetime :ends_at
       t.integer :usage_limit
       t.integer :customer_limit
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :promotions, [:organization_id, :code], unique: true
@@ -111,7 +111,7 @@ class CreateProductCommercialCatalog < ActiveRecord::Migration[8.1]
       t.decimal :quantity, precision: 18, scale: 6
       t.decimal :amount, precision: 12, scale: 2
       t.string :customer_segment, limit: 100
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     create_table :promotion_benefits do |t|
@@ -119,7 +119,7 @@ class CreateProductCommercialCatalog < ActiveRecord::Migration[8.1]
       t.references :promotion, null: false, foreign_key: true
       t.string :kind, null: false, default: 'percentage'
       t.decimal :value, precision: 12, scale: 4, null: false
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_check_constraint :promotion_benefits, "value > 0 AND (kind <> 'percentage' OR value <= 100)", name: 'promotion_valid_benefit'
@@ -132,7 +132,7 @@ class CreateProductCommercialCatalog < ActiveRecord::Migration[8.1]
       t.decimal :quantity, precision: 18, scale: 6, null: false
       t.decimal :discount, precision: 12, scale: 2, null: false
       t.jsonb :snapshot, null: false, default: {}
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
     add_index :promotion_redemptions, [:organization_id, :idempotency_key], unique: true, name: 'idx_promotion_redemption_idempotency'

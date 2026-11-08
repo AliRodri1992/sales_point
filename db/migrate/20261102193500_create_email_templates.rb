@@ -10,7 +10,7 @@ class CreateEmailTemplates < ActiveRecord::Migration[8.1]
       t.text :text_body, null: false
       t.boolean :enabled, null: false, default: true
       t.integer :version, null: false, default: 1
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
 

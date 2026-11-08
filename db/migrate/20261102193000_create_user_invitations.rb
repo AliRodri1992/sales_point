@@ -12,7 +12,7 @@ class CreateUserInvitations < ActiveRecord::Migration[8.1]
       t.datetime :expires_at, null: false
       t.datetime :accepted_at
       t.datetime :revoked_at
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
 

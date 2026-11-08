@@ -14,9 +14,9 @@ class CreateActiveStorageTables < ActiveRecord::Migration[7.0]
       t.string   :checksum
 
       if connection.supports_datetime_with_precision?
-        t.datetime :created_at, precision: 6, null: false
+        t.timestamp :created_at, precision: 6, null: false
       else
-        t.datetime :created_at, null: false
+        t.timestamp :created_at, null: false
       end
 
       t.index [ :key ], unique: true
@@ -28,9 +28,9 @@ class CreateActiveStorageTables < ActiveRecord::Migration[7.0]
       t.references :blob,     null: false, type: foreign_key_type
 
       if connection.supports_datetime_with_precision?
-        t.datetime :created_at, precision: 6, null: false
+        t.timestamp :created_at, precision: 6, null: false
       else
-        t.datetime :created_at, null: false
+        t.timestamp :created_at, null: false
       end
 
       t.index [ :record_type, :record_id, :name, :blob_id ], name: :index_active_storage_attachments_uniqueness, unique: true

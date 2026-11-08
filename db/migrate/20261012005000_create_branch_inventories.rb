@@ -9,7 +9,7 @@ class CreateBranchInventories < ActiveRecord::Migration[8.1]
       t.decimal :stock, precision: 14, scale: 3, null: false, default: 0
       t.decimal :min_stock, precision: 14, scale: 3, null: false, default: 0
       t.decimal :max_stock, precision: 14, scale: 3
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
 
@@ -28,7 +28,7 @@ class CreateBranchInventories < ActiveRecord::Migration[8.1]
       t.decimal :stock_before, precision: 14, scale: 3, null: false
       t.decimal :stock_after, precision: 14, scale: 3, null: false
       t.string :reference, limit: 100
-      t.datetime :deleted_at
+      t.timestamp :deleted_at
       t.timestamps
     end
 
