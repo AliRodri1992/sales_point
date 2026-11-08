@@ -24,6 +24,7 @@ class EmailTemplateVersion < ApplicationRecord
   validates :text_body, length: { maximum: 100_000 }
   validate :variables_are_safe
   validate :declared_variables
+  validate :only_one_draft_per_template, if: -> { status == 'draft' && email_template_id.present? }
   validate :required_customization_variables, if: -> { status == 'published' }
   validate :published_version_is_immutable, on: :update
   before_destroy :protect_published_version
@@ -47,6 +48,11 @@ class EmailTemplateVersion < ApplicationRecord
   end
 
   private
+
+  def only_one_draft_per_template
+    other_drafts = self.class.where(email_template_id:, status: 'draft').where.not(id: id)
+    errors.add(:status, :taken) if other_drafts.exists?
+  end
 
   def variables_are_safe
     return errors.add(:allowed_variables, :invalid) unless allowed_variables.is_a?(Array)
