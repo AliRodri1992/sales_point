@@ -14,18 +14,15 @@ module BranchesHelper
   end
 
   def branch_activation_requirements(branch)
-    organization = branch.organization
-    settings = organization&.organization_settings&.active_records&.first
-    team_ready = organization &&
-                 Branch.team_assignments(organization).where(branch_id: branch.id).exists?
-    {
-      organization: organization&.active?,
-      name: branch.name.present?,
-      code: branch.code.present?,
-      address: branch.address&.valid?,
-      currency: settings&.base_currency&.active?,
-      team: team_ready || current_user&.admin?
-    }
+    Branches::LifecycleRequirements.new(branch:, actor: current_user).activation
+  end
+
+  def branch_suspension_blockers(branch)
+    Branches::LifecycleRequirements.new(branch:, actor: current_user).suspension_blockers
+  end
+
+  def branch_closure_blockers(branch)
+    Branches::LifecycleRequirements.new(branch:, actor: current_user).closure_blockers
   end
 
   def branch_required_label(text)
