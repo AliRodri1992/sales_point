@@ -2,6 +2,8 @@ es:
   admin:
     branch_lifecycle:
       title: "Estado operativo"
+      created_reason: "Registro de sucursal"
+      audit_immutable: "Los eventos de auditoría de sucursales no pueden modificarse ni eliminarse."
       loading_results: "Actualizando las sucursales…"
       global_summary: "Indicadores generales de la organización; no cambian con los filtros."
       initial_hint: "La sucursal nueva inicia en preparación. La activación se realiza después de completar los requisitos."
@@ -86,3 +88,7 @@ es:
         assigned_team: "Reasigna o retira primero los usuarios de la sucursal."
         outstanding_stock: "Transfiere o ajusta el inventario antes del cierre."
         last_active_branch: "La organización operativa debe conservar al menos una sucursal activa."
+  activerecord:
+    attributes:
+      branch:
+        operational_status: "Estado operativo"
