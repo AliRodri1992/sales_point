@@ -321,7 +321,7 @@ RSpec.describe 'Admin email templates', type: :request do
     error = page.at_css('#email_templates_test_recipient_email_error')
     expect(error).to be_present
     expect(error.text).to start_with(I18n.t('admin.email_templates.test_recipient'))
-    expect(page.at_css("form[novalidate]")).to be_present
+    expect(page.at_css('form[novalidate]')).to be_present
     expect(template.audits.where(action: 'test_sent')).not_to exist
   end
 

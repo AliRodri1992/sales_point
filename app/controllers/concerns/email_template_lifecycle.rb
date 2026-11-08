@@ -34,6 +34,7 @@ module EmailTemplateLifecycle
   def reactivate
     authorize @template, :reactivate?
     @template.update!(status: 'draft', enabled: false, updated_by: current_user)
+    @template.new_draft!(actor: current_user) unless @template.versions.exists?(status: 'draft')
     @template.audit!(action: 'reactivated', actor: current_user)
     notify_email_template('reactivated')
     redirect_to edit_admin_email_template_path(@template),

@@ -107,7 +107,8 @@
                         <%= delta_icon('ellipsis-horizontal', class: 'size-5') %>
                         <span><%= t('admin.email_templates.more_actions') %></span>
                       </summary>
-                      <div class="mt-2 flex flex-wrap justify-end gap-1.5">                  <% if current_organization && policy(template).personalize? %>
+                      <div class="mt-2 flex flex-wrap justify-end gap-1.5">
+                        <% if current_organization && policy(template).personalize? %>
                     <%= button_to personalize_admin_email_template_path(template), method: :post,
                                   form: { data: { turbo_confirm: t('admin.email_templates.confirm_personalize', name: template.name), turbo_frame: '_top' } },
                                   data: { tooltip: t('admin.email_templates.personalize') },

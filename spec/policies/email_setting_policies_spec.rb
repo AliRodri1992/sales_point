@@ -22,13 +22,15 @@ RSpec.describe 'Email settings policies' do
 
   it 'authorizes only accessible organization senders' do
     expect(EmailSenderSettingPolicy.new(user, EmailSenderSetting.new(organization:)).update?).to be(true)
-    expect(EmailSenderSettingPolicy.new(user, EmailSenderSetting.new(organization: foreign_organization)).update?).to be(false)
+    foreign = EmailSenderSetting.new(organization: foreign_organization)
+    expect(EmailSenderSettingPolicy.new(user, foreign).update?).to be(false)
     expect(EmailSenderSettingPolicy.new(user, EmailSenderSetting.new).update?).to be(false)
   end
 
   it 'protects global branding from ordinary administrators' do
     expect(EmailBrandingSettingPolicy.new(user, EmailBrandingSetting.new(organization:)).edit?).to be(true)
-    expect(EmailBrandingSettingPolicy.new(user, EmailBrandingSetting.new(organization: foreign_organization)).edit?).to be(false)
+    foreign = EmailBrandingSetting.new(organization: foreign_organization)
+    expect(EmailBrandingSettingPolicy.new(user, foreign).edit?).to be(false)
     expect(EmailBrandingSettingPolicy.new(user, EmailBrandingSetting.new).edit?).to be(false)
     role.update!(code: 'super_admin')
     expect(EmailBrandingSettingPolicy.new(user, EmailBrandingSetting.new).edit?).to be(true)
