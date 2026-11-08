@@ -77,7 +77,8 @@ module Branches
       settings = branch.organization.organization_settings.active_records.first
       reject!('missing_currency') unless settings&.base_currency&.active?
       team = Branch.team_assignments(branch.organization).where(branch_id: branch.id)
-      reject!('missing_team') unless team.exists?
+      # Organization administrators are authorized managers even without a branch-scoped role.
+      reject!('missing_team') unless team.exists? || actor.admin?
     end
 
     def check_closure!
