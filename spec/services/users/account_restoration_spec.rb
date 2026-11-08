@@ -60,7 +60,7 @@ RSpec.describe Users::AccountRestoration do
     local_assignment = create(:user_role, user:, system_role: role, branch: local_branch)
     other_assignment = create(:user_role, user:, system_role: role, branch: other_branch)
     # Historical data can contain archived branches that predate current lifecycle protections.
-    # rubocop:disable-next-line Rails/SkipsModelValidations
+    # rubocop:disable-next Rails/SkipsModelValidations
     local_branch.update_columns(deleted_at: Time.current)
     role.status = :inactive
     role.save!(context: :status_transition)
