@@ -1,0 +1,35 @@
+es:
+  admin:
+    branch_lifecycle:
+      title: "Estado operativo"
+      initial_hint: "La sucursal nueva inicia en preparación. La activación se realiza después de completar los requisitos."
+      changed: "Estado de sucursal actualizado"
+      reason: "Motivo del cambio"
+      history: "Historial de estados"
+      statuses:
+        preparing: "En preparación"
+        active: "Activa"
+        suspended: "Suspendida"
+        closed: "Cerrada"
+      actions:
+        active: "Activar o reactivar"
+        suspended: "Suspender"
+        closed: "Cerrar definitivamente"
+      descriptions:
+        preparing: "Configura la sucursal antes de habilitar operaciones."
+        active: "La sucursal está habilitada para operar según sus permisos."
+        suspended: "No se permiten nuevas operaciones; pueden regularizarse pendientes."
+        closed: "La sucursal no admite nuevas operaciones. Su historial permanece disponible."
+      errors:
+        not_authorized: "No tienes permiso para cambiar esta sucursal."
+        invalid_transition: "La transición solicitada no está permitida."
+        reason_required: "Debes indicar el motivo del cambio."
+        reason_too_long: "El motivo no puede exceder 2000 caracteres."
+        organization_inactive: "La organización debe estar activa."
+        missing_address: "La dirección debe estar completa y ser válida."
+        missing_code: "Registra el código de la sucursal antes de activarla."
+        missing_team: "Asigna al menos un usuario autorizado a la sucursal."
+        open_operations: "Resuelve primero las operaciones activas."
+        assigned_team: "Reasigna o retira primero los usuarios de la sucursal."
+        outstanding_stock: "Transfiere o ajusta el inventario antes del cierre."
+        last_active_branch: "La organización operativa debe conservar al menos una sucursal activa."
