@@ -27,8 +27,7 @@ module Onboarding
     private
 
     def active_branch_terminals
-      branch = @organization.branches.not_deleted.where(operational_status: %w[preparing active]).first ||
-               @organization.branches.not_deleted.first
+      branch = @organization.branches.not_deleted.where(operational_status: %w[preparing active]).first
       return [] unless branch
 
       branch.terminals.active_records.order(:id).to_a
