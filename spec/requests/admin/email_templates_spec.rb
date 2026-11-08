@@ -163,6 +163,12 @@ RSpec.describe 'Admin email templates', type: :request do
     page = Nokogiri::HTML(response.body)
     expect(page.at_css('#email-template-overview-title')).to be_present
     expect(page.at_css('#email-template-content-title')).to be_present
+    content = page.at_css('section[aria-labelledby="email-template-content-title"]')
+    expect(content.parent['class']).to include('space-y-5')
+    expect(content.parent['class']).not_to include('grid')
+    expect(content.at_css('[data-email-template-detail-target="frame"]')['class'])
+      .to include('max-w-[920px]')
+    expect(content.at_css('#email-template-show-frame')['class']).to include('sm:h-[860px]')
     expect(page.at_css('#email-template-show-frame[sandbox]')).to be_present
     expect(page.at_css('#email-template-show-frame')['srcdoc']).to include('Usuario de ejemplo')
     expect(page.at_css('#email-template-show-frame')['srcdoc']).to include('<p>Hello')
