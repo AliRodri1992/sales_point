@@ -63,6 +63,7 @@ module Admin
 
     def create
       @branch = Branch.new(branch_params)
+      @branch.lifecycle_created_by = current_user
       @branch.organization ||= current_organization
       raise Pundit::NotAuthorizedError unless current_organization
 
