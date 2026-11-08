@@ -8,7 +8,7 @@
     <div class="branch-status-filter">
       <label class="sr-only" for="branch-filter-status"><%= t('admin.branch_workspace.filters.status') %></label>
       <div class="branch-select" data-controller="delta-select" data-search-placeholder="<%= t('admin.branch_workspace.filters.search') %>" data-searchable="false">
-        <%= select_tag :status, options_for_select([[t('admin.catalog_design.all_statuses'), ''], [t('admin.catalog_design.active'), 'active'], [t('admin.catalog_design.inactive'), 'inactive']], @branch_filters['status']), id: 'branch-filter-status', data: { action: 'change->branch-directory#change' } %>
+        <%= select_tag :status, options_for_select([[t('admin.catalog_design.all_statuses'), ''], *%w[preparing active suspended closed].map { |value| [t("admin.branch_lifecycle.statuses.#{value}"), value] }], @branch_filters['status']), id: 'branch-filter-status', data: { action: 'change->branch-directory#change' } %>
       </div>
     </div>
     <details class="branch-advanced" <%= 'open' if @branch_filters.except('search', 'status').values.any?(&:present?) %>>
