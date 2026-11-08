@@ -34,6 +34,8 @@ module Users
       members = @organization.organization_memberships.accessible
                              .where.not(user_id: @user.id).select(:user_id)
       UserRole.active.where(branch_id: nil, user_id: members)
+              .joins(:user)
+              .where(users: { status: 'active', deleted_at: nil })
               .exists?(system_roles: { code: SystemRole::ADMINISTRATIVE_CODES })
     end
 
