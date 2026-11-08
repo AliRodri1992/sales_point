@@ -65,9 +65,10 @@ module Admin
 
     def update
       authorize @user
+      writer = account_writer
 
-      if account_writer.save
-        if @user.saved_change_to_email? && @user.pending?
+      if writer.save
+        if writer.email_changed?
           Users::InvitationDispatcher.call(user: @user, organization: current_organization)
         end
         notify_user(current_user, @user, 'updated')
