@@ -92,7 +92,7 @@ email_catalog_content.each do |key, translations|
           <tr><td align="center">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#fff">
               <tr><td style="padding:24px;background:#ffffff;color:#0f172a;border-bottom:1px solid #e2e8f0">
-                <img src="{{#{logo_key}}}" width="214" alt="Delta POS — full logo" style="width:214px;max-width:100%;height:auto;border:0;display:block">
+                <img src="{{#{logo_key}}}" width="244" alt="Delta POS — full logo" style="width:244px;max-width:100%;height:auto;border:0;display:block">
                 <span style="display:block;margin-top:12px;color:#047857;font-size:12px">{{organization_name}}</span>
               </td></tr>
               <tr><td style="padding:36px">
