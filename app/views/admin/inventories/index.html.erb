@@ -72,26 +72,63 @@
                           admin_branch_inventory_inventory_lots_path(@branch, inventory),
                           class: 'mb-2 inline-block font-semibold text-emerald-700 hover:underline' %>
               <% unless @branch.closed? %>
-                <%= form_with url: adjust_admin_branch_inventory_path(@branch, inventory),
-                              html: { novalidate: true },
-                              class: 'flex flex-wrap items-start gap-2' do |form| %>
-                  <div class="catalog-field">
-                    <%= form.label :quantity, t('admin.inventory.quantity'), class: 'sr-only' %>
-                    <%= form.number_field :quantity, step: 0.001,
-                                          value: (@adjustment_inventory_id == inventory.id ? @adjustment_value : nil),
-                                          placeholder: t('admin.inventory.quantity'),
-                                          class: 'w-32 rounded-xl border border-slate-200 p-2',
-                                          aria: { invalid: @adjustment_inventory_id == inventory.id,
-                                                  describedby: "inventory-quantity-error-#{inventory.id}" } %>
-                    <% if @adjustment_inventory_id == inventory.id %>
-                      <p id="inventory-quantity-error-<%= inventory.id %>" role="alert"
-                         class="mt-1 max-w-40 text-xs text-rose-700">
-                        <%= t('admin.inventory.quantity') %> <%= @adjustment_error %>
-                      </p>
+                <% if inventory.product.tracking_serial? %>
+                  <p class="mb-2 text-xs text-amber-800">
+                    <%= t('admin.branch_lifecycle.serial_adjustment_notice') %>
+                  </p>
+                <% else %>
+                  <%= form_with url: adjust_admin_branch_inventory_path(@branch, inventory),
+                                html: { novalidate: true },
+                                class: 'flex flex-wrap items-start gap-2' do |form| %>
+                    <% if inventory.product.tracking_lot? %>
+                      <div class="catalog-field">
+                        <%= label_tag "inventory-lot-#{inventory.id}",
+                                      branch_required_label(t('admin.branch_lifecycle.inventory_lot_label')),
+                                      class: 'catalog-label' %>
+                        <div data-controller="delta-select" data-searchable="false">
+                          <%= select_tag :inventory_lot_id,
+                                         options_for_select(
+                                           [[t('admin.branch_lifecycle.inventory_lot_choose'), ''],
+                                            *inventory.inventory_lots.reject(&:quarantined?).sort_by(&:code).map do |lot|
+                                              ["#{lot.code} · #{lot.quantity}", lot.id]
+                                            end],
+                                           @adjustment_inventory_id == inventory.id ? @adjustment_lot_id : nil
+                                         ),
+                                         id: "inventory-lot-#{inventory.id}",
+                                         class: 'w-44 rounded-xl border border-slate-200 p-2',
+                                         aria: { required: true,
+                                                 invalid: @adjustment_inventory_id == inventory.id &&
+                                                          @adjustment_lot_error.present?,
+                                                 describedby: "inventory-lot-error-#{inventory.id}" } %>
+                        </div>
+                        <% if @adjustment_inventory_id == inventory.id && @adjustment_lot_error.present? %>
+                          <p id="inventory-lot-error-<%= inventory.id %>" role="alert"
+                             class="mt-1 max-w-44 text-xs text-rose-700">
+                            <%= t('admin.branch_lifecycle.inventory_lot_label') %>
+                            <%= @adjustment_lot_error %>
+                          </p>
+                        <% end %>
+                      </div>
                     <% end %>
-                  </div>
-                  <%= form.submit t('admin.inventory.adjust'),
-                                  class: 'catalog-button catalog-button-primary' %>
+                    <div class="catalog-field">
+                      <%= form.label :quantity, t('admin.inventory.quantity'), class: 'sr-only' %>
+                      <%= form.number_field :quantity, step: 0.001,
+                                            value: (@adjustment_inventory_id == inventory.id ? @adjustment_value : nil),
+                                            placeholder: t('admin.inventory.quantity'),
+                                            class: 'w-32 rounded-xl border border-slate-200 p-2',
+                                            aria: { invalid: @adjustment_inventory_id == inventory.id &&
+                                                             @adjustment_error.present?,
+                                                    describedby: "inventory-quantity-error-#{inventory.id}" } %>
+                      <% if @adjustment_inventory_id == inventory.id && @adjustment_error.present? %>
+                        <p id="inventory-quantity-error-<%= inventory.id %>" role="alert"
+                           class="mt-1 max-w-40 text-xs text-rose-700">
+                          <%= t('admin.inventory.quantity') %> <%= @adjustment_error %>
+                        </p>
+                      <% end %>
+                    </div>
+                    <%= form.submit t('admin.inventory.adjust'),
+                                    class: 'catalog-button catalog-button-primary' %>
+                  <% end %>
                 <% end %>
               <% end %>
               <% (@recent_movements_by_inventory[inventory.id] || []).each do |movement| %>
