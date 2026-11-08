@@ -16,10 +16,26 @@ class UserRole < ApplicationRecord
   validate :assignable_role
   validate :no_new_assignments_to_closed_branch, if: :new_assignment?
   before_save :lock_assignable_role
+  around_save :serialize_branch_assignment, if: :branch_assignment_change?
 
   scope :active, -> { joins(:system_role).where(deleted_at: nil, system_roles: { status: 'active', deleted_at: nil }) }
 
   private
+
+  def branch_assignment_change?
+    branch_id.present? && new_assignment?
+  end
+
+  def serialize_branch_assignment
+    Branch.find(branch_id).with_lock do
+      if branch.closed? || branch.deleted_at.present?
+        errors.add(:branch, :invalid)
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      yield
+    end
+  end
 
   def new_assignment?
     new_record? || will_save_change_to_system_role_id? || will_save_change_to_user_id? ||
@@ -44,7 +60,7 @@ class UserRole < ApplicationRecord
   end
 
   def no_new_assignments_to_closed_branch
-    return unless branch&.closed?
+    return unless branch && (branch.closed? || branch.deleted_at.present?)
 
     errors.add(:branch, :invalid)
   end
