@@ -1,9 +1,35 @@
 <% mobile = branch_mobile(@branch) || @branch.phones.build(kind: 'mobile', primary: true) %>
 <%= form.fields_for :phones, [mobile] do |phone_form| %>
-  <div class="catalog-field"><%= phone_form.hidden_field :id if mobile.persisted? %><%= phone_form.hidden_field :kind, value: 'mobile' %><%= phone_form.hidden_field :primary, value: '1' %><%= phone_form.label :number, t('admin.phones.primary_mobile') %>
-    <div data-controller="international-phone" class="w-full [&_.iti]:w-full [&_.iti__tel-input]:w-full"><%= phone_form.telephone_field :number, data: { international_phone_target: 'input', country_code: mobile.country_code.presence || 'MX' }, autocomplete: 'tel', placeholder: '55 1234 5678', aria: branch_field_aria(mobile, :number) %></div><%= error_message_for(mobile, :number) %>
-    <%= error_message_for(mobile, :country_code, label: t('admin.branch_lifecycle.country_code_label')) %>
-    <label class="branch-checkbox"><%= phone_form.check_box :whatsapp_enabled %><span><%= t('admin.branch_workspace.whatsapp') %></span></label>
-    <% if mobile.persisted? %><label class="branch-checkbox branch-phone-removal"><%= phone_form.check_box :_destroy %><span><%= t('admin.branch_workspace.remove_phone') %></span></label><% end %>
+  <% errors = [] %>
+  <% errors << 'phone_number_error' if mobile.errors[:number].any? %>
+  <% errors << 'phone_country_code_error' if mobile.errors[:country_code].any? %>
+  <div class="catalog-field">
+    <%= phone_form.hidden_field :id if mobile.persisted? %>
+    <%= phone_form.hidden_field :kind, value: 'mobile' %>
+    <%= phone_form.hidden_field :primary, value: '1' %>
+    <%= phone_form.label :number, t('admin.phones.primary_mobile') %>
+    <div data-controller="international-phone"
+         class="w-full [&_.iti]:w-full [&_.iti__tel-input]:w-full">
+      <%= phone_form.telephone_field :number,
+                                     data: {
+                                       international_phone_target: 'input',
+                                       country_code: mobile.country_code.presence || 'MX'
+                                     },
+                                     autocomplete: 'tel', placeholder: '55 1234 5678',
+                                     aria: { invalid: errors.any?, describedby: errors.join(' ') } %>
+    </div>
+    <%= error_message_for(mobile, :number) %>
+    <%= error_message_for(mobile, :country_code,
+                          label: t('admin.branch_lifecycle.country_code_label')) %>
+    <label class="branch-checkbox">
+      <%= phone_form.check_box :whatsapp_enabled %>
+      <span><%= t('admin.branch_workspace.whatsapp') %></span>
+    </label>
+    <% if mobile.persisted? %>
+      <label class="branch-checkbox branch-phone-removal">
+        <%= phone_form.check_box :_destroy %>
+        <span><%= t('admin.branch_workspace.remove_phone') %></span>
+      </label>
+    <% end %>
   </div>
 <% end %>
