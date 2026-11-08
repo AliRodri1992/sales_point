@@ -98,6 +98,11 @@
         "operations_hint": "Información registrada para esta sucursal.",
         "products": "Productos con inventario",
         "terminals": "Terminales registradas",
+        "remove": "Retirar",
+        "remove_branch": "Retirar %{name}",
+        "remove_confirmation": "Retirar esta sucursal la ocultará del catálogo activo, pero conservará su historial. No se permite retirarla si tiene operaciones o usuarios asignados.",
+        "remove_title": "¿Retirar sucursal?",
+        "status_transition_hint": "Antes de desactivar, reasigna a sus usuarios. Debe permanecer al menos una sucursal activa.",
         "history_hint": "Desactivar una sucursal conserva sus datos. Si ya tiene registros operativos, debe desactivarse en lugar de eliminarse."
       }
     },

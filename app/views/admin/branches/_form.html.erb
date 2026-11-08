@@ -20,6 +20,9 @@
         <div class="catalog-field" data-controller="branch-status" data-branch-status-active-value="<%= t('admin.branches.statuses.active') %>" data-branch-status-inactive-value="<%= t('admin.branches.statuses.inactive') %>">
           <label class="catalog-toggle branch-status-card"><%= form.check_box :status, data: { branch_status_target: 'input', action: 'change->branch-status#update' }, aria: { invalid: @branch.errors[:status].any? } %><span><strong data-branch-status-target="label"><%= t("admin.branches.statuses.#{@branch.status ? 'active' : 'inactive'}") %></strong><small><%= t('admin.branch_workspace.status_hint') %></small></span></label>
           <%= error_message_for(@branch, :status) %>
+          <% if @branch.persisted? %>
+            <p class="catalog-hint"><%= t('admin.branch_workspace.status_transition_hint') %></p>
+          <% end %>
         </div>
       </div></section>
       <section class="catalog-card branch-form-section" id="branch-contact"><%= catalog_heading(t('admin.branch_workspace.contact'), t('admin.branch_workspace.contact_hint'), icon: 'phone') %><div class="catalog-card-body catalog-fields">
@@ -81,7 +84,7 @@
                   <span data-country-label
                         data-country-label-mx="<%= t('admin.supplier_details.address_form.country_labels.neighborhood.mx') %>"
                         data-country-label-other="<%= t('admin.supplier_details.address_form.country_labels.neighborhood.other') %>"><%= t('admin.supplier_details.address_form.country_labels.neighborhood.mx') %></span>
-                  <span data-required-when="mx" class="text-rose-600" aria-hidden="true">*</span>
+                  <span data-required-when="mx" class="branch-required-mark" aria-hidden="true">*</span>
                 <% end %>
                 <%= address_form.text_field :neighborhood, maxlength: 100, list: 'branch-neighborhoods',
                     data: { branch_address_target: 'field', branch_attribute: 'neighborhood', supplier_postal_field: 'neighborhood' } %>
@@ -106,7 +109,7 @@
                 <div class="catalog-field">
                   <%= address_form.label attribute do %>
                     <%= t("admin.branches.form.fields.#{attribute}") %>
-                    <% if attribute == :exterior_number %><span data-required-when="mx" class="text-rose-600" aria-hidden="true">*</span><% end %>
+                    <% if attribute == :exterior_number %><span data-required-when="mx" class="branch-required-mark" aria-hidden="true">*</span><% end %>
                   <% end %>
                   <%= address_form.text_field attribute, maxlength: 20, autocomplete: 'off',
                       data: { branch_address_target: 'field', branch_attribute: attribute } %>

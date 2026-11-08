@@ -2,6 +2,18 @@
   <%= link_to admin_branch_path(branch, branch_directory_parameters), class: 'branch-icon-button', aria: { label: t('admin.branch_workspace.view_branch', name: branch.name) }, title: t('admin.branch_workspace.view') , data: { turbo_frame: '_top' } do %><%= delta_icon('eye', class: 'size-4') %><% end %>
   <% if can_manage_branches %>
     <%= link_to edit_admin_branch_path(branch, branch_directory_parameters), class: 'branch-icon-button', aria: { label: t('admin.branch_workspace.edit_branch', name: branch.name) }, title: t('admin.branches.actions.edit'), data: { turbo_frame: '_top' } do %><%= delta_icon('pencil-square', class: 'size-4') %><% end %>
-    <%= button_to admin_branch_path(branch, branch_directory_parameters), method: :delete, class: 'branch-icon-button branch-delete', aria: { label: t('admin.branch_workspace.delete_branch', name: branch.name) }, title: t('admin.branches.actions.delete'), form: { data: { controller: 'swal-confirm', turbo_frame: '_top', turbo_confirm: t('admin.branches.confirm_delete'), swal_cancel_text: t('admin.branches.confirm.cancel') } } do %><%= delta_icon('trash', class: 'size-4') %><% end %>
+    <%= button_to admin_branch_path(branch, branch_directory_parameters), method: :delete,
+                  class: 'branch-icon-button branch-delete',
+                  aria: { label: t('admin.branch_workspace.remove_branch', name: branch.name) },
+                  title: t('admin.branch_workspace.remove'),
+                  form: { data: {
+                    controller: 'swal-confirm', turbo_frame: '_top',
+                    turbo_confirm: t('admin.branch_workspace.remove_confirmation'),
+                    confirm_title: t('admin.branch_workspace.remove_title'),
+                    confirm_record: branch.name,
+                    swal_cancel_text: t('admin.branches.confirm.cancel')
+                  } } do %>
+      <%= delta_icon('trash', class: 'size-4') %>
+    <% end %>
   <% end %>
 </div>

@@ -98,6 +98,11 @@
         "operations_hint": "Information registered for this branch.",
         "products": "Products with inventory",
         "terminals": "Registered terminals",
+        "remove": "Remove",
+        "remove_branch": "Remove %{name}",
+        "remove_confirmation": "Removing this branch hides it from the active directory and preserves its history. Branches with operations or assigned users cannot be removed.",
+        "remove_title": "Remove branch?",
+        "status_transition_hint": "Reassign its users before deactivation. At least one branch must remain active.",
         "history_hint": "Deactivating a branch preserves its data. Branches with operational records must be deactivated instead of deleted."
       }
     },

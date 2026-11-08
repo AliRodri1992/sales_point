@@ -544,4 +544,15 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(branch.reload.deleted_at).to be_nil
     end
   end
+  it 'explains branch soft removal and includes its name in the confirmation' do
+    branch = create(:branch, organization:, name: 'Confirm removal')
+    get admin_branches_path
+
+    document = Nokogiri::HTML(response.body)
+    form = document.at_css("form[action='#{admin_branch_path(branch)}'][data-confirm-record]")
+    expect(form).to be_present
+    expect(form['data-confirm-record']).to eq(branch.name)
+    expect(form['data-turbo-confirm']).to eq(I18n.t('admin.branch_workspace.remove_confirmation'))
+  end
 end
+

@@ -125,7 +125,10 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
     fill_in 'branch_notes', with: 'Deliveries at gate two.'
     within('[data-country-flags]') { find('button[aria-haspopup="listbox"]').click }
     find('[role="option"]', text: central.address.country.localized_name, exact_text: true, visible: true).click
-    expect(page).to have_css('#branch_address_attributes_exterior_number[required]')
+    expect(page).to have_css('#branch_address_attributes_exterior_number[aria-required="true"]')
+    expect(page).to have_no_css('#branch_address_attributes_exterior_number[required]')
+    expect(page).to have_css('form[novalidate]')
+    expect(page).to have_css('label[for="branch_name"] .branch-required-mark')
     fill_in 'branch_address_attributes_street', with: 'Airport avenue'
     fill_in 'branch_address_attributes_exterior_number', with: '20'
     fill_in 'branch_address_attributes_neighborhood', with: 'Centro'
