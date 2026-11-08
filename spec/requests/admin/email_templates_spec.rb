@@ -935,4 +935,19 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.published_version).to eq(version)
     expect(template.audits.where(action: 'activated')).to exist
   end
+  it 'does not allow customizing global templates without an accessible organization' do
+    global = EmailTemplate.create!(
+      key: 'no_organization_copy', name: 'System notice', locale: 'es',
+      category: 'security', subject: 'Notice', html_body: '<p>Notice</p>',
+      text_body: 'Notice', status: 'draft', enabled: false
+    )
+    global.new_draft!(actor: administrator).publish!(actor: administrator)
+    administrator.organization_memberships.destroy_all
+
+    post personalize_admin_email_template_path(global)
+
+    expect(response).to have_http_status(:forbidden)
+    expect(EmailTemplate.where(source_template: global)).to be_empty
+  end
+
 end

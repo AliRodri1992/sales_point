@@ -21,9 +21,13 @@ module EmailTemplates
     end
 
     def self.find_or_create_customization(source, organization, actor)
-      EmailTemplate.create_or_find_by!(organization:, key: source.key, locale: source.locale) do |record|
-        record.assign_attributes(custom_attributes(source, actor))
-      end
+      attributes = { organization:, key: source.key, locale: source.locale }
+      EmailTemplate.find_by(attributes) ||
+        EmailTemplate.create_or_find_by!(attributes) do |record|
+          record.assign_attributes(custom_attributes(source, actor))
+        end
+    rescue ActiveRecord::RecordInvalid => e
+      EmailTemplate.find_by(attributes) || raise(e)
     end
 
     def self.custom_attributes(source, actor)

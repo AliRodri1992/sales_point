@@ -217,6 +217,8 @@ es:
         system: "Del sistema"
         customized: "Personalizada"
         organization: "De organización"
+      custom_draft_notice: "Esta es una copia de «%{name}» exclusiva para tu organización. Conserva las variables requeridas y publícala para activarla."
+      protected_system: "Plantilla del sistema protegida"
       source_label: "Plantilla original"
       personalize: "Personalizar"
       personalize_named: "Personalizar plantilla %{name}"

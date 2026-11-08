@@ -217,6 +217,8 @@ en:
         system: "System template"
         customized: "Customized"
         organization: "Organization template"
+      custom_draft_notice: "This is a copy of «%{name}» for your organization only. Keep required variables and publish the draft to activate it."
+      protected_system: "Protected system template"
       source_label: "Original template"
       personalize: "Customize"
       personalize_named: "Customize template %{name}"

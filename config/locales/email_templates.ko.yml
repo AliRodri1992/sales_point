@@ -217,6 +217,8 @@ ko:
         system: "시스템 템플릿"
         customized: "사용자 지정"
         organization: "조직 템플릿"
+      custom_draft_notice: "«%{name}»의 조직 전용 사본입니다. 필수 변수를 유지하고 초안을 게시해야 활성화됩니다."
+      protected_system: "보호된 시스템 템플릿"
       source_label: "원본 템플릿"
       personalize: "맞춤 설정"
       personalize_named: "%{name} 템플릿 맞춤 설정"
