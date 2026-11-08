@@ -66,6 +66,7 @@
         "code": "Clave interna",
         "code_placeholder": "Ej. CENTRO-01",
         "code_hint": "Opcional. Hasta 30 letras, números, guiones o guiones bajos. Única en tu organización.",
+        "active_operations_block": "no se puede desactivar con existencias, terminales activas o solicitudes y pedidos pendientes.",
         "active_team_block": "no se puede desactivar mientras tenga usuarios asignados. Reasígnalos primero.",
         "last_active_block": "no se puede desactivar porque es la última sucursal activa.",
         "delete_team_block": "No se puede eliminar la sucursal mientras tenga usuarios asignados.",
@@ -102,7 +103,7 @@
         "remove_branch": "Retirar %{name}",
         "remove_confirmation": "Retirar esta sucursal la ocultará del catálogo activo, pero conservará su historial. No se permite retirarla si tiene operaciones o usuarios asignados.",
         "remove_title": "¿Retirar sucursal?",
-        "status_transition_hint": "Antes de desactivar, reasigna a sus usuarios. Debe permanecer al menos una sucursal activa.",
+        "status_transition_hint": "Reasigna a los usuarios, transfiere el inventario y finaliza los pedidos y terminales pendientes. Debe quedar al menos una sucursal activa.",
         "history_hint": "Desactivar una sucursal conserva sus datos. Si ya tiene registros operativos, debe desactivarse en lugar de eliminarse."
       }
     },

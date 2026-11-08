@@ -66,6 +66,7 @@
         "code": "Internal code",
         "code_placeholder": "e.g. CENTRAL-01",
         "code_hint": "Optional. Up to 30 letters, numbers, hyphens or underscores. Unique within your organization.",
+        "active_operations_block": "cannot be deactivated while inventory, active terminals or pending purchasing workflows remain.",
         "active_team_block": "cannot be deactivated while users are assigned. Reassign them first.",
         "last_active_block": "cannot be deactivated because this is the last active branch.",
         "delete_team_block": "The branch cannot be deleted while users are assigned.",
@@ -102,7 +103,7 @@
         "remove_branch": "Remove %{name}",
         "remove_confirmation": "Removing this branch hides it from the active directory and preserves its history. Branches with operations or assigned users cannot be removed.",
         "remove_title": "Remove branch?",
-        "status_transition_hint": "Reassign its users before deactivation. At least one branch must remain active.",
+        "status_transition_hint": "Reassign users, transfer stock, and close pending orders and terminals. At least one active branch must remain.",
         "history_hint": "Deactivating a branch preserves its data. Branches with operational records must be deactivated instead of deleted."
       }
     },

@@ -263,4 +263,18 @@ RSpec.describe 'Branch directory and workspace', type: :request do
     page = Nokogiri::HTML(response.body)
     expect(page.at_css('#branch_status_error')).to be_present
   end
+  it 'shows a field-level error when operational work blocks branch deactivation' do
+    create(:branch, organization:, name: 'Fallback')
+    Terminal.create!(branch: central, name: 'Front register', code: 'FRONT-1', status: 'active')
+
+    patch admin_branch_path(central), params: { branch: { status: false } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(central.reload.status).to be(true)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('#branch_status_error')).to be_present
+    expect(document.at_css('#branch_status_error').text)
+      .to include(I18n.t('admin.branch_workspace.active_operations_block'))
+  end
+
 end

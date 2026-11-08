@@ -96,4 +96,22 @@ RSpec.describe Branch, type: :model do
     expect(branch.errors[:base]).to be_present
     expect(branch.reload.deleted_at).to be_nil
   end
+  it 'does not allow deactivation with live terminals or untransferred stock' do
+    organization = create(:organization)
+    branch = create(:branch, organization:, name: 'Operations')
+    create(:branch, organization:, name: 'Available')
+    terminal = Terminal.create!(branch:, name: 'Cash register', code: 'POS-01', status: 'active')
+
+    expect(branch.update(status: false)).to be(false)
+    expect(branch.errors[:status]).to be_present
+
+    terminal.update!(status: 'inactive')
+    product = create(:product, organization:)
+    inventory = Inventory.create!(branch:, organization:, product:, stock: 7, min_stock: 0)
+    expect(branch.update(status: false)).to be(false)
+
+    inventory.update!(stock: 0)
+    expect(branch.update(status: false)).to be(true)
+  end
+
 end

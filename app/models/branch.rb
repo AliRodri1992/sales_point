@@ -70,9 +70,17 @@ class Branch < ApplicationRecord
 
   def protect_branch_deactivation
     errors.add(:status, I18n.t('admin.branch_workspace.active_team_block')) if user_roles.active.exists?
+    errors.add(:status, I18n.t('admin.branch_workspace.active_operations_block')) if active_branch_operations?
     return unless organization && organization.branches.not_deleted.where(status: true).where.not(id: id).none?
 
     errors.add(:status, I18n.t('admin.branch_workspace.last_active_block'))
+  end
+
+  def active_branch_operations?
+    inventories.where('stock > 0').exists? ||
+      terminals.active_records.exists? ||
+      purchase_requests.where(status: %w[draft submitted]).exists? ||
+      purchase_orders.where(status: %w[draft pending_approval approved ordered partially_received]).exists?
   end
 
   def preserve_operational_history
