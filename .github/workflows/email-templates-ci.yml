@@ -22,6 +22,7 @@ on:
       - 'app/views/admin/email_sender_settings/**'
       - 'app/views/admin/email_branding_settings/**'
       - 'app/views/admin/email_setting_audits/**'
+      - 'app/javascript/controllers/index.js'
       - 'app/javascript/controllers/email_template*'
       - 'config/locales/email_templates.*.yml'
       - 'spec/**/email_template*'
