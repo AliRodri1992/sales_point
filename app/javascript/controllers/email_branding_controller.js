@@ -14,6 +14,8 @@ export default class extends Controller {
 
   connect() {
     this.objectUrl = null
+    this.originalLogoSrc = this.logoPreviewTarget.getAttribute("src")
+    this.originalLogoHidden = this.logoPreviewTarget.classList.contains("hidden")
     this.updatePreview()
     this.updateColors()
   }
@@ -79,6 +81,7 @@ export default class extends Controller {
     const allowed = ["image/png", "image/jpeg", "image/webp"]
     if (!allowed.includes(file.type) || file.size > 2 * 1024 * 1024) {
       event.target.value = ""
+      this.resetLogoPreview()
       this.logoErrorTarget.textContent = this.invalidLogoValue
       this.logoErrorTarget.hidden = false
       this.logoNameTarget.textContent = ""
@@ -90,6 +93,23 @@ export default class extends Controller {
     this.logoPreviewTarget.classList.remove("hidden")
     this.logoNameTarget.textContent = file.name
     if (this.hasRemoveLogoTarget) this.removeLogoTarget.checked = false
+  }
+
+  removeLogoChanged(event) {
+    if (event.target.checked) {
+      this.resetLogoPreview()
+      this.logoPreviewTarget.classList.add("hidden")
+    } else if (!this.logoTarget.files.length) {
+      this.resetLogoPreview()
+    }
+  }
+
+  resetLogoPreview() {
+    if (this.objectUrl) URL.revokeObjectURL(this.objectUrl)
+    this.objectUrl = null
+    this.logoPreviewTarget.src = this.originalLogoSrc
+    this.logoPreviewTarget.classList.toggle("hidden", this.originalLogoHidden)
+    this.logoNameTarget.textContent = ""
   }
 
   validateForm(event) {

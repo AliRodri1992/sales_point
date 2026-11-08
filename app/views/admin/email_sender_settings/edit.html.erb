@@ -34,7 +34,7 @@
     </div>
   </section>
 
-  <%= form_with model: @sender, url: admin_email_sender_settings_path, method: :patch,
+  <%= form_with model: @sender, url: admin_email_sender_settings_path, method: :patch, html: { novalidate: true },
                 class: 'grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.85fr)]',
                 data: { controller: 'email-sender',
                         email_sender_default_name_value: 'Delta POS',
@@ -59,22 +59,22 @@
         </header>
         <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
           <div class="sm:col-span-2">
-            <%= f.label :display_name, t('admin.email_templates.settings_fields.display_name'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-            <%= f.text_field :display_name, required: true, maxlength: 150, autocomplete: 'organization',
+            <%= f.label :display_name, required_field_label(t('admin.email_templates.settings_fields.display_name')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= f.text_field :display_name, maxlength: 150, autocomplete: 'organization',
                              data: { email_sender_target: 'name', action: 'input->email-sender#updatePreview' },
                              aria: { invalid: @sender.errors[:display_name].any? },
                              class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
-            <%= error_message_for(@sender, :display_name) %>
+            <%= error_message_for(@sender, :display_name, label: t('admin.email_templates.settings_fields.display_name')) %>
             <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.sender_name_hint') %></p>
           </div>
           <div class="min-w-0">
-            <%= f.label :from_address, t('admin.email_templates.settings_fields.from_address'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= f.label :from_address, required_field_label(t('admin.email_templates.settings_fields.from_address')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
             <%= f.email_field :from_address, maxlength: 254, autocomplete: 'email', inputmode: 'email',
                               placeholder: 'notificaciones@ejemplo.com',
                               data: { email_sender_target: 'from', action: 'input->email-sender#updatePreview' },
                               aria: { invalid: @sender.errors[:from_address].any? },
                               class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
-            <%= error_message_for(@sender, :from_address) %>
+            <%= error_message_for(@sender, :from_address, label: t('admin.email_templates.settings_fields.from_address')) %>
             <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.sender_from_hint') %></p>
           </div>
           <div class="min-w-0">
@@ -84,7 +84,7 @@
                               data: { email_sender_target: 'reply', action: 'input->email-sender#updatePreview' },
                               aria: { invalid: @sender.errors[:reply_to].any? },
                               class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
-            <%= error_message_for(@sender, :reply_to) %>
+            <%= error_message_for(@sender, :reply_to, label: t('admin.email_templates.settings_fields.reply_to')) %>
             <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.sender_reply_hint') %></p>
           </div>
         </div>
@@ -100,14 +100,14 @@
         </header>
         <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
           <div class="min-w-0">
-            <%= f.label :default_locale, t('admin.email_templates.settings_fields.default_locale'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= f.label :default_locale, required_field_label(t('admin.email_templates.settings_fields.default_locale')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
             <div data-controller="delta-select" data-searchable="false">
               <%= f.select :default_locale, %w[es en ko].map { |code| [t("admin.email_templates.languages.#{code}"), code] },
                            {}, data: { email_sender_target: 'locale', action: 'change->email-sender#updatePreview' },
                            aria: { invalid: @sender.errors[:default_locale].any? },
                            class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm' %>
             </div>
-            <%= error_message_for(@sender, :default_locale) %>
+            <%= error_message_for(@sender, :default_locale, label: t('admin.email_templates.settings_fields.default_locale')) %>
             <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.sender_locale_hint') %></p>
           </div>
           <div class="min-w-0">
@@ -193,5 +193,5 @@
     </aside>
   <% end %>
 
-  <%= render 'admin/email_setting_audits/history', audits: @audits %>
+  <%= render 'admin/email_setting_audits/history', audits: @audits %> if @can_view_audits
 </main>

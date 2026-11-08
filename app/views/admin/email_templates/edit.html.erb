@@ -17,7 +17,7 @@
   <%= render 'workflow_steps', step: 2 %>
 
   <%= form_with model: @draft, url: draft_admin_email_template_path(@template, version_id: @draft.id),
-                method: :patch, class: 'grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]',
+                method: :patch, html: { novalidate: true }, class: 'grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]',
                 data: { controller: 'email-template-preview email-template-editor',
                         action: 'input->email-template-preview#schedule change->email-template-preview#schedule',
                         email_template_preview_url_value: preview_draft_admin_email_template_path(@template, version_id: @draft.id),
@@ -46,22 +46,22 @@
       <div class="space-y-6 px-5 py-5 sm:px-6">
         <div class="grid gap-4 lg:grid-cols-2">
           <div class="min-w-0">
-          <%= f.label :subject, t('admin.email_templates.subject'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-          <%= f.text_field :subject, required: true, maxlength: 250, aria: { invalid: @draft.errors[:subject].any? },
+          <%= f.label :subject, required_field_label(t('admin.email_templates.subject')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+          <%= f.text_field :subject, maxlength: 250, aria: { invalid: @draft.errors[:subject].any? },
                            data: { action: 'focus->email-template-editor#rememberField' },
                            class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
-          <%= error_message_for(@draft, :subject) %>
+          <%= error_message_for(@draft, :subject, label: t('admin.email_templates.subject')) %>
           </div>
           <div class="min-w-0">
           <%= f.label :preheader, t('admin.email_templates.preheader'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
           <%= f.text_field :preheader, maxlength: 250, aria: { invalid: @draft.errors[:preheader].any? },
                            class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
           <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.preheader_hint') %></p>
-          <%= error_message_for(@draft, :preheader) %>
+          <%= error_message_for(@draft, :preheader, label: t('admin.email_templates.preheader')) %>
           </div>
         </div>
         <div class="min-w-0">
-          <%= f.label :html_body, t('admin.email_templates.html_source'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+          <%= f.label :html_body, required_field_label(t('admin.email_templates.html_source')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
           <div class="mb-3 flex flex-wrap items-center gap-2" role="group" aria-label="<%= t('admin.email_templates.insert_variable') %>">
             <% %w[recipient_name organization_name activation_url platform_logo].each do |variable| %>
               <button type="button" data-action="click->email-template-editor#insertVariable"
@@ -71,19 +71,19 @@
               </button>
             <% end %>
           </div>
-          <%= f.text_area :html_body, rows: 14, required: true, spellcheck: false,
+          <%= f.text_area :html_body, rows: 14, spellcheck: false,
                           data: { email_template_editor_target: 'htmlBody', action: 'focus->email-template-editor#rememberField' },
                           aria: { invalid: @draft.errors[:html_body].any? },
                           class: 'block min-h-80 w-full resize-y rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 font-mono text-xs leading-6 text-slate-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
-          <%= error_message_for(@draft, :html_body) %>
+          <%= error_message_for(@draft, :html_body, label: t('admin.email_templates.html_source')) %>
         </div>
         <div>
-          <%= f.label :text_body, t('admin.email_templates.plain_text'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+          <%= f.label :text_body, required_field_label(t('admin.email_templates.plain_text')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
           <%= f.text_area :text_body, rows: 7, required: true,
                           data: { action: 'focus->email-template-editor#rememberField' },
                           aria: { invalid: @draft.errors[:text_body].any? },
                           class: 'block min-h-32 w-full resize-y rounded-xl border border-slate-300 bg-slate-50/60 px-4 py-3 font-mono text-xs leading-6 text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %>
-          <%= error_message_for(@draft, :text_body) %>
+          <%= error_message_for(@draft, :text_body, label: t('admin.email_templates.plain_text')) %>
         </div>
         <div>
           <%= f.label :allowed_variables_csv, t('admin.email_templates.variables'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
@@ -105,7 +105,7 @@
               <% end %>
             </div>
           </details>
-          <%= error_message_for(@draft, :allowed_variables) %>
+          <%= error_message_for(@draft, :allowed_variables, label: t('admin.email_templates.variables')) %>
         </div>
       </div>
       <footer class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-6">

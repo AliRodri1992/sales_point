@@ -21,9 +21,13 @@ export default class extends Controller {
       Turbo.visit(url.toString())
     } catch (error) {
       console.warn("Table page size was not saved", error)
-      const english = document.documentElement.lang?.toLowerCase().startsWith("en")
-      const title = english ? "Could not save your preference" : "No se pudo guardar tu preferencia"
-      const message = english ? "Please try selecting a page size again." : "Intenta seleccionar nuevamente una cantidad de registros."
+      const locale = document.documentElement.lang?.toLowerCase().slice(0, 2)
+      const text = {
+        es: ["No se pudo guardar tu preferencia", "Intenta seleccionar nuevamente una cantidad de registros."],
+        en: ["Could not save your preference", "Please try selecting a page size again."],
+        ko: ["설정을 저장할 수 없습니다", "표시할 항목 수를 다시 선택해 주세요."]
+      }
+      const [title, message] = text[locale] || text.es
       if (window.Swal) window.Swal.fire({ icon: "error", title, text: message })
       else window.alert(`${title}. ${message}`)
     } finally {
