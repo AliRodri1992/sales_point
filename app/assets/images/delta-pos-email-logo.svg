@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="372" height="94" viewBox="0 0 372 94" fill="none" role="img" aria-labelledby="delta-title">
+  <title id="delta-title">DELTA POS — Point of Sale</title>
+  <defs>
+    <linearGradient id="delta-logo-left" x1="5" y1="92" x2="50" y2="5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#065f46"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="delta-logo-right" x1="95" y1="92" x2="50" y2="5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#0d9488"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(0 9) scale(.76)">
+    <path d="M50 5 L7 92 L50 68 Z" fill="url(#delta-logo-left)"/>
+    <path d="M50 5 L93 92 L50 68 Z" fill="url(#delta-logo-right)"/>
+    <path d="M7 92 L93 92 L50 68 Z" fill="#065f46"/>
+    <path d="M50 5 V68" stroke="#000000" stroke-opacity=".1"/>
+    <path d="M22 64 L38 80 L76 30" stroke="#ffffff" stroke-width="9.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="84" y="52" fill="#1e293b" font-family="Inter, Arial, Helvetica, sans-serif" font-size="42" font-weight="800" letter-spacing="-0.84">DELTA <tspan fill="#059669">POS</tspan></text>
+  <text x="85" y="77" fill="#6b7280" font-family="Inter, Arial, Helvetica, sans-serif" font-size="15" font-weight="500" letter-spacing="2.7">POINT OF SALE</text>
+</svg>
