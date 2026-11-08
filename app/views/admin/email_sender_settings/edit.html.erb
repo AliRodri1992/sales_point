@@ -57,7 +57,7 @@
             <%= f.text_field :display_name, maxlength: 150, autocomplete: 'organization',
                              data: { email_sender_target: 'name', action: 'input->email-sender#updatePreview' },
                              aria: { invalid: @sender.errors[:display_name].any? },
-                             class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+                             class: "min-h-11 w-full rounded-xl border bg-white px-4 text-sm focus:ring-2 #{ @sender.errors[:display_name].any? ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-emerald-500 focus:ring-emerald-100' }" %>
             <%= error_message_for(@sender, :display_name, label: t('admin.email_templates.settings_fields.display_name')) %>
             <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.sender_name_hint') %></p>
           </div>
@@ -67,7 +67,7 @@
                               placeholder: t('admin.email_templates.sender_from_example'),
                               data: { email_sender_target: 'from', action: 'input->email-sender#updatePreview' },
                               aria: { invalid: @sender.errors[:from_address].any? },
-                              class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+                              class: "min-h-11 w-full rounded-xl border bg-white px-4 text-sm focus:ring-2 #{ @sender.errors[:from_address].any? ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-emerald-500 focus:ring-emerald-100' }" %>
             <%= error_message_for(@sender, :from_address, label: t('admin.email_templates.settings_fields.from_address')) %>
             <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.sender_from_hint') %></p>
           </div>
@@ -77,7 +77,7 @@
                               placeholder: t('admin.email_templates.sender_reply_example'),
                               data: { email_sender_target: 'reply', action: 'input->email-sender#updatePreview' },
                               aria: { invalid: @sender.errors[:reply_to].any? },
-                              class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+                              class: "min-h-11 w-full rounded-xl border bg-white px-4 text-sm focus:ring-2 #{ @sender.errors[:reply_to].any? ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-emerald-500 focus:ring-emerald-100' }" %>
             <%= error_message_for(@sender, :reply_to, label: t('admin.email_templates.settings_fields.reply_to')) %>
             <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.sender_reply_hint') %></p>
           </div>
