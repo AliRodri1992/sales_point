@@ -85,6 +85,7 @@ es:
         suspended: "No se permiten nuevas operaciones; pueden regularizarse pendientes."
         closed: "La sucursal no admite nuevas operaciones. Su historial permanece disponible."
       errors:
+        code_readonly: "es inmutable: se genera automáticamente."
         operational_address_required: "La sucursal activa o suspendida debe conservar un domicilio válido."
         missing_organization: "La organización debe estar activa."
         missing_name: "El nombre de la sucursal debe contener entre 3 y 150 caracteres."
