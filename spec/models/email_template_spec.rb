@@ -38,4 +38,16 @@ RSpec.describe EmailTemplate, type: :model do
     expect(described_class.resolve(key: 'localized_notice', locale: 'ko', organization:)).to eq(local)
   end
 
+  it 'normalizes display identity and rejects subjects with line breaks' do
+    template = described_class.new(key: 'trimmed_identity', name: '  Welcome  ',
+                                   category: '  transactional  ', locale: 'es',
+                                   subject: "Welcome\nInjected header", html_body: '<p>Hello</p>',
+                                   text_body: 'Hello', status: 'draft')
+
+    expect(template).not_to be_valid
+    expect(template.name).to eq('Welcome')
+    expect(template.category).to eq('transactional')
+    expect(template.errors[:subject]).to be_present
+  end
+
 end
