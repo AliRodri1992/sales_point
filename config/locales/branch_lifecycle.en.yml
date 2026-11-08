@@ -85,6 +85,7 @@ en:
         suspended: "New operations are blocked; outstanding work can be resolved."
         closed: "New operations are disabled. Historical records are preserved."
       errors:
+        code_readonly: "is immutable: it is generated automatically."
         operational_address_required: "An active or suspended branch must retain a valid address."
         missing_organization: "The organization must be active."
         missing_name: "The branch name must contain 3 to 150 characters."
