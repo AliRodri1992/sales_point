@@ -36,6 +36,16 @@ RSpec.describe Branches::TransitionStatus do
     expect(branch.reload).to be_active
   end
 
+  it 'protects the address of a permanently closed branch from edits and deletion' do
+    described_class.call(branch:, actor:, to: 'closed', reason: 'Site closed permanently')
+
+    address = branch.address
+    expect(address.update(city: 'Another city')).to be(false)
+    expect(address.errors[:base]).to be_present
+    expect(address.destroy).to be(false)
+    expect(address.reload).to be_persisted
+  end
+
   it 'does not permit reopening a closed branch' do
     described_class.call(branch:, actor:, to: 'closed', reason: 'Permanent closure')
     expect(branch.reload).to be_closed
