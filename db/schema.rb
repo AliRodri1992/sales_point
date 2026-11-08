@@ -101,11 +101,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_030000) do
     t.string "from_status"
     t.string "to_status", null: false
     t.text "reason"
+    t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["branch_id", "created_at"], name: "idx_branch_status_transitions_chronological"
     t.index ["branch_id"], name: "index_branch_status_transitions_on_branch_id"
     t.index ["changed_by_id"], name: "index_branch_status_transitions_on_changed_by_id"
+    t.index ["deleted_at"], name: "index_branch_status_transitions_on_deleted_at"
   end
 
   create_table "branches", force: :cascade do |t|
@@ -2405,8 +2407,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_030000) do
   add_foreign_key "branch_status_transitions", "branches"
   add_foreign_key "branch_status_transitions", "users", column: "changed_by_id"
   add_foreign_key "branches", "organizations"
-  add_foreign_key "branch_status_transitions", "branches"
-  add_foreign_key "branch_status_transitions", "users", column: "changed_by_id"
   add_foreign_key "clients", "sat_fiscal_regimes"
   add_foreign_key "conversation_participants", "conversations"
   add_foreign_key "conversation_participants", "users"
