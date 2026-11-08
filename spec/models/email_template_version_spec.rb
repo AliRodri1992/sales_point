@@ -77,4 +77,16 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(local.reload.published_version).to eq(draft)
     expect(global.reload.published_version).to eq(source)
   end
+  it 'rejects locally authored security templates without required recovery links' do
+    local = EmailTemplate.create!(
+      organization: create(:organization), key: 'password_recovery', name: 'Recover access',
+      locale: 'ko', category: 'security', status: 'draft', enabled: false,
+      subject: 'Restore your password', html_body: '<p>Reset</p>', text_body: 'Reset'
+    )
+    version = local.new_draft!(actor: nil)
+
+    expect { version.publish!(actor: nil) }.to raise_error(ActiveRecord::RecordInvalid)
+    expect(local.reload.published_version).to be_nil
+  end
+
 end

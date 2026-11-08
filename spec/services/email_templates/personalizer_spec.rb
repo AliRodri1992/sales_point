@@ -50,4 +50,20 @@ RSpec.describe EmailTemplates::Personalizer do
     expect { described_class.call(source: draft, organization:, actor: nil) }.to raise_error(ArgumentError)
     expect { described_class.call(source:, organization: nil, actor: nil) }.to raise_error(ArgumentError)
   end
+  it 'reuses a manually authored organization template without overriding its content' do
+    global = source
+    existing = EmailTemplate.create!(
+      organization:, key: global.key, locale: global.locale, name: 'Local original',
+      category: 'transactional', status: 'draft', enabled: false,
+      subject: 'Original', html_body: '<p>Custom</p>', text_body: 'Custom'
+    )
+
+    returned, created = described_class.call(source: global, organization:, actor: nil)
+
+    expect(created).to be(false)
+    expect(returned.id).to eq(existing.id)
+    expect(returned.reload).to have_attributes(name: 'Local original', source_template_id: nil)
+    expect(returned.audits).to be_empty
+  end
+
 end

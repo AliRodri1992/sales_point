@@ -116,4 +116,18 @@ RSpec.describe EmailTemplatePolicy do
     global.enabled = true
     expect(described_class.new(user, global).deactivate?).to be(false)
   end
+  it 'limits shutdown of critical global templates even for a super administrator' do
+    role.update!(code: 'super_admin')
+    protected = template_for(nil)
+    protected.key = 'password_recovery'
+    protected.status = 'published'
+    protected.enabled = true
+
+    expect(described_class.new(user, protected).archive?).to be(false)
+    expect(described_class.new(user, protected).deactivate?).to be(false)
+
+    protected.key = 'general_notice'
+    expect(described_class.new(user, protected).archive?).to be(true)
+  end
+
 end

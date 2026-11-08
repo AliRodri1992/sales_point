@@ -950,4 +950,16 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(EmailTemplate.where(source_template: global)).to be_empty
   end
 
+  it 'blocks root administrators from archiving or deactivating essential global templates' do
+    role.update!(code: 'super_admin')
+    EmailTemplate.ensure_invitation_template!
+    global = EmailTemplate.global.find_by!(key: 'user_invitation', locale: 'es')
+
+    patch archive_admin_email_template_path(global)
+    expect(response).to have_http_status(:forbidden)
+
+    patch deactivate_admin_email_template_path(global)
+    expect(response).to have_http_status(:forbidden)
+    expect(global.reload).to have_attributes(status: 'published', enabled: true)
+  end
 end
