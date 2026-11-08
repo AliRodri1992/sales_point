@@ -33,6 +33,7 @@ module Admin
       @template = EmailTemplate.new(locale: I18n.locale.to_s, category: 'transactional')
       authorize @template
       raise Pundit::NotAuthorizedError unless current_organization || current_user.role?('super_admin')
+
       load_new_categories
     end
 

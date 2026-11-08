@@ -92,6 +92,17 @@ RSpec.describe 'Published email template delivery', type: :mailer do
     end.to raise_error(ArgumentError, 'Template has no published version')
   end
 
+  it 'resolves branding placeholders even without caller-provided color variables' do
+    organization = create(:organization)
+    template.update!(organization:)
+    template.update!(html_body: '<p>{{primary_color}}</p>')
+    template.new_draft!(actor: nil).publish!(actor: nil)
+    _, html, = EmailTemplates::Resolver.call(
+      key: template.key, locale: 'es', organization:, values: { recipient_name: 'Buyer' }
+    )
+    expect(html).to include('#064e3b')
+  end
+
   it 'resolves published content and rejects a missing template' do
     publish
     rendered = EmailTemplates::Resolver.call(

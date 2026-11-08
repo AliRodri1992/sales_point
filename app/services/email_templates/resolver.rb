@@ -6,7 +6,8 @@ module EmailTemplates
       template = EmailTemplate.resolve(key:, locale:, organization:)
       raise ActiveRecord::RecordNotFound, 'Published email template not found' unless template
 
-      template.render_with(values)
+      branding = EmailTemplates::Branding.values(organization: organization || template.organization)
+      template.render_with(values.symbolize_keys.merge(branding))
     end
   end
 end

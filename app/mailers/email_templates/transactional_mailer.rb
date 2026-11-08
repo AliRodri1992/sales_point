@@ -8,8 +8,8 @@ module EmailTemplates
 
       subject, html, plain = template.render_with(values.deep_symbolize_keys)
       organization = organization_id ? Organization.find(organization_id) : template.organization
-      mail(to: recipient, subject:, from: Sender.call(organization:),
-           **Sender.headers_for(organization:)) do |format|
+      headers = Sender.headers_for(organization:)
+      mail(to: recipient, subject:, **headers) do |format|
         format.html { render body: html, content_type: 'text/html' }
         format.text { render plain: }
       end
