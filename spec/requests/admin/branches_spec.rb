@@ -402,6 +402,34 @@ RSpec.describe 'Admin::Branches', type: :request do
     end
   end
 
+  describe 'accessible branch lifecycle controls' do
+    it 'renders one status selector, one reason field and one confirmation action' do
+      branch = create(:branch, organization:)
+      get admin_branch_path(branch)
+
+      document = Nokogiri::HTML(response.body)
+      forms = document.css("form[action='#{transition_status_admin_branch_path(branch)}']")
+      expect(forms.size).to eq(1)
+      expect(forms.first['data-controller']).to include('branch-transition')
+      expect(forms.first.at_css('select[name="to_status"]')).to be_present
+      expect(forms.first.css('input[name="reason"]').size).to eq(1)
+      expect(forms.first.at_css('select[name="to_status"]')['aria-describedby'])
+        .to include('branch-transition-availability')
+    end
+
+    it 'describes blocked transitions before an administrator can submit them' do
+      branch = create(:branch, organization:)
+      create(:terminal, branch:, status: 'active')
+      get admin_branch_path(branch)
+
+      document = Nokogiri::HTML(response.body)
+      option = document.at_css('#branch-transition-target option[value="suspended"]')
+      expect(option['data-blocked']).to eq('true')
+      expect(document.at_css('#branch-transition-availability')).to be_present
+      expect(response.body).to include(I18n.t('admin.branch_lifecycle.blockers.active_terminals'))
+    end
+  end
+
   describe 'GET /admin/branches/:id/edit' do
     it 'renders the edit branch screen for a system administrator' do
       branch = create(:branch, organization:, name: 'Sucursal Centro')
