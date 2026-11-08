@@ -118,6 +118,25 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(target.user_roles.active.where(branch_id: branch.id).pluck(:system_role_id)).to eq([branch_role.id])
   end
 
+  scenario 'shows the employee role requirement only for employees' do
+    visit new_admin_user_path
+
+    expect(page).to have_css('#users-access-title [data-user-access-target="employeeRolesRequired"]:not(.hidden)')
+    page.execute_script(<<~JS)
+      const type = document.querySelector('#user_user_type')
+      type.value = 'customer'
+      type.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
+    expect(page).to have_css('#users-access-title [data-user-access-target="employeeRolesRequired"].hidden')
+    expect(page).to have_css('[data-user-access-target="roleWarning"]', text: /without roles/)
+    page.execute_script(<<~JS)
+      const type = document.querySelector('#user_user_type')
+      type.value = 'employee'
+      type.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
+    expect(page).to have_css('#users-access-title [data-user-access-target="employeeRolesRequired"]:not(.hidden)')
+  end
+
   scenario 'renders red required stars without browser required attributes' do
     visit new_admin_user_path
 

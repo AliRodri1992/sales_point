@@ -3,6 +3,51 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+
+  describe 'admin user creation validation' do
+    it 'requires a global or branch role for an employee only in the admin creation context' do
+      user = build(:user)
+      user.admin_role_selection_required = true
+      user.admin_selected_system_roles = []
+      user.admin_selected_branch_roles = []
+
+      expect(user).to be_invalid
+      expect(user.errors.added?(:system_role_ids, :at_least_one)).to be(true)
+
+      user.admin_selected_branch_roles = [[1, 2]]
+      expect(user).to be_valid
+
+      user.admin_selected_branch_roles = []
+      user.user_type = 'customer'
+      expect(user).to be_valid
+    end
+
+    it 'validates length limits and removes surrounding whitespace from account details' do
+      user = build(:user, email: '  PERSON@Example.com  ', username: '  Operator  ')
+      expect(user.email).to eq('person@example.com')
+      expect(user.username).to eq('Operator')
+
+      user.username = 'X' * 101
+      expect(user).to be_invalid
+      expect(user.errors.added?(:username, :too_long, count: 100)).to be(true)
+
+      user.username = 'Operator'
+      user.email = "#{'a' * 250}@example.com"
+      expect(user).to be_invalid
+      expect(user.errors.added?(:email, :too_long, count: 254)).to be(true)
+    end
+
+    it 'rejects unavailable selected languages while allowing no language' do
+      language = create(:language, :english, status: :inactive)
+      user = build(:user, language:)
+      expect(user).to be_invalid
+      expect(user.errors.added?(:language_id, :unavailable)).to be(true)
+
+      user.language = nil
+      expect(user).to be_valid
+    end
+  end
+
   describe '#admin?' do
     it 'ignores revoked administrative assignments' do
       role = create(:system_role, :system, code: 'administrator')

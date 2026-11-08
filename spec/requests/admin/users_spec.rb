@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Admin::Users', type: :request do
   let(:system_admin_role) { create(:system_role, :system, code: 'administrator') }
+  let(:employee_role) { create(:system_role, :system, code: 'warehouse_operator') }
   let(:admin_user) { create(:user, system_roles: [system_admin_role]) }
   let(:organization) { create(:organization) }
 
@@ -154,7 +155,8 @@ RSpec.describe 'Admin::Users', type: :request do
           password_confirmation: 'password123',
           user_type: 'employee',
           status: 'active',
-          theme: Theme::DEFAULT
+          theme: Theme::DEFAULT,
+          system_role_ids: ['', employee_role.id.to_s]
         }
       }
     end
@@ -170,6 +172,102 @@ RSpec.describe 'Admin::Users', type: :request do
       follow_redirect!
       expect(response.body).to include(I18n.t('admin.users.created', locale: :es))
       expect(User.exists?(created_user.id)).to be(true)
+    end
+
+
+    it 'requires an employee to have at least one global or branch role' do
+      post admin_users_path, params: {
+        user: { email: 'without-roles@example.com', user_type: 'employee',
+                theme: Theme::DEFAULT, system_role_ids: [''], branch_role_assignments: [''] }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(User.exists?(email: 'without-roles@example.com')).to be(false)
+      document = Nokogiri::HTML(response.body)
+      message = document.at_css('#user_system_role_ids_error')
+      expect(message).to be_present
+      expect(message.text).to start_with(I18n.t('admin.users.ui.roles_and_permissions'))
+      expect(message.text).to include(I18n.t('activerecord.errors.models.user.attributes.system_role_ids.at_least_one'))
+      expect(document.at_css('#users-access-title [data-required-indicator]')).to be_present
+    end
+
+    it 'accepts a branch-only assignment as the employee minimum role' do
+      branch = create(:branch, organization:)
+      local_role = create(:system_role, :branch, code: 'inventory_branch')
+
+      post admin_users_path, params: {
+        user: { email: 'branch-only@example.com', user_type: 'employee', theme: Theme::DEFAULT,
+                system_role_ids: [''], branch_role_assignments: ['', "#{branch.id}:#{local_role.id}"] }
+      }
+
+      expect(response).to redirect_to(admin_users_path)
+      created = User.find_by!(email: 'branch-only@example.com')
+      expect(created.user_roles.active.exists?(branch:, system_role: local_role)).to be(true)
+    end
+
+    it 'allows customer and supplier accounts without role assignments' do
+      %w[customer supplier].each do |kind|
+        post admin_users_path, params: {
+          user: { email: "account-#{kind}@example.com", user_type: kind, theme: Theme::DEFAULT,
+                  system_role_ids: [''], branch_role_assignments: [''] }
+        }
+        expect(response).to redirect_to(admin_users_path)
+        created = User.find_by!(email: "account-#{kind}@example.com")
+        expect(created.user_roles.active).to be_empty
+      end
+    end
+
+    it 'rejects forged branch roles without creating a partially configured account' do
+      foreign = create(:organization)
+      branch = create(:branch, organization: foreign)
+      role = create(:system_role, :branch, code: 'foreign_branch')
+
+      post admin_users_path, params: {
+        user: { email: 'forged@example.com', user_type: 'employee', theme: Theme::DEFAULT,
+                system_role_ids: [''], branch_role_assignments: ["#{branch.id}:#{role.id}"] }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(User.exists?(email: 'forged@example.com')).to be(false)
+      expect(Nokogiri::HTML(response.body).at_css('#user_branch_role_assignments_error')).to be_present
+    end
+
+    it 'normalizes account identity and uses a selectable language by default' do
+      post admin_users_path, params: {
+        user: { email: '  MIXED@Example.com  ', username: '  Store Team  ', user_type: 'employee',
+                theme: Theme::DEFAULT, system_role_ids: ['', employee_role.id.to_s] }
+      }
+
+      expect(response).to redirect_to(admin_users_path)
+      created = User.find_by!(email: 'mixed@example.com')
+      expect(created.username).to eq('Store Team')
+      expect(created.language).to be_present
+      expect(created.language).to be_in(Language.selectable)
+    end
+
+    it 'rejects inactive languages from crafted requests' do
+      language = create(:language, :english, status: :inactive)
+      post admin_users_path, params: {
+        user: { email: 'inactive-language@example.com', user_type: 'employee',
+                theme: Theme::DEFAULT, language_id: language.id,
+                system_role_ids: ['', employee_role.id.to_s] }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(User.exists?(email: 'inactive-language@example.com')).to be(false)
+      expect(Nokogiri::HTML(response.body).at_css('#user_language_id_error')).to be_present
+    end
+
+    it 'validates field lengths on the server, regardless of HTML limits' do
+      post admin_users_path, params: {
+        user: { email: "#{'a' * 250}@example.com", username: 'U' * 101, user_type: 'employee',
+                theme: Theme::DEFAULT, system_role_ids: ['', employee_role.id.to_s] }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('#user_email_error')).to be_present
+      expect(document.at_css('#user_username_error')).to be_present
     end
 
     it 'places all model validation messages beneath the correct field' do
