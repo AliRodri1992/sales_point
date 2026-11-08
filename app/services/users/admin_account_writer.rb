@@ -13,6 +13,10 @@ module Users
       @actor = actor
     end
 
+    def email_changed?
+      @email_changed == true
+    end
+
     def save
       @user.assign_attributes(user_attributes)
       prepare_new_account if @user.new_record?
@@ -108,7 +112,8 @@ module Users
         created = @user.new_record?
         @user.save!
         previous_access = active_assignment_pairs
-        UserInvitation.revoke_for!(@user) if !created && @user.saved_change_to_email? && @user.pending?
+        @email_changed = !created && @user.saved_change_to_email? && @user.pending?
+        UserInvitation.revoke_for!(@user) if @email_changed
         if created
           @user.organization_memberships.create!(
             organization: @organization, status: :active, account_status: :pending
