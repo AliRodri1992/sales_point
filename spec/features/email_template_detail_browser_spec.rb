@@ -93,5 +93,4 @@ RSpec.describe 'Email template detail preview', type: :feature, js: true do
     visit admin_email_template_path(template)
     expect(page).to have_css('main > header form[action*="/personalize"]')
   end
-
 end

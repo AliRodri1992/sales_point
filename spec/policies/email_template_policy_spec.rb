@@ -68,13 +68,16 @@ RSpec.describe EmailTemplatePolicy do
     expect(described_class.new(nil, template_for(organization)).index?).to be_falsey
     expect(described_class::Scope.new(nil, EmailTemplate).resolve).to be_empty
   end
+
   it 'allows published global copies but protects essential global emails' do
     global = template_for(nil)
     global.status = 'published'
     global.enabled = true
     global.id = 87
-    version = EmailTemplateVersion.new(email_template: global, version_number: 1, status: 'published',
-                                        subject: 'Hello', html_body: '<p>Hello</p>', text_body: 'Hello')
+    version = EmailTemplateVersion.new(
+      email_template: global, version_number: 1, status: 'published',
+      subject: 'Hello', html_body: '<p>Hello</p>', text_body: 'Hello'
+    )
     allow(global).to receive(:published_version).and_return(version)
     expect(described_class.new(user, global).personalize?).to be(true)
 
@@ -113,5 +116,4 @@ RSpec.describe EmailTemplatePolicy do
     global.enabled = true
     expect(described_class.new(user, global).deactivate?).to be(false)
   end
-
 end

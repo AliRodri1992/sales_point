@@ -781,13 +781,15 @@ RSpec.describe 'Admin email templates', type: :request do
 
     doc = Nokogiri::HTML(response.body)
     expect(doc.at_css("a[href='#{edit_admin_email_template_path(template)}']")).to be_present
-    archive_action = "form[action='#{archive_admin_email_template_path(template)}'] input[name='_method'][value='patch']"
+    archive_action = "form[action='#{archive_admin_email_template_path(template)}'] " \
+                     "input[name='_method'][value='patch']"
     expect(doc.at_css(archive_action)).to be_present
 
     archive_permission = Permission.find_by!(code: 'email_templates.archive')
     SystemRolePermission.where(system_role: role, permission: archive_permission).destroy_all
     get admin_email_templates_path
-    expect(Nokogiri::HTML(response.body).at_css("form[action='#{archive_admin_email_template_path(template)}']")).to be_nil
+    archived_form = "form[action='#{archive_admin_email_template_path(template)}']"
+    expect(Nokogiri::HTML(response.body).at_css(archived_form)).to be_nil
   end
 
   it 'removes a template without erasing its immutable history' do
@@ -838,6 +840,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include(I18n.t('admin.email_templates.categories.transactions'))
   end
+
   it 'personalizes a global published template for the current organization only' do
     global = EmailTemplate.create!(
       organization: nil, key: 'welcome_alert', name: 'Global welcome',
@@ -876,16 +879,17 @@ RSpec.describe 'Admin email templates', type: :request do
   end
 
   it 'rejects customizing an unpublished template and archiving critical global emails' do
-    global = EmailTemplate.create!(
-      organization: nil, key: 'user_invitation', name: 'Access invitation',
+    draft = EmailTemplate.create!(
+      key: 'unpublished_system_example', name: 'System draft',
       locale: 'ko', category: 'security', status: 'draft', enabled: false,
-      subject: 'Invite', html_body: '<p>Invite</p>', text_body: 'Invite'
+      subject: 'Draft', html_body: '<p>Draft</p>', text_body: 'Draft'
     )
 
-    post personalize_admin_email_template_path(global)
+    post personalize_admin_email_template_path(draft)
     expect(response).to have_http_status(:forbidden)
-    global.new_draft!(actor: administrator).publish!(actor: administrator)
 
+    EmailTemplate.ensure_invitation_template!
+    global = EmailTemplate.global.find_by!(key: 'user_invitation', locale: 'es')
     patch archive_admin_email_template_path(global)
     expect(response).to have_http_status(:forbidden)
     expect(global.reload).to have_attributes(status: 'published', enabled: true)
@@ -931,5 +935,4 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.published_version).to eq(version)
     expect(template.audits.where(action: 'activated')).to exist
   end
-
 end

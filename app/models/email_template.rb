@@ -13,9 +13,9 @@ class EmailTemplate < ApplicationRecord
   }.freeze
 
   belongs_to :organization, optional: true
-  belongs_to :source_template, class_name: 'EmailTemplate', optional: true
+  belongs_to :source_template, class_name: 'EmailTemplate', inverse_of: :customizations, optional: true
   has_many :customizations, class_name: 'EmailTemplate', foreign_key: :source_template_id,
-                            dependent: :restrict_with_exception
+                            inverse_of: :source_template, dependent: :restrict_with_exception
   belongs_to :created_by, class_name: 'User', optional: true
   belongs_to :updated_by, class_name: 'User', optional: true
   belongs_to :published_version, class_name: 'EmailTemplateVersion', optional: true

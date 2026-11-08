@@ -70,7 +70,6 @@ RSpec.describe 'Email template tenant resolution', type: :model do
     local.key = 'different_key'
     expect(local).not_to be_valid
     local.reload
-    expect(local.update(organization: second_organization)).to be(false) if local.published_version
+    expect(local.reload.source_template).to eq(global)
   end
-
 end

@@ -60,14 +60,9 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(published.update(updated_at: 1.second.from_now)).to be(true)
   end
   it 'requires security links in both versions of a customized invitation' do
-    global = EmailTemplate.create!(
-      key: 'user_invitation', name: 'Invitation', locale: 'es', category: 'security',
-      subject: 'Join', html_body: '<a href="{{activation_url}}">Join</a>',
-      text_body: '{{activation_url}}', status: 'draft', enabled: false
-    )
-    source = global.new_draft!(actor: nil)
-    source.update!(allowed_variables: ['activation_url'])
-    source.publish!(actor: nil)
+    EmailTemplate.ensure_invitation_template!
+    global = EmailTemplate.global.find_by!(key: 'user_invitation', locale: 'es')
+    source = global.published_version
     organization = create(:organization)
     local, = EmailTemplates::Personalizer.call(source: global, organization:, actor: nil)
     draft = local.versions.first
@@ -82,5 +77,4 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(local.reload.published_version).to eq(draft)
     expect(global.reload.published_version).to eq(source)
   end
-
 end

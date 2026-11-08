@@ -16,7 +16,8 @@ module EmailTemplateLifecycle
     @template.update!(status: 'inactive', enabled: false, updated_by: current_user)
     @template.audit!(action: 'deactivated', actor: current_user)
     notify_email_template('deactivated')
-    redirect_to admin_email_templates_path, status: :see_other,
+    redirect_to admin_email_templates_path,
+                status: :see_other,
                 flash: { swal_message: t('admin.email_templates.deactivated_toast') }
   end
 
@@ -25,7 +26,8 @@ module EmailTemplateLifecycle
     @template.update!(status: 'published', enabled: true, updated_by: current_user)
     @template.audit!(action: 'activated', actor: current_user)
     notify_email_template('activated')
-    redirect_to admin_email_templates_path, status: :see_other,
+    redirect_to admin_email_templates_path,
+                status: :see_other,
                 flash: { swal_message: t('admin.email_templates.activated_toast') }
   end
 
@@ -34,7 +36,8 @@ module EmailTemplateLifecycle
     @template.update!(status: 'draft', enabled: false, updated_by: current_user)
     @template.audit!(action: 'reactivated', actor: current_user)
     notify_email_template('reactivated')
-    redirect_to edit_admin_email_template_path(@template), status: :see_other,
+    redirect_to edit_admin_email_template_path(@template),
+                status: :see_other,
                 flash: { swal_message: t('admin.email_templates.reactivated_toast') }
   end
 

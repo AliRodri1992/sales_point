@@ -43,5 +43,4 @@ RSpec.describe EmailTemplates::Dispatcher do
       recipient: 'example@example.org', values: { recipient_name: 'Example' }
     )
   end
-
 end

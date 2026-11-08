@@ -5,26 +5,34 @@ module EmailTemplates
   # Unique (organization, key, locale) indexes keep retries idempotent.
   class Personalizer
     def self.call(source:, organization:, actor:)
-      unless source.organization_id.nil? && source.status == 'published' &&
-             source.enabled? && source.published_version && organization&.persisted?
-        raise ArgumentError, 'A published global template and organization are required'
-      end
-
+      validate_source!(source, organization)
       EmailTemplate.transaction do
-        template = EmailTemplate.create_or_find_by!(
-          organization:, key: source.key, locale: source.locale
-        ) do |record|
-          record.assign_attributes(
-            source_template: source, name: source.name, category: source.category,
-            subject: source.published_version.subject, html_body: source.published_version.html_body,
-            text_body: source.published_version.text_body, status: 'draft', enabled: false,
-            created_by: actor, updated_by: actor
-          )
-        end
+        template = find_or_create_customization(source, organization, actor)
         created = template.previously_new_record?
         create_draft!(template, source.published_version, actor) if created
         [template, created]
       end
+    end
+
+    def self.validate_source!(source, organization)
+      valid = source.organization_id.nil? && source.status == 'published' &&
+              source.enabled? && source.published_version && organization&.persisted?
+      raise ArgumentError, 'A published global template and organization are required' unless valid
+    end
+
+    def self.find_or_create_customization(source, organization, actor)
+      EmailTemplate.create_or_find_by!(organization:, key: source.key, locale: source.locale) do |record|
+        record.assign_attributes(custom_attributes(source, actor))
+      end
+    end
+
+    def self.custom_attributes(source, actor)
+      version = source.published_version
+      {
+        source_template: source, name: source.name, category: source.category,
+        subject: version.subject, html_body: version.html_body, text_body: version.text_body,
+        status: 'draft', enabled: false, created_by: actor, updated_by: actor
+      }
     end
 
     def self.create_draft!(template, source_version, actor)
