@@ -23,8 +23,7 @@ module Admin
       ).render
       render :preview
     rescue ArgumentError
-      redirect_to admin_email_template_path(@template), status: :see_other,
-                  flash: { swal_message: t('admin.email_templates.detail_preview_error'), swal_icon: 'error' }
+      redirect_invalid_saved_preview
     end
 
     # Render the unsaved editor content without changing the stored draft.
@@ -47,6 +46,12 @@ module Admin
     end
 
     private
+
+    def redirect_invalid_saved_preview
+      redirect_to admin_email_template_path(@template), status: :see_other,
+                  flash: { swal_message: t('admin.email_templates.detail_preview_error'),
+                           swal_icon: 'error' }
+    end
 
     def render_invalid_preview(source)
       key = if source.errors.added?(:allowed_variables, :undeclared_placeholders)
