@@ -16,12 +16,10 @@
       <section class="catalog-card branch-form-section" id="branch-identity"><%= catalog_heading(t('admin.branch_workspace.identity'), t('admin.branch_workspace.identity_hint'), icon: 'building-storefront') %><div class="catalog-card-body catalog-fields">
         <div class="catalog-full"><%= catalog_field(form, :name, label: branch_required_label(t('admin.branches.form.fields.name')), maxlength: 150, autocomplete: 'organization', aria: branch_field_aria(@branch, :name, required: true)) %></div>
         <div><%= catalog_field(form, :code, label: t('admin.branch_workspace.code'), maxlength: 30, autocomplete: 'off', placeholder: t('admin.branch_workspace.code_placeholder')) %><p class="catalog-hint"><%= t('admin.branch_workspace.code_hint') %></p></div>
-        <div class="catalog-field" data-controller="branch-status" data-branch-status-active-value="<%= t('admin.branches.statuses.active') %>" data-branch-status-inactive-value="<%= t('admin.branches.statuses.inactive') %>">
-          <label class="catalog-toggle branch-status-card"><%= form.check_box :status, data: { branch_status_target: 'input', action: 'change->branch-status#update' }, aria: { invalid: @branch.errors[:status].any? } %><span><strong data-branch-status-target="label"><%= t("admin.branches.statuses.#{@branch.status ? 'active' : 'inactive'}") %></strong><small><%= t('admin.branch_workspace.status_hint') %></small></span></label>
-          <%= error_message_for(@branch, :status) %>
-          <% if @branch.persisted? %>
-            <p class="catalog-hint"><%= t('admin.branch_workspace.status_transition_hint') %></p>
-          <% end %>
+        <div class="catalog-field">
+          <span class="catalog-label"><%= t('admin.branch_lifecycle.title') %></span>
+          <p class="catalog-hint"><%= t('admin.branch_lifecycle.initial_hint') %></p>
+          <span class="branch-status-card"><%= t("admin.branch_lifecycle.statuses.#{@branch.operational_status}") %></span>
         </div>
       </div></section>
       <section class="catalog-card branch-form-section" id="branch-contact"><%= catalog_heading(t('admin.branch_workspace.contact'), t('admin.branch_workspace.contact_hint'), icon: 'phone') %><div class="catalog-card-body catalog-fields">
