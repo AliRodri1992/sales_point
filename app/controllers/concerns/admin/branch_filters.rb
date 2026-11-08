@@ -7,7 +7,7 @@ module Admin
     def normalize_branch_filters(scope)
       @branch_filters = BranchesListing::FILTER_KEYS.index_with { |key| params[key].to_s.strip }
       @branch_filters['search'] = @branch_filters['search'].first(150)
-      retain_branch_filter('status', %w[active inactive])
+      retain_branch_filter('status', %w[preparing active suspended closed])
       retain_branch_filter('contact', %w[with_phone without_phone with_email without_email])
       retain_branch_filter('team', %w[assigned unassigned])
       normalize_branch_locations(scope)
@@ -65,7 +65,7 @@ module Admin
     end
 
     def filter_branch_attributes(scope)
-      scope = scope.where(status: @branch_filters['status'] == 'active') if @branch_filters['status'].present?
+      scope = scope.where(operational_status: @branch_filters['status']) if @branch_filters['status'].present?
       %w[country_id state city].each { |key| scope = branch_location_scope(scope, key) }
       scope
     end
