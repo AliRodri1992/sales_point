@@ -21,6 +21,35 @@ RSpec.describe EmailTemplates::Renderer do
     expect(html).to include('&lt;img')
   end
 
+  it 'enlarges older standard platform logos when rendering published email content' do
+    legacy_markup = '<img src="{{platform_logo}}" width="244" alt="Delta POS" ' \
+                    'style="display:block;width:244px;max-width:100%;height:auto">'
+    source = template(legacy_markup)
+    source.allowed_variables = %w[recipient_name platform_logo]
+
+    _subject, html, _plain = described_class.new(
+      source:, values: { recipient_name: 'Sample', platform_logo: 'https://example.org/logo.png' }
+    ).render
+
+    logo = Nokogiri::HTML.fragment(html).at_css('img')
+    expect(logo['width']).to eq('320')
+    expect(logo['style']).to include('width:320px')
+  end
+
+  it 'preserves custom platform logo sizes and other image dimensions' do
+    markup = '<img src="{{platform_logo}}" width="380" style="width:380px">' \
+             '<img src="https://example.org/other.png" width="244" style="width:244px">'
+    source = template(markup)
+    source.allowed_variables = %w[recipient_name platform_logo]
+
+    _subject, html, _plain = described_class.new(
+      source:, values: { recipient_name: 'Sample', platform_logo: 'https://example.org/logo.png' }
+    ).render
+
+    images = Nokogiri::HTML.fragment(html).css('img')
+    expect(images.map { |img| img['width'] }).to eq(%w[380 244])
+  end
+
   it 'rejects a dangerous activation URL' do
     value = { recipient_name: 'Sample', activation_url: 'javascript:alert(1)' }
     expect do

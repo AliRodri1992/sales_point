@@ -3,6 +3,7 @@
 module EmailTemplates
   class Renderer
     VARIABLE_PATTERN = /\{\{([a-z][a-z0-9_]*)\}\}/
+    STANDARD_LOGO_TAG = /<img\b[^>]*\bsrc=(["'])\{\{platform_logo\}\}\1[^>]*>/i
     URL_VARIABLES = %w[activation_url recovery_url support_url privacy_url
                        logo_url organization_logo platform_logo].freeze
     KNOWN_VARIABLES = %w[
@@ -30,12 +31,20 @@ module EmailTemplates
     end
 
     def render_html
-      html = replace(@source.html_body, :html)
+      html = replace(enlarge_standard_logo(@source.html_body), :html)
       ActionController::Base.helpers.sanitize(
         html,
         tags: %w[html head body meta table tr td th p a img div span h1 h2 h3 strong b em ul ol li br hr],
         attributes: %w[lang charset name content width height role cellpadding cellspacing style href src alt align]
       )
+    end
+
+    # Adapt legacy stock logo markup without editing immutable published versions.
+    def enlarge_standard_logo(html)
+      html.to_s.gsub(STANDARD_LOGO_TAG) do |tag|
+        tag.gsub(/\bwidth=(["'])(?:210|214|220|222|244)\1/, 'width="320"')
+           .gsub(/(?<![-\w])width:\s*(?:210|214|220|222|244)px\b/, 'width:320px')
+      end
     end
 
     def render_plain
