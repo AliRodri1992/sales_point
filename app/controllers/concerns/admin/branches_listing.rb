@@ -9,7 +9,7 @@ module Admin
 
     def load_branches
       scope = policy_scope(organization_branches).left_joins(:address)
-      @branch_counts = scope.group('branches.status').count
+      @branch_counts = scope.group('branches.operational_status').count
       normalize_branch_filters(scope)
       paginate_branches(filter_branches(scope))
     end
