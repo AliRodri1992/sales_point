@@ -6,6 +6,7 @@ module RestrictsClosedBranchMutations
 
   included do
     validate :reject_closed_branch_owner
+    before_destroy :prevent_closed_branch_deletion
   end
 
   private
@@ -15,6 +16,14 @@ module RestrictsClosedBranchMutations
     return unless owner.is_a?(Branch) && owner.closed?
 
     errors.add(:base, I18n.t('admin.branch_lifecycle.errors.closed_readonly'))
+  end
+
+  def prevent_closed_branch_deletion
+    owner = branch_record_owner
+    return unless owner.is_a?(Branch) && owner.closed?
+
+    errors.add(:base, I18n.t('admin.branch_lifecycle.errors.closed_readonly'))
+    throw :abort
   end
 
   def branch_record_owner
