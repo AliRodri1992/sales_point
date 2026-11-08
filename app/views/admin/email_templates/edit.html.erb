@@ -43,13 +43,13 @@
           <%= f.label :subject, required_field_label(t('admin.email_templates.subject')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
           <%= f.text_field :subject, maxlength: 250, aria: { invalid: @draft.errors[:subject].any? },
                            data: { action: 'focus->email-template-editor#rememberField' },
-                           class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+                           class: "min-h-11 w-full rounded-xl border px-4 py-2.5 text-sm focus:ring-2 #{ @draft.errors[:subject].any? ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-emerald-500 focus:ring-emerald-100' }" %>
           <%= error_message_for(@draft, :subject, label: t('admin.email_templates.subject')) %>
           </div>
           <div class="min-w-0">
           <%= f.label :preheader, t('admin.email_templates.preheader'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
           <%= f.text_field :preheader, maxlength: 250, aria: { invalid: @draft.errors[:preheader].any? },
-                           class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+                           class: "min-h-11 w-full rounded-xl border px-4 py-2.5 text-sm focus:ring-2 #{ @draft.errors[:preheader].any? ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-emerald-500 focus:ring-emerald-100' }" %>
           <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.preheader_hint') %></p>
           <%= error_message_for(@draft, :preheader, label: t('admin.email_templates.preheader')) %>
           </div>
@@ -68,7 +68,7 @@
           <%= f.text_area :html_body, rows: 14, spellcheck: false,
                           data: { email_template_editor_target: 'htmlBody', action: 'focus->email-template-editor#rememberField' },
                           aria: { invalid: @draft.errors[:html_body].any? },
-                          class: 'block min-h-80 w-full resize-y rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 font-mono text-xs leading-6 text-slate-100 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+                          class: "block min-h-80 w-full resize-y rounded-xl border bg-slate-900 px-4 py-3 font-mono text-xs leading-6 text-slate-100 focus:ring-2 #{ @draft.errors[:html_body].any? ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-200' : 'border-slate-700 focus:border-emerald-500 focus:ring-emerald-100' }" %>
           <%= error_message_for(@draft, :html_body, label: t('admin.email_templates.html_source')) %>
         </div>
         <div>
@@ -76,7 +76,7 @@
           <%= f.text_area :text_body, rows: 7,
                           data: { action: 'focus->email-template-editor#rememberField' },
                           aria: { invalid: @draft.errors[:text_body].any? },
-                          class: 'block min-h-32 w-full resize-y rounded-xl border border-slate-300 bg-slate-50/60 px-4 py-3 font-mono text-xs leading-6 text-slate-800 focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100' %>
+                          class: "block min-h-32 w-full resize-y rounded-xl border px-4 py-3 font-mono text-xs leading-6 text-slate-800 focus:bg-white focus:ring-2 #{ @draft.errors[:text_body].any? ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 bg-slate-50/60 focus:border-emerald-500 focus:ring-emerald-100' }" %>
           <%= error_message_for(@draft, :text_body, label: t('admin.email_templates.plain_text')) %>
         </div>
         <div>
@@ -84,7 +84,8 @@
           <%= f.text_field :allowed_variables_csv, autocomplete: 'off', spellcheck: false,
                            data: { email_template_editor_target: 'variables' },
                            aria: { invalid: @draft.errors[:allowed_variables].any? },
-                           class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 py-2.5 font-mono text-xs focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+                           class: "min-h-11 w-full rounded-xl border px-4 py-2.5 font-mono text-xs focus:ring-2 #{ @draft.errors[:allowed_variables].any? ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 focus:border-emerald-500 focus:ring-emerald-100' }" %>
+          <%= error_message_for(@draft, :allowed_variables, label: t('admin.email_templates.variables')) %>
           <p class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.variables_hint') %></p>
           <details class="mt-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
             <summary class="cursor-pointer text-xs font-semibold text-emerald-800"><%= t('admin.email_templates.available_variables') %></summary>
@@ -99,7 +100,6 @@
               <% end %>
             </div>
           </details>
-          <%= error_message_for(@draft, :allowed_variables, label: t('admin.email_templates.variables')) %>
         </div>
       </div>
       <footer class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-6">
