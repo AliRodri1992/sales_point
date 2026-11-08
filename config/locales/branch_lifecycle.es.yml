@@ -2,6 +2,7 @@ es:
   admin:
     branch_lifecycle:
       title: "Estado operativo"
+      loading_results: "Actualizando las sucursales…"
       global_summary: "Indicadores generales de la organización; no cambian con los filtros."
       initial_hint: "La sucursal nueva inicia en preparación. La activación se realiza después de completar los requisitos."
       edit_hint: "El estado operativo se administra desde la vista de detalle y no puede modificarse mediante este formulario."
@@ -17,7 +18,7 @@ es:
         code: "Código de sucursal"
         address: "Domicilio completo"
         currency: "Moneda base activa"
-        team: "Usuario asignado"
+        team: "Administrador autorizado o personal asignado"
       confirmations:
         active: "¿Confirmas la activación de esta sucursal?"
         suspended: "¿Quieres suspender temporalmente esta sucursal?"
