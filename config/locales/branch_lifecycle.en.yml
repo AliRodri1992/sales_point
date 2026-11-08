@@ -8,6 +8,19 @@ en:
       changed: "Branch status updated"
       reason: "Reason for change"
       history: "Status history"
+      system_actor: "System"
+      requirements_title: "Activation requirements"
+      requirements:
+        organization: "Active organization"
+        name: "Valid branch name"
+        code: "Branch code"
+        address: "Complete address"
+        currency: "Active base currency"
+        team: "Assigned user"
+      confirmations:
+        active: "Do you want to activate this branch?"
+        suspended: "Do you want to temporarily suspend this branch?"
+        closed: "Do you want to permanently close this branch? It cannot be reopened."
       statuses:
         preparing: "Preparing"
         active: "Active"
