@@ -108,6 +108,7 @@ RSpec.describe 'Admin user statuses', type: :request do
   it 'issues a new invitation when a pending account is unblocked' do
     target.update!(status: :pending)
     target.organization_memberships.find_by!(organization:).update!(account_status: :pending)
+    create(:user_role, user: target, system_role: create(:system_role, :system, code: 'reverified_staff'))
 
     patch admin_user_status_path(target), params: {
       transition: 'blocked', reason: 'Seguridad de la cuenta'

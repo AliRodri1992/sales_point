@@ -70,7 +70,9 @@ module Admin
       writer = account_writer
 
       if writer.save
-        Users::InvitationDispatcher.call(user: @user, organization: current_organization) if writer.email_changed?
+        if writer.email_changed? && Users::InvitationEligibility.ready?(user: @user, organization: current_organization)
+          Users::InvitationDispatcher.call(user: @user, organization: current_organization)
+        end
         notify_user(current_user, @user, 'updated')
         return if redirect_without_catalog_listing(@user, :updated)
 

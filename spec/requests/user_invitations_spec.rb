@@ -19,6 +19,8 @@ RSpec.describe 'User invitation activation', type: :request do
   end
 
   it 'requires authenticated ownership before accepting an invitation to a second organization' do
+    first_org = create(:organization)
+    create(:organization_membership, user:, organization: first_org, account_status: :active)
     user.update!(status: :active)
     invitation = UserInvitation.issue!(user:, organization:)
     get user_invitation_path(token: invitation.raw_token)

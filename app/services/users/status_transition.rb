@@ -57,7 +57,8 @@ module Users
       # Serialize account status and role changes against the same organization lock.
       @organization.with_lock { User.transaction { execute_transition! } }
       SessionRevoker.call(@user)
-      if @target == 'pending' && @user.pending?
+      if @target == 'pending' && @user.pending? &&
+         Users::InvitationEligibility.ready?(user: @user, organization: @organization)
         Users::InvitationDispatcher.call(user: @user, organization: @organization)
       end
       notify_account_holder

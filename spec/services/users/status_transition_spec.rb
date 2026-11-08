@@ -6,7 +6,7 @@ RSpec.describe Users::StatusTransition do
   let(:organization) { create(:organization) }
   let(:role) { create(:system_role, :system, code: 'administrator') }
   let(:actor) { create(:user, system_roles: [role]) }
-  let(:user) { create(:user) }
+  let(:user) { create(:user, user_type: :customer) }
   let!(:membership) { create(:organization_membership, user:, organization:) }
 
   before do

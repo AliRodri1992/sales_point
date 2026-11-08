@@ -6,7 +6,7 @@ RSpec.describe Users::AccountRestoration do
   let(:organization) { create(:organization) }
   let(:super_role) { create(:system_role, :system, code: 'super_admin') }
   let(:administrator) { create(:user, system_roles: [super_role]) }
-  let(:user) { create(:user, status: :deleted, deleted_at: Time.current) }
+  let(:user) { create(:user, user_type: :customer, status: :deleted, deleted_at: Time.current) }
 
   before do
     permission = Permission.find_or_create_by!(code: 'users.restore') do |item|

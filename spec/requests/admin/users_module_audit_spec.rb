@@ -78,7 +78,7 @@ RSpec.describe 'Audited users access boundaries', type: :request do
   end
 
   it 'reissues the invitation when the email of a pending user is changed' do
-    target = add_member(create(:user, status: :pending, email: 'original-invite@example.com'))
+    target = add_member(create(:user, status: :pending, user_type: :customer, email: 'original-invite@example.com'))
     target.organization_memberships.find_by!(organization:).update!(account_status: :pending)
 
     expect do
