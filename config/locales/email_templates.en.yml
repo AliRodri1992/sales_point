@@ -108,6 +108,30 @@ en:
         archived: "Archived"
       preview_undeclared_variables: "Declare every variable used in the content before publishing."
       default_subject: "New template"
+      branding_platform_logo_alt: "Full Delta POS logo"
+      branding_platform_logo_title: "Official Delta POS logo"
+      branding_platform_logo_hint: "The full platform logo remains in system templates. An organization logo does not replace it."
+      branding_optional_logo: "Organization logo"
+      branding_optional_logo_hint: "Optional. Available to templates that include your organization's identity."
+      branding_organization_logo_alt: "Organization logo"
+      branding_remove_logo: "Remove saved organization logo"
+      branding_colors_title: "Color palette"
+      branding_colors_hint: "Pick colors visually or enter HEX values. The preview updates as you edit."
+      branding_pick_color: "Choose %{name}"
+      branding_https_hint: "Support and privacy links must begin with https://."
+      branding_preview_title: "Brand preview"
+      branding_preview_hint: "Review your identity before saving; no email will be sent."
+      branding_preview_eyebrow: "YOUR ORGANIZATION'S COMMUNICATION"
+      branding_preview_message: "This is how the main brand elements may look together."
+      branding_preview_action: "Example button"
+      branding_preview_footer: "Sample email footer text"
+      branding_preview_support: "Support email"
+      branding_preview_disclaimer: "Illustrative settings preview. Published emails keep their own styles until a new version is edited and published."
+      branding_deltin_tip: "Deltín's tip: use accessible colors and keep the complete Delta POS logo in every template."
+      branding_contrast_good: "Button contrast passes WCAG AA for white text."
+      branding_contrast_low: "Use a darker button color to make white text readable (minimum 4.5:1)."
+      branding_invalid_logo: "Choose PNG, JPG, or WebP up to 2 MB."
+      branding_invalid_color: "Use a HEX color such as #047857."
       branding_intro: "Customize the logo, colors, and contact details shown in your emails."
       brand_identity_title: "Email branding"
       brand_identity_hint: "Choose the colors and logo recipients will see."
@@ -306,6 +330,10 @@ en:
         domain_status: "Domain status"
     errors:
       models:
+        email_branding_setting:
+          attributes:
+            button_color:
+              insufficient_contrast: "must contrast sufficiently with white text (at least 4.5:1)"
         email_template:
           attributes:
             base:

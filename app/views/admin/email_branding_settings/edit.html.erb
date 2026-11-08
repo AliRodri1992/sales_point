@@ -1,73 +1,206 @@
-<main class="mx-auto max-w-5xl space-y-5 px-4 pb-8 pt-4 sm:px-6 sm:pt-6" data-loading-scope="true">
-  <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+<% content_for :title, t('admin.email_templates.branding') %>
+<main class="mx-auto max-w-[100rem] space-y-5 px-4 pb-9 pt-4 sm:px-6 sm:pt-6" data-loading-scope="true">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div class="min-w-0">
-      <p class="text-xs font-bold uppercase tracking-widest text-emerald-700"><%= t('admin.email_templates.section') %></p>
+      <p class="text-xs font-bold uppercase tracking-[.18em] text-emerald-700"><%= t('admin.email_templates.section') %></p>
       <h1 class="mt-1 font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.email_templates.branding') %></h1>
-      <p class="mt-2 text-sm leading-6 text-slate-500"><%= t('admin.email_templates.branding_intro') %></p>
+      <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600"><%= t('admin.email_templates.branding_intro') %></p>
     </div>
-    <%= link_to admin_email_templates_path, class: 'inline-flex min-h-11 items-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50' do %>
+    <%= link_to admin_email_templates_path, class: 'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700' do %>
       <%= delta_icon('arrow-left', class: 'size-4') %>
       <%= t('admin.email_templates.back') %>
     <% end %>
   </header>
 
-  <%= form_with model: @branding, url: admin_email_branding_settings_path, method: :patch, multipart: true,
-                class: 'overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm' do |f| %>
+  <%= form_with model: @branding, url: admin_email_branding_settings_path, method: :patch,
+                multipart: true, class: 'grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.85fr)]',
+                data: { controller: 'email-branding',
+                        action: 'submit->email-branding#validateForm',
+                        email_branding_invalid_logo_value: t('admin.email_templates.branding_invalid_logo'),
+                        email_branding_invalid_color_value: t('admin.email_templates.branding_invalid_color'),
+                        email_branding_contrast_good_value: t('admin.email_templates.branding_contrast_good'),
+                        email_branding_contrast_low_value: t('admin.email_templates.branding_contrast_low') } do |f| %>
     <%= hidden_field_tag :global, '1' if @branding.organization_id.nil? %>
-    <% if @branding.errors.any? %>
-      <div role="alert" class="m-5 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
-        <p class="font-bold"><%= t('admin.email_templates.correct_errors') %></p>
-        <ul class="mt-2 list-disc pl-5"><% @branding.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
-      </div>
-    <% end %>
-    <div class="border-b border-slate-100 px-5 py-4 sm:px-6">
-      <h2 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.brand_identity_title') %></h2>
-      <p class="mt-1 text-sm text-slate-500"><%= t('admin.email_templates.brand_identity_hint') %></p>
-    </div>
-    <div class="grid gap-5 px-5 py-5 sm:grid-cols-2 sm:px-6">
-      <div class="sm:col-span-2">
-        <%= f.label :display_name, t('admin.email_templates.settings_fields.display_name'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-        <%= f.text_field :display_name, required: true, maxlength: 150, class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
-        <%= error_message_for(@branding, :display_name) %>
-      </div>
-      <% %i[primary_color secondary_color button_color].each do |field| %>
-        <div>
-          <%= f.label field, t("admin.email_templates.settings_fields.#{field}"), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-          <%= f.text_field field, maxlength: 7, placeholder: '#047857', spellcheck: false,
-                           class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 font-mono text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
-          <%= error_message_for(@branding, field) %>
+
+    <div class="min-w-0 space-y-5">
+      <% if @branding.errors.any? %>
+        <div role="alert" class="rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-800" tabindex="-1">
+          <p class="font-bold"><%= t('admin.email_templates.correct_errors') %></p>
+          <ul class="mt-2 list-disc space-y-1 pl-5">
+            <% @branding.errors.full_messages.each do |message| %><li><%= message %></li><% end %>
+          </ul>
         </div>
       <% end %>
-      <div class="sm:col-span-2">
-        <%= f.label :logo, t('admin.email_templates.settings_fields.logo'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-        <%= f.file_field :logo, accept: 'image/png,image/jpeg,image/webp',
-                         class: 'block min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-1 file:font-semibold file:text-emerald-800' %>
-        <p class="mt-1.5 text-xs text-slate-500"><%= t('admin.email_templates.logo_hint') %></p>
-        <%= error_message_for(@branding, :logo) %>
-      </div>
-    </div>
-    <div class="border-y border-slate-100 bg-slate-50/60 px-5 py-4 sm:px-6">
-      <h2 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.contact_links_title') %></h2>
-      <p class="mt-1 text-sm text-slate-500"><%= t('admin.email_templates.contact_links_hint') %></p>
-    </div>
-    <div class="grid gap-5 px-5 py-5 sm:grid-cols-2 sm:px-6">
-      <% %i[support_email support_url privacy_url].each do |field| %>
-        <div class="<%= field == :privacy_url ? 'sm:col-span-2' : '' %>">
-          <%= f.label field, t("admin.email_templates.settings_fields.#{field}"), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-          <%= f.text_field field, class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
-          <%= error_message_for(@branding, field) %>
+
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="branding-identity-title">
+        <header class="border-b border-slate-100 px-5 py-4 sm:px-6">
+          <h2 id="branding-identity-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.brand_identity_title') %></h2>
+          <p class="mt-1 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.brand_identity_hint') %></p>
+        </header>
+        <div class="space-y-5 p-5 sm:p-6">
+          <div>
+            <%= f.label :display_name, t('admin.email_templates.settings_fields.display_name'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= f.text_field :display_name, required: true, maxlength: 150, autocomplete: 'organization',
+                             data: { email_branding_target: 'name', action: 'input->email-branding#updatePreview' },
+                             aria: { invalid: @branding.errors[:display_name].any? },
+                             class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+            <%= error_message_for(@branding, :display_name) %>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-[180px_minmax(0,1fr)]">
+            <div class="flex min-h-28 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <%= image_tag 'LOGOTIPO COMPLETO.jpeg', alt: t('admin.email_templates.branding_platform_logo_alt'), class: 'max-h-20 w-full object-contain' %>
+            </div>
+            <div class="flex min-w-0 flex-col justify-center gap-1">
+              <p class="text-sm font-semibold text-slate-800"><%= t('admin.email_templates.branding_platform_logo_title') %></p>
+              <p class="text-xs leading-5 text-slate-600"><%= t('admin.email_templates.branding_platform_logo_hint') %></p>
+            </div>
+          </div>
+          <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+            <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+              <div class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white p-2">
+                <% if @branding.logo.attached? %>
+                  <%= image_tag url_for(@branding.logo), alt: t('admin.email_templates.branding_organization_logo_alt'),
+                                class: 'max-h-full max-w-full object-contain',
+                                data: { email_branding_target: 'logoPreview' } %>
+                <% else %>
+                  <%= image_tag 'delta-pos-logo.svg', alt: '', class: 'hidden max-h-full max-w-full object-contain',
+                                data: { email_branding_target: 'logoPreview' } %>
+                <% end %>
+              </div>
+              <div class="min-w-0 flex-1">
+                <%= f.label :logo, t('admin.email_templates.branding_optional_logo'), class: 'mb-1 block text-sm font-semibold text-slate-800' %>
+                <p class="mb-2 text-xs leading-5 text-slate-600"><%= t('admin.email_templates.branding_optional_logo_hint') %></p>
+                <%= f.file_field :logo, accept: 'image/png,image/jpeg,image/webp',
+                                 data: { email_branding_target: 'logo', action: 'change->email-branding#logoChanged' },
+                                 aria: { describedby: 'branding-logo-guidance', invalid: @branding.errors[:logo].any? },
+                                 class: 'block w-full max-w-md cursor-pointer rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-1.5 file:font-semibold file:text-emerald-800' %>
+                <p id="branding-logo-guidance" class="mt-2 text-xs text-slate-500"><%= t('admin.email_templates.logo_hint') %></p>
+                <p class="mt-1 break-words text-xs text-slate-700" data-email-branding-target="logoName" aria-live="polite"></p>
+                <p class="mt-1 text-xs font-semibold text-rose-700" data-email-branding-target="logoError" role="alert" hidden></p>
+                <%= error_message_for(@branding, :logo) %>
+              </div>
+            </div>
+            <% if @branding.logo.attached? %>
+              <label class="mt-4 inline-flex cursor-pointer items-center gap-2 text-xs font-semibold text-slate-700">
+                <%= check_box_tag :remove_logo, '1', false, data: { email_branding_target: 'removeLogo' },
+                                  class: 'size-4 rounded border-slate-300 text-emerald-700 focus:ring-emerald-600' %>
+                <%= t('admin.email_templates.branding_remove_logo') %>
+              </label>
+            <% end %>
+          </div>
         </div>
-      <% end %>
-      <div class="sm:col-span-2">
-        <%= f.label :footer_text, t('admin.email_templates.settings_fields.footer_text'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
-        <%= f.text_area :footer_text, rows: 3, class: 'w-full resize-y rounded-xl border border-slate-300 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
-        <%= error_message_for(@branding, :footer_text) %>
-      </div>
+      </section>
+
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="branding-colors-title">
+        <header class="border-b border-slate-100 px-5 py-4 sm:px-6">
+          <h2 id="branding-colors-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.branding_colors_title') %></h2>
+          <p class="mt-1 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.branding_colors_hint') %></p>
+        </header>
+        <div class="grid gap-4 p-5 sm:grid-cols-3 sm:p-6">
+          <% %i[primary_color secondary_color button_color].each do |field| %>
+            <% value = @branding.public_send(field).presence || '#047857' %>
+            <div class="min-w-0">
+              <%= f.label field, t("admin.email_templates.settings_fields.#{field}"), class: 'mb-1.5 block text-xs font-semibold text-slate-700' %>
+              <div class="flex min-w-0 items-center gap-2">
+                <%= tag.input type: 'color', id: "branding-picker-#{field}", value: value.match?(/\A#[0-9a-fA-F]{6}\z/) ? value : '#047857',
+                              aria: { label: t('admin.email_templates.branding_pick_color', name: t("admin.email_templates.settings_fields.#{field}")) },
+                              data: { email_branding_target: 'picker', brand_color: field, action: 'input->email-branding#pickerChanged' },
+                              class: 'size-11 shrink-0 cursor-pointer rounded-lg border border-slate-300 bg-white p-1' %>
+                <%= f.text_field field, maxlength: 7, required: true, placeholder: '#047857', spellcheck: false,
+                                 pattern: '#[0-9a-fA-F]{6}', autocomplete: 'off',
+                                 data: { email_branding_target: 'colorInput', brand_color: field, action: 'input->email-branding#colorChanged' },
+                                 aria: { invalid: @branding.errors[field].any? },
+                                 class: 'min-h-11 min-w-0 w-full rounded-xl border border-slate-300 px-2 font-mono text-xs uppercase text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+              </div>
+              <%= error_message_for(@branding, field) %>
+            </div>
+          <% end %>
+          <p class="text-xs leading-5 text-slate-600 sm:col-span-3" data-email-branding-target="contrast" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="branding-contact-title">
+        <header class="border-b border-slate-100 px-5 py-4 sm:px-6">
+          <h2 id="branding-contact-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.contact_links_title') %></h2>
+          <p class="mt-1 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.contact_links_hint') %></p>
+        </header>
+        <div class="grid gap-4 p-5 sm:grid-cols-2 sm:p-6">
+          <div class="min-w-0">
+            <%= f.label :support_email, t('admin.email_templates.settings_fields.support_email'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= f.email_field :support_email, maxlength: 254, autocomplete: 'email',
+                              data: { email_branding_target: 'supportEmail', action: 'input->email-branding#updatePreview' },
+                              aria: { invalid: @branding.errors[:support_email].any? },
+                              class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+            <%= error_message_for(@branding, :support_email) %>
+          </div>
+          <% %i[support_url privacy_url].each do |field| %>
+            <div class="min-w-0 <%= 'sm:col-span-2' if field == :privacy_url %>">
+              <%= f.label field, t("admin.email_templates.settings_fields.#{field}"), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+              <%= f.url_field field, maxlength: 2048, inputmode: 'url', placeholder: 'https://',
+                              aria: { invalid: @branding.errors[field].any? },
+                              class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+              <%= error_message_for(@branding, field) %>
+            </div>
+          <% end %>
+          <p class="text-xs leading-5 text-slate-500 sm:col-span-2"><%= t('admin.email_templates.branding_https_hint') %></p>
+          <div class="min-w-0 sm:col-span-2">
+            <%= f.label :footer_text, t('admin.email_templates.settings_fields.footer_text'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+            <%= f.text_area :footer_text, rows: 3, maxlength: 2000,
+                            data: { email_branding_target: 'footer', action: 'input->email-branding#updatePreview' },
+                            aria: { invalid: @branding.errors[:footer_text].any? },
+                            class: 'min-h-28 w-full resize-y rounded-xl border border-slate-300 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+            <%= error_message_for(@branding, :footer_text) %>
+          </div>
+        </div>
+      </section>
+      <footer class="flex flex-col-reverse items-stretch justify-end gap-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center">
+        <%= link_to t('admin.email_templates.cancel'), admin_email_templates_path,
+                    class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
+        <%= f.submit t('admin.email_templates.save'),
+                     class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-700 px-6 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' %>
+      </footer>
     </div>
-    <footer class="flex justify-end border-t border-slate-100 bg-slate-50/70 px-5 py-4 sm:px-6">
-      <%= f.submit t('admin.email_templates.save'),
-                   class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800' %>
-    </footer>
+
+    <aside class="min-w-0 space-y-5 xl:sticky xl:top-6" aria-labelledby="branding-preview-title">
+      <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <header class="border-b border-slate-100 px-5 py-4">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex size-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700"><%= delta_icon('eye', class: 'size-5') %></span>
+            <h2 id="branding-preview-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.email_templates.branding_preview_title') %></h2>
+          </div>
+          <p class="mt-2 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.branding_preview_hint') %></p>
+        </header>
+        <div class="bg-slate-100 p-4 sm:p-5">
+          <div class="mx-auto max-w-md overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div class="border-b border-slate-100 px-5 py-5">
+              <%= image_tag 'LOGOTIPO COMPLETO.jpeg', alt: t('admin.email_templates.branding_platform_logo_alt'), class: 'max-h-16 w-48 max-w-full object-contain' %>
+            </div>
+            <div class="space-y-4 px-5 py-6">
+              <p class="text-[11px] font-bold uppercase tracking-wider" data-email-branding-target="previewPrimary" style="color: <%= @branding.primary_color.presence&.match?(/\A#[0-9a-fA-F]{6}\z/) ? @branding.primary_color : '#064e3b' %>"><%= t('admin.email_templates.branding_preview_eyebrow') %></p>
+              <h3 class="break-words font-jakarta text-xl font-bold text-slate-900" data-email-branding-target="previewName"><%= @branding.display_name.presence || 'Delta POS' %></h3>
+              <p class="text-sm leading-6 text-slate-600"><%= t('admin.email_templates.branding_preview_message') %></p>
+              <span class="inline-flex min-h-11 items-center rounded-lg px-5 py-2.5 text-sm font-semibold text-white"
+                    data-email-branding-target="previewButton"
+                    style="background-color: <%= @branding.button_color.presence&.match?(/\A#[0-9a-fA-F]{6}\z/) ? @branding.button_color : '#047857' %>"><%= t('admin.email_templates.branding_preview_action') %></span>
+            </div>
+            <div class="border-t border-slate-100 bg-slate-50 px-5 py-4" data-email-branding-target="previewFooter">
+              <p class="break-words text-xs leading-5 text-slate-600" data-email-branding-target="previewFooterText"><%= @branding.footer_text.presence || t('admin.email_templates.branding_preview_footer') %></p>
+              <p class="mt-2 break-all text-xs font-semibold" data-email-branding-target="previewSecondary" style="color: <%= @branding.secondary_color.presence&.match?(/\A#[0-9a-fA-F]{6}\z/) ? @branding.secondary_color : '#047857' %>">
+                <span data-email-branding-target="previewEmail"><%= @branding.support_email.presence || t('admin.email_templates.branding_preview_support') %></span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <p class="border-t border-slate-100 px-5 py-4 text-xs leading-5 text-slate-600"><%= t('admin.email_templates.branding_preview_disclaimer') %></p>
+      </section>
+      <div class="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4">
+        <div class="flex items-start gap-3">
+          <%= image_tag 'deltin/waving.svg', alt: t('admin.email_templates.deltin_alt'), class: 'size-14 shrink-0 object-contain' %>
+          <p class="text-xs leading-5 text-emerald-950"><%= t('admin.email_templates.branding_deltin_tip') %></p>
+        </div>
+      </div>
+    </aside>
   <% end %>
+
   <%= render 'admin/email_setting_audits/history', audits: @audits %>
 </main>

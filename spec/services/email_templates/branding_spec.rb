@@ -35,4 +35,24 @@ RSpec.describe EmailTemplates::Branding do
     expect(setting).not_to be_valid
     expect(setting.errors[:logo]).to be_present
   end
+
+  it 'rejects weak white-on-button contrast and invalid support email' do
+    setting = EmailBrandingSetting.new(
+      display_name: 'Shop', button_color: '#ffffff', support_email: 'invalid'
+    )
+
+    expect(setting).not_to be_valid
+    expect(setting.errors[:button_color]).to be_present
+    expect(setting.errors[:support_email]).to be_present
+  end
+
+  it 'keeps valid accessible colors and optional contact details' do
+    setting = EmailBrandingSetting.new(
+      display_name: 'Shop', button_color: '#047857',
+      support_email: 'help@example.org', support_url: 'https://example.org/help'
+    )
+
+    expect(setting).to be_valid
+  end
+
 end

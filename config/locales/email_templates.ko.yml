@@ -108,6 +108,30 @@ ko:
         archived: "보관됨"
       preview_undeclared_variables: "게시하기 전에 본문에서 사용한 모든 변수를 선언하세요."
       default_subject: "새 템플릿"
+      branding_platform_logo_alt: "Delta POS 전체 로고"
+      branding_platform_logo_title: "Delta POS 공식 로고"
+      branding_platform_logo_hint: "시스템 템플릿에는 전체 플랫폼 로고가 유지됩니다. 조직 로고로 대체되지 않습니다."
+      branding_optional_logo: "조직 로고"
+      branding_optional_logo_hint: "선택 항목입니다. 조직 브랜드를 사용하는 템플릿에서 활용할 수 있습니다."
+      branding_organization_logo_alt: "조직 로고"
+      branding_remove_logo: "저장된 조직 로고 제거"
+      branding_colors_title: "색상 팔레트"
+      branding_colors_hint: "색상 선택기를 사용하거나 HEX 코드를 입력하세요. 미리보기에 즉시 반영됩니다."
+      branding_pick_color: "%{name} 선택"
+      branding_https_hint: "지원 및 개인정보처리방침 링크는 https://로 시작해야 합니다."
+      branding_preview_title: "브랜드 미리보기"
+      branding_preview_hint: "저장 전에 확인하세요. 이메일은 발송되지 않습니다."
+      branding_preview_eyebrow: "조직 커뮤니케이션"
+      branding_preview_message: "브랜드의 주요 요소가 함께 표시되는 예시입니다."
+      branding_preview_action: "예시 버튼"
+      branding_preview_footer: "이메일 바닥글 예시"
+      branding_preview_support: "지원 이메일"
+      branding_preview_disclaimer: "설정에 대한 예시 화면입니다. 게시된 이메일은 새 버전을 편집하고 게시하기 전까지 기존 스타일이 유지됩니다."
+      branding_deltin_tip: "델틴의 팁: 읽기 쉬운 색상을 선택하고 모든 템플릿에 Delta POS 전체 로고를 유지하세요."
+      branding_contrast_good: "버튼과 흰색 텍스트의 대비가 WCAG AA를 충족합니다."
+      branding_contrast_low: "흰색 글자가 잘 보이도록 버튼 색상을 더 어둡게 설정하세요(최소 4.5:1)."
+      branding_invalid_logo: "최대 2MB의 PNG, JPG 또는 WebP 파일을 선택하세요."
+      branding_invalid_color: "#047857과 같은 HEX 색상을 입력하세요."
       branding_intro: "이메일에 사용할 로고, 색상, 연락처 정보를 설정하세요."
       brand_identity_title: "이메일 브랜드 설정"
       brand_identity_hint: "수신자에게 표시할 색상과 로고를 지정하세요."
@@ -306,6 +330,10 @@ ko:
         domain_status: "도메인 상태"
     errors:
       models:
+        email_branding_setting:
+          attributes:
+            button_color:
+              insufficient_contrast: "흰색 텍스트와 충분한 명도 대비(최소 4.5:1)가 필요합니다"
         email_template:
           attributes:
             base:

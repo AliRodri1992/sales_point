@@ -18,15 +18,19 @@ module Admin
       verify_permission!
       @branding = EmailBrandingSetting.find_or_initialize_by(organization: selected_organization)
       attributes = branding_params
+      remove_logo = params[:remove_logo] == '1' && attributes[:logo].blank?
+      remove_logo &&= @branding.logo.attached?
       saved = EmailBrandingSetting.transaction do
         next false unless @branding.update(attributes)
 
         extra = attributes.key?(:logo) ? { 'logo_updated' => true } : {}
+        extra['logo_removed'] = true if remove_logo
         EmailSettingAudit.record!(setting: @branding, actor: current_user, kind: 'branding', extra:)
         true
       end
       return render_branding_errors unless saved
 
+      @branding.logo.purge_later if remove_logo
       notify_email_setting('branding_updated', @branding)
       redirect_to edit_admin_email_branding_settings_path,
                   flash: { swal_message: t('admin.email_templates.saved') }

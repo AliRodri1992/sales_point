@@ -144,4 +144,58 @@ RSpec.describe 'Email settings audit history', type: :request do
     expect(EmailSettingAudit.find_by!(organization:, setting_type: 'branding').changeset)
       .to include('logo_updated' => true)
   end
+
+  it 'renders an accessible branding editor with live preview and existing logos' do
+    branding = EmailBrandingSetting.create!(organization:, display_name: 'North Shop')
+    branding.logo.attach(
+      io: StringIO.new(Base64.decode64('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=')),
+      filename: 'logo.png', content_type: 'image/png'
+    )
+    get edit_admin_email_branding_settings_path
+
+    expect(response).to have_http_status(:ok)
+    page = Nokogiri::HTML(response.body)
+    expect(page.at_css('[data-controller="email-branding"]')).to be_present
+    expect(page.at_css('[data-email-branding-target="previewButton"]')).to be_present
+    expect(page.css('input[type="color"][data-email-branding-target="picker"]').size).to eq(3)
+    expect(page.at_css('input#email_branding_setting_support_email[type="email"]')).to be_present
+    expect(page.at_css('input#email_branding_setting_support_url[type="url"]')).to be_present
+    expect(page.at_css('input#email_branding_setting_privacy_url[type="url"]')).to be_present
+    expect(page.at_css('input[name="remove_logo"][type="checkbox"]')).to be_present
+    expect(page.css('img').map { |img| img['alt'] })
+      .to include(I18n.t('admin.email_templates.branding_platform_logo_alt'))
+  end
+
+  it 'validates accessibility and contact details on the server without notifying' do
+    expect do
+      patch admin_email_branding_settings_path, params: {
+        email_branding_setting: {
+          display_name: 'North Shop', button_color: '#FFFFFF',
+          support_email: 'not-an-email', support_url: 'http://insecure.example.org'
+        }
+      }
+    end.not_to(change { administrator.notifications.count })
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(EmailSettingAudit.where(organization:, setting_type: 'branding')).to be_empty
+    expect(EmailBrandingSetting.find_by(organization:)).to be_nil
+  end
+
+  it 'removes an optional organization logo without deleting the required platform logo' do
+    branding = EmailBrandingSetting.create!(organization:, display_name: 'North Shop')
+    branding.logo.attach(
+      io: StringIO.new(Base64.decode64('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=')),
+      filename: 'logo.png', content_type: 'image/png'
+    )
+
+    patch admin_email_branding_settings_path, params: {
+      remove_logo: '1', email_branding_setting: { display_name: 'North Shop' }
+    }
+
+    expect(response).to have_http_status(:redirect)
+    expect(branding.reload.logo).not_to be_attached
+    expect(EmailSettingAudit.find_by!(organization:, setting_type: 'branding').changeset)
+      .to include('logo_removed' => true)
+  end
+
 end

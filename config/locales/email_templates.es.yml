@@ -108,6 +108,30 @@ es:
         archived: "Archivadas"
       preview_undeclared_variables: "Declara todas las variables usadas en el contenido antes de publicar."
       default_subject: "Nueva plantilla"
+      branding_platform_logo_alt: "Logotipo completo de Delta POS"
+      branding_platform_logo_title: "Logotipo oficial de Delta POS"
+      branding_platform_logo_hint: "Este logotipo completo se conserva en las plantillas del sistema. No se reemplaza por un logo de organización."
+      branding_optional_logo: "Logotipo de tu organización"
+      branding_optional_logo_hint: "Opcional. Quedará disponible para las plantillas que incluyan la identidad de tu organización."
+      branding_organization_logo_alt: "Logotipo de la organización"
+      branding_remove_logo: "Quitar el logotipo de organización guardado"
+      branding_colors_title: "Paleta de colores"
+      branding_colors_hint: "Elige colores con el selector o escribe su código hexadecimal. La vista previa cambia al instante."
+      branding_pick_color: "Elegir %{name}"
+      branding_https_hint: "Los enlaces de soporte y privacidad deben comenzar con https://."
+      branding_preview_title: "Vista previa de identidad"
+      branding_preview_hint: "Visualiza tu identidad antes de guardar; no se enviará ningún correo."
+      branding_preview_eyebrow: "COMUNICACIÓN DE TU ORGANIZACIÓN"
+      branding_preview_message: "Así se verán los elementos principales de tu identidad visual."
+      branding_preview_action: "Botón de ejemplo"
+      branding_preview_footer: "Texto de pie de correo de ejemplo"
+      branding_preview_support: "Correo de soporte"
+      branding_preview_disclaimer: "Vista ilustrativa de la configuración. Los correos publicados conservan sus propios estilos hasta que se edite y publique una nueva versión."
+      branding_deltin_tip: "Deltín te recuerda: usa colores legibles y conserva el logotipo completo de Delta POS en todas las plantillas."
+      branding_contrast_good: "El botón tiene contraste suficiente para texto blanco (WCAG AA)."
+      branding_contrast_low: "El botón necesita un color más oscuro para que el texto blanco sea legible (mínimo 4.5:1)."
+      branding_invalid_logo: "Selecciona un PNG, JPG o WebP de máximo 2 MB."
+      branding_invalid_color: "Escribe un color hexadecimal como #047857."
       branding_intro: "Personaliza el logotipo, los colores y la información de contacto de los correos."
       brand_identity_title: "Identidad de los correos"
       brand_identity_hint: "Configura los colores y el logotipo que verán los destinatarios."
@@ -306,6 +330,10 @@ es:
         domain_status: "Estado del dominio"
     errors:
       models:
+        email_branding_setting:
+          attributes:
+            button_color:
+              insufficient_contrast: "debe tener contraste suficiente con texto blanco (al menos 4.5:1)"
         email_template:
           attributes:
             base:
