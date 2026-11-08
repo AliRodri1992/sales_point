@@ -13,6 +13,7 @@ module BranchLifecycle
          default: :preparing, validate: true
 
     has_many :branch_status_transitions, dependent: :restrict_with_exception
+    after_create :record_initial_operational_status
 
     before_validation :sync_legacy_status
     validate :protect_operational_status_change, if: :restricted_lifecycle_change?
@@ -26,6 +27,10 @@ module BranchLifecycle
   def operational_dependencies? = active_branch_operations?
 
   private
+
+  def record_initial_operational_status
+    branch_status_transitions.create!(to_status: operational_status)
+  end
 
   def sync_legacy_status
     self.direct_legacy_status_change = persisted? && will_save_change_to_status? &&
