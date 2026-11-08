@@ -73,7 +73,8 @@ module EmailTemplates
     end
 
     def validate_variables!(allowed)
-      used = [@source.subject, @source.preheader, @source.html_body, @source.text_body].flat_map do |body|
+      used = [@source.subject, (@source.preheader if @source.respond_to?(:preheader)),
+              @source.html_body, @source.text_body].flat_map do |body|
         body.to_s.scan(VARIABLE_PATTERN).flatten
       end.uniq
       raise ArgumentError, 'Unapproved email variables' unless (used - allowed).empty?

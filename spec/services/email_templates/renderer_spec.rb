@@ -10,6 +10,13 @@ RSpec.describe EmailTemplates::Renderer do
     )
   end
 
+  it 'renders legacy nonversioned content without a preheader attribute' do
+    draft = EmailTemplate.new(
+      subject: 'Subject', html_body: '<p>Hello</p>', text_body: 'Hello'
+    )
+    expect(described_class.new(source: draft, values: {}).render.first).to eq('Subject')
+  end
+
   it 'escapes user values and removes scripts and event handlers' do
     content = '<p onclick="alert(1)">{{recipient_name}}</p><script>alert(1)</script>'
     _subject, html, _plain = described_class.new(
