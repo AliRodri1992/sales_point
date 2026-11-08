@@ -24,7 +24,7 @@ module BranchesHelper
       code: branch.code.present?,
       address: branch.address&.valid?,
       currency: settings&.base_currency&.active?,
-      team: team_ready
+      team: team_ready || current_user&.admin?
     }
   end
 
