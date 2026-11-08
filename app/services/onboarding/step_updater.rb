@@ -31,7 +31,8 @@ module Onboarding
       end
 
       true
-    rescue ActiveRecord::RecordInvalid, KeyError, ActionController::ParameterMissing
+    rescue ActiveRecord::RecordInvalid, Branches::TransitionStatus::InvalidTransition,
+           KeyError, ActionController::ParameterMissing
       false
     end
 
@@ -54,7 +55,13 @@ module Onboarding
       return false unless applicable_sections.all? { |section| section[:percentage] == 100 }
 
       @organization.complete_onboarding!
-      true
+      branch = @organization.branches.not_deleted.find_by(operational_status: 'preparing')
+      return true unless branch
+
+      Branches::TransitionStatus.call(
+        branch:, actor: @user, to: 'active',
+        reason: I18n.t('admin.branch_lifecycle.onboarding_reason')
+      )
     end
 
     def persist_progress
