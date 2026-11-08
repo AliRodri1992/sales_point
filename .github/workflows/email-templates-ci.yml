@@ -40,6 +40,8 @@ on:
       - 'spec/**/email_sender*'
       - 'spec/**/email_branding*'
       - 'spec/**/email_setting*'
+      - 'spec/services/email_templates/**'
+      - 'spec/jobs/email_templates/**'
 
 permissions:
   contents: read
