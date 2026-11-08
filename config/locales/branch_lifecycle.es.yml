@@ -8,6 +8,19 @@ es:
       changed: "Estado de sucursal actualizado"
       reason: "Motivo del cambio"
       history: "Historial de estados"
+      system_actor: "Sistema"
+      requirements_title: "Requisitos para activar"
+      requirements:
+        organization: "Organización activa"
+        name: "Nombre de sucursal válido"
+        code: "Código de sucursal"
+        address: "Domicilio completo"
+        currency: "Moneda base activa"
+        team: "Usuario asignado"
+      confirmations:
+        active: "¿Confirmas la activación de esta sucursal?"
+        suspended: "¿Quieres suspender temporalmente esta sucursal?"
+        closed: "¿Quieres cerrar definitivamente esta sucursal? No podrá reactivarse."
       statuses:
         preparing: "En preparación"
         active: "Activa"
