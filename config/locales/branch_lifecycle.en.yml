@@ -1,0 +1,35 @@
+en:
+  admin:
+    branch_lifecycle:
+      title: "Operational status"
+      initial_hint: "New branches start in preparation. Activate them after completing setup."
+      changed: "Branch status updated"
+      reason: "Reason for change"
+      history: "Status history"
+      statuses:
+        preparing: "Preparing"
+        active: "Active"
+        suspended: "Suspended"
+        closed: "Closed"
+      actions:
+        active: "Activate or reactivate"
+        suspended: "Suspend"
+        closed: "Close permanently"
+      descriptions:
+        preparing: "Finish branch setup before enabling operations."
+        active: "This branch can operate within its permissions."
+        suspended: "New operations are blocked; outstanding work can be resolved."
+        closed: "New operations are disabled. Historical records are preserved."
+      errors:
+        not_authorized: "You are not authorized to manage this branch."
+        invalid_transition: "This status transition is not allowed."
+        reason_required: "Provide a reason for this change."
+        reason_too_long: "The reason must not exceed 2000 characters."
+        organization_inactive: "The organization must be active."
+        missing_address: "A complete, valid address is required."
+        missing_code: "Enter a branch code before activation."
+        missing_team: "Assign at least one authorized user to the branch."
+        open_operations: "Resolve active operations before closing."
+        assigned_team: "Reassign or remove branch users first."
+        outstanding_stock: "Transfer or reconcile inventory before closing."
+        last_active_branch: "An operating organization must retain an active branch."
