@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class InventoryMovement < ApplicationRecord
+  include RestrictsClosedBranchMutations
   belongs_to :organization
   belongs_to :inventory
   belongs_to :source, polymorphic: true, optional: true
