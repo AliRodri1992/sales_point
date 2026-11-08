@@ -26,6 +26,7 @@ class Branch < ApplicationRecord
   has_many :terminals, dependent: :restrict_with_exception
 
   attribute :status, :boolean, default: false
+  before_validation :assign_branch_code
   normalizes :code, with: ->(value) { value.strip.upcase.presence }
   normalizes :contact_email, with: ->(value) { value.strip.downcase.presence }
   normalizes :notes, with: ->(value) { value.strip.presence }
@@ -69,6 +70,10 @@ class Branch < ApplicationRecord
   end
 
   private
+
+  def assign_branch_code
+    self.code = "BR-#{SecureRandom.hex(6).upcase}" if code.blank?
+  end
 
   def deactivating?
     persisted? && will_save_change_to_status? && !status && deleted_at.nil? &&
