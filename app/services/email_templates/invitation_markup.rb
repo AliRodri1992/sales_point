@@ -19,7 +19,7 @@ module EmailTemplates
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#ffffff;border:1px solid #dde8e5;border-radius:16px;">
                   <tr>
                     <td style="padding:27px 36px 24px;border-bottom:1px solid #e5eeea;background-color:#ffffff;">
-                      <img src="{{platform_logo}}" width="222" alt="#{copy.fetch(:brandAlt)}" style="display:block;width:222px;max-width:100%;height:auto;border:0;text-decoration:none;">
+                      <img src="{{platform_logo}}" width="244" alt="#{copy.fetch(:brandAlt)}" style="display:block;width:244px;max-width:100%;height:auto;border:0;text-decoration:none;">
                     </td>
                   </tr>
                   <tr>
