@@ -56,6 +56,7 @@ class Branch < ApplicationRecord
   validates :address, presence: true, on: :create, unless: :registration_bootstrap
   validate :operational_address_required, if: :operational_address_required?
   validate :protect_branch_deactivation, if: :deactivating?
+  validate :immutable_branch_code, if: -> { persisted? && will_save_change_to_code? }
 
   validates :name,
             presence: true,
@@ -84,6 +85,10 @@ class Branch < ApplicationRecord
 
   def operational_address_required
     errors.add(:address, :invalid) unless address && !address.marked_for_destruction? && address.valid?
+  end
+
+  def immutable_branch_code
+    errors.add(:code, I18n.t('admin.branch_lifecycle.errors.code_readonly'))
   end
 
   def deactivating?
