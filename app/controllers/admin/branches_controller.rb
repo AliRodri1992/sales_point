@@ -5,6 +5,7 @@ module Admin
     include Admin::BranchFilters
     include Admin::BranchesListing
     include Admin::BranchForm
+    include Admin::BranchTransitions
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
@@ -99,21 +100,6 @@ module Admin
         @branch.build_address unless @branch.address
         render :edit, status: :unprocessable_content
       end
-    end
-
-    def transition_status
-      authorize @branch, :manage?
-      Branches::TransitionStatus.call(branch: @branch, actor: current_user,
-                                      to: params[:to_status], reason: params[:reason])
-      redirect_to admin_branch_path(@branch, branch_directory_parameters),
-                  flash: { swal_message: t('admin.branch_lifecycle.changed') }, status: :see_other
-    rescue Branches::TransitionStatus::InvalidTransition, ActiveRecord::RecordInvalid => e
-      @transition_error = e.is_a?(ActiveRecord::RecordInvalid) ? e.record.errors.full_messages.to_sentence : e.message
-      @transition_to = params[:to_status].to_s
-      @transition_reason = params[:reason].to_s
-      @branch.reload
-      load_branch_detail
-      render :show, status: :unprocessable_content
     end
 
     def destroy
