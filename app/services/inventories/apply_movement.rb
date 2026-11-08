@@ -80,6 +80,7 @@ module Inventories
       return unless kind.to_s == 'adjustment' && lot
 
       raise ArgumentError, 'Serialized stock requires serial-level reconciliation' if inventory.product.tracking_serial?
+      raise ArgumentError, 'Quarantined lots require separate reconciliation' if lot.quarantined?
 
       lot.with_lock do
         new_quantity = lot.quantity + amount
