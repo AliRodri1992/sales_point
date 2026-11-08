@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   extend UserChatPresence
   include UserAdminAccessValidations
+  include UserEffectiveRoles
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -78,18 +79,6 @@ class User < ApplicationRecord
     user_roles.active.joins(:system_role).exists?(
       branch_id: nil, system_roles: { code: SystemRole::ADMINISTRATIVE_CODES }
     )
-  end
-
-  def role?(role_code, branch: nil)
-    scope = user_roles.active.joins(:system_role).where(system_roles: { code: role_code })
-    scope = scope.where(branch: branch) if branch
-    scope.exists?
-  end
-
-  def permission?(permission_code)
-    user_roles.active
-              .joins(system_role: :permissions)
-              .exists?(permissions: { code: permission_code, status: 'active' })
   end
 
   def initials
