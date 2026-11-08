@@ -191,6 +191,8 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(back['href']).to eq(admin_email_templates_path)
     expect(back.text.strip).to eq(I18n.t('admin.email_templates.back'))
     expect(back['class']).to include('border-slate-200')
+    breadcrumb = document.at_css('nav[aria-label] a[href="/admin/email_templates"]')
+    expect(breadcrumb.text.strip).to eq(I18n.t('admin.breadcrumbs.controllers.email_templates'))
     expect(heading.at_css('div.min-w-0 a')).to be_nil
   end
 

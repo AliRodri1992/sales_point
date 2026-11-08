@@ -23,7 +23,7 @@ module EmailTemplates
       mailer_options = Rails.application.config.action_mailer.default_url_options || {}
       Rails.application.routes.url_helpers.rails_blob_url(
         setting.logo, host: configured_host, port: mailer_options[:port],
-        protocol: Rails.env.development? ? 'http' : 'https'
+                      protocol: Rails.env.development? ? 'http' : 'https'
       )
     end
 

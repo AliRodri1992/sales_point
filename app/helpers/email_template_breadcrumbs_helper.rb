@@ -2,7 +2,7 @@
 
 module EmailTemplateBreadcrumbsHelper
   def email_template_breadcrumb_items
-    base = { label: t('admin.breadcrumbs.controllers.email_templates'), path: admin_email_templates_path }
+    base = email_template_section_breadcrumb
     template = controller.view_assigns['template']
 
     case params[:action]
@@ -10,12 +10,8 @@ module EmailTemplateBreadcrumbsHelper
       [base.except(:path)]
     when 'new', 'create'
       [base, { label: t('admin.email_templates.new') }]
-    when 'show'
-      [base, { label: template&.name || t('admin.email_templates.view') }]
-    when 'edit', 'update_draft'
-      [base, template_breadcrumb(template), { label: t('admin.email_templates.edit') }]
-    when 'compare'
-      [base, template_breadcrumb(template), { label: t('admin.email_templates.compare') }]
+    when 'edit', 'update_draft', 'compare'
+      [base, template_breadcrumb(template), { label: editor_breadcrumb_label }]
     else
       [base, { label: template&.name || t('admin.email_templates.view') }]
     end
@@ -35,6 +31,12 @@ module EmailTemplateBreadcrumbsHelper
 
   def email_template_section_breadcrumb
     { label: t('admin.breadcrumbs.controllers.email_templates'), path: admin_email_templates_path }
+  end
+
+  def editor_breadcrumb_label
+    return t('admin.email_templates.compare') if params[:action] == 'compare'
+
+    t('admin.email_templates.edit')
   end
 
   def template_breadcrumb(template)

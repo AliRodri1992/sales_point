@@ -42,6 +42,7 @@ RSpec.describe 'Email template detail preview', type: :feature, js: true do
     visit admin_email_template_path(template)
 
     expect(page).to have_css('#email-template-show-frame[sandbox]')
+    expect(page).to have_css('main > header > div:last-child > a[href="/admin/email_templates"]')
     stage = find('section[aria-labelledby="email-template-content-title"]')
     expect(stage).to have_css('[data-email-template-detail-target="frame"].max-w-\\[920px\\]')
     expect(page).to have_css('#email-template-show-frame')
@@ -71,6 +72,7 @@ RSpec.describe 'Email template detail preview', type: :feature, js: true do
     visit admin_email_template_path(template)
 
     expect(page).to have_css('#email-template-show-frame[sandbox]')
+    expect(page).to have_css('main > header > div:last-child > a[href="/admin/email_templates"]')
     expect(page).to have_css('[data-email-template-detail-target="desktopButton"][aria-pressed="true"]')
     find('[data-email-template-detail-target="mobileButton"]').click
     expect(page).to have_css('[data-email-template-detail-target="mobileButton"][aria-pressed="true"]')

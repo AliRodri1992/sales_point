@@ -20,9 +20,10 @@ RSpec.describe BreadcrumbsHelper, type: :helper do
     expect(helper.breadcrumb_items[2]).to include(label: 'Viewed office', path: helper.admin_branch_path(viewed))
   end
   describe 'email communication breadcrumbs' do
-    let(:email_template) { build_stubbed(:email_template, name: 'Order confirmation') }
+    let(:email_template) { EmailTemplate.new(id: 42, name: 'Order confirmation') }
 
     before do
+      allow(email_template).to receive(:to_param).and_return('42')
       allow(helper.controller).to receive(:view_assigns).and_return('template' => email_template)
     end
 
@@ -65,5 +66,4 @@ RSpec.describe BreadcrumbsHelper, type: :helper do
       end
     end
   end
-
 end
