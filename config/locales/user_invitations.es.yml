@@ -13,3 +13,7 @@ es:
     sign_in: "Iniciar sesión"
     join: "Aceptar invitación"
     joined: "Ya tienes acceso a la nueva empresa."
+    existing_mail_invite: "te invitó a colaborar en Delta POS. Inicia sesión con tu cuenta actual para aceptar esta invitación; no necesitas otra contraseña."
+    existing_mail_guide: "Abre el enlace e inicia sesión con la cuenta que recibió la invitación para confirmar el acceso a esta empresa."
+    existing_mail_preheader: "Te invitaron a una nueva empresa. Confirma con tu cuenta actual."
+    existing_description: "Has sido invitado a formar parte de %{organization}. Inicia sesión con tu cuenta actual para aceptar la invitación."

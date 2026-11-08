@@ -13,3 +13,7 @@ ko:
     sign_in: "로그인"
     join: "초대 수락"
     joined: "새 조직에 가입했습니다."
+    existing_mail_invite: "에서 Delta POS 협업에 초대했습니다. 기존 계정으로 로그인하여 초대를 수락하세요. 새 비밀번호는 필요하지 않습니다."
+    existing_mail_guide: "보안 링크를 열고 초대받은 계정으로 로그인하여 조직의 접근 권한을 확인하세요."
+    existing_mail_preheader: "새 조직에 초대되었습니다. 기존 계정으로 수락하세요."
+    existing_description: "%{organization}에 초대되었습니다. 기존 계정으로 로그인하여 수락하세요."

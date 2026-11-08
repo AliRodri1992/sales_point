@@ -13,3 +13,7 @@ en:
     sign_in: "Sign in"
     join: "Accept invitation"
     joined: "You have joined the new organization."
+    existing_mail_invite: "has invited you to collaborate in Delta POS. Sign in with your existing account to accept; no new password is needed."
+    existing_mail_guide: "Open the secure link and sign in with the invited account to confirm access to this organization."
+    existing_mail_preheader: "You have been invited to another organization. Join using your existing account."
+    existing_description: "You have been invited to join %{organization}. Sign in with your existing account to accept."
