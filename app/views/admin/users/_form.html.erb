@@ -255,10 +255,8 @@
             <%= form.label :theme, t('admin.users.form.fields.theme'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
             <div class="relative" data-controller="delta-select">
               <%= form.select :theme,
-                              @themes.map do |theme|
-                                [t("admin.users.themes.#{theme[:id]}", default: theme[:id].humanize),
-                                 theme[:id], { 'data-swatch-color': theme[:color] }]
-                              end,
+                              @themes.map { |theme| [t("admin.users.themes.#{theme[:id]}", default: theme[:id].humanize),
+                                                theme[:id], { 'data-swatch-color': theme[:color] }] },
                               {},
                               data: { user_access_target: 'theme' },
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :theme)} px-3.5 py-2.5 text-sm",
