@@ -2,6 +2,7 @@
 
 module Inventories
   class ApplyMovement
+    SUSPENDED_KINDS = %w[adjustment transfer_out return receipt].freeze
     def self.call(inventory:, quantity:, kind:, **options)
       inventory.branch.with_lock do
         validate_branch_status!(inventory, kind)
@@ -27,7 +28,7 @@ module Inventories
       permitted = case inventory.branch.operational_status
                   when 'active' then inventory.branch.operationally_active?
                   when 'preparing' then kind.to_s == 'adjustment'
-                  when 'suspended' then kind.to_s != 'sale'
+                  when 'suspended' then SUSPENDED_KINDS.include?(kind.to_s) && inventory.branch.organization&.active?
                   else false
                   end
       return if permitted
