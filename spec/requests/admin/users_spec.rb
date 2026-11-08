@@ -140,6 +140,8 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(Nokogiri::HTML(response.body).css('select#user_theme option[value=""]')).to be_empty
       expect(response.body).not_to include('id="users-create-deltin"')
       expect(response.body).to include('xl:sticky xl:top-24')
+      expect(response.body).to include('id="users-edit-access-summary"')
+      expect(response.body).to include('data-user-access-target="reviewRoles"')
       expect(response.body).not_to include('name="user[status]"')
     end
   end
