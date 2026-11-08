@@ -49,7 +49,7 @@ RSpec.describe 'Admin::Users', type: :request do
       section = document.at_css('#users-active-filters')
       expect(section).to be_present
       chips = section.css('a[data-user-filter]')
-      expect(chips.map { |chip| chip['data-user-filter'] }).to eq(%w[q user_type status role])
+      expect(chips.pluck('data-user-filter')).to eq(%w[q user_type status role])
       expect(section.text).to include(
         'staff',
         I18n.t('admin.users.user_types.employee'),
