@@ -19,7 +19,10 @@ RSpec.describe 'Branch inventory field validations', type: :request do
 
     expect(response).to have_http_status(:unprocessable_content)
     expect(response.body).to include('inventory-product-error')
-    expect(response.body).not_to include('required="required"')
+    document = Nokogiri::HTML(response.body)
+    product_field = document.at_css('select[name="inventory[product_id]"]')
+    expect(product_field).to be_present
+    expect(product_field['required']).to be_nil
     expect(branch.inventories.count).to eq(0)
   end
 
