@@ -55,6 +55,20 @@ RSpec.describe 'Admin archived user restoration', type: :request do
     expect(response.body).not_to include(user.email)
   end
 
+  it 'paginates more than twenty archived user memberships' do
+    20.times do |index|
+      archived = create(:user, status: :deleted, deleted_at: Time.current,
+                        email: "archive-page-#{index}@example.com")
+      create(:organization_membership, user: archived, organization:, account_status: :deleted)
+    end
+
+    get admin_user_restorations_path, params: { page: 2 }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(user.email)
+    expect(Nokogiri::HTML(response.body).at_css('nav[aria-label]')).to be_present
+  end
+
   it 'rejects an archived account from another organization' do
     user.organization_memberships.find_by!(organization:).update!(organization: create(:organization))
     post admin_user_restoration_path(user), params: { reason: 'Review' }
