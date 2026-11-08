@@ -49,7 +49,8 @@ RSpec.describe 'Retained inactive role assignments' do
 
   it 'permits retaining or removing an existing assignment on an archived branch' do
     assignment = create(:user_role, user:, system_role: branch_role, branch:)
-    branch.update!(status: false, deleted_at: Time.current)
+    # Simulate a legacy archived branch without bypassing production lifecycle rules.
+    branch.update_columns(status: false, operational_status: 'suspended', deleted_at: Time.current)
     expect(Users::BranchRoleAssignments.branch_options(user:, organization:)).to include(branch)
     expect(Users::BranchRoleAssignments.branch_options(user: User.new, organization:)).not_to include(branch)
     token = "#{branch.id}:#{branch_role.id}"

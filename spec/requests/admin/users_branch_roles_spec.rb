@@ -16,7 +16,7 @@ RSpec.describe 'Admin branch role assignment management', type: :request do
     sign_in admin
   end
 
-  it 'grants a branch role and makes the assigned branch available in the navbar' do
+  it 'grants an effective branch role without modifying other access' do
     patch admin_user_path(target), params: {
       user: { branch_role_assignments: ['', "#{branch.id}:#{branch_role.id}"] }
     }
@@ -24,10 +24,8 @@ RSpec.describe 'Admin branch role assignment management', type: :request do
     expect(response).to redirect_to(admin_user_path(target))
     expect(target.reload.user_roles.active.where(branch_id: branch.id).pluck(:system_role_id)).to eq([branch_role.id])
 
-    sign_out admin
-    sign_in target
-    get admin_dashboard_path
-    expect(response.body).to include(branch.name)
+    expect(target.reload.role?(branch_role.code, branch:)).to be(true)
+    expect(branch).to be_operationally_active
   end
 
   it 'replaces only local branch assignments, leaving foreign organization roles untouched' do

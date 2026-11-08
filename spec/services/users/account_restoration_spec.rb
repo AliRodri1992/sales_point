@@ -59,7 +59,8 @@ RSpec.describe Users::AccountRestoration do
     role = create(:system_role, :branch)
     local_assignment = create(:user_role, user:, system_role: role, branch: local_branch)
     other_assignment = create(:user_role, user:, system_role: role, branch: other_branch)
-    local_branch.update!(deleted_at: Time.current)
+    # Historical data can contain archived branches that predate current lifecycle protections.
+    local_branch.update_columns(deleted_at: Time.current)
     role.status = :inactive
     role.save!(context: :status_transition)
 

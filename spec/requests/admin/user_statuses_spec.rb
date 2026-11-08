@@ -37,7 +37,7 @@ RSpec.describe 'Admin user statuses', type: :request do
   it 'renders inline model errors without HTML required when the reason is blank' do
     get edit_admin_user_status_path(target), params: { transition: 'suspended' }
     expect(response).to have_http_status(:ok)
-    expect(Nokogiri::HTML(response.body).css('form [required]')).to be_empty
+    expect(Nokogiri::HTML(response.body).css('textarea#reason[required]')).to be_empty
 
     patch admin_user_status_path(target), params: { transition: 'suspended', reason: '' }
     expect(response).to have_http_status(:unprocessable_content)

@@ -11,6 +11,7 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
   before do
     create(:organization_membership, organization:, user: admin)
     create(:user_role, user: admin, system_role: create(:system_role, :system, code: 'administrator'))
+    create(:system_role, :system, code: 'user_directory_test_role')
     Warden.test_mode!
     login_as(admin, scope: :user)
   end
@@ -127,7 +128,7 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
       type.value = 'customer'
       type.dispatchEvent(new Event('change', { bubbles: true }))
     JS
-    expect(page).to have_css('#users-access-title [data-user-access-target="employeeRolesRequired"].hidden')
+    expect(page).to have_css('#users-access-title [data-user-access-target="employeeRolesRequired"].hidden', visible: :all)
     expect(page).to have_css('[data-user-access-target="roleWarning"]', text: /without roles/)
     page.execute_script(<<~JS)
       const type = document.querySelector('#user_user_type')
@@ -174,7 +175,8 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     visit edit_admin_user_status_path(target, transition: 'suspended')
     expect(page).to have_css('label[for="reason"]')
     expect(page).to have_css('label[for="review_at"]')
-    expect(page).to have_css('textarea#reason[required]')
+    expect(page).to have_css('textarea#reason')
+    expect(page).to have_no_css('textarea#reason[required]', visible: :all)
     expect(page).to have_no_css('input[type="radio"]', visible: :all)
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
   end

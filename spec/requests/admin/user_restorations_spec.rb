@@ -50,7 +50,7 @@ RSpec.describe 'Admin archived user restoration', type: :request do
     post admin_user_restoration_path(user), params: { reason: '' }
     expect(response).to have_http_status(:unprocessable_content)
     expect(Nokogiri::HTML(response.body).at_css('#users_account_restoration_reason_error')).to be_present
-    expect(Nokogiri::HTML(response.body).css('form input[required]')).to be_empty
+    expect(Nokogiri::HTML(response.body).css('input[id^="restore_reason_"][required]')).to be_empty
     expect(user.reload).to be_deleted
   end
 

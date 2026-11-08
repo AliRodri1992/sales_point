@@ -83,7 +83,7 @@
                                  data: { user_access_target: 'email' },
                                  aria: { invalid: @user.errors[:email].any? },
                                  class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :email)} px-3.5 py-2.5 text-sm text-slate-800" %>
-            <%= error_message_for(@user, :email) %>
+            <%= error_message_for(@user, :email, label: t('admin.users.form.fields.email')) %>
           </div>
           <div class="min-w-0">
             <%= form.label :username, t('admin.users.form.fields.username'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
@@ -277,7 +277,7 @@
                               class: "input-field min-h-11 w-full rounded-xl #{form_state_classes(@user, :theme)} px-3.5 py-2.5 text-sm",
                               aria: { invalid: @user.errors[:theme].any? } %>
             </div>
-            <%= error_message_for(@user, :theme) %>
+            <%= error_message_for(@user, :theme, label: t('admin.users.form.fields.theme')) %>
             <p class="mt-2 flex items-center gap-2 text-xs text-slate-600">
               <span data-user-access-target="themeSwatch" class="size-5 shrink-0 rounded-md border border-slate-300 shadow-sm" aria-hidden="true"></span>
               <span data-user-access-target="themeLabel"></span>

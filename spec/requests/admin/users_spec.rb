@@ -93,7 +93,7 @@ RSpec.describe 'Admin::Users', type: :request do
       expect(response.body).not_to include('name="user[status]"')
       expect(response.body).not_to include('name="user[password]"')
       expect(response.body).to include('data-user-access-target="submitButton"')
-      expect(response.body).to include('data-empty-label=')
+      expect(response.body).to include(I18n.t('admin.users.ui.no_roles_available'))
       expect(response.body).to include('maxlength="254"')
       theme = Nokogiri::HTML(response.body).at_css('select#user_theme')
       expect(theme).to be_present
@@ -337,7 +337,10 @@ RSpec.describe 'Admin::Users', type: :request do
         message = document.at_css("#user_#{attribute}_error")
         expect(field).to be_present
         expect(message).to be_present
-        expect(message.parent).to eq(field.parent) if attribute == 'email'
+        if attribute == 'email'
+          control = field.parent['class'] == 'field_with_errors' ? field.parent : field
+          expect(message.previous_element).to eq(control)
+        end
       end
     end
 
