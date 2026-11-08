@@ -22,6 +22,9 @@ module Admin
         source: @version, values: EmailTemplates::SampleData.call(@template), preview: true
       ).render
       render :preview
+    rescue ArgumentError
+      redirect_to admin_email_template_path(@template), status: :see_other,
+                  flash: { swal_message: t('admin.email_templates.detail_preview_error'), swal_icon: 'error' }
     end
 
     # Render the unsaved editor content without changing the stored draft.

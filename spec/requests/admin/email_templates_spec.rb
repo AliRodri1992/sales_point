@@ -92,6 +92,18 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response.body).to include('activation-demo')
   end
 
+  it 'handles an invalid saved preview without exposing a server exception' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+    draft.update!(subject: '{{name}}', html_body: '<p>{{name}}</p>',
+                  text_body: '{{name}}', allowed_variables: ['name'])
+
+    get preview_admin_email_template_path(template, version_id: draft.id)
+
+    expect(response).to redirect_to(admin_email_template_path(template))
+    expect(flash[:swal_icon]).to eq('error')
+  end
+
   it 'previews unsaved draft content without persisting changes' do
     template = create_template(organization:)
     draft = template.new_draft!(actor: administrator)
