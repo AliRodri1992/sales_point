@@ -90,6 +90,39 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(draft.reload.subject).to eq('Order')
   end
 
+  it 'validates a draft preview without treating its original version number as a duplicate' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+
+    post preview_draft_admin_email_template_path(template, version_id: draft.id), params: {
+      email_template_version: {
+        subject: 'Current unsaved preview',
+        html_body: '<p>Current unsaved preview</p>',
+        text_body: 'Current unsaved preview',
+        allowed_variables_csv: ''
+      }
+    }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.parsed_body.fetch('subject')).to eq('Current unsaved preview')
+    expect(draft.reload.subject).to eq('Order')
+  end
+
+  it 'rejects an excessively long unsaved preview without persisting it' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+
+    post preview_draft_admin_email_template_path(template, version_id: draft.id), params: {
+      email_template_version: {
+        subject: 'x' * 251, html_body: '<p>Valid preview</p>', text_body: 'Valid preview',
+        allowed_variables_csv: ''
+      }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(draft.reload.subject).to eq('Order')
+  end
+
   it 'does not preview unsaved drafts from another organization' do
     foreign = create_template(organization: other_organization)
     draft = foreign.new_draft!(actor: administrator)

@@ -29,7 +29,8 @@ module Admin
       authorize @template, :update?
       raise Pundit::NotAuthorizedError unless @version.status == 'draft'
 
-      source = @version.dup
+      # Validate a persisted version in memory: dup would trigger the unique version number constraint.
+      source = @version
       source.assign_attributes(draft_attributes)
       raise ArgumentError, source.errors.full_messages.join(', ') unless source.valid?
 
