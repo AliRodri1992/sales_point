@@ -4,6 +4,7 @@ module Admin
   class OnboardingController < ApplicationController
     layout 'admin_dashboard'
     before_action :authenticate_user!
+    before_action :set_paper_trail_whodunnit
     before_action :set_organization
     before_action :authorize_onboarding
 
