@@ -5,7 +5,8 @@ module EmailTemplateTestSending
   ERROR_KEYS = {
     'Invalid recipient' => 'admin.email_templates.invalid_recipient',
     'Template not published' => 'admin.email_templates.test_not_published',
-    'Test email limit reached' => 'admin.email_templates.test_limit_reached'
+    'Test email limit reached' => 'admin.email_templates.test_limit_reached',
+    'Unable to enqueue test email' => 'admin.email_templates.test_enqueue_failed'
   }.freeze
 
   def send_test
