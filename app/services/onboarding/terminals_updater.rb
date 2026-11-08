@@ -27,7 +27,7 @@ module Onboarding
     private
 
     def active_branch_terminals
-      branch = @organization.branches.not_deleted.where(status: true).first ||
+      branch = @organization.branches.not_deleted.where(operational_status: %w[preparing active]).first ||
                @organization.branches.not_deleted.first
       return [] unless branch
 
