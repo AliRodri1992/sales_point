@@ -1,0 +1,8 @@
+es:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            system_role_ids:
+              last_administrator: "debe conservar al menos un administrador activo en la organización."
