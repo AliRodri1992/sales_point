@@ -1,0 +1,131 @@
+name: Categories CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/fixes
+    paths:
+      - '.github/workflows/categories-ci.yml'
+      - 'app/controllers/admin/categories_controller.rb'
+      - 'app/controllers/concerns/admin/category_mutations.rb'
+      - 'app/models/category.rb'
+      - 'app/models/organization.rb'
+      - 'app/models/product.rb'
+      - 'app/models/promotion_condition.rb'
+      - 'app/policies/category_policy.rb'
+      - 'app/helpers/catalog_design_helper.rb'
+      - 'app/views/admin/categories/**'
+      - 'app/views/admin/products/_form.html.erb'
+      - 'app/views/admin/commercial_catalog/_row.html.erb'
+      - 'app/javascript/controllers/modal_controller.js'
+      - 'db/migrate/*categor*'
+      - 'db/schema.rb'
+      - 'config/locales/es.yml'
+      - 'config/locales/en.yml'
+      - 'config/locales/ko.yml'
+      - 'spec/requests/admin/categories*'
+      - 'spec/models/category_spec.rb'
+      - 'spec/policies/category_policy_spec.rb'
+      - 'spec/features/categories_quality_browser_spec.rb'
+      - 'docs/quality/modules/categories.md'
+
+permissions:
+  contents: read
+
+env:
+  RAILS_ENV: test
+  POSTGRES_DB_TEST: sale_point_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
+  REDIS_URL: redis://localhost:6379/0
+
+jobs:
+  categories_lint:
+    name: Categories module RuboCop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - name: Lint category-owned code and regressions
+        run: |
+          bin/rubocop -f simple \
+            app/controllers/admin/categories_controller.rb \
+            app/controllers/concerns/admin/category_mutations.rb \
+            app/models/category.rb app/models/promotion_condition.rb \
+            app/policies/category_policy.rb app/helpers/catalog_design_helper.rb \
+            db/migrate/20261110042000_harden_category_data_constraints.rb \
+            db/migrate/20261110043000_scope_categories_to_organizations.rb \
+            spec/models/category_spec.rb spec/policies/category_policy_spec.rb \
+            spec/requests/admin/categories_spec.rb spec/requests/admin/categories_tenant_spec.rb \
+            spec/features/categories_quality_browser_spec.rb
+
+  categories_specs:
+    name: Categories models, tenant requests and browser flows
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sale_point_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d sale_point_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips
+      - name: Install matching Chrome and ChromeDriver
+        id: browser
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+          install-chromedriver: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Build assets
+        run: |
+          yarn build:js
+          yarn build:css
+      - name: Prepare fresh test database and migrations
+        run: bin/rails db:drop db:create db:migrate
+      - name: Run categories requests, isolation, models and browser regressions
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec \
+            spec/models/category_spec.rb spec/policies/category_policy_spec.rb \
+            spec/requests/admin/categories_spec.rb spec/requests/admin/categories_tenant_spec.rb \
+            spec/requests/admin/catalog_pagination_spec.rb \
+            spec/requests/admin/granular_catalog_permissions_spec.rb \
+            spec/features/categories_quality_browser_spec.rb

@@ -48,7 +48,7 @@ RSpec.describe 'Categories organization isolation', type: :request do
 
   it 'rejects cross-organization category references on promotion conditions' do
     foreign = create(:category, organization: other_organization)
-    promotion = create(:promotion, organization:)
+    promotion = Promotion.new(organization:, name: 'Tenant promo', code: 'TENANT-PROMO', currency: 'MXN')
     condition = promotion.promotion_conditions.build(kind: 'category', category: foreign)
     expect(condition).not_to be_valid
     expect(condition.errors[:category]).to be_present
