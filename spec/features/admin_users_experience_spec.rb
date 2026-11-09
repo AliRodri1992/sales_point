@@ -158,6 +158,8 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page).to have_css('section[aria-labelledby="users-access-title"]')
     expect(page).to have_css('#user_system_role_ids_error')
     expect(page).to have_css('section[aria-describedby="user_system_role_ids_error"]')
+    expect(page.evaluate_script('document.activeElement.getAttribute("aria-invalid")')).to eq('true')
+    expect(page.evaluate_script('document.activeElement.type')).to eq('checkbox')
   end
 
   scenario 'renders field validation directly beneath the email input' do
