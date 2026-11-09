@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'System role editor', type: :request do
-  let!(:admin_role) { create(:system_role, :system, code: 'administrator') }
+  let!(:admin_role) { create(:system_role, :system, code: 'super_admin') }
   let!(:admin) { create(:user, :english) }
   let!(:role) { create(:system_role, :system, name: 'Operations', code: 'operations') }
   let!(:permission) { create(:permission, code: 'suppliers.contacts.create', module_name: 'Proveedores') }

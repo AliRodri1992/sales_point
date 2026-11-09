@@ -10,7 +10,7 @@ RSpec.describe 'Role status review', type: :feature, js: true do
   let!(:permission) { create(:permission, code: 'products.show') }
 
   before do
-    create(:user_role, user: admin, system_role: create(:system_role, :system, code: 'administrator'))
+    create(:user_role, user: admin, system_role: create(:system_role, :system, code: 'super_admin'))
     create(:system_role_permission, system_role: role, permission:)
     Warden.test_mode!
     login_as(admin, scope: :user)

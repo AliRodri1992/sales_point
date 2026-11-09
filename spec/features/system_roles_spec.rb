@@ -5,7 +5,7 @@ RSpec.feature 'SystemRoles', type: :feature do
     create(
       :system_role,
       name: 'Administrator',
-      code: 'administrator',
+      code: 'super_admin',
       role_type: :system
     )
   end

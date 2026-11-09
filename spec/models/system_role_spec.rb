@@ -23,6 +23,15 @@ RSpec.describe SystemRole, type: :model do
     expect(duplicate).not_to be_valid
   end
 
+  it 'normalizes role names and rejects duplicates ignoring case and surrounding spaces' do
+    create(:system_role, :system, name: 'Sales Manager', code: 'manager_alpha')
+    duplicate = build(:system_role, :system, name: '  sales manager  ', code: 'manager_beta')
+
+    expect(duplicate).not_to be_valid
+    expect(duplicate.name).to eq('sales manager')
+    expect(duplicate.errors[:name]).to be_present
+  end
+
   it 'generates a valid code for names in non-Latin scripts' do
     role = build(:system_role, name: '매장 관리자', code: nil)
     expect(role).to be_valid

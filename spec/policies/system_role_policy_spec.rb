@@ -8,7 +8,10 @@ RSpec.describe SystemRolePolicy do
   context 'when the user is an administrator' do
     let(:user) { build(:user) }
 
-    before { allow(user).to receive(:admin?).and_return(true) }
+    before do
+      allow(user).to receive(:admin?).and_return(true)
+      allow(user).to receive(:role?).with('super_admin').and_return(true)
+    end
 
     it 'allows all system role actions' do
       policy = described_class.new(user, record)
@@ -25,7 +28,10 @@ RSpec.describe SystemRolePolicy do
   context 'when the role is a protected administrator' do
     let(:user) { build(:user) }
 
-    before { allow(user).to receive(:admin?).and_return(true) }
+    before do
+      allow(user).to receive(:admin?).and_return(true)
+      allow(user).to receive(:role?).with('super_admin').and_return(true)
+    end
 
     it 'allows viewing but forbids deletion or modifying permissions' do
       SystemRole::ADMINISTRATIVE_CODES.each do |code|
@@ -36,6 +42,25 @@ RSpec.describe SystemRolePolicy do
         expect(policy.destroy?).to be(false)
         expect(policy.update_permissions?).to be(false)
       end
+    end
+  end
+
+  context 'when the user is a regular administrator' do
+    let(:user) { build(:user) }
+
+    before do
+      allow(user).to receive(:admin?).and_return(true)
+      allow(user).to receive(:role?).with('super_admin').and_return(false)
+    end
+
+    it 'can view roles but cannot manage global privileges' do
+      policy = described_class.new(user, record)
+      expect(policy.index?).to be(true)
+      expect(policy.show?).to be(true)
+      expect(policy.create?).to be(false)
+      expect(policy.update?).to be(false)
+      expect(policy.change_status?).to be(false)
+      expect(policy.update_permissions?).to be(false)
     end
   end
 

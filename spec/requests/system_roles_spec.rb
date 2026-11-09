@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'SystemRoles', type: :request do
   include Devise::Test::IntegrationHelpers
 
-  let!(:admin_role) { create(:system_role, name: 'Administrator', code: 'administrator', role_type: :system) }
+  let!(:admin_role) { create(:system_role, name: 'Administrator', code: 'super_admin', role_type: :system) }
   let!(:admin) { create(:user, :english) }
   let!(:membership) { create(:user_role, user: admin, system_role: admin_role) }
 
@@ -105,7 +105,7 @@ RSpec.describe 'SystemRoles', type: :request do
 
     it 'forbids removing administrator and super-administrator permissions' do
       permission = create(:permission)
-      super_role = create(:system_role, :system, code: 'super_admin')
+      super_role = create(:system_role, :system, code: 'administrator')
 
       [admin_role, super_role].each do |role|
         expect(role.permissions).to include(permission)
