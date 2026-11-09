@@ -25,7 +25,6 @@ on:
       - 'spec/policies/system_role*'
       - 'spec/requests/system_role*'
       - 'spec/services/system_roles/**'
-      - 'spec/services/system_roles/**'
       - 'spec/features/system_role*'
       - 'spec/seeds/full_seed_repeatability_spec.rb'
       - 'docs/quality/modules/system-roles.md'

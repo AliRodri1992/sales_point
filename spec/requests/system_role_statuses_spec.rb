@@ -131,9 +131,9 @@ RSpec.describe 'Reviewed role status changes', type: :request do
   end
 
   it 'lets an administrator explicitly remove an inactive assignment before archiving' do
-    organization = create(:organization)
+    organization = admin.organization_memberships.first!.organization
     user = create(:user, :english)
-    [admin, user].each { |member| create(:organization_membership, user: member, organization:) }
+    create(:organization_membership, user:, organization:)
     assignment = create(:user_role, user:, system_role: role)
     change_status('inactive')
     get edit_admin_user_path(user)

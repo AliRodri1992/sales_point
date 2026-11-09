@@ -53,16 +53,18 @@ RSpec.describe 'Role permission persistence and authorization regressions', type
 
   it 'rejects a role administrator whose last organization membership is revoked' do
     membership.update!(status: :inactive)
+
     get system_roles_path
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to redirect_to(new_user_session_path)
 
     get system_role_path(role)
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to redirect_to(new_user_session_path)
 
     post system_roles_path, params: { system_role: { name: 'Unauthorized', role_type: 'system' } }
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to redirect_to(new_user_session_path)
+    expect(SystemRole.find_by(name: 'Unauthorized')).to be_nil
 
     patch permissions_system_role_path(role), params: { permission_ids: [] }
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to redirect_to(new_user_session_path)
   end
 end

@@ -36,7 +36,7 @@ RSpec.describe 'Role status review', type: :feature, js: true do
     page.driver.browser.manage.window.resize_to(390, 844)
     visit system_role_path(role)
     click_button 'Review change'
-    expect(page).to have_text('Users without another active role')
+    expect(page).to have_text('Users without another effective role')
     expect(page).to have_text('This role will stop authorizing operations on the next request.')
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
     confirm_change('Seasonal operation ended')
