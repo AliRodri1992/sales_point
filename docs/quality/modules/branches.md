@@ -306,3 +306,19 @@ Branches CI [42565000001](https://github.com/AliRodri1992/sales_point/actions/ru
 ### BR-005 — reinicio seguro de la base exclusiva de CI (2026-11-08)
 
 En Branches CI [42565321011](https://github.com/AliRodri1992/sales_point/actions/runs/42565321011), SHA `db06e4b`, el job se detuvo antes de RSpec con `PG::DuplicateObject` en la clave foránea `user_roles`. El servicio de PostgreSQL de Actions ya crea `sale_point_test` y el workflow repetía `db:create db:migrate`. Se cambia únicamente el paso **Prepare test database** de `.github/workflows/branches-ci.yml` a `db:drop db:create db:migrate`, siguiendo el procedimiento de base limpia del CI global. **Alcance destructor limitado a la base efímera sale_point_test del runner CI**, sin tocar desarrollo/producción ni datos reales. **Estado de la nueva ejecución: pendiente**, no se presume corregida la causa sin resultado verde.
+
+
+## Verificación automatizada de BR-001, BR-003 y preparación CI — 2026-11-08
+
+**SHA validado:** `b865c461b7aa3c5e8e33c053bbdb6ee90cd1a921` — [Branches CI 42565579713](https://github.com/AliRodri1992/sales_point/actions/runs/42565579713). Resultado comprobado en los jobs reales de GitHub Actions:
+
+| Job | Resultado |
+|---|---|
+| Branches module RuboCop | **PASÓ** |
+| Prepare test database (PostgreSQL efímero; `db:drop db:create db:migrate`) | **PASÓ** |
+| Branches models, requests and real browser flows | **PASÓ: 132 ejemplos, 0 fallos** (seed `25971`) |
+
+- **BR-001:** semántica `h2` restaurada y región independiente `role="status"`, `aria-live="polite"`, `aria-atomic="true"` actualizada por Turbo Stream. Prueba real de Chrome y requests **VERIFICADAS AUTOMÁTICAMENTE** en el SHA indicado. Evaluación perceptiva con lector de pantalla real aún pendiente para cierre accesible.
+- **BR-003:** motivo de transición multilineal, ajustable en móvil, con máximo de 2,000 caracteres, 422 y error por campo. Pruebas de requests y Chrome **VERIFICADAS AUTOMÁTICAMENTE** en el SHA indicado. La corrección de la prueba de `textarea` retira el salto de línea inicial añadido por ActionView al renderizar HTML, sin modificar la entrada del usuario.
+- **BR-005:** bloqueo por migración con fecha futura corregido mediante renombrado mínimo; base efímera del runner recreada correctamente en CI. **La aceptación integral continúa ABIERTA**: el job `CI` general del mismo SHA se canceló por commits paralelos, no constituye éxito global. La documentación y las pruebas no sustituyen revisión manual del lector de pantalla, zoom 200 % y aceptación independiente.
+- **Alcance:** ningún dato de bases persistentes eliminado, ninguna fusión realizada. Los IDs históricos se conservan; no duplicar hallazgos en auditorías posteriores.
