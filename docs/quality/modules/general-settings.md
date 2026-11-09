@@ -1,6 +1,6 @@
 # Registro de calidad — General (`/admin/general_settings`)
 
-**Estado actual:** REAUDITADO 2026-11-09; ANTERIORES ADECUACIONES CONSERVADAS; GENERAL CI VERDE (42 ejemplos, 0 fallos); NUEVOS HALLAZGOS 015 (P2) Y 016 (P3), PENDIENTES DE CORRECCIÓN; CI GLOBAL CON FALLOS EXTERNOS Y REVISIÓN VISUAL INDEPENDIENTE PENDIENTES; NO CERRADO.  
+**Estado actual:** HALLAZGOS 015/016 CORREGIDOS Y VERIFICADOS; GENERAL CI VERDE (49 ejemplos, 0 fallos); GENERAL_SETTINGS-009 CON COBERTURA AUTOMATIZADA AMPLIADA; CI GLOBAL CON FALLOS FUERA DEL MÓDULO Y REVISIÓN VISUAL INDEPENDIENTE PENDIENTES; NO CERRADO.  
 **Fecha:** 2026-11-08 (America/Mexico_City). **Rama:** `feature/fixes`.  
 **SHA base de inspección:** `8974fee011f9422066985a0ab088ed2d771e1c8a`. **SHA revisado posteriormente:** `719ae720c3464bbab3478ef7cd91399b5c911b53` (comparación sin cambios en archivos de General).  
 **SHA de aceptación:** PENDIENTE. **Responsable propuesto:** equipo Delta POS. **Revisor independiente:** PENDIENTE.  
@@ -247,3 +247,20 @@ Conservar los 42 tests funcionales y de Chrome aprobados: la mejora es real y **
 - No se hallaron regresiones por código en `005` (recuperación con bloqueo de organización y respeto de ajustes archivados), `008` (permiso por organización), `010` (token obligatorio y bloqueo de fila), `011` (tabla de auditoría en schema), `012` (contraste), `013` (no-op/CTA) ni `014` (pulido existente).
 - **Prioridad:** corregir `015` y `016` con pruebas negativas específicas; después cubrir `009` y obtener evidencia visual y CI global completo verde. **No cerrar el expediente** por el mero éxito del pipeline focal.
 - **Esta reauditoría es documental:** no cambia controladores, modelos, formularios ni migraciones; únicamente agrega hallazgos al registro estable para adecuación posterior.
+
+## 11. Implementación y verificación de la reauditoría — 2026-11-09
+
+**Commit funcional:** `feb1bf297df9c0a7d3863d0259b2b8b5b98a857b`, rama `feature/fixes`.  
+**CI focalizado real:** [General Settings CI #42611039332](https://github.com/AliRodri1992/sales_point/actions/runs/42611039332) — **SUCCESS** en los tres jobs. **49 ejemplos RSpec, 0 fallos**, incluyendo casos HTTP, modelo y Chrome, RuboCop, YAML y paridad es/en/ko, migraciones y restauración desde `db:schema:load`.
+
+| ID | Estado comprobado | Cambio y prueba de aceptación |
+|---|---|---|
+| **GENERAL_SETTINGS-015 (P2)** | **CORREGIDO — CI FOCAL VERDE** | `OrganizationSetting` permite asignar valores de `enum :payment_method` desconocidos sin lanzar `ArgumentError`, y valida ese valor en el modelo. Se mantiene `allow_nil` en el validador del enum para no convertir la etapa inicial de Onboarding en una nueva validación de pago; `create/update` continúan exigiendo presencia e inclusión. Request specs de recuperación con `crypto`, blanco y moneda inactiva comprueban 422, mensaje bajo el campo, asociación ARIA y cero persistencia. Un spec de modelo confirma que la asignación es segura. |
+| **GENERAL_SETTINGS-016 (P3)** | **CORREGIDO — CI FOCAL VERDE** | El resumen SSR usa el tamaño seleccionado si es válido, o el último tamaño persistido; si aún no existe, utiliza `TablePagePreference::DEFAULT`. Stimulus aplica el mismo fallback cuando el select no contiene una opción válida. Una prueba de request comprueba que el rechazo de `99` no anuncie «99 registros por página» y que el valor persistido siga siendo 10. |
+| **GENERAL_SETTINGS-009 (puerta de cobertura)** | **AUTOMATIZADO EN MÁS ESCENARIOS — REVISIÓN MANUAL PENDIENTE** | Browser spec a 390px para modo de recuperación: los dropdowns de moneda/zona/pago exponen `aria-required`, se abren/cierra con Escape y se preserva el foco/estado; se muestra error del modelo por campo al guardar, `aria-invalid`/`aria-describedby` se propagan al botón personalizado, y corregir/guardar configura la organización. Se agregó request spec de reintento tras un 409. Los cambios de `delta_select_controller.js`, `form_validation_helper.rb` y la hoja Tailwind compartida ahora disparan el CI focal. |
+
+**Límites explícitos:** las pruebas Chrome cubren flujos reales y reflujo en diversos anchos, pero **no** sustituyen pruebas asistidas con lector de pantalla, zoom 200% real, screenshots comparados ni evaluación de diseño realizada por una persona. Estas verificaciones siguen pendientes para la aceptación visual independiente. No se ejecutó la CLI original de Impeccable, UI UX Pro Max o Ponytail; se aplicó su procedimiento con las herramientas conectadas.
+
+**Puerta global:** [CI global del mismo commit #42611039425](https://github.com/AliRodri1992/sales_point/actions/runs/42611039425) registró **32 ofensas de RuboCop en archivos externos a General** (Inventario, Onboarding, modelos compartidos, scripts y specs de otros dominios); RuboCop focal de General pasó. Seguridad e i18n globales pasaron; migraciones/semillas y RSpec global estaban en proceso al registrar esta entrada. No fusionar ni declarar cierre modular hasta obtener CI global verde sobre un SHA final y revisión independiente.
+
+**Resultados:** 015 y 016 = resueltos con evidencia automatizada. 009 = ampliado pero pendiente de validaciones humanas de accesibilidad y diseño. Se preservan todos los IDs históricos. No se recreó la base de datos del usuario, no se modificaron módulos vecinos ni se hizo merge.
