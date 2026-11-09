@@ -41,7 +41,7 @@
     <div class="products-filters__grid">
       <div class="products-filters__field">
         <%= label_tag :category_id, t('admin.catalog_design.category_id') %>
-        <%= select_tag :category_id, options_for_select([[t('admin.catalog_design.all_categories'), '']] + Category.not_deleted.order(:name).pluck(:name, :id), params[:category_id]), include_blank: false %>
+        <%= select_tag :category_id, options_for_select([[t('admin.catalog_design.all_categories'), '']] + current_organization.categories.not_deleted.order(:name).pluck(:name, :id), params[:category_id]), include_blank: false %>
       </div>
       <div class="products-filters__field">
         <%= label_tag :featured, t('admin.catalog_design.featured_filter') %>

@@ -362,21 +362,35 @@ RSpec.describe 'Admin::Products', type: :request do
     end
 
     it 'combines category, tracking, featured and price filters within this organization' do
-      category = create(:category)
-      chosen = create(:product, organization:, category:, tracking_mode: :lot,
-                      featured: true, price: 80, name: 'Matching catalog item')
-      create(:product, organization:, category:, tracking_mode: :none,
-             featured: false, price: 140, name: 'Not matching item')
-      create(:product, organization: create(:organization), category:, tracking_mode: :lot,
-             featured: true, price: 80, name: 'Foreign catalog item')
+      category = create(:category, organization:)
+      attrs = { category:, tracking_mode: :lot, featured: true, price: 80 }
+      chosen = create(:product, organization:, **attrs, name: 'Matching catalog item')
+      create(:product, organization:, category:, tracking_mode: :none, featured: false,
+             price: 140, name: 'Not matching item')
+      foreign_organization = create(:organization)
+      foreign_category = create(:category, organization: foreign_organization)
+      create(:product, organization: foreign_organization, category: foreign_category,
+             tracking_mode: :lot, featured: true, price: 80, name: 'Foreign catalog item')
 
-      get admin_products_path, params: { category_id: category.id, tracking_mode: 'lot',
-                                         featured: 'true', min_price: '60', max_price: '90' }
+      filters = {
+        category_id: category.id, tracking_mode: 'lot', featured: 'true',
+        min_price: '60', max_price: '90'
+      }
+      get admin_products_path, params: filters
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(chosen.name)
       expect(response.body).not_to include('Not matching item', 'Foreign catalog item')
       expect(Nokogiri::HTML(response.body).at_css('details.products-filters__advanced')['open']).to be_present
+    end
+
+    it 'shows only this organization categories in the advanced filters' do
+      visible = create(:category, organization:)
+      foreign = create(:category, organization: create(:organization))
+      get admin_products_path
+
+      expect(response.body).to include(visible.name)
+      expect(response.body).not_to include(foreign.name)
     end
 
     it 'filters available, depleted and low-stock products using tenant inventories' do
@@ -538,7 +552,7 @@ RSpec.describe 'Admin::Products', type: :request do
       document = Nokogiri::HTML(response.body)
       fields = document.css('#product-variants input[name$="[name]"]')
       expect(fields.size).to eq(2)
-      ids = fields.map { |field| field['aria-describedby'] }
+      ids = fields.map { |field| field.attributes.fetch('aria-describedby').value }
       expect(ids).to all(be_present)
       expect(ids.uniq.size).to eq(2)
       ids.each { |id| expect(document.at_css("##{id}")).to be_present }
@@ -546,16 +560,14 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'explains a segment-mismatched price list in the quote response' do
       product = create(:product, organization:)
-      price_list = organization.price_lists.create!(name: 'Wholesale', code: 'WHS-QUO',
-                                                   currency: 'MXN', status: 'active',
-                                                   customer_segment: 'wholesale')
-
-      get quote_admin_product_path(product), params: { price_list_id: price_list.id,
-                                                        customer_segment: 'retail' }
+      attributes = { name: 'Wholesale', code: 'WHS-QUO', currency: 'MXN',
+                     status: 'active', customer_segment: 'wholesale' }
+      price_list = organization.price_lists.create!(attributes)
+      query = { price_list_id: price_list.id, customer_segment: 'retail' }
+      get quote_admin_product_path(product), params: query
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.parsed_body.fetch('error')).to be_present
     end
   end
-
 end
