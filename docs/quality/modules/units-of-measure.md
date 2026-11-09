@@ -124,3 +124,15 @@ Mantener **NO CERRADO** hasta que todas las comprobaciones del estándar estén 
 - **UOM-017 (P2) — CORRECCIÓN COMPLETADA EN CÓDIGO, PENDIENTE DE CI/NAVEGADOR:** al reemplazar el listado por Turbo Stream, el controlador `units-of-measure-context` sincroniza la URL de la página y los filtros efectivos (incluyendo el número de página normalizado) mediante `history.replaceState`, preservando el estado de historial de Turbo. La regresión Chrome comprueba `current_url` después de retirar el último registro de una página.
 - **UOM-018 (P2) — CORRECCIÓN ANTERIOR CONSERVADA:** Escape cierra el dropdown abierto sin propagarse al modal; la regresión de navegador espera que otra pulsación cierre el modal. Los resultados de CI del nuevo commit son los que acreditarán este comportamiento.
 - **Puertas de cierre:** matriz completa de pruebas RSpec/RuboCop, CI global, revisión manual de accesibilidad (zoom 200 %, lector de pantalla, contraste), inspección visual independiente y actualización comprobada de una base histórica. No se toca Productos ni se realiza merge.
+
+### Evidencia CI posterior a las correcciones — 2026-11-09
+
+**SHA de código probado:** `c7c2868a9e59f2563cb1d0960aae134e2bfcc499`. [Units of measure CI #42654122312](https://github.com/AliRodri1992/sales_point/actions/runs/42654122312) — **SUCCESS** en los dos jobs: `Units of measure RuboCop` y `Units of measure model and request regressions`. El log RSpec acredita **34 ejemplos, 0 fallos** (modelo, aislamiento organizacional, solicitudes HTTP y navegador Chrome); la preparación reconstruyó la base de pruebas mediante `db:drop db:create db:migrate`.
+
+- **UOM-019 — VERIFICADO para el código probado:** se corrigieron los errores de sintaxis y las ofensas RuboCop; el spec nuevo carga y termina en verde. Sin P1 propio abierto a partir de esta evidencia.
+- **UOM-017 — VERIFICADO en escenarios focalizados:** se comprobaron filtros al crear y editar, baja lógica desde la última página, el retorno a página válida y la sincronización `current_url` con la consulta aplicada. La comprobación manual adicional de historial atrás/adelante no está acreditada.
+- **UOM-018 — VERIFICADO en escenario focalizado Chrome:** al pulsar Escape con el dropdown SAT abierto, se cierra solo ese desplegable, se conservan datos del formulario y una pulsación posterior cierra el modal.
+- **CI global:** continúa siendo una puerta de aceptación independiente. El RuboCop global del mismo SHA reportó infracciones en archivos externos al módulo (inventarios, onboarding, otros servicios/specs y scripts), no en los archivos Ruby del catálogo. La CI global no se considera verde sin todos sus jobs.
+- **Cierre global NO ACREDITADO:** faltan revisión visual independiente, zoom 200 %, contraste/lector de pantalla, migración comprobada desde una base histórica existente y CI global satisfactoria. No se fusionaron ramas ni se relacionaron Productos.
+
+**Estado de seguimiento:** los defectos UOM-019 y los escenarios automatizados UOM-017/UOM-018 se atendieron con evidencia focalizada; el módulo completo permanece **NO CERRADO** hasta superar las puertas generales.
