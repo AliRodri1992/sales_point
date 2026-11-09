@@ -1,7 +1,8 @@
 <% member_status = @user.organization_memberships.active.find_by(organization: current_organization)&.account_status || @user.status %>
 <% content_for :title, "#{@user.display_name} | #{t('admin.users.index.title')}" %>
 <% assignments = @user.user_roles.where(deleted_at: nil).includes(:system_role, branch: :organization).to_a.select do |assignment|
-     assignment.system_role && assignment.system_role.deleted_at.nil? &&
+     assignment.organization_id == current_organization&.id &&
+       assignment.system_role && assignment.system_role.deleted_at.nil? &&
        (assignment.branch_id.nil? || (assignment.branch&.organization_id == current_organization&.id &&
                                     assignment.branch.deleted_at.nil?))
    end %>
