@@ -63,6 +63,14 @@
 - Validación pendiente para este nuevo SHA: Users CI y CI global, zoom 200 %, viewport móvil y lector de pantalla. La verificación anterior de 306 pruebas pertenece únicamente a `a4a4f488`.
 - En la auditoría de este pase también se revisaron `UsersController`, `UserStatusesController`, `UserPolicy`, modelo `User`, directorio, detalle y controlador Stimulus. **USERS-002 continúa abierto**; no modificar privilegios multiempresa sin contrato definido.
 
+### Adecuaciones complementarias — 2026-11-08
+
+- **USERS-010:** el controlador `user_access_controller.js` ahora muestra cualquier acordeón que contenga el primer control `aria-invalid="true"`, enfoca el control y deja que el navegador lo desplace al área visible. Cambio publicado en `d77db915`; falta CI del SHA definitivo.
+- **USERS-013:** incorporada regresión Capybara para centrado horizontal/vertical, permanencia dentro del viewport de 390 × 420 y cierre sin cambiar el estado de cuenta. Prueba publicada en `9d245f2e`; su resultado **no está certificado** hasta completar Users CI.
+- **USERS-002:** sigue como decisión contractual de seguridad sobre roles globales en distintas organizaciones. No se cambia la concesión de privilegios sin regla formal y migración de datos.
+- **USERS-011:** se conservan los KPI existentes; no se dispone de pruebas de usabilidad que justifiquen eliminarlos.
+- Las pruebas automatizadas de geometría no sustituyen una revisión manual con zoom real 200 %, lector de pantalla ni comprobación visual de contraste. El SHA de aceptación permanece pendiente.
+
 ## 4. Matriz de aceptación por pantalla
 
 | Pantalla / flujo | Servidor, autorización y datos | UX y errores | Evidencia aún exigida |
