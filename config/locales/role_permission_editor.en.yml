@@ -87,7 +87,7 @@ en:
       form:
         required_field: 'Required field'
         code_label: 'Code'
-        access_required: 'Selected actions require the module's Access permission.'
+        access_required: "Selected actions require the module's Access permission."
         invalid_permissions: The selection contains unavailable permissions. Review
           the permissions and try again.
       permission_history:
