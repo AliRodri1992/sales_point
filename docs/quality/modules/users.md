@@ -104,6 +104,21 @@
 - **Foco de esta entrega:** aislamiento dentro del módulo Usuarios y contratos directos. No certifica todas las consultas de roles de otros módulos ni las verificaciones manuales de contraste, zoom 200 % y lectores de pantalla.
 - **CI:** los primeros runs fallaron por timestamp futuro de migración, `NULL` SQL sin tipo en `branch_id` e infracciones RuboCop; se corrigieron. El run de aceptación debe evaluarse sobre la versión final, no los commits intermedios.
 
+### Reauditoría AI Dev Suite — 2026-11-09 (HEAD `d414ec7d`)
+
+**Alcance:** código de roles por organización, cuentas compartidas, migración `ScopeUserRolesByOrganization`, creación/edición, invitaciones, restauración, modal y pruebas. Métodos: Impeccable, UI UX Pro Max y Ponytail aplicados sobre GitHub; sin navegador local, CLI externo ni datos de producción.
+
+| ID | Severidad | Evidencia y alcance | Adecuación recomendada | Estado |
+|---|---|---|---|---|
+| **USERS-015** | **P1 · Propio · Confirmado por código** | `UserRole` conserva `organization` opcional y solo exige organización para usuarios con **más de una** membresía. Un rol puede nacer sin membresía o con `organization_id` de una empresa a la que el usuario aún no pertenece. `OrganizationMembership#scope_orphan_roles_on_first_membership` incorpora automáticamente roles huérfanos a la primera empresa al crear membresía, sin consentimiento ni nuevo evento de concesión. Esto contradice el contrato de que incorporarse a una empresa no concede roles automáticamente. | Exigir correspondencia entre la organización del rol y la membresía del usuario; definir el orden transaccional de alta, separar rol preasignado de concesión efectiva, suprimir promociones implícitas y migrar/reconciliar roles sin organización; regresión de unión posterior a empresa y asignación extranjera. | **ABIERTO; requiere corrección y pruebas** |
+| **USERS-014** | **P2 · Regresión parcial del hallazgo existente** | La modal ya trata correctamente fallos distintos de `422`, pero `submissionFinished` marca siempre `reason` inválido cuando recibe `422`. `UserStatusesController#render_invalid_transition` puede devolver `422` con **errores de base** (p. ej., `ArgumentError`), no necesariamente una validación de `reason`. | Emitir una señal de error por campo desde el servidor o detectar `#users-deactivation-reason` específicamente; presentar errores de base sin atribuirlos al textarea. Añadir regresiones `422` de campo y `422` de negocio. | **REABIERTO PARCIALMENTE** |
+| **USERS-012** | **Bloqueo de calidad, compartido** | [CI general `d414ec7d`](https://github.com/AliRodri1992/sales_point/actions/runs/42609077039) detectó 32 ofensas; **dos son de `app/models/organization_membership.rb`**, directamente relacionado con Usuarios: `Style/CollectionQuerying` y `Rails/SkipsModelValidations` por `update_all`. La lista especializada de RuboCop de Users CI no incluye ese modelo. | Incluir `OrganizationMembership` en RuboCop de Usuarios y sustituir o justificar explícitamente la escritura masiva con pruebas y registro auditable. Mantener los defectos restantes asignados a módulos vecinos. | **ABIERTO** |
+| **USERS-002** | **P2 · Revisión de datos** | La migración copia roles históricos a las membresías existentes, incluso aquellas cuyo `account_status` no es activo, preservando el acceso anterior potencialmente recuperable. El diseño no hereda roles al agregar una membresía futura cuando la concesión ya está correctamente acotada. | Revisar concesiones históricas por empresa y estados de membresía antes de considerar aceptado el backfill. | **IMPLEMENTACIÓN PROBADA, REVISIÓN OPERATIVA PENDIENTE** |
+
+**CI:** [Users CI `d414ec7d`](https://github.com/AliRodri1992/sales_point/actions/runs/42609077246) completó **316 ejemplos, 0 fallos** y RuboCop especializado verde. En CI general del mismo SHA, migraciones/seeds, I18n y seguridad pasaron; RuboCop global falló y RSpec global seguía ejecutándose al consultar. No confundir el detector original de Impeccable/UX Pro Max con esta auditoría asistida.
+
+**Aceptación visual:** pendiente inspección real de zoom 200 %, contraste WCAG, lector de pantalla, navegación móvil y teclado. No se ha comprobado por observación en navegador local.
+
 ## 4. Matriz de aceptación por pantalla
 
 | Pantalla / flujo | Servidor, autorización y datos | UX y errores | Evidencia aún exigida |
