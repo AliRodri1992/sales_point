@@ -59,6 +59,40 @@ RSpec.describe UserRole, type: :model do
       expect(assignment.errors[:branch]).to include('must be blank for system roles')
     end
 
+    it 'rejects assigning a role to an organization without a matching user membership' do
+      user = create(:user)
+      foreign = create(:organization)
+      role = create(:system_role, :system)
+      assignment = build(:user_role, user:, system_role: role, organization: foreign)
+
+      expect(assignment).to be_invalid
+      expect(assignment.errors[:organization]).to be_present
+    end
+
+    it 'does not promote an orphan system role when a user joins the first organization' do
+      user = create(:user)
+      role = create(:system_role, :system, code: 'legacy_unassigned_role')
+      assignment = create(:user_role, user:, system_role: role)
+      organization = create(:organization)
+
+      create(:organization_membership, user:, organization:)
+
+      expect(assignment.reload.organization_id).to be_nil
+      expect(user.role?('legacy_unassigned_role', organization:)).to be(false)
+    end
+
+    it 'rejects new organizationless role grants after a membership exists' do
+      user = create(:user)
+      first = create(:organization)
+      create(:organization_membership, user:, organization: first)
+      create(:organization_membership, user:, organization: create(:organization))
+      role = create(:system_role, :system)
+      assignment = build(:user_role, user:, system_role: role, organization: nil)
+
+      expect(assignment).to be_invalid
+      expect(assignment.errors[:organization]).to be_present
+    end
+
     it 'rejects duplicate active global roles for the same user' do
       user = create(:user)
       role = create(:system_role, :system)
