@@ -38,10 +38,12 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
     sat_dropdown = find('#unit_of_measure_sat_unit_key_id', visible: :all).find(:xpath, '..')
     sat_dropdown.find('button[aria-haspopup="listbox"]').click
     sat_dropdown.find('[role="option"]', text: /H87.*Piece/).click
+    expect(find('#unit_of_measure_sat_unit_key_id', visible: :all).value).to eq(sat_key.id.to_s)
+    expect(page).to have_field('unit_of_measure_name', with: 'Browser piece')
 
     click_button 'Create unit'
-    expect(page).to have_css('#units_of_measure_list', text: 'Browser piece', wait: 10)
     expect(page).to have_css('turbo-frame#unit_of_measure_modal.hidden', visible: :all, wait: 10)
+    expect(page).to have_css('#units_of_measure_list', text: 'Browser piece', wait: 10)
 
     unit = organization.units_of_measure.find_by!(code: 'BR_PCE')
     expect(unit.sat_unit_key_id).to eq(sat_key.id)
