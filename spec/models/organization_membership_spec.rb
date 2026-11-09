@@ -6,16 +6,19 @@ RSpec.describe OrganizationMembership, type: :model do
   it { is_expected.to belong_to(:organization) }
   it { is_expected.to belong_to(:user) }
 
-  it 'does not grant previously unscoped roles when the first organization is joined' do
+  it 'materializes a preassigned role for the first organization only' do
     user = create(:user)
-    role = create(:system_role, :system, code: 'orphan_membership_role')
+    role = create(:system_role, :system, code: 'preassigned_membership_role')
     assignment = create(:user_role, user:, system_role: role)
     organization = create(:organization)
 
     create(:organization_membership, user:, organization:)
+    other = create(:organization)
+    create(:organization_membership, user:, organization: other)
 
-    expect(assignment.reload.organization_id).to be_nil
-    expect(user.role?('orphan_membership_role', organization:)).to be(false)
+    expect(assignment.reload.organization_id).to eq(organization.id)
+    expect(user.role?('preassigned_membership_role', organization:)).to be(true)
+    expect(user.role?('preassigned_membership_role', organization: other)).to be(false)
   end
 
   it 'defines the supported statuses' do
