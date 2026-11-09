@@ -7,6 +7,7 @@ on:
       - feature/fixes
     paths:
       - '.github/workflows/email-templates-ci.yml'
+      - 'docs/quality/modules/email_templates.md'
       - 'app/controllers/admin/email_*'
       - 'app/controllers/concerns/email_template*'
       - 'app/controllers/concerns/admin/email_setting*'
