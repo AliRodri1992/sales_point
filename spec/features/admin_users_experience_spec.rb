@@ -244,6 +244,45 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(target.reload.organization_memberships.find_by!(organization:).account_status).to eq('active')
   end
 
+  scenario 'distinguishes a field validation error from a business 422 in the deactivation modal' do
+    permission = Permission.find_or_create_by!(code: 'users.destroy') do |item|
+      item.name = 'Deactivate users'
+      item.module_name = 'Usuarios'
+      item.status = :active
+    end
+    SystemRolePermission.find_or_create_by!(system_role: admin.system_roles.first, permission:)
+    target = create(:user, email: 'invalid-transition@example.com')
+    create(:organization_membership, organization:, user: target)
+
+    visit admin_users_path
+    find("button[data-deactivation-account='#{target.email}']").click
+    page.execute_script(<<~JS)
+      const errors = document.querySelector('#users-deactivation-errors')
+      const form = document.querySelector('#users-deactivation-modal form')
+      errors.textContent = 'Business rule prevents deactivation'
+      form.dispatchEvent(new CustomEvent('turbo:submit-end', {
+        bubbles: true, detail: { success: false, fetchResponse: { statusCode: 422 } }
+      }))
+    JS
+    expect(page).to have_no_css('#users-deactivation-reason[aria-invalid="true"]')
+    expect(page.evaluate_script('document.activeElement.id')).to eq('users-deactivation-errors')
+
+    page.execute_script(<<~JS)
+      const errors = document.querySelector('#users-deactivation-errors')
+      const marker = document.createElement('span')
+      marker.dataset.deactivationReasonError = ''
+      marker.hidden = true
+      errors.append(marker)
+      document.querySelector('#users-deactivation-modal form').dispatchEvent(
+        new CustomEvent('turbo:submit-end', {
+          bubbles: true, detail: { success: false, fetchResponse: { statusCode: 422 } }
+        })
+      )
+    JS
+    expect(page).to have_css('#users-deactivation-reason[aria-invalid="true"]')
+    expect(page.evaluate_script('document.activeElement.id')).to eq('users-deactivation-reason')
+  end
+
   scenario 'centers the deactivation dialog within a compact mobile viewport' do
     permission = Permission.find_or_create_by!(code: 'users.destroy') do |item|
       item.name = 'Deactivate users'
