@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'timeout'
 
-RSpec.describe 'Concurrent email template publication', type: :model do
+RSpec.describe 'Concurrent email template publication', type: :model, concurrent_db: true do
   it 'serializes overlapping PostgreSQL locks and creates only one publication audit' do
     template = EmailTemplate.create!(
       key: 'overlapping_notice', name: 'Overlapping notice', category: 'security',
