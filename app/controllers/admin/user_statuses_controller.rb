@@ -21,17 +21,27 @@ module Admin
       return head :unprocessable_content unless permitted_transition?
 
       @status_form = Users::StatusTransition.new(**transition_attributes)
-      return render :edit, status: :unprocessable_content unless @status_form.call
+      return render_invalid_transition unless @status_form.call
 
       render_successful_change
     rescue Users::InvitationDispatcher::DeliveryError
       redirect_to admin_user_path(@user), alert: t('admin.users.status_management.invitation_delivery_failed')
     rescue ArgumentError => e
       @status_form.errors.add(:base, Users::StatusErrorPresenter.call(e.message))
-      render :edit, status: :unprocessable_content
+      render_invalid_transition
     end
 
     private
+
+    def render_invalid_transition
+      return render :edit, status: :unprocessable_content unless @target == 'deleted' && request.format.turbo_stream?
+
+      render turbo_stream: turbo_stream.update('users-deactivation-errors',
+                                              partial: 'admin/user_statuses/deactivation_errors',
+                                              locals: { status_form: @status_form }),
+             status: :unprocessable_content
+    end
+
 
     def permitted_transition?
       helpers.allowed_user_transitions(@user, organization: current_organization).include?(@target)

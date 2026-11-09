@@ -34,6 +34,28 @@ RSpec.describe 'Admin user statuses', type: :request do
     expect(UserStatusEvent.last.reason).to eq('Ausencia temporal')
   end
 
+  it 'responds with inline modal errors for a missing deactivation reason' do
+    patch admin_user_status_path(target), params: { transition: 'deleted', reason: '' },
+          headers: { 'Accept' => Mime[:turbo_stream].to_s }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.media_type).to eq('text/vnd.turbo-stream.html')
+    expect(response.body).to include('users-deactivation-errors')
+    expect(response.body).to include(I18n.t('admin.users.status_management.reason'))
+    expect(target.reload).to be_active
+  end
+
+  it 'deactivates from a modal form and writes an audit event' do
+    expect do
+      patch admin_user_status_path(target), params: { transition: 'deleted', reason: 'Access terminated' },
+            headers: { 'Accept' => Mime[:turbo_stream].to_s }
+    end.to change(UserStatusEvent, :count).by(1)
+
+    expect(response).to redirect_to(admin_users_path)
+    expect(UserStatusEvent.last.reason).to eq('Access terminated')
+    expect(target.reload).to be_deleted
+  end
+
   it 'renders inline model errors without HTML required when the reason is blank' do
     get edit_admin_user_status_path(target), params: { transition: 'suspended' }
     expect(response).to have_http_status(:ok)

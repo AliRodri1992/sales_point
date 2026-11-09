@@ -8,7 +8,7 @@
 <% global_roles = assignments.select { |assignment| assignment.branch_id.nil? } %>
 <% branch_roles = assignments.reject { |assignment| assignment.branch_id.nil? } %>
 
-<div class="catalog-workspace space-y-6">
+<div class="catalog-workspace space-y-6" data-controller="user-deactivation">
   <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <div class="min-w-0">
       <p class="mb-2 text-xs font-bold uppercase tracking-[.18em] text-emerald-700"><%= t('admin.users.ui.eyebrow') %></p>
@@ -57,9 +57,17 @@
         <p class="mt-1 text-xs text-slate-500"><%= t('admin.users.form.status_edit_hint') %></p>
         <div class="mt-4 flex flex-wrap gap-2">
           <% transitions.each do |target| %>
-            <%= link_to t("admin.users.status_management.#{target}"),
-                        edit_admin_user_status_path(@user, transition: target),
-                        class: 'inline-flex min-h-10 items-center rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50' %>
+            <% if target == 'deleted' %>
+              <%= button_tag t('admin.users.status_management.deleted'), type: 'button',
+                             data: { action: 'click->user-deactivation#open',
+                                     deactivation_url: admin_user_status_path(@user),
+                                     deactivation_account: @user.email },
+                             class: 'inline-flex min-h-10 items-center rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100' %>
+            <% else %>
+              <%= link_to t("admin.users.status_management.#{target}"),
+                          edit_admin_user_status_path(@user, transition: target),
+                          class: 'inline-flex min-h-10 items-center rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50' %>
+            <% end %>
           <% end %>
         </div>
       </section>
@@ -221,4 +229,5 @@
   <% end %>
 
 
+  <%= render 'deactivation_modal' %>
 </div>

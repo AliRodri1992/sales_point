@@ -1,7 +1,7 @@
 <% content_for :title, t('admin.users.index.page_title') %>
 <% counts = @user_status_counts || {} %>
 
-<div class="mx-auto max-w-[100rem] space-y-6">
+<div class="mx-auto max-w-[100rem] space-y-6" data-controller="user-deactivation">
   <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
     <div class="min-w-0">
       <p class="mb-1 text-xs font-bold uppercase tracking-[.18em] text-emerald-700"><%= t('admin.users.ui.eyebrow') %></p>
@@ -133,4 +133,5 @@
       <button type="button" data-action="skeleton-loading#retry" class="ml-2 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-rose-600"><%= t('admin.skeleton_loading.retry') %></button>
     </div>
   </div>
+  <%= render 'deactivation_modal' %>
 </div>

@@ -39,11 +39,11 @@
             <%= hidden_field_tag :page, params[:page] if params[:page].present? %>
             <div class="min-w-0 flex-1">
               <%= label_tag "restore_reason_#{user.id}", class: 'mb-1 block text-sm font-semibold' do %>
-                <%= t('admin.users.status_management.reason') %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
+                <%= t('admin.users.status_management.reason') %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span><span class="sr-only"><%= t('admin.users.ui.required_field') %></span>
               <% end %>
               <% current_error = @restoration_error_target_id == user.id %>
               <%= form.text_field :reason, id: "restore_reason_#{user.id}", value: current_error ? @restoration_form.reason : nil, maxlength: 1000,
-                                  aria: { invalid: current_error && @restoration_form.errors[:reason].any?,
+                                  aria: { required: true, invalid: current_error && @restoration_form.errors[:reason].any?,
                                           describedby: current_error && @restoration_form.errors[:reason].any? ?
                                             'users_account_restoration_reason_error' : nil },
                                   class: "w-full rounded-xl border px-3 py-2 text-sm #{current_error ? form_state_classes(@restoration_form, :reason) : 'border-slate-300'}" %>

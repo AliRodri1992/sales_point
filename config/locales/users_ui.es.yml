@@ -2,6 +2,10 @@ es:
   admin:
     users:
       ui:
+        deactivation_title: "Dar de baja al usuario"
+        deactivation_hint: "Esta acción retirará al usuario de esta empresa y puede cerrar sus sesiones abiertas. Registra el motivo para conservar evidencia del cambio."
+        deactivation_cancel: "Cancelar"
+        deactivation_confirm: "Confirmar baja"
         shared_sessions_warning: "Este usuario pertenece a otras empresas. Por seguridad, el cambio puede cerrar también las sesiones que tenga abiertas en ellas."
         invitation_not_ready: "Antes de enviar la invitación, asigna al empleado al menos un rol vigente en esta empresa."
         restored_needs_roles: "Cuenta restaurada como pendiente. Asigna los roles del empleado y después envía su invitación."

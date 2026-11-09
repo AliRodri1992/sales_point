@@ -11,7 +11,7 @@ module UserPermissionsHelper
                    else
                      Users::StatusTransition::PERMISSIONS.fetch(target)
                    end
-      current_user.permission?(permission)
+      current_user.permission?(permission, organization:)
     end
   end
 end

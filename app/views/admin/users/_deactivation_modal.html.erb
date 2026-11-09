@@ -1,0 +1,37 @@
+<dialog data-user-deactivation-target="dialog"
+        data-action="click->user-deactivation#backdrop close->user-deactivation#closed"
+        aria-labelledby="users-deactivation-title" aria-describedby="users-deactivation-description"
+        class="w-[calc(100%-2rem)] max-w-lg rounded-2xl border border-rose-100 bg-white p-0 shadow-2xl backdrop:bg-slate-900/60">
+  <div class="border-b border-slate-100 px-5 py-5 sm:px-6">
+    <div class="flex items-center gap-3">
+      <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-700"><%= delta_icon('trash', class: 'size-5') %></span>
+      <h2 id="users-deactivation-title" class="font-jakarta text-lg font-bold text-slate-900"><%= t('admin.users.ui.deactivation_title') %></h2>
+    </div>
+    <p id="users-deactivation-description" class="mt-3 text-sm leading-6 text-slate-600"><%= t('admin.users.ui.deactivation_hint') %></p>
+    <p class="mt-2 break-all text-sm font-semibold text-slate-900" data-user-deactivation-target="account"></p>
+  </div>
+  <%= form_with url: admin_users_path, method: :patch, html: { novalidate: true },
+                data: { user_deactivation_target: 'form', turbo_stream: true,
+                        action: 'turbo:submit-end->user-deactivation#submissionFinished' },
+                class: 'space-y-4 px-5 py-5 sm:px-6' do %>
+    <%= hidden_field_tag :transition, 'deleted' %>
+    <div>
+      <%= label_tag 'users-deactivation-reason', class: 'block text-sm font-semibold text-slate-700' do %>
+        <%= t('admin.users.status_management.reason') %>
+        <span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
+        <span class="sr-only"><%= t('admin.users.ui.required_field') %></span>
+      <% end %>
+      <%= text_area_tag :reason, nil, id: 'users-deactivation-reason', rows: 4, maxlength: 1000,
+                        aria: { required: true, describedby: 'users-deactivation-errors' },
+                        data: { user_deactivation_target: 'reason' },
+                        class: 'mt-2 min-h-24 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 focus:border-rose-500 focus:ring-2 focus:ring-rose-100' %>
+      <div id="users-deactivation-errors" data-user-deactivation-target="errors" role="alert" aria-live="polite"></div>
+    </div>
+    <div class="flex flex-wrap justify-end gap-3 border-t border-slate-100 pt-4">
+      <button type="button" data-action="click->user-deactivation#close"
+              class="min-h-11 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"><%= t('admin.users.ui.deactivation_cancel') %></button>
+      <%= submit_tag t('admin.users.ui.deactivation_confirm'),
+                     class: 'min-h-11 cursor-pointer rounded-xl bg-rose-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-rose-800' %>
+    </div>
+  <% end %>
+</dialog>

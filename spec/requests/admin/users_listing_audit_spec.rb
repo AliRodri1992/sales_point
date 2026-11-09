@@ -64,8 +64,10 @@ RSpec.describe 'Audited users listing', type: :request do
     expect(filters['data-action']).to include('change->users-filters#filterChanged')
     sort = document.css('a').find { |link| link['href']&.include?('sort=users') }
     expect(sort['data-turbo-frame']).to eq('_top')
-    deletion = document.css('a').find { |link| link['href']&.include?("users/#{target.id}/status/edit") }
-    expect(deletion['data-turbo-frame']).to eq('_top')
+    deactivation = document.at_css('dialog[data-user-deactivation-target="dialog"]')
+    expect(deactivation).to be_present
+    expect(deactivation.at_css('input[name="transition"]')['value']).to eq('deleted')
+    expect(document.at_css('textarea#users-deactivation-reason[required]')).to be_nil
   end
 
   it 'shows status history on an authorized user detail' do

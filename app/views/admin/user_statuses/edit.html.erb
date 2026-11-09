@@ -16,10 +16,10 @@
       <%= hidden_field_tag :transition, @target %>
       <div>
         <%= label_tag :reason, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
-          <%= t('admin.users.status_management.reason') %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
+          <%= t('admin.users.status_management.reason') %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span><span class="sr-only"><%= t('admin.users.ui.required_field') %></span>
         <% end %>
         <%= text_area_tag :reason, @status_form.reason, maxlength: 1000, rows: 4,
-                          aria: { invalid: @status_form.errors[:reason].any?,
+                          aria: { required: true, invalid: @status_form.errors[:reason].any?,
                                   describedby: @status_form.errors[:reason].any? ?
                                     'users_status_transition_reason_error' : nil },
                           class: "w-full rounded-xl border p-3 text-sm #{form_state_classes(@status_form, :reason)}" %>
@@ -39,10 +39,10 @@
       <% if @user.organization_memberships.active.find_by(organization: current_organization)&.account_blocked? && @target != 'deleted' %>
         <div>
           <%= label_tag :resolution, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
-            <%= t('admin.users.status_management.resolution') %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
+            <%= t('admin.users.status_management.resolution') %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span><span class="sr-only"><%= t('admin.users.ui.required_field') %></span>
           <% end %>
           <%= text_area_tag :resolution, @status_form.resolution, maxlength: 1000, rows: 3,
-                            aria: { invalid: @status_form.errors[:resolution].any?,
+                            aria: { required: true, invalid: @status_form.errors[:resolution].any?,
                                   describedby: @status_form.errors[:resolution].any? ?
                                     'users_status_transition_resolution_error' : nil },
                             class: "w-full rounded-xl border p-3 text-sm #{form_state_classes(@status_form, :resolution)}" %>
