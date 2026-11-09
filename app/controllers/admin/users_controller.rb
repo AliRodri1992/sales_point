@@ -117,8 +117,8 @@ module Admin
     end
 
     def filtered_users
-      UsersQuery.new(scoped_users.includes(:organization_memberships, user_roles: [:system_role, { branch: :organization }]), params,
-                     organization: current_organization).call
+      scope = scoped_users.includes(:organization_memberships, user_roles: [:system_role, { branch: :organization }])
+      UsersQuery.new(scope, params, organization: current_organization).call
     end
 
     def user_params

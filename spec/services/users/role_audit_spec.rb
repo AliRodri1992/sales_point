@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Users role change audit' do
   let(:organization) { create(:organization) }
   let(:actor) { create(:user, system_roles: [create(:system_role, :system, code: 'administrator')]) }
-  let(:target) { create(:user) }
+  let(:target) { create(:user, user_type: :customer) }
 
   before do
     create(:organization_membership, user: actor, organization:)
