@@ -144,7 +144,7 @@ RSpec.describe 'Admin::Categories', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_to)
-        .with('categories_catalog')
+        .with("categories_catalog_#{user.organization_memberships.first.organization_id}")
 
       post admin_categories_path(format: :turbo_stream),
            params: { category: { name: 'Test Category', code: 'test_category' } }
@@ -219,7 +219,7 @@ RSpec.describe 'Admin::Categories', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_to)
-        .with('categories_catalog')
+        .with("categories_catalog_#{user.organization_memberships.first.organization_id}")
 
       patch admin_category_path(category, format: :turbo_stream),
             params: { category: { name: 'New Name', code: 'old_code' } }
@@ -298,7 +298,7 @@ RSpec.describe 'Admin::Categories', type: :request do
 
     it 'broadcasts the updated catalog to subscribed clients' do
       expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_to)
-        .with('categories_catalog')
+        .with("categories_catalog_#{user.organization_memberships.first.organization_id}")
 
       delete admin_category_path(category, format: :turbo_stream)
     end
