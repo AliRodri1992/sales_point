@@ -11,7 +11,7 @@ module Users
                                             !@attributes[:branch_role_assignments].nil? ||
                                             @user.will_save_change_to_user_type?
       @user.admin_selected_system_roles = role_ids ||
-                                          @user.user_roles.active.where(branch_id: nil).pluck(:system_role_id)
+                                          @user.user_roles.active.where(branch_id: nil, organization: @organization).pluck(:system_role_id)
       @user.admin_selected_branch_roles = branch_roles.selected_pairs
     end
 
