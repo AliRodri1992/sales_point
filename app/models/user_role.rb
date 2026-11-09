@@ -28,13 +28,14 @@ class UserRole < ApplicationRecord
 
   def resolve_organization
     return if organization_id.present?
+
     if branch
       self.organization = branch.organization
     elsif CurrentOrganizationAccess.organization
       self.organization = CurrentOrganizationAccess.organization
     elsif user&.persisted?
       memberships = user.organization_memberships.where(deleted_at: nil)
-      self.organization_id = memberships.pick(:organization_id) if memberships.limit(2).count == 1
+      self.organization_id = memberships.pick(:organization_id) if memberships.one?
     end
   end
 
@@ -46,7 +47,7 @@ class UserRole < ApplicationRecord
 
   def organization_required_for_shared_user
     return if branch_id.present? || organization_id.present? || !user&.persisted?
-    return unless user.organization_memberships.where(deleted_at: nil).limit(2).count > 1
+    return unless user.organization_memberships.where(deleted_at: nil).many?
 
     errors.add(:organization, :blank)
   end
