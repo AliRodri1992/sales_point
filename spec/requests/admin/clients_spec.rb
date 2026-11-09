@@ -259,6 +259,16 @@ RSpec.describe 'Admin clients', type: :request do
   end
 
   describe 'DELETE /admin/clients/:id' do
+    it 'updates the table and counters after a Turbo Stream soft deletion' do
+      customer = create(:client)
+      delete admin_client_path(customer), as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq('text/vnd.turbo-stream.html')
+      expect(response.body).to include('clients_list', 'clients_stats')
+      expect(customer.reload.deleted_at).to be_present
+    end
+
     it 'soft deletes a client' do
       client = create(:client)
 
