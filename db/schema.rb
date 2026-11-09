@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_09_060000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_111000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
 
   create_table "account_payables", force: :cascade do |t|
     t.datetime "deleted_at"
@@ -126,6 +127,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_060000) do
     t.index ["deleted_at"], name: "index_branches_on_deleted_at"
     t.index ["organization_id"], name: "index_branches_on_organization_id"
     t.index ["organization_id", "operational_status"], name: "idx_branches_organization_operational_status"
+    t.index ["organization_id", "created_at"], name: "idx_branches_active_org_created_at", where: "(deleted_at IS NULL)"
     t.check_constraint "code IS NULL OR code::text ~ '^[A-Z0-9_-]{1,30}$'::text", name: "branches_valid_code"
     t.check_constraint "operational_status::text = ANY (ARRAY['preparing'::character varying, 'active'::character varying, 'suspended'::character varying, 'closed'::character varying]::text[])", name: "branches_operational_status_valid"
   end
@@ -161,6 +163,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_060000) do
     t.index ["rfc"], name: "index_clients_on_rfc", unique: true, where: "((rfc IS NOT NULL) AND ((rfc)::text <> ''::text) AND (deleted_at IS NULL))"
     t.index ["sat_fiscal_regime_id"], name: "index_clients_on_sat_fiscal_regime_id"
     t.index ["status"], name: "index_clients_on_status"
+    t.index ["code"], name: "idx_clients_code_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
+    t.index ["name"], name: "idx_clients_name_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
+    t.index ["email"], name: "idx_clients_email_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
+    t.index ["rfc"], name: "idx_clients_rfc_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
     t.check_constraint "code::text = btrim(code::text) AND code::text <> ''::text AND code::text ~ '^[A-Za-z0-9_-]+$'::text", name: "chk_clients_code_format"
     t.check_constraint "credit_limit >= 0::numeric", name: "chk_clients_credit_limit_non_negative"
     t.check_constraint "name::text = btrim(name::text) AND name::text <> ''::text", name: "chk_clients_name_format"
@@ -333,6 +339,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_060000) do
     t.index ["status", "created_at"], name: "idx_demo_requests_status_created_active", where: "(deleted_at IS NULL)"
     t.index ["status"], name: "index_demo_requests_on_status"
     t.index ["terms_accepted"], name: "index_demo_requests_on_terms_accepted"
+    t.index ["name"], name: "idx_demo_requests_name_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
+    t.index ["email"], name: "idx_demo_requests_email_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
+    t.index ["company"], name: "idx_demo_requests_company_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
+    t.index ["phone"], name: "idx_demo_requests_phone_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
   end
 
   create_table "email_branding_settings", force: :cascade do |t|
@@ -457,6 +467,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_060000) do
     t.index ["organization_id"], name: "index_email_templates_on_organization_id"
     t.index ["source_template_id"], name: "idx_email_templates_source_template"
     t.index ["updated_by_id"], name: "index_email_templates_on_updated_by_id"
+    t.index ["published_version_id"], name: "idx_email_templates_published_version"
+    t.index ["key"], name: "idx_email_templates_key_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
+    t.index ["name"], name: "idx_email_templates_name_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
+    t.index ["subject"], name: "idx_email_templates_subject_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
     t.check_constraint "status::text = ANY (ARRAY['draft'::character varying::text, 'published'::character varying::text, 'inactive'::character varying::text, 'archived'::character varying::text])", name: "chk_email_templates_status"
   end
 
@@ -883,6 +897,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_060000) do
     t.index ["phoneable_type", "phoneable_id", "kind"], name: "idx_phones_one_primary_per_kind", unique: true, where: "((deleted_at IS NULL) AND (\"primary\" = true))"
     t.index ["phoneable_type", "phoneable_id", "number", "extension"], name: "idx_phones_unique_active_number", unique: true, where: "(deleted_at IS NULL)", nulls_not_distinct: true
     t.index ["phoneable_type", "phoneable_id"], name: "index_phones_on_phoneable"
+    t.index ["number"], name: "idx_phones_number_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
     t.check_constraint "(phoneable_type::text <> ALL (ARRAY['Client'::character varying::text, 'Branch'::character varying::text, 'Employee'::character varying::text])) OR kind::text = 'mobile'::text AND \"primary\" = true", name: "chk_phones_mobile_only_for_direct_owners"
     t.check_constraint "country_code::text ~ '^[A-Z]{2}$'::text", name: "chk_phones_country"
     t.check_constraint "kind::text = ANY (ARRAY['mobile'::character varying::text, 'landline'::character varying::text, 'other'::character varying::text])", name: "chk_phones_kind"
@@ -1140,7 +1155,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_060000) do
     t.decimal "extra_expenses_amount", precision: 18, scale: 6, default: "0.0", null: false
     t.decimal "additional_discount_amount", precision: 18, scale: 6, default: "0.0", null: false
     t.index ["goods_receipt_item_id"], name: "idx_purchase_cost_allocation_receipt_item", unique: true
-    t.index ["goods_receipt_item_id"], name: "index_purchase_cost_allocations_on_goods_receipt_item_id"
     t.index ["organization_id"], name: "index_purchase_cost_allocations_on_organization_id"
   end
 
@@ -1581,7 +1595,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_060000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at", precision: nil
-    t.index ["code"], name: "index_sat_payment_methods_active", where: "((deleted_at IS NULL) AND (status = true))"
     t.index ["code"], name: "index_sat_payment_methods_unique", unique: true, where: "((deleted_at IS NULL) AND (status = true))"
     t.index ["deleted_at"], name: "index_sat_payment_methods_on_deleted_at"
     t.index ["description"], name: "index_sat_payment_methods_on_description"
@@ -2309,6 +2322,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_060000) do
     t.index ["user_id", "system_role_id", "branch_id"], name: "idx_user_roles_branch_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NOT NULL))"
     t.index ["user_id", "system_role_id"], name: "idx_user_roles_global_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NULL))"
     t.index ["user_id"], name: "index_user_roles_on_user_id"
+    t.index ["system_role_id", "branch_id", "user_id"], name: "idx_user_roles_active_role_branch_user", where: "(deleted_at IS NULL)"
   end
 
   create_table "user_security_incidents", force: :cascade do |t|
@@ -2388,6 +2402,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_060000) do
     t.index ["status"], name: "index_users_on_status"
     t.index ["user_type", "status"], name: "index_users_on_user_type_and_status"
     t.index ["user_type"], name: "index_users_on_user_type"
+    t.index ["email"], name: "idx_users_email_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
+    t.index ["username"], name: "idx_users_username_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
     t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'active'::character varying::text, 'suspended'::character varying::text, 'blocked'::character varying::text, 'deleted'::character varying::text])", name: "chk_users_status"
     t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying::text, 'customer'::character varying::text, 'supplier'::character varying::text])", name: "chk_users_user_type"
   end
