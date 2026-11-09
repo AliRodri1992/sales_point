@@ -688,14 +688,14 @@ RSpec.describe 'Admin email templates', type: :request do
 
     expect do
       patch archive_admin_email_template_path(template)
-    end.not_to change { template.audits.where(action: 'archived').count }
+    end.not_to(change { template.audits.where(action: 'archived').count })
     expect(response).to have_http_status(:forbidden)
     expect(template.reload.updated_at).to eq(archived_at)
     expect(administrator.notifications.count).to eq(notifications)
 
     expect do
       delete admin_email_template_path(template)
-    end.not_to change { template.audits.where(action: 'archived').count }
+    end.not_to(change { template.audits.where(action: 'archived').count })
     expect(response).to have_http_status(:forbidden)
   end
 
