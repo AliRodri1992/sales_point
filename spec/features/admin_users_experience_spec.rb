@@ -197,6 +197,46 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(target.reload.organization_memberships.find_by!(organization:).account_status).to eq('deleted')
   end
 
+  scenario 'centers the deactivation dialog within a compact mobile viewport' do
+    permission = Permission.find_or_create_by!(code: 'users.destroy') do |item|
+      item.name = 'Deactivate users'
+      item.module_name = 'Usuarios'
+      item.status = :active
+    end
+    SystemRolePermission.find_or_create_by!(system_role: admin.system_roles.first, permission:)
+    target = create(:user, email: 'mobile-deactivation@example.com')
+    create(:organization_membership, organization:, user: target)
+    page.driver.browser.manage.window.resize_to(390, 420)
+
+    visit admin_users_path
+    find("button[data-deactivation-account='#{target.email}']").click
+    expect(page).to have_css('dialog#users-deactivation-modal[open]', visible: true)
+
+    layout = page.evaluate_script(<<~JS)
+      (() => {
+        const dialog = document.getElementById('users-deactivation-modal')
+        const rect = dialog.getBoundingClientRect()
+        const viewport = window.visualViewport
+        const centerX = viewport.offsetLeft + viewport.width / 2
+        const centerY = viewport.offsetTop + viewport.height / 2
+        return {
+          horizontalOffset: Math.abs((rect.left + rect.right) / 2 - centerX),
+          verticalOffset: Math.abs((rect.top + rect.bottom) / 2 - centerY),
+          fitsViewport: rect.left >= 0 && rect.right <= viewport.width + 2 &&
+            rect.top >= 0 && rect.bottom <= viewport.height + 2,
+          scrollable: dialog.scrollHeight <= dialog.clientHeight || getComputedStyle(dialog).overflowY === 'auto'
+        }
+      })()
+    JS
+
+    expect(layout['horizontalOffset']).to be < 3
+    expect(layout['verticalOffset']).to be < 3
+    expect(layout['fitsViewport']).to be(true)
+    expect(layout['scrollable']).to be(true)
+    click_button 'Cancel'
+    expect(target.reload.organization_memberships.find_by!(organization:).account_status).to eq('active')
+  end
+
   scenario 'opens deactivation from details and restores keyboard focus on cancellation' do
     permission = Permission.find_or_create_by!(code: 'users.destroy') do |item|
       item.name = 'Deactivate users'
