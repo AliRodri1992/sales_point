@@ -39,6 +39,21 @@ RSpec.describe Category, type: :model do
     end
   end
 
+  describe 'organization isolation' do
+    it 'accepts identical category codes for different organizations' do
+      first = create(:organization)
+      second = create(:organization)
+      create(:category, organization: first, code: 'beverages')
+      expect(build(:category, organization: second, code: 'beverages')).to be_valid
+    end
+
+    it 'rejects identical active codes within one organization' do
+      organization = create(:organization)
+      create(:category, organization:, code: 'beverages')
+      expect(build(:category, organization:, code: 'beverages')).not_to be_valid
+    end
+  end
+
   describe 'soft delete integrity' do
     it 'allows reusing a code from a retired category' do
       old = create(:category, code: 'retired_code')

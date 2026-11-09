@@ -140,7 +140,2582 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_120000) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at", precision: nil
     t.text "description"
-    t.index ["code"], name: "index_categories_on_code", unique: true, where: "(deleted_at IS NULL)"
+    t.bigint "organization_id"
+    t.index ["code"], name: "idx_categories_legacy_code", unique: true, where: "((deleted_at IS NULL) AND (organization_id IS NULL))"
+    t.index ["organization_id", "code"], name: "idx_categories_organization_code", unique: true, where: "((deleted_at IS NULL) AND (organization_id IS NOT NULL))"
+    t.check_constraint "name IS NOT NULL AND btrim(name::text) <> ''::text", name: "chk_categories_name_present", validate: false
+    t.check_constraint "code IS NOT NULL AND code::text ~ '^[a-z0-9_]{1,20}
+    t.index ["deleted_at"], name: "index_categories_on_deleted_at"
+    t.index ["name"], name: "index_categories_on_name", where: "(deleted_at IS NULL)"
+  end
+
+  create_table "clients", force: :cascade do |t|
+    t.string "code", limit: 30, null: false
+    t.string "name", limit: 150, null: false
+    t.string "email", limit: 150
+    t.string "rfc", limit: 13
+    t.bigint "sat_fiscal_regime_id"
+    t.string "postal_code", limit: 5
+    t.decimal "credit_limit", precision: 12, scale: 2, default: "0.0", null: false
+    t.string "status", limit: 20, default: "active", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_clients_code_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["code"], name: "index_clients_on_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_clients_on_deleted_at"
+    t.index ["email"], name: "idx_clients_email_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["email"], name: "index_clients_on_email"
+    t.index ["name"], name: "idx_clients_name_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["rfc"], name: "idx_clients_rfc_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["rfc"], name: "index_clients_on_rfc", unique: true, where: "((rfc IS NOT NULL) AND ((rfc)::text <> ''::text) AND (deleted_at IS NULL))"
+    t.index ["sat_fiscal_regime_id"], name: "index_clients_on_sat_fiscal_regime_id"
+    t.index ["status"], name: "index_clients_on_status"
+    t.check_constraint "code::text = btrim(code::text) AND code::text <> ''::text AND code::text ~ '^[A-Za-z0-9_-]+$'::text", name: "chk_clients_code_format"
+    t.check_constraint "credit_limit >= 0::numeric", name: "chk_clients_credit_limit_non_negative"
+    t.check_constraint "name::text = btrim(name::text) AND name::text <> ''::text", name: "chk_clients_name_format"
+    t.check_constraint "postal_code IS NULL OR postal_code::text = ''::text OR postal_code::text ~ '^[0-9]{5}$'::text", name: "chk_clients_postal_code_format"
+    t.check_constraint "rfc IS NULL OR rfc::text = ''::text OR rfc::text ~ '^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$'::text", name: "chk_clients_rfc_format"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "chk_clients_status"
+  end
+
+  create_table "contacts", force: :cascade do |t|
+    t.string "contactable_type", null: false
+    t.bigint "contactable_id", null: false
+    t.string "name", limit: 150, null: false
+    t.string "position", limit: 100
+    t.string "email", limit: 150
+    t.boolean "primary", default: false, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contactable_type", "contactable_id", "name"], name: "idx_contacts_owner_active_name", where: "((deleted_at IS NULL) AND (active = true))"
+    t.index ["contactable_type", "contactable_id"], name: "idx_contacts_one_active_primary", unique: true, where: "((deleted_at IS NULL) AND (active = true) AND (\"primary\" = true))"
+    t.index ["contactable_type", "contactable_id"], name: "index_contacts_on_contactable"
+    t.index ["deleted_at"], name: "index_contacts_on_deleted_at"
+    t.check_constraint "btrim(name::text) <> ''::text", name: "chk_contacts_name_present"
+  end
+
+  create_table "conversation_participants", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id", "user_id"], name: "idx_conv_participants_unique_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["conversation_id"], name: "index_conversation_participants_on_conversation_id"
+    t.index ["deleted_at"], name: "index_conversation_participants_on_deleted_at"
+    t.index ["user_id"], name: "index_conversation_participants_on_user_id"
+  end
+
+  create_table "conversations", force: :cascade do |t|
+    t.string "conversation_type", default: "direct", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_type", "deleted_at"], name: "index_conversations_on_conversation_type_and_deleted_at"
+    t.index ["deleted_at"], name: "index_conversations_on_deleted_at"
+  end
+
+  create_table "countries", force: :cascade do |t|
+    t.string "name", limit: 150, null: false
+    t.string "iso_alpha2", limit: 2, null: false
+    t.string "iso_alpha3", limit: 3, null: false
+    t.string "iso_numeric", limit: 3, null: false
+    t.string "phone_code", limit: 10
+    t.boolean "active", default: true, null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["active", "position"], name: "index_countries_on_active_and_position"
+    t.index ["deleted_at"], name: "index_countries_on_deleted_at"
+    t.index ["iso_alpha2"], name: "index_countries_on_iso_alpha2", unique: true
+    t.index ["iso_alpha3"], name: "index_countries_on_iso_alpha3", unique: true
+    t.index ["iso_numeric"], name: "index_countries_on_iso_numeric", unique: true
+    t.check_constraint "\"position\" >= 0", name: "chk_countries_position"
+    t.check_constraint "iso_alpha2::text ~ '^[A-Z]{2}$'::text", name: "chk_countries_iso_alpha2"
+    t.check_constraint "iso_alpha3::text ~ '^[A-Z]{3}$'::text", name: "chk_countries_iso_alpha3"
+    t.check_constraint "iso_numeric::text ~ '^[0-9]{3}$'::text", name: "chk_countries_iso_numeric"
+  end
+
+  create_table "country_currencies", force: :cascade do |t|
+    t.bigint "country_id", null: false
+    t.bigint "currency_id", null: false
+    t.boolean "is_primary", default: false, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_id", "currency_id"], name: "idx_country_currencies_unique", unique: true
+    t.index ["country_id"], name: "idx_country_currencies_one_primary", unique: true, where: "(is_primary = true)"
+    t.index ["country_id"], name: "index_country_currencies_on_country_id"
+    t.index ["currency_id"], name: "index_country_currencies_on_currency_id"
+    t.index ["deleted_at"], name: "index_country_currencies_on_deleted_at"
+    t.check_constraint "NOT is_primary OR active", name: "chk_country_currencies_primary_active"
+  end
+
+  create_table "currencies", force: :cascade do |t|
+    t.string "name", limit: 150, null: false
+    t.string "code", limit: 3, null: false
+    t.string "numeric_code", limit: 3
+    t.string "symbol", limit: 12
+    t.integer "decimal_places", default: 2, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["active"], name: "index_currencies_on_active"
+    t.index ["code"], name: "index_currencies_on_code", unique: true
+    t.index ["deleted_at"], name: "index_currencies_on_deleted_at"
+    t.index ["numeric_code"], name: "index_currencies_on_numeric_code", unique: true
+    t.check_constraint "code::text ~ '^[A-Z]{3}$'::text", name: "chk_currencies_code"
+    t.check_constraint "decimal_places >= 0 AND decimal_places <= 8", name: "chk_currencies_decimal_places"
+    t.check_constraint "numeric_code IS NULL OR numeric_code::text ~ '^[0-9]{3}$'::text", name: "chk_currencies_numeric_code"
+  end
+
+  create_table "dashboard_preferences", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "grid_type", null: false
+    t.string "widget_id", null: false
+    t.integer "position_x", default: 0, null: false
+    t.integer "position_y", default: 0, null: false
+    t.integer "width", default: 1, null: false
+    t.integer "height", default: 1, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["deleted_at"], name: "index_dashboard_preferences_on_deleted_at"
+    t.index ["user_id", "widget_id"], name: "index_dashboard_preferences_on_user_id_and_widget_id", unique: true
+    t.index ["user_id"], name: "index_dashboard_preferences_on_user_id"
+  end
+
+  create_table "demo_request_activities", force: :cascade do |t|
+    t.bigint "demo_request_id", null: false
+    t.bigint "user_id"
+    t.string "action", null: false
+    t.text "details"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action"], name: "index_demo_request_activities_on_action"
+    t.index ["deleted_at"], name: "index_demo_request_activities_on_deleted_at"
+    t.index ["demo_request_id"], name: "index_demo_request_activities_on_demo_request_id"
+    t.index ["user_id"], name: "index_demo_request_activities_on_user_id"
+  end
+
+  create_table "demo_requests", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "phone"
+    t.string "company", null: false
+    t.text "message"
+    t.string "status", default: "pending", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "business_type", limit: 30
+    t.integer "branches", default: 1, null: false
+    t.boolean "terms_accepted", default: false, null: false
+    t.datetime "terms_accepted_at"
+    t.bigint "assigned_to_id"
+    t.datetime "scheduled_at"
+    t.datetime "reminder_24h_sent_at"
+    t.datetime "reminder_1h_sent_at"
+    t.string "locale", default: "es", null: false
+    t.datetime "contacted_at"
+    t.string "contact_channel", limit: 30
+    t.string "contact_outcome", limit: 40
+    t.datetime "next_follow_up_at"
+    t.string "next_action", limit: 120
+    t.string "demo_outcome", limit: 40
+    t.datetime "converted_at"
+    t.index ["assigned_to_id", "next_follow_up_at"], name: "idx_demo_requests_assignee_follow_up_active", where: "((deleted_at IS NULL) AND (next_follow_up_at IS NOT NULL))"
+    t.index ["assigned_to_id"], name: "index_demo_requests_on_assigned_to_id"
+    t.index ["branches"], name: "index_demo_requests_on_branches"
+    t.index ["business_type"], name: "index_demo_requests_on_business_type"
+    t.index ["company"], name: "idx_demo_requests_company_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["contact_outcome"], name: "index_demo_requests_on_contact_outcome"
+    t.index ["deleted_at"], name: "index_demo_requests_on_deleted_at"
+    t.index ["demo_outcome"], name: "index_demo_requests_on_demo_outcome"
+    t.index ["email"], name: "idx_demo_requests_email_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["email"], name: "index_demo_requests_on_email"
+    t.index ["name"], name: "idx_demo_requests_name_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["next_follow_up_at"], name: "index_demo_requests_on_next_follow_up_at"
+    t.index ["phone"], name: "idx_demo_requests_phone_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["status", "created_at"], name: "idx_demo_requests_status_created_active", where: "(deleted_at IS NULL)"
+    t.index ["status"], name: "index_demo_requests_on_status"
+    t.index ["terms_accepted"], name: "index_demo_requests_on_terms_accepted"
+  end
+
+  create_table "email_branding_settings", force: :cascade do |t|
+    t.bigint "organization_id"
+    t.string "display_name", default: "Delta POS", null: false
+    t.string "primary_color", default: "#064e3b", null: false
+    t.string "secondary_color", default: "#047857", null: false
+    t.string "button_color", default: "#047857", null: false
+    t.string "support_email"
+    t.string "support_url"
+    t.string "privacy_url"
+    t.text "footer_text"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "((organization_id IS NULL))", name: "idx_email_branding_one_global", unique: true, where: "((organization_id IS NULL) AND (deleted_at IS NULL))"
+    t.index ["deleted_at"], name: "index_email_branding_settings_on_deleted_at"
+    t.index ["organization_id"], name: "idx_email_branding_tenant_unique", unique: true, where: "((organization_id IS NOT NULL) AND (deleted_at IS NULL))"
+    t.index ["organization_id"], name: "index_email_branding_settings_on_organization_id"
+  end
+
+  create_table "email_sender_settings", force: :cascade do |t|
+    t.bigint "organization_id"
+    t.string "display_name", default: "Delta POS", null: false
+    t.string "from_address"
+    t.string "reply_to"
+    t.string "default_locale", default: "es", null: false
+    t.string "domain"
+    t.string "domain_status", default: "unverified", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "((organization_id IS NULL))", name: "idx_email_senders_one_global", unique: true, where: "((organization_id IS NULL) AND (deleted_at IS NULL))"
+    t.index ["deleted_at"], name: "index_email_sender_settings_on_deleted_at"
+    t.index ["organization_id"], name: "idx_email_senders_tenant_unique", unique: true, where: "((organization_id IS NOT NULL) AND (deleted_at IS NULL))"
+    t.index ["organization_id"], name: "index_email_sender_settings_on_organization_id"
+  end
+
+  create_table "email_setting_audits", force: :cascade do |t|
+    t.bigint "organization_id"
+    t.bigint "actor_id", null: false
+    t.string "setting_type", null: false
+    t.jsonb "changeset", default: {}, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_email_setting_audits_on_actor_id"
+    t.index ["deleted_at"], name: "index_email_setting_audits_on_deleted_at"
+    t.index ["organization_id", "created_at"], name: "idx_email_setting_audits_tenant_history"
+    t.index ["organization_id"], name: "index_email_setting_audits_on_organization_id"
+    t.check_constraint "setting_type::text = ANY (ARRAY['branding'::character varying, 'sender'::character varying]::text[])", name: "chk_email_setting_audit_type"
+  end
+
+  create_table "email_template_audits", force: :cascade do |t|
+    t.bigint "email_template_id", null: false
+    t.bigint "email_template_version_id"
+    t.bigint "organization_id"
+    t.bigint "actor_id"
+    t.string "action", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_email_template_audits_on_actor_id"
+    t.index ["deleted_at"], name: "index_email_template_audits_on_deleted_at"
+    t.index ["email_template_id", "created_at"], name: "idx_email_template_audits_history"
+    t.index ["email_template_id"], name: "index_email_template_audits_on_email_template_id"
+    t.index ["email_template_version_id"], name: "index_email_template_audits_on_email_template_version_id"
+    t.index ["organization_id", "created_at"], name: "idx_email_template_audits_tenant"
+    t.index ["organization_id"], name: "index_email_template_audits_on_organization_id"
+  end
+
+  create_table "email_template_versions", force: :cascade do |t|
+    t.bigint "email_template_id", null: false
+    t.integer "version_number", null: false
+    t.string "status", default: "draft", null: false
+    t.string "subject", null: false
+    t.string "preheader", default: "", null: false
+    t.text "html_body", null: false
+    t.text "text_body", null: false
+    t.jsonb "allowed_variables", default: [], null: false
+    t.bigint "created_by_id"
+    t.bigint "published_by_id"
+    t.datetime "published_at"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "lock_version", default: 0, null: false
+    t.index ["created_by_id"], name: "index_email_template_versions_on_created_by_id"
+    t.index ["deleted_at"], name: "index_email_template_versions_on_deleted_at"
+    t.index ["email_template_id", "status"], name: "idx_email_template_versions_status"
+    t.index ["email_template_id", "version_number"], name: "idx_email_template_versions_number", unique: true
+    t.index ["email_template_id"], name: "idx_email_template_versions_single_draft", unique: true, where: "((status)::text = 'draft'::text)"
+    t.index ["email_template_id"], name: "index_email_template_versions_on_email_template_id"
+    t.index ["published_by_id"], name: "index_email_template_versions_on_published_by_id"
+    t.check_constraint "status::text = ANY (ARRAY['draft'::character varying, 'published'::character varying, 'archived'::character varying]::text[])", name: "chk_email_template_versions_status"
+  end
+
+  create_table "email_templates", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "locale", default: "es", null: false
+    t.string "subject", null: false
+    t.text "html_body", null: false
+    t.text "text_body", null: false
+    t.boolean "enabled", default: true, null: false
+    t.integer "version", default: 1, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "organization_id"
+    t.string "name", null: false
+    t.string "category", default: "transactional", null: false
+    t.string "status", default: "published", null: false
+    t.bigint "created_by_id"
+    t.bigint "updated_by_id"
+    t.bigint "published_version_id"
+    t.bigint "source_template_id"
+    t.index ["created_by_id"], name: "index_email_templates_on_created_by_id"
+    t.index ["key", "locale"], name: "idx_email_templates_global_unique", unique: true, where: "(organization_id IS NULL)"
+    t.index ["key"], name: "idx_email_templates_key_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["locale", "enabled"], name: "idx_email_templates_available_locale", where: "(deleted_at IS NULL)"
+    t.index ["name"], name: "idx_email_templates_name_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["organization_id", "key", "locale"], name: "idx_email_templates_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
+    t.index ["organization_id", "status", "updated_at"], name: "idx_email_templates_tenant_status"
+    t.index ["organization_id"], name: "index_email_templates_on_organization_id"
+    t.index ["published_version_id"], name: "idx_email_templates_published_version"
+    t.index ["source_template_id"], name: "idx_email_templates_source_template"
+    t.index ["subject"], name: "idx_email_templates_subject_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["updated_by_id"], name: "index_email_templates_on_updated_by_id"
+    t.check_constraint "status::text = ANY (ARRAY['draft'::character varying, 'published'::character varying, 'inactive'::character varying, 'archived'::character varying]::text[])", name: "chk_email_templates_status"
+  end
+
+  create_table "employees", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "first_name", limit: 80, null: false
+    t.string "last_name", limit: 120, null: false
+    t.string "email", null: false
+    t.string "status", limit: 20, default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index "organization_id, lower((email)::text)", name: "idx_employees_org_email_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_employees_on_deleted_at"
+    t.index ["organization_id"], name: "index_employees_on_organization_id"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'terminated'::character varying]::text[])", name: "check_employees_status"
+  end
+
+  create_table "financial_audit_events", force: :cascade do |t|
+    t.datetime "deleted_at", precision: nil
+    t.bigint "organization_id", null: false
+    t.bigint "actor_id"
+    t.string "event", limit: 80, null: false
+    t.string "subject_type", limit: 80, null: false
+    t.bigint "subject_id", null: false
+    t.jsonb "details", default: {}, null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.index ["actor_id"], name: "index_financial_audit_events_on_actor_id"
+    t.index ["organization_id", "created_at"], name: "index_financial_audit_events_on_organization_id_and_created_at"
+    t.index ["organization_id"], name: "index_financial_audit_events_on_organization_id"
+    t.index ["subject_type", "subject_id"], name: "index_financial_audit_events_on_subject_type_and_subject_id"
+  end
+
+  create_table "financial_reminder_deliveries", force: :cascade do |t|
+    t.datetime "deleted_at", precision: nil
+    t.bigint "organization_id", null: false
+    t.bigint "account_payable_id", null: false
+    t.bigint "recipient_id", null: false
+    t.string "event_key", limit: 64, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_payable_id"], name: "index_financial_reminder_deliveries_on_account_payable_id"
+    t.index ["event_key"], name: "index_financial_reminder_deliveries_on_event_key", unique: true
+    t.index ["organization_id"], name: "index_financial_reminder_deliveries_on_organization_id"
+    t.index ["recipient_id"], name: "index_financial_reminder_deliveries_on_recipient_id"
+  end
+
+  create_table "general_setting_audit_events", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "actor_id", null: false
+    t.integer "previous_page_size", null: false
+    t.integer "new_page_size", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_general_setting_audit_events_on_actor_id"
+    t.index ["deleted_at"], name: "index_general_setting_audit_events_on_deleted_at"
+    t.index ["organization_id", "created_at"], name: "idx_general_setting_audits_org_created"
+    t.index ["organization_id"], name: "index_general_setting_audit_events_on_organization_id"
+    t.check_constraint "new_page_size = ANY (ARRAY[5, 10, 15, 25, 50])", name: "chk_general_settings_audits_new"
+    t.check_constraint "previous_page_size = ANY (ARRAY[5, 10, 15, 25, 50])", name: "chk_general_settings_audits_previous"
+  end
+
+  create_table "goods_receipt_items", force: :cascade do |t|
+    t.bigint "goods_receipt_id", null: false
+    t.bigint "purchase_order_item_id", null: false
+    t.decimal "delivered_quantity", precision: 14, scale: 3, null: false
+    t.decimal "accepted_quantity", precision: 14, scale: 3, null: false
+    t.decimal "damaged_quantity", precision: 14, scale: 3, default: "0.0", null: false
+    t.string "lot_code", limit: 100
+    t.date "expires_on"
+    t.decimal "landed_unit_cost", precision: 18, scale: 6, default: "0.0", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["goods_receipt_id"], name: "index_goods_receipt_items_on_goods_receipt_id"
+    t.index ["purchase_order_item_id"], name: "index_goods_receipt_items_on_purchase_order_item_id"
+    t.check_constraint "delivered_quantity >= 0::numeric AND accepted_quantity >= 0::numeric AND damaged_quantity >= 0::numeric AND (accepted_quantity + damaged_quantity) <= delivered_quantity", name: "chk_receipt_item_differences"
+  end
+
+  create_table "goods_receipts", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "branch_id", null: false
+    t.bigint "purchase_order_id", null: false
+    t.bigint "received_by_id", null: false
+    t.string "idempotency_key", limit: 100, null: false
+    t.string "status", default: "posted", null: false
+    t.datetime "received_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "payload_digest", limit: 64
+    t.decimal "actual_freight_amount", precision: 14, scale: 4
+    t.decimal "actual_insurance_amount", precision: 14, scale: 4
+    t.decimal "extra_expenses_amount", precision: 14, scale: 4, default: "0.0", null: false
+    t.decimal "additional_discount_amount", precision: 14, scale: 4, default: "0.0", null: false
+    t.index ["branch_id"], name: "index_goods_receipts_on_branch_id"
+    t.index ["organization_id", "idempotency_key"], name: "idx_goods_receipts_idempotent", unique: true
+    t.index ["organization_id"], name: "index_goods_receipts_on_organization_id"
+    t.index ["purchase_order_id"], name: "index_goods_receipts_on_purchase_order_id"
+    t.index ["received_by_id"], name: "index_goods_receipts_on_received_by_id"
+    t.check_constraint "(actual_freight_amount IS NULL OR actual_freight_amount >= 0::numeric) AND (actual_insurance_amount IS NULL OR actual_insurance_amount >= 0::numeric) AND extra_expenses_amount >= 0::numeric AND additional_discount_amount >= 0::numeric", name: "chk_goods_receipts_actual_costs"
+  end
+
+  create_table "inventories", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "branch_id", null: false
+    t.bigint "product_id", null: false
+    t.decimal "stock", precision: 14, scale: 3, default: "0.0", null: false
+    t.decimal "min_stock", precision: 14, scale: 3, default: "0.0", null: false
+    t.decimal "max_stock", precision: 14, scale: 3
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id", "product_id"], name: "index_inventories_on_branch_id_and_product_id", unique: true
+    t.index ["branch_id"], name: "index_inventories_on_branch_id"
+    t.index ["organization_id"], name: "index_inventories_on_organization_id"
+    t.index ["product_id"], name: "index_inventories_on_product_id"
+    t.check_constraint "max_stock IS NULL OR max_stock >= min_stock", name: "chk_inventory_limits"
+    t.check_constraint "stock >= 0::numeric AND min_stock >= 0::numeric", name: "chk_inventory_nonnegative"
+  end
+
+  create_table "inventory_lots", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "inventory_id", null: false
+    t.bigint "goods_receipt_item_id"
+    t.string "code", limit: 100, null: false
+    t.date "expires_on"
+    t.string "status", default: "available", null: false
+    t.decimal "quantity", precision: 14, scale: 3, default: "0.0", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["goods_receipt_item_id"], name: "index_inventory_lots_on_goods_receipt_item_id"
+    t.index ["inventory_id", "code"], name: "index_inventory_lots_on_inventory_id_and_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["inventory_id"], name: "index_inventory_lots_on_inventory_id"
+    t.index ["organization_id"], name: "index_inventory_lots_on_organization_id"
+    t.check_constraint "quantity >= 0::numeric", name: "chk_inventory_lot_quantity"
+  end
+
+  create_table "inventory_movements", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "inventory_id", null: false
+    t.bigint "user_id"
+    t.string "kind", limit: 24, null: false
+    t.decimal "quantity", precision: 14, scale: 3, null: false
+    t.decimal "stock_before", precision: 14, scale: 3, null: false
+    t.decimal "stock_after", precision: 14, scale: 3, null: false
+    t.string "reference", limit: 100
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "source_type"
+    t.bigint "source_id"
+    t.bigint "inventory_lot_id"
+    t.index ["inventory_id", "created_at"], name: "index_inventory_movements_on_inventory_id_and_created_at"
+    t.index ["inventory_id"], name: "index_inventory_movements_on_inventory_id"
+    t.index ["inventory_lot_id"], name: "index_inventory_movements_on_inventory_lot_id"
+    t.index ["organization_id"], name: "index_inventory_movements_on_organization_id"
+    t.index ["source_type", "source_id"], name: "index_inventory_movements_on_source"
+    t.index ["user_id"], name: "index_inventory_movements_on_user_id"
+    t.check_constraint "quantity <> 0::numeric", name: "chk_movement_nonzero"
+  end
+
+  create_table "inventory_serials", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "inventory_lot_id", null: false
+    t.string "serial_number", null: false
+    t.string "status", default: "available", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["inventory_lot_id"], name: "index_inventory_serials_on_inventory_lot_id"
+    t.index ["organization_id", "serial_number"], name: "idx_inventory_serials_unique", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_inventory_serials_on_organization_id"
+  end
+
+  create_table "languages", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.string "flag_iso"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["code"], name: "index_languages_on_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_languages_on_deleted_at"
+    t.index ["name"], name: "index_languages_on_name", where: "(deleted_at IS NULL)"
+  end
+
+  create_table "membership_features", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "key", null: false
+    t.text "description"
+    t.string "value_type", default: "boolean", null: false
+    t.integer "position", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active", "position"], name: "index_membership_features_on_active_and_position"
+    t.index ["deleted_at"], name: "index_membership_features_on_deleted_at"
+    t.index ["key"], name: "index_membership_features_on_key", unique: true
+    t.check_constraint "value_type::text = ANY (ARRAY['boolean'::character varying, 'integer'::character varying, 'decimal'::character varying, 'text'::character varying]::text[])", name: "chk_membership_features_value_type"
+  end
+
+  create_table "membership_plan_features", force: :cascade do |t|
+    t.bigint "membership_plan_id", null: false
+    t.bigint "membership_feature_id", null: false
+    t.boolean "enabled", default: true, null: false
+    t.string "value"
+    t.integer "limit"
+    t.integer "position", default: 0, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_membership_plan_features_on_deleted_at"
+    t.index ["membership_feature_id"], name: "index_membership_plan_features_on_membership_feature_id"
+    t.index ["membership_plan_id", "membership_feature_id"], name: "idx_membership_plan_features_unique_pair", unique: true
+    t.index ["membership_plan_id"], name: "index_membership_plan_features_on_membership_plan_id"
+    t.check_constraint "\"limit\" IS NULL OR \"limit\" >= 0", name: "chk_membership_plan_features_limit_non_negative"
+  end
+
+  create_table "membership_plans", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.text "description"
+    t.decimal "price", precision: 12, scale: 2, default: "0.0", null: false
+    t.string "currency", limit: 3, default: "MXN", null: false
+    t.string "billing_interval", default: "monthly", null: false
+    t.integer "trial_days", default: 0, null: false
+    t.integer "position", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active", "position"], name: "index_membership_plans_on_active_and_position"
+    t.index ["deleted_at"], name: "index_membership_plans_on_deleted_at"
+    t.index ["slug"], name: "index_membership_plans_on_slug", unique: true
+    t.check_constraint "billing_interval::text = ANY (ARRAY['monthly'::character varying, 'yearly'::character varying]::text[])", name: "chk_membership_plans_billing_interval"
+    t.check_constraint "price >= 0::numeric", name: "chk_membership_plans_price_non_negative"
+    t.check_constraint "trial_days >= 0", name: "chk_membership_plans_trial_days_non_negative"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.bigint "user_id", null: false
+    t.text "body", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id", "created_at"], name: "index_messages_on_conversation_id_and_created_at"
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["deleted_at"], name: "index_messages_on_deleted_at"
+    t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
+  create_table "notes", force: :cascade do |t|
+    t.string "notable_type", null: false
+    t.bigint "notable_id", null: false
+    t.bigint "organization_id"
+    t.bigint "created_by_id"
+    t.string "kind", limit: 30, default: "general", null: false
+    t.text "body", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_notes_on_created_by_id"
+    t.index ["deleted_at"], name: "index_notes_on_deleted_at"
+    t.index ["notable_type", "notable_id", "kind"], name: "idx_notes_notable_kind", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id", "created_at"], name: "idx_notes_org_created_at"
+    t.check_constraint "length(btrim(body)) > 0", name: "chk_notes_nonempty_body"
+  end
+
+  create_table "noticed_events", force: :cascade do |t|
+    t.string "type"
+    t.string "record_type"
+    t.bigint "record_id"
+    t.jsonb "params"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "notifications_count"
+    t.index ["record_type", "record_id"], name: "index_noticed_events_on_record"
+  end
+
+  create_table "noticed_notifications", force: :cascade do |t|
+    t.string "type"
+    t.bigint "event_id", null: false
+    t.string "recipient_type", null: false
+    t.bigint "recipient_id", null: false
+    t.datetime "read_at", precision: nil
+    t.datetime "seen_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_noticed_notifications_on_event_id"
+    t.index ["recipient_type", "recipient_id", "created_at"], name: "idx_noticed_notifications_recipient_recent", order: { created_at: :desc }
+    t.index ["recipient_type", "recipient_id", "created_at"], name: "idx_noticed_notifications_unread_recent", order: { created_at: :desc }, where: "(read_at IS NULL)"
+    t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
+  end
+
+  create_table "onboarding_audits", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "user_id", null: false
+    t.string "action", limit: 50, null: false
+    t.integer "step"
+    t.string "section", limit: 50
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["action"], name: "index_onboarding_audits_on_action"
+    t.index ["deleted_at"], name: "index_onboarding_audits_on_deleted_at"
+    t.index ["organization_id", "created_at"], name: "index_onboarding_audits_on_organization_id_and_created_at"
+    t.index ["organization_id"], name: "index_onboarding_audits_on_organization_id"
+    t.index ["user_id", "created_at"], name: "index_onboarding_audits_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_onboarding_audits_on_user_id"
+  end
+
+  create_table "organization_memberships", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "user_id", null: false
+    t.string "status", limit: 20, default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "account_status", default: "active", null: false
+    t.datetime "status_review_at"
+    t.index ["deleted_at"], name: "index_organization_memberships_on_deleted_at"
+    t.index ["organization_id", "account_status"], name: "idx_org_memberships_account_status", where: "((deleted_at IS NULL) AND ((status)::text = 'active'::text))"
+    t.index ["organization_id", "user_id"], name: "idx_org_memberships_active_unique", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_organization_memberships_on_organization_id"
+    t.index ["user_id"], name: "index_organization_memberships_on_user_id"
+    t.check_constraint "account_status::text = ANY (ARRAY['pending'::character varying, 'active'::character varying, 'suspended'::character varying, 'blocked'::character varying, 'deleted'::character varying]::text[])", name: "chk_org_member_account_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "check_org_memberships_status"
+  end
+
+  create_table "organization_migrations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "volume", limit: 20, null: false
+    t.string "priority", limit: 20, null: false
+    t.string "status", limit: 20, default: "pending", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["deleted_at"], name: "index_organization_migrations_on_deleted_at"
+    t.index ["organization_id"], name: "idx_org_migrations_org_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_organization_migrations_on_organization_id"
+    t.check_constraint "priority::text = ANY (ARRAY['catalog'::character varying, 'inventory'::character varying, 'customers'::character varying, 'all'::character varying]::text[])", name: "check_org_migrations_priority"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'in_progress'::character varying, 'completed'::character varying]::text[])", name: "check_org_migrations_status"
+    t.check_constraint "volume::text = ANY (ARRAY['under_500'::character varying, '500_5000'::character varying, 'over_5000'::character varying]::text[])", name: "check_org_migrations_volume"
+  end
+
+  create_table "organization_settings", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "base_currency_id", null: false
+    t.string "timezone", default: "UTC", null: false
+    t.string "payment_method", limit: 20, default: "cash", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.integer "default_table_page_size", default: 10, null: false
+    t.index ["base_currency_id"], name: "index_organization_settings_on_base_currency_id"
+    t.index ["deleted_at"], name: "index_organization_settings_on_deleted_at"
+    t.index ["organization_id"], name: "idx_organization_settings_active_org", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_organization_settings_on_organization_id"
+    t.check_constraint "default_table_page_size = ANY (ARRAY[5, 10, 15, 25, 50])", name: "chk_organization_settings_table_page_size"
+    t.check_constraint "payment_method::text = ANY (ARRAY['cash'::character varying, 'card'::character varying, 'qr'::character varying]::text[])", name: "check_organization_settings_payment_method"
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.string "name", limit: 150, null: false
+    t.string "tax_id", limit: 13, null: false
+    t.string "business_sector", limit: 50, null: false
+    t.string "status", limit: 20, default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "onboarding_status", limit: 20, default: "pending", null: false
+    t.integer "onboarding_current_step", default: 1, null: false
+    t.jsonb "onboarding_sections", default: {}, null: false
+    t.datetime "onboarding_completed_at"
+    t.bigint "membership_plan_id"
+    t.index "lower((tax_id)::text)", name: "idx_organizations_tax_id_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_organizations_on_deleted_at"
+    t.index ["membership_plan_id"], name: "index_organizations_on_membership_plan_id"
+    t.index ["onboarding_status"], name: "index_organizations_on_onboarding_status"
+    t.check_constraint "onboarding_current_step >= 1 AND onboarding_current_step <= 5", name: "check_organizations_onboarding_current_step"
+    t.check_constraint "onboarding_status::text = ANY (ARRAY['pending'::character varying, 'in_progress'::character varying, 'completed'::character varying]::text[])", name: "check_organizations_onboarding_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'suspended'::character varying]::text[])", name: "check_organizations_status"
+  end
+
+  create_table "payment_integrations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "provider", limit: 30, null: false
+    t.string "status", limit: 20, default: "pending", null: false
+    t.jsonb "configuration", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["deleted_at"], name: "index_payment_integrations_on_deleted_at"
+    t.index ["organization_id", "provider"], name: "idx_payment_integrations_org_provider_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_payment_integrations_on_organization_id"
+    t.check_constraint "provider::text = ANY (ARRAY['card'::character varying, 'qr'::character varying]::text[])", name: "check_payment_integrations_provider"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'active'::character varying, 'inactive'::character varying]::text[])", name: "check_payment_integrations_status"
+  end
+
+  create_table "permissions", force: :cascade do |t|
+    t.string "code", limit: 80, null: false
+    t.string "name", limit: 80, null: false
+    t.string "module_name", limit: 50, null: false
+    t.string "description"
+    t.string "status", limit: 20, default: "active", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_permissions_on_code", unique: true
+    t.index ["deleted_at", "status"], name: "index_permissions_on_deleted_at_and_status"
+    t.index ["deleted_at"], name: "index_permissions_on_deleted_at"
+    t.index ["module_name", "status"], name: "index_permissions_on_module_name_and_status"
+    t.index ["status"], name: "index_permissions_on_status"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "check_permissions_status"
+  end
+
+  create_table "phones", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "phoneable_type", null: false
+    t.bigint "phoneable_id", null: false
+    t.string "number", limit: 16, null: false
+    t.string "country_code", limit: 2, default: "MX", null: false
+    t.string "kind", limit: 12, null: false
+    t.string "label", limit: 60
+    t.string "extension", limit: 10
+    t.boolean "primary", default: false, null: false
+    t.boolean "whatsapp_enabled", default: false, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_phones_on_deleted_at"
+    t.index ["number"], name: "idx_phones_number_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["organization_id"], name: "index_phones_on_organization_id"
+    t.index ["phoneable_type", "phoneable_id", "kind"], name: "idx_phones_one_primary_per_kind", unique: true, where: "((deleted_at IS NULL) AND (\"primary\" = true))"
+    t.index ["phoneable_type", "phoneable_id", "number", "extension"], name: "idx_phones_unique_active_number", unique: true, where: "(deleted_at IS NULL)", nulls_not_distinct: true
+    t.index ["phoneable_type", "phoneable_id"], name: "index_phones_on_phoneable"
+    t.check_constraint "(phoneable_type::text <> ALL (ARRAY['Client'::character varying, 'Branch'::character varying, 'Employee'::character varying]::text[])) OR kind::text = 'mobile'::text AND \"primary\" = true", name: "chk_phones_mobile_only_for_direct_owners"
+    t.check_constraint "country_code::text ~ '^[A-Z]{2}$'::text", name: "chk_phones_country"
+    t.check_constraint "kind::text = ANY (ARRAY['mobile'::character varying, 'landline'::character varying, 'other'::character varying]::text[])", name: "chk_phones_kind"
+    t.check_constraint "number::text ~ '^\\+[1-9][0-9]{1,14}$'::text", name: "chk_phones_e164"
+  end
+
+  create_table "price_change_events", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "price_list_item_id"
+    t.bigint "actor_id", null: false
+    t.bigint "approved_by_id"
+    t.decimal "previous_price", precision: 12, scale: 2
+    t.decimal "new_price", precision: 12, scale: 2, null: false
+    t.string "currency", limit: 3, null: false
+    t.string "status", default: "pending", null: false
+    t.text "reason", null: false
+    t.datetime "approved_at"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_price_change_events_on_actor_id"
+    t.index ["approved_by_id"], name: "index_price_change_events_on_approved_by_id"
+    t.index ["organization_id"], name: "index_price_change_events_on_organization_id"
+    t.index ["price_list_item_id"], name: "index_price_change_events_on_price_list_item_id"
+    t.index ["product_id"], name: "index_price_change_events_on_product_id"
+    t.check_constraint "new_price >= 0::numeric", name: "price_change_positive_price"
+  end
+
+  create_table "price_list_items", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "price_list_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "product_variant_id"
+    t.bigint "product_presentation_id"
+    t.decimal "price", precision: 12, scale: 2, null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "id"], name: "index_price_list_items_on_organization_id_and_id", unique: true
+    t.index ["organization_id", "product_id", "id"], name: "idx_list_item_tenant_product", unique: true
+    t.index ["organization_id"], name: "index_price_list_items_on_organization_id"
+    t.index ["price_list_id"], name: "index_price_list_items_on_price_list_id"
+    t.index ["product_id"], name: "index_price_list_items_on_product_id"
+    t.index ["product_presentation_id"], name: "index_price_list_items_on_product_presentation_id"
+    t.index ["product_variant_id"], name: "index_price_list_items_on_product_variant_id"
+    t.check_constraint "ends_at IS NULL OR starts_at IS NULL OR ends_at > starts_at", name: "price_item_dates"
+    t.check_constraint "price >= 0::numeric", name: "list_item_positive_price"
+    t.exclusion_constraint "price_list_id WITH =, product_id WITH =, COALESCE(product_variant_id, (0)::bigint) WITH =, COALESCE(product_presentation_id, (0)::bigint) WITH =, tsrange(starts_at, ends_at, '[)'::text) WITH &&", where: "deleted_at IS NULL", using: :gist, deferrable: :deferred, name: "commercial_price_periods"
+  end
+
+  create_table "price_lists", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name", limit: 100, null: false
+    t.string "code", limit: 50, null: false
+    t.string "currency", limit: 3, default: "MXN", null: false
+    t.string "customer_segment", limit: 100
+    t.string "status", default: "draft", null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "code"], name: "index_price_lists_on_organization_id_and_code", unique: true
+    t.index ["organization_id", "id"], name: "index_price_lists_on_organization_id_and_id", unique: true
+    t.index ["organization_id"], name: "index_price_lists_on_organization_id"
+    t.check_constraint "ends_at IS NULL OR starts_at IS NULL OR ends_at > starts_at", name: "price_list_dates"
+  end
+
+  create_table "product_barcodes", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "product_variant_id"
+    t.bigint "product_presentation_id"
+    t.string "value", limit: 100, null: false
+    t.string "symbology", default: "code128", null: false
+    t.boolean "primary", default: false, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "organization_id, lower((value)::text)", name: "idx_product_barcodes_org_value_ci", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id", "value"], name: "index_product_barcodes_on_organization_id_and_value", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_product_barcodes_on_organization_id"
+    t.index ["product_id"], name: "idx_product_primary_barcode", unique: true, where: "((\"primary\" = true) AND (deleted_at IS NULL))"
+    t.index ["product_id"], name: "index_product_barcodes_on_product_id"
+    t.index ["product_presentation_id"], name: "index_product_barcodes_on_product_presentation_id"
+    t.index ["product_variant_id"], name: "index_product_barcodes_on_product_variant_id"
+  end
+
+  create_table "product_presentations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "product_id", null: false
+    t.string "name", limit: 100, null: false
+    t.decimal "units", precision: 18, scale: 6, default: "1.0", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "product_id", "id"], name: "idx_presentation_tenant_product", unique: true
+    t.index ["organization_id"], name: "index_product_presentations_on_organization_id"
+    t.index ["product_id"], name: "index_product_presentations_on_product_id"
+    t.check_constraint "units > 0::numeric", name: "presentation_positive_units"
+  end
+
+  create_table "product_variants", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "product_id", null: false
+    t.string "name", limit: 100, null: false
+    t.string "sku", limit: 50
+    t.jsonb "options", default: {}, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "product_id", "id"], name: "idx_variant_tenant_product", unique: true
+    t.index ["organization_id", "sku"], name: "index_product_variants_on_organization_id_and_sku", unique: true, where: "((sku IS NOT NULL) AND ((sku)::text <> ''::text))"
+    t.index ["organization_id"], name: "index_product_variants_on_organization_id"
+    t.index ["product_id"], name: "index_product_variants_on_product_id"
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "code", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.decimal "price", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "cost", precision: 12, scale: 2, default: "0.0", null: false
+    t.string "barcode"
+    t.string "sku"
+    t.bigint "category_id"
+    t.bigint "sat_unit_key_id"
+    t.bigint "sat_tax_id"
+    t.string "status", default: "active", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "position", default: 0
+    t.string "image_url"
+    t.boolean "featured", default: false
+    t.integer "view_count", default: 0
+    t.string "slug"
+    t.string "tracking_mode", default: "none", null: false
+    t.bigint "preferred_supplier_id"
+    t.index ["barcode"], name: "index_products_on_barcode", where: "(deleted_at IS NULL)"
+    t.index ["category_id"], name: "index_products_on_category_id"
+    t.index ["deleted_at"], name: "index_products_on_deleted_at"
+    t.index ["featured"], name: "index_products_on_featured"
+    t.index "organization_id, lower((code)::text)", name: "idx_products_org_code_ci", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id", "code"], name: "idx_products_org_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id", "id"], name: "index_products_on_organization_id_and_id", unique: true
+    t.index "organization_id, lower((sku)::text)", name: "idx_products_org_sku_ci", unique: true, where: "((deleted_at IS NULL) AND (sku IS NOT NULL))"
+    t.index ["organization_id", "sku"], name: "idx_products_org_sku", unique: true, where: "((deleted_at IS NULL) AND (sku IS NOT NULL))"
+    t.index ["organization_id", "slug"], name: "idx_products_org_slug", unique: true, where: "((deleted_at IS NULL) AND (slug IS NOT NULL))"
+    t.index ["organization_id"], name: "index_products_on_organization_id"
+    t.index ["position"], name: "index_products_on_position"
+    t.index ["preferred_supplier_id"], name: "index_products_on_preferred_supplier_id"
+    t.index ["sat_tax_id"], name: "index_products_on_sat_tax_id"
+    t.index ["sat_unit_key_id"], name: "index_products_on_sat_unit_key_id"
+    t.check_constraint "tracking_mode::text = ANY (ARRAY['none'::character varying, 'lot'::character varying, 'serial'::character varying]::text[])", name: "chk_products_tracking_mode"
+  end
+
+  create_table "promotion_benefits", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "promotion_id", null: false
+    t.string "kind", default: "percentage", null: false
+    t.decimal "value", precision: 12, scale: 4, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_promotion_benefits_on_organization_id"
+    t.index ["promotion_id"], name: "index_promotion_benefits_on_promotion_id"
+    t.check_constraint "value > 0::numeric AND (kind::text <> 'percentage'::text OR value <= 100::numeric)", name: "promotion_valid_benefit"
+  end
+
+  create_table "promotion_conditions", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "promotion_id", null: false
+    t.string "kind", null: false
+    t.bigint "product_id"
+    t.bigint "category_id"
+    t.decimal "quantity", precision: 18, scale: 6
+    t.decimal "amount", precision: 12, scale: 2
+    t.string "customer_segment", limit: 100
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_promotion_conditions_on_category_id"
+    t.index ["organization_id"], name: "index_promotion_conditions_on_organization_id"
+    t.index ["product_id"], name: "index_promotion_conditions_on_product_id"
+    t.index ["promotion_id"], name: "index_promotion_conditions_on_promotion_id"
+  end
+
+  create_table "promotion_redemptions", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "promotion_id", null: false
+    t.bigint "product_id", null: false
+    t.string "idempotency_key", limit: 100, null: false
+    t.string "customer_reference", limit: 100
+    t.decimal "quantity", precision: 18, scale: 6, null: false
+    t.decimal "discount", precision: 12, scale: 2, null: false
+    t.jsonb "snapshot", default: {}, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "idempotency_key"], name: "idx_promotion_redemption_idempotency", unique: true
+    t.index ["organization_id"], name: "index_promotion_redemptions_on_organization_id"
+    t.index ["product_id"], name: "index_promotion_redemptions_on_product_id"
+    t.index ["promotion_id", "customer_reference"], name: "idx_on_promotion_id_customer_reference_742ad4c936"
+    t.index ["promotion_id"], name: "index_promotion_redemptions_on_promotion_id"
+    t.check_constraint "quantity > 0::numeric AND discount >= 0::numeric", name: "redemption_positive_values"
+  end
+
+  create_table "promotions", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "name", limit: 100, null: false
+    t.string "code", limit: 50, null: false
+    t.string "currency", limit: 3, default: "MXN", null: false
+    t.string "status", default: "draft", null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.integer "usage_limit"
+    t.integer "customer_limit"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "code"], name: "index_promotions_on_organization_id_and_code", unique: true
+    t.index ["organization_id", "id"], name: "index_promotions_on_organization_id_and_id", unique: true
+    t.index ["organization_id"], name: "index_promotions_on_organization_id"
+    t.check_constraint "(usage_limit IS NULL OR usage_limit > 0) AND (customer_limit IS NULL OR customer_limit > 0)", name: "promotion_positive_limits"
+    t.check_constraint "ends_at IS NULL OR starts_at IS NULL OR ends_at > starts_at", name: "promotion_dates"
+  end
+
+  create_table "purchase_approvals", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "purchase_order_id", null: false
+    t.bigint "decided_by_id", null: false
+    t.string "decision", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["decided_by_id"], name: "index_purchase_approvals_on_decided_by_id"
+    t.index ["organization_id"], name: "index_purchase_approvals_on_organization_id"
+    t.index ["purchase_order_id"], name: "index_purchase_approvals_on_purchase_order_id"
+  end
+
+  create_table "purchase_cost_allocations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "goods_receipt_item_id", null: false
+    t.decimal "goods_amount", precision: 18, scale: 6, null: false
+    t.decimal "freight_amount", precision: 18, scale: 6, null: false
+    t.decimal "insurance_amount", precision: 18, scale: 6, null: false
+    t.decimal "landed_unit_cost", precision: 18, scale: 6, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.decimal "extra_expenses_amount", precision: 18, scale: 6, default: "0.0", null: false
+    t.decimal "additional_discount_amount", precision: 18, scale: 6, default: "0.0", null: false
+    t.index ["goods_receipt_item_id"], name: "idx_purchase_cost_allocation_receipt_item", unique: true
+    t.index ["organization_id"], name: "index_purchase_cost_allocations_on_organization_id"
+  end
+
+  create_table "purchase_event_deliveries", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "recipient_id", null: false
+    t.string "event_key", limit: 64, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_key"], name: "index_purchase_event_deliveries_on_event_key", unique: true
+    t.index ["organization_id"], name: "index_purchase_event_deliveries_on_organization_id"
+    t.index ["recipient_id"], name: "index_purchase_event_deliveries_on_recipient_id"
+  end
+
+  create_table "purchase_order_items", force: :cascade do |t|
+    t.bigint "purchase_order_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "supplier_product_id"
+    t.decimal "quantity", precision: 14, scale: 3, null: false
+    t.decimal "units_per_package", precision: 14, scale: 4, default: "1.0", null: false
+    t.decimal "unit_price", precision: 14, scale: 4, null: false
+    t.decimal "discount_percent", precision: 6, scale: 3, default: "0.0", null: false
+    t.decimal "nonrecoverable_tax", precision: 14, scale: 4, default: "0.0", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_purchase_order_items_on_product_id"
+    t.index ["purchase_order_id"], name: "index_purchase_order_items_on_purchase_order_id"
+    t.index ["supplier_product_id"], name: "index_purchase_order_items_on_supplier_product_id"
+    t.check_constraint "discount_percent >= 0::numeric AND discount_percent <= 100::numeric", name: "chk_purchase_order_items_discount"
+    t.check_constraint "quantity > 0::numeric AND units_per_package > 0::numeric AND unit_price >= 0::numeric", name: "chk_purchase_order_items_quantities"
+  end
+
+  create_table "purchase_orders", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "branch_id", null: false
+    t.bigint "supplier_id", null: false
+    t.bigint "currency_id", null: false
+    t.bigint "purchase_request_id"
+    t.bigint "purchase_quotation_id"
+    t.bigint "requested_by_id", null: false
+    t.bigint "approved_by_id"
+    t.string "code", null: false
+    t.string "status", default: "draft", null: false
+    t.decimal "freight_amount", precision: 14, scale: 4, default: "0.0", null: false
+    t.decimal "insurance_amount", precision: 14, scale: 4, default: "0.0", null: false
+    t.decimal "exchange_rate", precision: 18, scale: 8, default: "1.0", null: false
+    t.date "expected_on"
+    t.datetime "approved_at"
+    t.datetime "cancelled_at"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["approved_by_id"], name: "index_purchase_orders_on_approved_by_id"
+    t.index ["branch_id"], name: "index_purchase_orders_on_branch_id"
+    t.index ["currency_id"], name: "index_purchase_orders_on_currency_id"
+    t.index ["organization_id", "code"], name: "index_purchase_orders_on_organization_id_and_code", unique: true
+    t.index ["organization_id"], name: "index_purchase_orders_on_organization_id"
+    t.index ["purchase_quotation_id"], name: "index_purchase_orders_on_purchase_quotation_id"
+    t.index ["purchase_request_id"], name: "index_purchase_orders_on_purchase_request_id"
+    t.index ["requested_by_id"], name: "index_purchase_orders_on_requested_by_id"
+    t.index ["supplier_id"], name: "index_purchase_orders_on_supplier_id"
+    t.check_constraint "freight_amount >= 0::numeric AND insurance_amount >= 0::numeric AND exchange_rate > 0::numeric", name: "chk_purchase_order_expenses"
+  end
+
+  create_table "purchase_quotation_items", force: :cascade do |t|
+    t.bigint "purchase_quotation_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "supplier_product_id"
+    t.decimal "quantity", precision: 14, scale: 3, null: false
+    t.decimal "units_per_package", precision: 14, scale: 4, default: "1.0", null: false
+    t.decimal "unit_price", precision: 14, scale: 4, null: false
+    t.decimal "discount_percent", precision: 6, scale: 3, default: "0.0", null: false
+    t.integer "lead_time_days", default: 0, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_purchase_quotation_items_on_product_id"
+    t.index ["purchase_quotation_id"], name: "index_purchase_quotation_items_on_purchase_quotation_id"
+    t.index ["supplier_product_id"], name: "index_purchase_quotation_items_on_supplier_product_id"
+    t.check_constraint "discount_percent >= 0::numeric AND discount_percent <= 100::numeric", name: "chk_purchase_quotation_items_discount"
+    t.check_constraint "quantity > 0::numeric AND units_per_package > 0::numeric AND unit_price >= 0::numeric", name: "chk_purchase_quotation_items_quantities"
+  end
+
+  create_table "purchase_quotations", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "supplier_id", null: false
+    t.bigint "purchase_request_id"
+    t.bigint "currency_id", null: false
+    t.string "code", null: false
+    t.string "status", default: "draft", null: false
+    t.date "valid_until"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["currency_id"], name: "index_purchase_quotations_on_currency_id"
+    t.index ["organization_id", "code"], name: "index_purchase_quotations_on_organization_id_and_code", unique: true
+    t.index ["organization_id"], name: "index_purchase_quotations_on_organization_id"
+    t.index ["purchase_request_id"], name: "index_purchase_quotations_on_purchase_request_id"
+    t.index ["supplier_id"], name: "index_purchase_quotations_on_supplier_id"
+  end
+
+  create_table "purchase_request_items", force: :cascade do |t|
+    t.bigint "purchase_request_id", null: false
+    t.bigint "product_id", null: false
+    t.decimal "quantity", precision: 14, scale: 3, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_purchase_request_items_on_product_id"
+    t.index ["purchase_request_id"], name: "index_purchase_request_items_on_purchase_request_id"
+    t.check_constraint "quantity > 0::numeric", name: "chk_purchase_request_quantity"
+  end
+
+  create_table "purchase_requests", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "branch_id", null: false
+    t.bigint "requested_by_id", null: false
+    t.string "code", null: false
+    t.string "status", default: "draft", null: false
+    t.date "needed_on"
+    t.datetime "submitted_at"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id"], name: "index_purchase_requests_on_branch_id"
+    t.index ["organization_id", "code"], name: "index_purchase_requests_on_organization_id_and_code", unique: true
+    t.index ["organization_id"], name: "index_purchase_requests_on_organization_id"
+    t.index ["requested_by_id"], name: "index_purchase_requests_on_requested_by_id"
+  end
+
+  create_table "purchase_return_items", force: :cascade do |t|
+    t.bigint "purchase_return_id", null: false
+    t.bigint "goods_receipt_item_id", null: false
+    t.decimal "quantity", precision: 14, scale: 3, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "stock_disposition", default: "accepted", null: false
+    t.index ["goods_receipt_item_id"], name: "index_purchase_return_items_on_goods_receipt_item_id"
+    t.index ["purchase_return_id"], name: "index_purchase_return_items_on_purchase_return_id"
+    t.check_constraint "quantity > 0::numeric", name: "chk_purchase_return_positive"
+    t.check_constraint "stock_disposition::text = ANY (ARRAY['accepted'::character varying, 'quarantined'::character varying]::text[])", name: "chk_purchase_return_stock_disposition"
+  end
+
+  create_table "purchase_returns", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "goods_receipt_id", null: false
+    t.bigint "requested_by_id", null: false
+    t.string "status", default: "draft", null: false
+    t.string "reason", default: "damaged", null: false
+    t.datetime "processed_at"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["goods_receipt_id"], name: "index_purchase_returns_on_goods_receipt_id"
+    t.index ["organization_id"], name: "index_purchase_returns_on_organization_id"
+    t.index ["requested_by_id"], name: "index_purchase_returns_on_requested_by_id"
+  end
+
+  create_table "sat_banks", primary_key: "code", id: { type: :string, limit: 3 }, force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.datetime "valid_from", precision: nil
+    t.datetime "valid_to", precision: nil
+    t.boolean "status", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["code"], name: "index_sat_banks_on_code", where: "((deleted_at IS NULL) AND (status = true))"
+    t.index ["deleted_at"], name: "index_sat_banks_on_deleted_at"
+    t.index ["name"], name: "index_sat_banks_on_name"
+    t.index ["valid_from", "valid_to"], name: "index_sat_banks_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
+    t.check_constraint "code::text = TRIM(BOTH FROM code)", name: "chk_sat_banks_code_trim"
+    t.check_constraint "code::text ~ '^[0-9]{3}$'::text", name: "chk_sat_banks_code_format"
+    t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_banks_validity"
+  end
+
+  create_table "sat_cfdi_uses", force: :cascade do |t|
+    t.string "code", limit: 4, null: false
+    t.string "description", limit: 255, null: false
+    t.boolean "applies_to_individual", default: false, null: false
+    t.boolean "applies_to_company", default: false, null: false
+    t.text "fiscal_regime_codes", default: [], null: false, array: true
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_cfdi_uses_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_cfdi_uses_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_cfdi_uses_validity"
+    t.check_constraint "code::text ~ '^[A-Z0-9]{3,4}$'::text", name: "chk_sat_cfdi_uses_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_cfdi_uses_validity"
+  end
+
+  create_table "sat_countries", force: :cascade do |t|
+    t.string "code", limit: 3, null: false
+    t.string "description", limit: 255, null: false
+    t.string "postal_code_format", limit: 255
+    t.string "tax_id_format", limit: 255
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_countries_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_countries_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_countries_validity"
+    t.check_constraint "code::text ~ '^[A-Z]{3}$'::text", name: "chk_sat_countries_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_countries_validity"
+  end
+
+  create_table "sat_currencies", force: :cascade do |t|
+    t.string "code", limit: 3, null: false
+    t.string "description", limit: 100, null: false
+    t.integer "decimals", default: 2, null: false
+    t.decimal "variation_percentage", precision: 5, scale: 2
+    t.string "symbol", limit: 5
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["code"], name: "index_sat_currencies_on_code", unique: true
+    t.index ["deleted_at"], name: "index_sat_currencies_on_deleted_at"
+    t.check_constraint "code::text = upper(TRIM(BOTH FROM code))", name: "chk_sat_currencies_code_uppercase"
+    t.check_constraint "code::text ~ '^[A-Z]{3}$'::text", name: "chk_sat_currencies_code_format"
+    t.check_constraint "decimals = ANY (ARRAY[0, 2, 3, 4, 5, 6, 8])", name: "chk_sat_currencies_decimals_allowed"
+    t.check_constraint "variation_percentage >= 0::numeric OR variation_percentage IS NULL", name: "chk_sat_currencies_variation_positive"
+  end
+
+  create_table "sat_customs_offices", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.string "description", limit: 255, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_customs_offices_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_customs_offices_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_customs_offices_validity"
+    t.check_constraint "code::text ~ '^[0-9]{1,3}$'::text", name: "chk_sat_customs_offices_identifier"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_customs_offices_validity"
+  end
+
+  create_table "sat_customs_patents", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.string "description", limit: 255, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_customs_patents_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_customs_patents_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_customs_patents_validity"
+    t.check_constraint "code::text ~ '^[0-9]{4}$'::text", name: "chk_sat_customs_patents_identifier"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_customs_patents_validity"
+  end
+
+  create_table "sat_customs_pediment_numbers", force: :cascade do |t|
+    t.string "code", limit: 40, null: false
+    t.string "description", limit: 255, null: false
+    t.string "customs_office_code", limit: 5
+    t.string "patent_code", limit: 5
+    t.integer "fiscal_year"
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_customs_pediment_numbers_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["customs_office_code"], name: "idx_sat_customs_pediment_numbers_customs_office_code"
+    t.index ["deleted_at"], name: "index_sat_customs_pediment_numbers_on_deleted_at"
+    t.index ["fiscal_year"], name: "idx_sat_customs_pediment_numbers_fiscal_year"
+    t.index ["patent_code"], name: "idx_sat_customs_pediment_numbers_patent_code"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_customs_pediment_numbers_validity"
+    t.check_constraint "fiscal_year IS NULL OR fiscal_year >= 2000 AND fiscal_year <= 2100", name: "chk_sat_customs_pediment_numbers_details"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_customs_pediment_numbers_validity"
+  end
+
+  create_table "sat_export_types", force: :cascade do |t|
+    t.string "code", limit: 2, null: false
+    t.string "description", limit: 255, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_export_types_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_export_types_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_export_types_validity"
+    t.check_constraint "code::text ~ '^[0-9]{2}$'::text", name: "chk_sat_export_types_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_export_types_validity"
+  end
+
+  create_table "sat_factor_types", force: :cascade do |t|
+    t.string "code", limit: 10, null: false
+    t.string "description", limit: 255, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_factor_types_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_factor_types_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_factor_types_validity"
+    t.check_constraint "code::text = ANY (ARRAY['Tasa'::character varying, 'Cuota'::character varying, 'Exento'::character varying]::text[])", name: "chk_sat_factor_types_identifier"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_factor_types_validity"
+  end
+
+  create_table "sat_fiscal_regimes", force: :cascade do |t|
+    t.string "code", limit: 3, null: false
+    t.string "description", limit: 255, null: false
+    t.string "person_type", limit: 1
+    t.date "valid_from"
+    t.date "valid_to"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.boolean "applies_to_individual", default: false, null: false
+    t.boolean "applies_to_company", default: false, null: false
+    t.index ["code", "valid_from", "valid_to"], name: "idx_sat_fiscal_regimes_code_validity"
+    t.index ["code", "valid_from"], name: "index_sat_fiscal_regimes_on_code_and_valid_from", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_fiscal_regimes_on_deleted_at"
+    t.index ["person_type"], name: "index_sat_fiscal_regimes_on_person_type", where: "(deleted_at IS NULL)"
+    t.index ["valid_from", "valid_to"], name: "index_sat_fiscal_regimes_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
+    t.check_constraint "person_type::text = ANY (ARRAY['F'::character varying, 'M'::character varying]::text[])"
+    t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from"
+  end
+
+  create_table "sat_localities", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.string "description", limit: 255, null: false
+    t.string "state_code", limit: 3, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_sat_localities_on_deleted_at"
+    t.index ["state_code", "code"], name: "idx_sat_localities_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["state_code"], name: "idx_sat_localities_state_code"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_localities_validity"
+    t.check_constraint "code::text ~ '^[0-9]{1,5}$'::text", name: "chk_sat_localities_details"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_localities_validity"
+  end
+
+  create_table "sat_months", primary_key: "code", id: { type: :string, limit: 2 }, force: :cascade do |t|
+    t.string "description", limit: 50, null: false
+    t.integer "month_number", null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["code"], name: "index_sat_months_on_code", where: "((deleted_at IS NULL) AND (status = true))"
+    t.index ["deleted_at"], name: "index_sat_months_on_deleted_at"
+    t.index ["month_number"], name: "index_sat_months_on_month_number", where: "(deleted_at IS NULL)"
+    t.index ["status"], name: "index_sat_months_on_status"
+    t.index ["valid_from", "valid_to"], name: "index_sat_months_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
+    t.check_constraint "code::integer = month_number"
+    t.check_constraint "code::text ~ '^(0[1-9]|1[0-8])$'::text"
+    t.check_constraint "code::text ~ '^(0[1-9]|1[0-8])$'::text", name: "chk_sat_months_cfdi40_code"
+    t.check_constraint "month_number >= 1 AND month_number <= 18"
+    t.check_constraint "month_number >= 1 AND month_number <= 18", name: "chk_sat_months_cfdi40_number"
+    t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from"
+  end
+
+  create_table "sat_municipalities", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.string "description", limit: 255, null: false
+    t.string "state_code", limit: 3, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_sat_municipalities_on_deleted_at"
+    t.index ["state_code", "code"], name: "idx_sat_municipalities_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["state_code"], name: "idx_sat_municipalities_state_code"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_municipalities_validity"
+    t.check_constraint "code::text ~ '^[0-9]{3}$'::text", name: "chk_sat_municipalities_identifier"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_municipalities_validity"
+  end
+
+  create_table "sat_neighborhoods", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.string "description", limit: 255, null: false
+    t.string "postal_code", limit: 5, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_sat_neighborhoods_on_deleted_at"
+    t.index ["postal_code", "code"], name: "idx_sat_neighborhoods_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["postal_code"], name: "idx_sat_neighborhoods_postal_code"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_neighborhoods_validity"
+    t.check_constraint "postal_code::text ~ '^[0-9]{5}$'::text", name: "chk_sat_neighborhoods_identifier"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_neighborhoods_validity"
+  end
+
+  create_table "sat_payment_method_types", force: :cascade do |t|
+    t.string "code", limit: 3, null: false
+    t.string "description", limit: 100, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["code"], name: "index_sat_payment_method_types_on_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_payment_method_types_on_deleted_at"
+    t.index ["status"], name: "index_sat_payment_method_types_on_status"
+    t.index ["valid_from", "valid_to"], name: "index_sat_payment_method_types_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
+    t.check_constraint "code::text = ANY (ARRAY['PUE'::character varying, 'PPD'::character varying]::text[])", name: "chk_sat_payment_method_types_code"
+    t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_payment_method_types_validity"
+  end
+
+  create_table "sat_payment_methods", force: :cascade do |t|
+    t.string "code", limit: 3, null: false
+    t.string "description", limit: 255, null: false
+    t.datetime "valid_from", precision: nil
+    t.datetime "valid_to", precision: nil
+    t.boolean "status", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["code"], name: "index_sat_payment_methods_unique", unique: true, where: "((deleted_at IS NULL) AND (status = true))"
+    t.index ["deleted_at"], name: "index_sat_payment_methods_on_deleted_at"
+    t.index ["description"], name: "index_sat_payment_methods_on_description"
+    t.index ["valid_from", "valid_to"], name: "index_sat_payment_methods_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
+    t.check_constraint "code::text ~ '^[0-9]{2}$'::text", name: "chk_sat_payment_methods_code_format"
+    t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_payment_methods_validity"
+  end
+
+  create_table "sat_periodicities", force: :cascade do |t|
+    t.string "code", limit: 2, null: false
+    t.string "description", limit: 255, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_periodicities_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_periodicities_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_periodicities_validity"
+    t.check_constraint "code::text ~ '^[0-9]{2}$'::text", name: "chk_sat_periodicities_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_periodicities_validity"
+  end
+
+  create_table "sat_postal_codes", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.string "description", limit: 255, null: false
+    t.string "state_code", limit: 3
+    t.string "municipality_code", limit: 5
+    t.string "locality_code", limit: 5
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_postal_codes_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_postal_codes_on_deleted_at"
+    t.index ["municipality_code"], name: "idx_sat_postal_codes_municipality_code"
+    t.index ["state_code"], name: "idx_sat_postal_codes_state_code"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_postal_codes_validity"
+    t.check_constraint "code::text ~ '^[0-9]{5}$'::text", name: "chk_sat_postal_codes_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_postal_codes_validity"
+  end
+
+  create_table "sat_product_service_keys", force: :cascade do |t|
+    t.string "code", limit: 8, null: false
+    t.string "description", limit: 500, null: false
+    t.boolean "includes_vat"
+    t.boolean "includes_ieps"
+    t.string "required_complement", limit: 255
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_product_service_keys_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_product_service_keys_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_product_service_keys_validity"
+    t.check_constraint "code::text ~ '^[0-9]{8}$'::text", name: "chk_sat_product_service_keys_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_product_service_keys_validity"
+  end
+
+  create_table "sat_relationship_types", force: :cascade do |t|
+    t.string "code", limit: 2, null: false
+    t.string "description", limit: 255, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_relationship_types_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_relationship_types_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_relationship_types_validity"
+    t.check_constraint "code::text ~ '^[0-9]{2}$'::text", name: "chk_sat_relationship_types_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_relationship_types_validity"
+  end
+
+  create_table "sat_states", force: :cascade do |t|
+    t.string "code", limit: 3, null: false
+    t.string "description", limit: 255, null: false
+    t.string "country_code", limit: 3, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_code", "code"], name: "idx_sat_states_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["country_code"], name: "idx_sat_states_country_code"
+    t.index ["deleted_at"], name: "index_sat_states_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_states_validity"
+    t.check_constraint "code::text ~ '^[A-Z0-9]{2,3}$'::text", name: "chk_sat_states_details"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_states_validity"
+  end
+
+  create_table "sat_tax_codes", force: :cascade do |t|
+    t.string "code", limit: 3, null: false
+    t.string "description", limit: 255, null: false
+    t.boolean "allows_withholding", default: false, null: false
+    t.boolean "allows_transfer", default: false, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_tax_codes_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_tax_codes_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_tax_codes_validity"
+    t.check_constraint "code::text ~ '^[0-9]{3}$'::text", name: "chk_sat_tax_codes_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_tax_codes_validity"
+  end
+
+  create_table "sat_tax_objects", force: :cascade do |t|
+    t.string "code", limit: 2, null: false
+    t.string "description", limit: 255, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_tax_objects_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_tax_objects_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_tax_objects_validity"
+    t.check_constraint "code::text ~ '^[0-9]{2}$'::text", name: "chk_sat_tax_objects_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_tax_objects_validity"
+  end
+
+  create_table "sat_tax_rates", force: :cascade do |t|
+    t.string "catalog_key", limit: 160, null: false
+    t.string "description", limit: 255, null: false
+    t.string "tax_code", limit: 3, null: false
+    t.string "factor_type", limit: 10, null: false
+    t.string "tax_type", limit: 12, null: false
+    t.decimal "minimum_rate", precision: 14, scale: 8
+    t.decimal "maximum_rate", precision: 14, scale: 8
+    t.boolean "fixed_rate", default: false, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["catalog_key"], name: "idx_sat_tax_rates_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_tax_rates_on_deleted_at"
+    t.index ["factor_type"], name: "idx_sat_tax_rates_factor_type"
+    t.index ["tax_code"], name: "idx_sat_tax_rates_tax_code"
+    t.index ["tax_type"], name: "idx_sat_tax_rates_tax_type"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_tax_rates_validity"
+    t.check_constraint "minimum_rate IS NULL OR maximum_rate IS NULL OR minimum_rate <= maximum_rate", name: "chk_sat_tax_rates_details"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_tax_rates_validity"
+  end
+
+  create_table "sat_taxes", force: :cascade do |t|
+    t.string "code", null: false
+    t.string "name", null: false
+    t.string "tax_type", default: "transfer", null: false
+    t.string "factor_type", default: "rate", null: false
+    t.string "description", limit: 255
+    t.string "applies_to"
+    t.integer "priority", default: 1, null: false
+    t.boolean "is_retainable", default: false
+    t.boolean "is_transferrable", default: true
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index "lower(TRIM(BOTH FROM code))", name: "index_sat_taxes_on_LOWER_TRIM_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["applies_to"], name: "index_sat_taxes_on_applies_to"
+    t.index ["factor_type"], name: "index_sat_taxes_on_factor_type"
+    t.index ["status", "deleted_at"], name: "index_sat_taxes_on_status_and_deleted_at"
+    t.index ["status"], name: "index_sat_taxes_on_status"
+    t.index ["tax_type"], name: "index_sat_taxes_on_tax_type"
+    t.index ["valid_from", "valid_to"], name: "index_sat_taxes_on_valid_from_and_valid_to", where: "(deleted_at IS NULL)"
+    t.check_constraint "(applies_to::text = ANY (ARRAY['product'::character varying, 'service'::character varying, 'both'::character varying]::text[])) OR applies_to IS NULL"
+    t.check_constraint "factor_type::text = ANY (ARRAY['rate'::character varying, 'quota'::character varying, 'exempt'::character varying]::text[])"
+    t.check_constraint "tax_type::text = 'transfer'::text AND is_transferrable = true OR tax_type::text = 'withheld'::text AND is_retainable = true"
+    t.check_constraint "tax_type::text = ANY (ARRAY['transfer'::character varying, 'withheld'::character varying]::text[])"
+    t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from"
+  end
+
+  create_table "sat_unit_keys", force: :cascade do |t|
+    t.string "code", limit: 5, null: false
+    t.string "description", limit: 255, null: false
+    t.string "symbol", limit: 10
+    t.datetime "valid_from", precision: nil
+    t.datetime "valid_to", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["code"], name: "index_sat_unit_keys_on_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_unit_keys_on_deleted_at"
+    t.index ["valid_from"], name: "index_sat_unit_keys_on_valid_from"
+    t.index ["valid_to"], name: "index_sat_unit_keys_on_valid_to"
+    t.check_constraint "code::text = upper(code::text)", name: "chk_sat_unit_keys_upper_code"
+    t.check_constraint "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from", name: "chk_sat_unit_keys_valid_range"
+  end
+
+  create_table "sat_voucher_types", force: :cascade do |t|
+    t.string "code", limit: 1, null: false
+    t.string "description", limit: 255, null: false
+    t.date "valid_from"
+    t.date "valid_to"
+    t.boolean "status", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_sat_voucher_types_active_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["deleted_at"], name: "index_sat_voucher_types_on_deleted_at"
+    t.index ["valid_from", "valid_to"], name: "idx_sat_voucher_types_validity"
+    t.check_constraint "code::text ~ '^[IETNP]$'::text", name: "chk_sat_voucher_types_code_format"
+    t.check_constraint "valid_from IS NULL OR valid_to IS NULL OR valid_to >= valid_from", name: "chk_sat_voucher_types_validity"
+  end
+
+  create_table "supplier_bank_accounts", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "supplier_id", null: false
+    t.string "sat_bank_code", limit: 3
+    t.string "bank_name", limit: 120
+    t.string "holder_name", limit: 180, null: false
+    t.string "clabe"
+    t.string "last_four", limit: 4
+    t.string "account_type", limit: 30
+    t.string "status", limit: 20, default: "active", null: false
+    t.string "verification_status", limit: 20, default: "pending", null: false
+    t.datetime "verified_at", precision: nil
+    t.string "blocked_reason", limit: 500
+    t.boolean "primary", default: false, null: false
+    t.string "currency_code", limit: 3, default: "MXN", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_supplier_bank_accounts_on_deleted_at"
+    t.index ["organization_id", "supplier_id", "primary"], name: "idx_supplier_bank_accounts_org_supplier"
+    t.index ["organization_id", "supplier_id", "status"], name: "idx_supplier_bank_account_status"
+    t.index ["organization_id"], name: "index_supplier_bank_accounts_on_organization_id"
+    t.index ["sat_bank_code"], name: "index_supplier_bank_accounts_on_sat_bank_code"
+    t.index ["supplier_id", "primary"], name: "idx_supplier_one_primary_bank_account", unique: true, where: "((\"primary\" = true) AND (deleted_at IS NULL))"
+    t.index ["supplier_id"], name: "index_supplier_bank_accounts_on_supplier_id"
+  end
+
+  create_table "supplier_credit_allocations", force: :cascade do |t|
+    t.datetime "deleted_at", precision: nil
+    t.bigint "organization_id", null: false
+    t.bigint "supplier_credit_note_id", null: false
+    t.bigint "account_payable_id", null: false
+    t.decimal "amount", precision: 18, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_payable_id"], name: "index_supplier_credit_allocations_on_account_payable_id"
+    t.index ["organization_id"], name: "index_supplier_credit_allocations_on_organization_id"
+    t.index ["supplier_credit_note_id", "account_payable_id"], name: "idx_supplier_credit_allocation_unique", unique: true
+    t.index ["supplier_credit_note_id"], name: "index_supplier_credit_allocations_on_supplier_credit_note_id"
+    t.check_constraint "amount > 0::numeric", name: "chk_supplier_credit_allocation_amount"
+  end
+
+  create_table "supplier_credit_notes", force: :cascade do |t|
+    t.datetime "deleted_at", precision: nil
+    t.bigint "organization_id", null: false
+    t.bigint "supplier_id", null: false
+    t.bigint "currency_id", null: false
+    t.bigint "supplier_invoice_id"
+    t.bigint "purchase_return_id"
+    t.bigint "created_by_id", null: false
+    t.string "uuid", limit: 36
+    t.string "folio", limit: 60
+    t.date "issued_on", null: false
+    t.decimal "total", precision: 18, scale: 2, null: false
+    t.string "status", limit: 20, default: "draft", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_supplier_credit_notes_on_created_by_id"
+    t.index ["currency_id"], name: "index_supplier_credit_notes_on_currency_id"
+    t.index ["organization_id", "uuid"], name: "idx_supplier_credit_notes_org_uuid", unique: true, where: "(uuid IS NOT NULL)"
+    t.index ["organization_id"], name: "index_supplier_credit_notes_on_organization_id"
+    t.index ["purchase_return_id"], name: "index_supplier_credit_notes_on_purchase_return_id"
+    t.index ["supplier_id"], name: "index_supplier_credit_notes_on_supplier_id"
+    t.index ["supplier_invoice_id"], name: "index_supplier_credit_notes_on_supplier_invoice_id"
+    t.check_constraint "total > 0::numeric", name: "chk_supplier_credit_note_amount"
+  end
+
+  create_table "supplier_documents", force: :cascade do |t|
+    t.bigint "supplier_id", null: false
+    t.bigint "attachment_id", null: false
+    t.bigint "previous_version_id"
+    t.bigint "uploaded_by_id"
+    t.bigint "updated_by_id"
+    t.bigint "deleted_by_id"
+    t.string "series_id", null: false
+    t.integer "revision_number", default: 1, null: false
+    t.boolean "current_version", default: true, null: false
+    t.string "category", default: "other", null: false
+    t.string "status", default: "active", null: false
+    t.string "description", limit: 300
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["attachment_id"], name: "index_supplier_documents_on_attachment_id", unique: true
+    t.index ["deleted_by_id"], name: "index_supplier_documents_on_deleted_by_id"
+    t.index ["previous_version_id"], name: "index_supplier_documents_on_previous_version_id"
+    t.index ["supplier_id", "current_version", "deleted_at"], name: "idx_supplier_document_listing"
+    t.index ["supplier_id", "series_id", "revision_number"], name: "idx_supplier_document_version", unique: true
+    t.index ["supplier_id"], name: "index_supplier_documents_on_supplier_id"
+    t.index ["updated_by_id"], name: "index_supplier_documents_on_updated_by_id"
+    t.index ["uploaded_by_id"], name: "index_supplier_documents_on_uploaded_by_id"
+  end
+
+  create_table "supplier_event_deliveries", force: :cascade do |t|
+    t.bigint "supplier_id", null: false
+    t.bigint "recipient_id", null: false
+    t.string "event_key", limit: 64, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_key"], name: "index_supplier_event_deliveries_on_event_key", unique: true
+    t.index ["recipient_id"], name: "index_supplier_event_deliveries_on_recipient_id"
+    t.index ["supplier_id"], name: "index_supplier_event_deliveries_on_supplier_id"
+  end
+
+  create_table "supplier_events", force: :cascade do |t|
+    t.bigint "supplier_id", null: false
+    t.bigint "branch_id", null: false
+    t.bigint "created_by_id"
+    t.string "title", limit: 150, null: false
+    t.string "kind", null: false
+    t.datetime "starts_at", precision: nil, null: false
+    t.datetime "ends_at", precision: nil
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "all_day", default: false, null: false
+    t.string "status", default: "scheduled", null: false
+    t.index ["branch_id"], name: "index_supplier_events_on_branch_id"
+    t.index ["created_by_id"], name: "index_supplier_events_on_created_by_id"
+    t.index ["deleted_at"], name: "index_supplier_events_on_deleted_at"
+    t.index ["supplier_id", "starts_at"], name: "idx_supplier_events_by_date"
+    t.index ["supplier_id", "status", "starts_at"], name: "idx_supplier_events_status_date"
+    t.index ["supplier_id"], name: "index_supplier_events_on_supplier_id"
+    t.check_constraint "ends_at IS NULL OR ends_at > starts_at", name: "chk_supplier_event_period"
+    t.check_constraint "status::text = ANY (ARRAY['scheduled'::character varying, 'completed'::character varying, 'cancelled'::character varying]::text[])", name: "chk_supplier_event_status"
+  end
+
+  create_table "supplier_invoice_lines", force: :cascade do |t|
+    t.datetime "deleted_at", precision: nil
+    t.bigint "supplier_invoice_id", null: false
+    t.string "description", limit: 500, null: false
+    t.decimal "quantity", precision: 18, scale: 6, null: false
+    t.decimal "unit_price", precision: 18, scale: 6, null: false
+    t.decimal "amount", precision: 18, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["supplier_invoice_id"], name: "index_supplier_invoice_lines_on_supplier_invoice_id"
+    t.check_constraint "quantity > 0::numeric AND unit_price >= 0::numeric AND amount >= 0::numeric", name: "chk_supplier_invoice_lines"
+  end
+
+  create_table "supplier_invoice_receipts", force: :cascade do |t|
+    t.datetime "deleted_at", precision: nil
+    t.bigint "supplier_invoice_id", null: false
+    t.bigint "goods_receipt_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["goods_receipt_id"], name: "index_supplier_invoice_receipts_on_goods_receipt_id"
+    t.index ["supplier_invoice_id", "goods_receipt_id"], name: "idx_supplier_invoice_receipt_unique", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["supplier_invoice_id"], name: "index_supplier_invoice_receipts_on_supplier_invoice_id"
+  end
+
+  create_table "supplier_invoices", force: :cascade do |t|
+    t.datetime "deleted_at", precision: nil
+    t.bigint "organization_id", null: false
+    t.bigint "supplier_id", null: false
+    t.bigint "purchase_order_id"
+    t.bigint "currency_id", null: false
+    t.bigint "created_by_id", null: false
+    t.string "uuid", limit: 36
+    t.string "series", limit: 30
+    t.string "folio", limit: 60
+    t.string "issuer_rfc", limit: 13
+    t.string "receiver_rfc", limit: 13
+    t.string "payment_method", limit: 3
+    t.date "issued_on", null: false
+    t.date "received_on", null: false
+    t.date "due_on", null: false
+    t.decimal "exchange_rate", precision: 18, scale: 8, default: "1.0", null: false
+    t.decimal "subtotal", precision: 18, scale: 2, default: "0.0", null: false
+    t.decimal "discount", precision: 18, scale: 2, default: "0.0", null: false
+    t.decimal "tax_amount", precision: 18, scale: 2, default: "0.0", null: false
+    t.decimal "total", precision: 18, scale: 2, null: false
+    t.string "status", limit: 20, default: "draft", null: false
+    t.string "source", limit: 20, default: "manual", null: false
+    t.datetime "posted_at"
+    t.datetime "cancelled_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "sat_status", limit: 30
+    t.string "sat_response_code", limit: 120
+    t.datetime "sat_verified_at"
+    t.index ["created_by_id"], name: "index_supplier_invoices_on_created_by_id"
+    t.index ["currency_id"], name: "index_supplier_invoices_on_currency_id"
+    t.index ["organization_id", "due_on", "status"], name: "idx_on_organization_id_due_on_status_b67ca610f8"
+    t.index ["organization_id", "uuid"], name: "idx_supplier_invoices_org_uuid", unique: true, where: "(uuid IS NOT NULL)"
+    t.index ["organization_id"], name: "index_supplier_invoices_on_organization_id"
+    t.index ["purchase_order_id"], name: "index_supplier_invoices_on_purchase_order_id"
+    t.index ["supplier_id", "issued_on"], name: "index_supplier_invoices_on_supplier_id_and_issued_on"
+    t.index ["supplier_id"], name: "index_supplier_invoices_on_supplier_id"
+    t.check_constraint "total >= 0::numeric AND subtotal >= 0::numeric AND discount >= 0::numeric AND tax_amount >= 0::numeric AND exchange_rate > 0::numeric", name: "chk_supplier_invoices_amounts"
+  end
+
+  create_table "supplier_payment_allocations", force: :cascade do |t|
+    t.datetime "deleted_at", precision: nil
+    t.bigint "organization_id", null: false
+    t.bigint "supplier_payment_id", null: false
+    t.bigint "account_payable_id", null: false
+    t.decimal "amount", precision: 18, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_payable_id"], name: "index_supplier_payment_allocations_on_account_payable_id"
+    t.index ["organization_id"], name: "index_supplier_payment_allocations_on_organization_id"
+    t.index ["supplier_payment_id", "account_payable_id"], name: "idx_supplier_payment_allocation_unique", unique: true
+    t.index ["supplier_payment_id"], name: "index_supplier_payment_allocations_on_supplier_payment_id"
+    t.check_constraint "amount > 0::numeric", name: "chk_supplier_payment_allocation_amount"
+  end
+
+  create_table "supplier_payments", force: :cascade do |t|
+    t.datetime "deleted_at", precision: nil
+    t.bigint "organization_id", null: false
+    t.bigint "supplier_id", null: false
+    t.bigint "currency_id", null: false
+    t.bigint "supplier_bank_account_id"
+    t.bigint "created_by_id", null: false
+    t.date "paid_on", null: false
+    t.decimal "amount", precision: 18, scale: 2, null: false
+    t.string "reference", limit: 120
+    t.string "status", limit: 20, default: "draft", null: false
+    t.datetime "posted_at"
+    t.datetime "reversed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_supplier_payments_on_created_by_id"
+    t.index ["currency_id"], name: "index_supplier_payments_on_currency_id"
+    t.index ["organization_id", "supplier_id", "paid_on"], name: "idx_on_organization_id_supplier_id_paid_on_892ea8c286"
+    t.index ["organization_id"], name: "index_supplier_payments_on_organization_id"
+    t.index ["supplier_bank_account_id"], name: "index_supplier_payments_on_supplier_bank_account_id"
+    t.index ["supplier_id"], name: "index_supplier_payments_on_supplier_id"
+    t.check_constraint "amount > 0::numeric", name: "chk_supplier_payment_amount"
+  end
+
+  create_table "supplier_product_prices", force: :cascade do |t|
+    t.bigint "supplier_product_id", null: false
+    t.bigint "currency_id", null: false
+    t.bigint "recorded_by_id"
+    t.decimal "purchase_price", precision: 14, scale: 4, null: false
+    t.string "presentation_name", limit: 80, null: false
+    t.decimal "units_per_package", precision: 14, scale: 4, null: false
+    t.decimal "discount_percent", precision: 6, scale: 3, default: "0.0", null: false
+    t.decimal "freight_amount", precision: 14, scale: 4, default: "0.0", null: false
+    t.decimal "nonrecoverable_tax", precision: 14, scale: 4, default: "0.0", null: false
+    t.date "effective_on", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.index ["currency_id"], name: "index_supplier_product_prices_on_currency_id"
+    t.index ["recorded_by_id"], name: "index_supplier_product_prices_on_recorded_by_id"
+    t.index ["supplier_product_id", "effective_on", "created_at"], name: "idx_supplier_prices_history"
+    t.index ["supplier_product_id"], name: "index_supplier_product_prices_on_supplier_product_id"
+    t.check_constraint "units_per_package > 0::numeric AND purchase_price >= 0::numeric", name: "chk_supplier_history_values"
+  end
+
+  create_table "supplier_products", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "supplier_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "currency_id", null: false
+    t.string "supplier_sku", limit: 80
+    t.string "supplier_barcode", limit: 80
+    t.string "presentation_name", limit: 80, default: "Unit", null: false
+    t.decimal "units_per_package", precision: 14, scale: 4, default: "1.0", null: false
+    t.decimal "purchase_price", precision: 14, scale: 4, default: "0.0", null: false
+    t.decimal "discount_percent", precision: 6, scale: 3, default: "0.0", null: false
+    t.decimal "freight_amount", precision: 14, scale: 4, default: "0.0", null: false
+    t.decimal "nonrecoverable_tax", precision: 14, scale: 4, default: "0.0", null: false
+    t.decimal "minimum_quantity", precision: 14, scale: 4, default: "1.0", null: false
+    t.integer "lead_time_days", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["currency_id"], name: "index_supplier_products_on_currency_id"
+    t.index ["organization_id", "supplier_id", "product_id", "presentation_name"], name: "idx_supplier_products_active_pair", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_supplier_products_on_organization_id"
+    t.index ["product_id"], name: "index_supplier_products_on_product_id"
+    t.index ["supplier_id"], name: "index_supplier_products_on_supplier_id"
+    t.check_constraint "discount_percent >= 0::numeric AND discount_percent <= 100::numeric", name: "chk_supplier_product_discount"
+    t.check_constraint "purchase_price >= 0::numeric AND freight_amount >= 0::numeric AND nonrecoverable_tax >= 0::numeric", name: "chk_supplier_product_costs"
+    t.check_constraint "units_per_package > 0::numeric", name: "chk_supplier_product_factor"
+  end
+
+  create_table "supplier_schedule_exceptions", force: :cascade do |t|
+    t.bigint "supplier_id", null: false
+    t.bigint "branch_id"
+    t.bigint "supplier_schedule_id"
+    t.bigint "created_by_id"
+    t.date "starts_on", null: false
+    t.date "ends_on"
+    t.string "reason", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id"], name: "index_supplier_schedule_exceptions_on_branch_id"
+    t.index ["created_by_id"], name: "index_supplier_schedule_exceptions_on_created_by_id"
+    t.index ["deleted_at"], name: "index_supplier_schedule_exceptions_on_deleted_at"
+    t.index ["supplier_id", "starts_on"], name: "idx_on_supplier_id_starts_on_0b80f77e34"
+    t.index ["supplier_id"], name: "index_supplier_schedule_exceptions_on_supplier_id"
+    t.index ["supplier_schedule_id"], name: "index_supplier_schedule_exceptions_on_supplier_schedule_id"
+  end
+
+  create_table "supplier_schedules", force: :cascade do |t|
+    t.bigint "supplier_id", null: false
+    t.bigint "branch_id", null: false
+    t.string "kind", null: false
+    t.integer "weekday", null: false
+    t.time "starts_at", null: false
+    t.time "ends_at"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["branch_id"], name: "index_supplier_schedules_on_branch_id"
+    t.index ["deleted_at"], name: "index_supplier_schedules_on_deleted_at"
+    t.index ["supplier_id", "branch_id", "kind", "weekday", "starts_at"], name: "idx_supplier_schedules_unique_slot", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["supplier_id"], name: "index_supplier_schedules_on_supplier_id"
+    t.check_constraint "kind::text = ANY (ARRAY['visit'::character varying, 'order'::character varying, 'delivery'::character varying]::text[])", name: "chk_supplier_schedules_kind"
+    t.check_constraint "weekday >= 0 AND weekday <= 6", name: "chk_supplier_schedules_weekday"
+    t.exclusion_constraint "supplier_id WITH =, branch_id WITH =, kind WITH =, weekday WITH =, int4range((EXTRACT(epoch FROM starts_at))::integer, COALESCE((EXTRACT(epoch FROM ends_at))::integer, ((EXTRACT(epoch FROM starts_at))::integer + 60)), '[)'::text) WITH &&", where: "deleted_at IS NULL", using: :gist, name: "supplier_schedules_no_overlap"
+  end
+
+  create_table "suppliers", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "code", limit: 30, null: false
+    t.string "name", limit: 150, null: false
+    t.string "email", limit: 150
+    t.string "rfc", limit: 13
+    t.bigint "sat_fiscal_regime_id"
+    t.string "status", limit: 20, default: "active", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "legal_name", limit: 150
+    t.string "trade_name", limit: 150
+    t.string "alias_name", limit: 100
+    t.string "classification", limit: 30
+    t.string "person_type", limit: 20
+    t.integer "credit_days", default: 0, null: false
+    t.decimal "credit_limit", precision: 15, scale: 2, default: "0.0", null: false
+    t.decimal "discount_percent", precision: 5, scale: 2, default: "0.0", null: false
+    t.decimal "minimum_order_amount", precision: 15, scale: 2, default: "0.0", null: false
+    t.bigint "currency_id", null: false
+    t.bigint "responsible_user_id"
+    t.text "tags", default: [], null: false, array: true
+    t.string "foreign_tax_id", limit: 80
+    t.index ["currency_id"], name: "index_suppliers_on_currency_id"
+    t.index ["deleted_at"], name: "index_suppliers_on_deleted_at"
+    t.index ["email"], name: "index_suppliers_on_email"
+    t.index ["organization_id", "code"], name: "idx_suppliers_organization_code_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id", "name"], name: "idx_suppliers_org_name_active", where: "(deleted_at IS NULL)"
+    t.index ["organization_id", "rfc"], name: "idx_suppliers_organization_rfc_active", unique: true, where: "((rfc IS NOT NULL) AND ((rfc)::text <> ''::text) AND (deleted_at IS NULL))"
+    t.index ["organization_id", "status", "name"], name: "idx_suppliers_org_status_name_active", where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_suppliers_on_organization_id"
+    t.index ["responsible_user_id"], name: "index_suppliers_on_responsible_user_id"
+    t.index ["sat_fiscal_regime_id"], name: "index_suppliers_on_sat_fiscal_regime_id"
+    t.index ["status"], name: "index_suppliers_on_status"
+    t.check_constraint "code::text = btrim(code::text) AND code::text <> ''::text AND code::text ~ '^[A-Za-z0-9_-]+$'::text", name: "chk_suppliers_code_format"
+    t.check_constraint "credit_days >= 0 AND credit_days <= 365", name: "chk_supplier_credit_days"
+    t.check_constraint "credit_limit >= 0::numeric AND minimum_order_amount >= 0::numeric", name: "chk_supplier_amounts"
+    t.check_constraint "discount_percent >= 0::numeric AND discount_percent <= 100::numeric", name: "chk_supplier_discount"
+    t.check_constraint "name::text = btrim(name::text) AND name::text <> ''::text", name: "chk_suppliers_name_format"
+    t.check_constraint "rfc IS NULL OR rfc::text = ''::text OR rfc::text ~ '^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$'::text", name: "chk_suppliers_rfc_format"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "chk_suppliers_status"
+  end
+
+  create_table "system_role_permission_audit_events", force: :cascade do |t|
+    t.bigint "system_role_id", null: false
+    t.bigint "actor_id"
+    t.jsonb "added_permission_codes", default: [], null: false
+    t.jsonb "removed_permission_codes", default: [], null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "source", default: "user", null: false
+    t.index ["actor_id"], name: "index_system_role_permission_audit_events_on_actor_id"
+    t.index ["system_role_id", "created_at"], name: "idx_role_permission_audits_role_history"
+    t.index ["system_role_id"], name: "index_system_role_permission_audit_events_on_system_role_id"
+    t.check_constraint "source::text = 'user'::text AND actor_id IS NOT NULL OR source::text = 'system'::text AND actor_id IS NULL", name: "chk_role_permission_audit_source_actor"
+  end
+
+  create_table "system_role_permissions", force: :cascade do |t|
+    t.bigint "system_role_id", null: false
+    t.bigint "permission_id", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_system_role_permissions_on_deleted_at"
+    t.index ["permission_id"], name: "index_system_role_permissions_on_permission_id"
+    t.index ["system_role_id", "permission_id"], name: "idx_system_role_permissions_unique", unique: true
+    t.index ["system_role_id"], name: "index_system_role_permissions_on_system_role_id"
+  end
+
+  create_table "system_role_status_events", force: :cascade do |t|
+    t.bigint "system_role_id", null: false
+    t.bigint "actor_id", null: false
+    t.string "from_status", null: false
+    t.string "to_status", null: false
+    t.text "reason", null: false
+    t.jsonb "impact", default: {}, null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["actor_id"], name: "index_system_role_status_events_on_actor_id"
+    t.index ["system_role_id", "created_at"], name: "index_role_status_events_on_role_and_created_at"
+    t.index ["system_role_id"], name: "index_system_role_status_events_on_system_role_id"
+  end
+
+  create_table "system_roles", force: :cascade do |t|
+    t.string "name", limit: 50, null: false
+    t.string "description"
+    t.string "role_type", limit: 20, null: false
+    t.string "status", limit: 20, default: "inactive", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.string "code", limit: 50, null: false
+    t.index "lower(btrim((name)::text)), role_type", name: "idx_system_roles_normalized_name_type", unique: true
+    t.index ["code"], name: "index_system_roles_on_code", unique: true
+    t.index ["created_at"], name: "index_system_roles_on_created_at"
+    t.index ["deleted_at"], name: "index_system_roles_on_deleted_at"
+    t.index ["name", "role_type"], name: "index_system_roles_on_name_and_role_type", unique: true
+    t.index ["role_type", "status"], name: "index_system_roles_on_role_type_and_status"
+    t.check_constraint "deleted_at IS NULL AND status::text <> 'deprecated'::text OR deleted_at IS NOT NULL", name: "check_system_roles_deleted_status"
+    t.check_constraint "role_type::text = ANY (ARRAY['system'::character varying, 'branch'::character varying]::text[])", name: "check_system_roles_role_type"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying, 'deprecated'::character varying]::text[])", name: "check_system_roles_status"
+  end
+
+  create_table "table_page_preferences", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "organization_id", null: false
+    t.string "table_key", limit: 70, null: false
+    t.integer "per_page", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_table_page_preferences_on_deleted_at"
+    t.index ["organization_id"], name: "index_table_page_preferences_on_organization_id"
+    t.index ["user_id", "organization_id", "table_key"], name: "idx_table_page_preferences_owner_and_table", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["user_id"], name: "index_table_page_preferences_on_user_id"
+    t.check_constraint "per_page = ANY (ARRAY[5, 10, 15, 25, 50])", name: "chk_table_page_preferences_per_page"
+  end
+
+  create_table "terminals", force: :cascade do |t|
+    t.bigint "branch_id", null: false
+    t.string "name", limit: 80, null: false
+    t.string "code", limit: 40, null: false
+    t.string "status", limit: 20, default: "active", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index "branch_id, lower((code)::text)", name: "idx_terminals_branch_code_active", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["branch_id"], name: "index_terminals_on_branch_id"
+    t.index ["deleted_at"], name: "index_terminals_on_deleted_at"
+    t.check_constraint "status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "check_terminals_status"
+  end
+
+  create_table "translates", force: :cascade do |t|
+    t.string "key", limit: 255, null: false
+    t.text "value", null: false
+    t.string "locale", limit: 10
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "language_id"
+    t.index ["deleted_at"], name: "index_translates_on_deleted_at"
+    t.index ["key", "locale"], name: "index_translates_on_key_and_locale", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["key"], name: "index_translates_on_key"
+    t.index ["language_id", "key"], name: "index_translates_on_language_id_and_key", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["language_id"], name: "index_translates_on_language_id"
+    t.index ["locale"], name: "index_translates_on_locale"
+  end
+
+  create_table "user_invitations", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "organization_id", null: false
+    t.string "token_digest", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "accepted_at"
+    t.datetime "revoked_at"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "delivery_status", default: "pending", null: false
+    t.datetime "delivery_attempted_at"
+    t.datetime "sent_at"
+    t.index ["delivery_status", "created_at"], name: "idx_user_invitations_delivery_queue", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
+    t.index ["expires_at"], name: "idx_user_invitations_pending_expiration", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
+    t.index ["organization_id"], name: "index_user_invitations_on_organization_id"
+    t.index ["token_digest"], name: "index_user_invitations_on_token_digest", unique: true
+    t.index ["user_id", "created_at"], name: "idx_user_invitations_pending_user", where: "((accepted_at IS NULL) AND (revoked_at IS NULL) AND (deleted_at IS NULL))"
+    t.index ["user_id"], name: "index_user_invitations_on_user_id"
+    t.check_constraint "delivery_status::text = ANY (ARRAY['pending'::character varying, 'queued'::character varying, 'sent'::character varying, 'failed'::character varying]::text[])", name: "chk_user_invitations_delivery_status"
+  end
+
+  create_table "user_role_audit_events", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "organization_id", null: false
+    t.bigint "actor_id", null: false
+    t.bigint "system_role_id", null: false
+    t.bigint "branch_id"
+    t.string "action", limit: 16, null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_user_role_audit_events_on_actor_id"
+    t.index ["branch_id"], name: "index_user_role_audit_events_on_branch_id"
+    t.index ["organization_id", "user_id", "created_at"], name: "idx_user_role_audits_tenant_history"
+    t.index ["organization_id"], name: "index_user_role_audit_events_on_organization_id"
+    t.index ["system_role_id"], name: "index_user_role_audit_events_on_system_role_id"
+    t.index ["user_id", "action", "created_at"], name: "idx_user_role_audits_action_history"
+    t.index ["user_id"], name: "index_user_role_audit_events_on_user_id"
+    t.check_constraint "action::text = ANY (ARRAY['granted'::character varying, 'revoked'::character varying]::text[])", name: "chk_user_role_audits_action"
+  end
+
+  create_table "user_roles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "system_role_id", null: false
+    t.bigint "branch_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.bigint "organization_id"
+    t.index ["branch_id"], name: "index_user_roles_on_branch_id"
+    t.index ["deleted_at"], name: "index_user_roles_on_deleted_at"
+    t.index ["organization_id", "user_id"], name: "idx_user_roles_tenant_user", where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_user_roles_on_organization_id"
+    t.index ["system_role_id", "branch_id", "user_id"], name: "idx_user_roles_active_role_branch_user", where: "(deleted_at IS NULL)"
+    t.index ["system_role_id"], name: "index_user_roles_on_system_role_id"
+    t.index ["user_id", "system_role_id", "branch_id"], name: "idx_user_roles_branch_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NOT NULL))"
+    t.index ["user_id", "system_role_id", "organization_id"], name: "idx_user_roles_organization_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NULL) AND (organization_id IS NOT NULL))"
+    t.index ["user_id", "system_role_id"], name: "idx_user_roles_unassigned_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NULL) AND (organization_id IS NULL))"
+    t.index ["user_id"], name: "index_user_roles_on_user_id"
+  end
+
+  create_table "user_security_incidents", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "organization_id", null: false
+    t.bigint "opened_by_id", null: false
+    t.bigint "resolved_by_id"
+    t.text "description", null: false
+    t.text "resolution"
+    t.datetime "resolved_at"
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["opened_by_id"], name: "index_user_security_incidents_on_opened_by_id"
+    t.index ["organization_id", "user_id", "resolved_at"], name: "idx_user_incidents_tenant_review"
+    t.index ["organization_id"], name: "index_user_security_incidents_on_organization_id"
+    t.index ["resolved_by_id"], name: "index_user_security_incidents_on_resolved_by_id"
+    t.index ["user_id"], name: "index_user_security_incidents_on_user_id"
+  end
+
+  create_table "user_status_events", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "organization_id", null: false
+    t.bigint "actor_id", null: false
+    t.string "from_status", null: false
+    t.string "to_status", null: false
+    t.text "reason", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_user_status_events_on_actor_id"
+    t.index ["organization_id"], name: "index_user_status_events_on_organization_id"
+    t.index ["user_id", "created_at"], name: "index_user_status_events_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_user_status_events_on_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "username"
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
+    t.string "last_sign_in_ip_country", limit: 2
+    t.integer "failed_attempts", default: 0, null: false
+    t.string "unlock_token"
+    t.datetime "locked_at"
+    t.string "user_type", null: false
+    t.string "status", default: "active", null: false
+    t.text "locked_Reason"
+    t.string "unique_session_id"
+    t.string "current_session_token"
+    t.datetime "session_expires_at"
+    t.datetime "session_revoked_at"
+    t.datetime "login_attempts_window_start"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.bigint "language_id"
+    t.string "theme", limit: 50, default: "theme-material-red", null: false
+    t.boolean "sidebar_collapsed", default: false, null: false
+    t.bigint "employee_id"
+    t.datetime "terms_accepted_at"
+    t.index "lower((email)::text)", name: "idx_users_email", unique: true
+    t.index ["deleted_at"], name: "index_users_on_deleted_at"
+    t.index ["email", "status"], name: "index_users_on_email_and_status"
+    t.index ["email"], name: "idx_users_email_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["employee_id"], name: "index_users_on_employee_id"
+    t.index ["language_id"], name: "index_users_on_language_id", where: "(language_id IS NOT NULL)"
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["session_expires_at"], name: "idx_users_session_active", where: "(session_expires_at IS NOT NULL)"
+    t.index ["status"], name: "idx_users_active", where: "((status)::text = 'active'::text)"
+    t.index ["status"], name: "index_users_on_status"
+    t.index ["user_type", "status"], name: "index_users_on_user_type_and_status"
+    t.index ["user_type"], name: "index_users_on_user_type"
+    t.index ["username"], name: "idx_users_username_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'active'::character varying, 'suspended'::character varying, 'blocked'::character varying, 'deleted'::character varying]::text[])", name: "chk_users_status"
+    t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying, 'customer'::character varying, 'supplier'::character varying]::text[])", name: "chk_users_user_type"
+  end
+
+  create_table "versions", force: :cascade do |t|
+    t.string "item_type", null: false
+    t.bigint "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object"
+    t.text "object_changes"
+    t.datetime "created_at", precision: nil
+    t.index ["created_at"], name: "index_versions_on_created_at"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
+  add_foreign_key "account_payables", "organizations"
+  add_foreign_key "account_payables", "supplier_invoices"
+  add_foreign_key "account_payables", "suppliers"
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "addresses", "countries"
+  add_foreign_key "branch_status_transitions", "branches"
+  add_foreign_key "branch_status_transitions", "users", column: "changed_by_id"
+  add_foreign_key "branches", "organizations"
+  add_foreign_key "clients", "sat_fiscal_regimes"
+  add_foreign_key "conversation_participants", "conversations"
+  add_foreign_key "conversation_participants", "users"
+  add_foreign_key "country_currencies", "countries"
+  add_foreign_key "country_currencies", "currencies"
+  add_foreign_key "dashboard_preferences", "users"
+  add_foreign_key "demo_request_activities", "demo_requests"
+  add_foreign_key "demo_request_activities", "users"
+  add_foreign_key "demo_requests", "users", column: "assigned_to_id"
+  add_foreign_key "email_branding_settings", "organizations"
+  add_foreign_key "email_sender_settings", "organizations"
+  add_foreign_key "email_setting_audits", "organizations"
+  add_foreign_key "email_setting_audits", "users", column: "actor_id"
+  add_foreign_key "email_template_audits", "email_template_versions"
+  add_foreign_key "email_template_audits", "email_templates"
+  add_foreign_key "email_template_audits", "organizations"
+  add_foreign_key "email_template_audits", "users", column: "actor_id"
+  add_foreign_key "email_template_versions", "email_templates"
+  add_foreign_key "email_template_versions", "users", column: "created_by_id"
+  add_foreign_key "email_template_versions", "users", column: "published_by_id"
+  add_foreign_key "email_templates", "email_template_versions", column: "published_version_id", on_delete: :nullify
+  add_foreign_key "email_templates", "email_templates", column: "source_template_id"
+  add_foreign_key "email_templates", "organizations"
+  add_foreign_key "email_templates", "users", column: "created_by_id"
+  add_foreign_key "email_templates", "users", column: "updated_by_id"
+  add_foreign_key "employees", "organizations"
+  add_foreign_key "financial_audit_events", "organizations"
+  add_foreign_key "financial_audit_events", "users", column: "actor_id"
+  add_foreign_key "financial_reminder_deliveries", "account_payables"
+  add_foreign_key "financial_reminder_deliveries", "organizations"
+  add_foreign_key "financial_reminder_deliveries", "users", column: "recipient_id"
+  add_foreign_key "general_setting_audit_events", "organizations"
+  add_foreign_key "general_setting_audit_events", "users", column: "actor_id"
+  add_foreign_key "goods_receipt_items", "goods_receipts"
+  add_foreign_key "goods_receipt_items", "purchase_order_items"
+  add_foreign_key "goods_receipts", "branches"
+  add_foreign_key "goods_receipts", "organizations"
+  add_foreign_key "goods_receipts", "purchase_orders"
+  add_foreign_key "goods_receipts", "users", column: "received_by_id"
+  add_foreign_key "inventories", "branches"
+  add_foreign_key "inventories", "organizations"
+  add_foreign_key "inventories", "products"
+  add_foreign_key "inventory_lots", "goods_receipt_items"
+  add_foreign_key "inventory_lots", "inventories"
+  add_foreign_key "inventory_lots", "organizations"
+  add_foreign_key "inventory_movements", "inventories"
+  add_foreign_key "inventory_movements", "inventory_lots"
+  add_foreign_key "inventory_movements", "organizations"
+  add_foreign_key "inventory_movements", "users"
+  add_foreign_key "inventory_serials", "inventory_lots"
+  add_foreign_key "inventory_serials", "organizations"
+  add_foreign_key "membership_plan_features", "membership_features"
+  add_foreign_key "membership_plan_features", "membership_plans"
+  add_foreign_key "messages", "conversations"
+  add_foreign_key "messages", "users"
+  add_foreign_key "notes", "organizations"
+  add_foreign_key "notes", "users", column: "created_by_id"
+  add_foreign_key "onboarding_audits", "organizations"
+  add_foreign_key "onboarding_audits", "users"
+  add_foreign_key "organization_memberships", "organizations"
+  add_foreign_key "organization_memberships", "users"
+  add_foreign_key "organization_migrations", "organizations"
+  add_foreign_key "organization_settings", "currencies", column: "base_currency_id"
+  add_foreign_key "organization_settings", "organizations"
+  add_foreign_key "organizations", "membership_plans"
+  add_foreign_key "payment_integrations", "organizations"
+  add_foreign_key "phones", "organizations"
+  add_foreign_key "price_change_events", "organizations"
+  add_foreign_key "price_change_events", "price_list_items"
+  add_foreign_key "price_change_events", "price_list_items", column: ["organization_id", "price_list_item_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "price_change_events", "price_list_items", column: ["organization_id", "product_id", "price_list_item_id"], primary_key: ["organization_id", "product_id", "id"]
+  add_foreign_key "price_change_events", "products"
+  add_foreign_key "price_change_events", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "price_change_events", "users", column: "actor_id"
+  add_foreign_key "price_change_events", "users", column: "approved_by_id"
+  add_foreign_key "price_list_items", "organizations"
+  add_foreign_key "price_list_items", "price_lists"
+  add_foreign_key "price_list_items", "price_lists", column: ["organization_id", "price_list_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "price_list_items", "product_presentations"
+  add_foreign_key "price_list_items", "product_presentations", column: ["organization_id", "product_id", "product_presentation_id"], primary_key: ["organization_id", "product_id", "id"]
+  add_foreign_key "price_list_items", "product_variants"
+  add_foreign_key "price_list_items", "product_variants", column: ["organization_id", "product_id", "product_variant_id"], primary_key: ["organization_id", "product_id", "id"]
+  add_foreign_key "price_list_items", "products"
+  add_foreign_key "price_list_items", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "price_lists", "organizations"
+  add_foreign_key "product_barcodes", "organizations"
+  add_foreign_key "product_barcodes", "product_presentations"
+  add_foreign_key "product_barcodes", "product_presentations", column: ["organization_id", "product_id", "product_presentation_id"], primary_key: ["organization_id", "product_id", "id"]
+  add_foreign_key "product_barcodes", "product_variants"
+  add_foreign_key "product_barcodes", "product_variants", column: ["organization_id", "product_id", "product_variant_id"], primary_key: ["organization_id", "product_id", "id"]
+  add_foreign_key "product_barcodes", "products"
+  add_foreign_key "product_barcodes", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "product_presentations", "organizations"
+  add_foreign_key "product_presentations", "products"
+  add_foreign_key "product_presentations", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "product_variants", "organizations"
+  add_foreign_key "product_variants", "products"
+  add_foreign_key "product_variants", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "categories", "organizations"
+  add_foreign_key "products", "categories"
+  add_foreign_key "products", "organizations"
+  add_foreign_key "products", "sat_taxes"
+  add_foreign_key "products", "sat_unit_keys"
+  add_foreign_key "products", "suppliers", column: "preferred_supplier_id"
+  add_foreign_key "promotion_benefits", "organizations"
+  add_foreign_key "promotion_benefits", "promotions"
+  add_foreign_key "promotion_benefits", "promotions", column: ["organization_id", "promotion_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "promotion_conditions", "categories"
+  add_foreign_key "promotion_conditions", "organizations"
+  add_foreign_key "promotion_conditions", "products"
+  add_foreign_key "promotion_conditions", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "promotion_conditions", "promotions"
+  add_foreign_key "promotion_conditions", "promotions", column: ["organization_id", "promotion_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "promotion_redemptions", "organizations"
+  add_foreign_key "promotion_redemptions", "products"
+  add_foreign_key "promotion_redemptions", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "promotion_redemptions", "promotions"
+  add_foreign_key "promotion_redemptions", "promotions", column: ["organization_id", "promotion_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "promotions", "organizations"
+  add_foreign_key "purchase_approvals", "organizations"
+  add_foreign_key "purchase_approvals", "purchase_orders"
+  add_foreign_key "purchase_approvals", "users", column: "decided_by_id"
+  add_foreign_key "purchase_cost_allocations", "goods_receipt_items"
+  add_foreign_key "purchase_cost_allocations", "organizations"
+  add_foreign_key "purchase_event_deliveries", "organizations"
+  add_foreign_key "purchase_event_deliveries", "users", column: "recipient_id"
+  add_foreign_key "purchase_order_items", "products"
+  add_foreign_key "purchase_order_items", "purchase_orders"
+  add_foreign_key "purchase_order_items", "supplier_products"
+  add_foreign_key "purchase_orders", "branches"
+  add_foreign_key "purchase_orders", "currencies"
+  add_foreign_key "purchase_orders", "organizations"
+  add_foreign_key "purchase_orders", "purchase_quotations"
+  add_foreign_key "purchase_orders", "purchase_requests"
+  add_foreign_key "purchase_orders", "suppliers"
+  add_foreign_key "purchase_orders", "users", column: "approved_by_id"
+  add_foreign_key "purchase_orders", "users", column: "requested_by_id"
+  add_foreign_key "purchase_quotation_items", "products"
+  add_foreign_key "purchase_quotation_items", "purchase_quotations"
+  add_foreign_key "purchase_quotation_items", "supplier_products"
+  add_foreign_key "purchase_quotations", "currencies"
+  add_foreign_key "purchase_quotations", "organizations"
+  add_foreign_key "purchase_quotations", "purchase_requests"
+  add_foreign_key "purchase_quotations", "suppliers"
+  add_foreign_key "purchase_request_items", "products"
+  add_foreign_key "purchase_request_items", "purchase_requests"
+  add_foreign_key "purchase_requests", "branches"
+  add_foreign_key "purchase_requests", "organizations"
+  add_foreign_key "purchase_requests", "users", column: "requested_by_id"
+  add_foreign_key "purchase_return_items", "goods_receipt_items"
+  add_foreign_key "purchase_return_items", "purchase_returns"
+  add_foreign_key "purchase_returns", "goods_receipts"
+  add_foreign_key "purchase_returns", "organizations"
+  add_foreign_key "purchase_returns", "users", column: "requested_by_id"
+  add_foreign_key "supplier_bank_accounts", "organizations"
+  add_foreign_key "supplier_bank_accounts", "sat_banks", column: "sat_bank_code", primary_key: "code"
+  add_foreign_key "supplier_bank_accounts", "suppliers"
+  add_foreign_key "supplier_credit_allocations", "account_payables"
+  add_foreign_key "supplier_credit_allocations", "organizations"
+  add_foreign_key "supplier_credit_allocations", "supplier_credit_notes"
+  add_foreign_key "supplier_credit_notes", "currencies"
+  add_foreign_key "supplier_credit_notes", "organizations"
+  add_foreign_key "supplier_credit_notes", "purchase_returns"
+  add_foreign_key "supplier_credit_notes", "supplier_invoices"
+  add_foreign_key "supplier_credit_notes", "suppliers"
+  add_foreign_key "supplier_credit_notes", "users", column: "created_by_id"
+  add_foreign_key "supplier_documents", "active_storage_attachments", column: "attachment_id"
+  add_foreign_key "supplier_documents", "supplier_documents", column: "previous_version_id"
+  add_foreign_key "supplier_documents", "suppliers"
+  add_foreign_key "supplier_documents", "users", column: "deleted_by_id"
+  add_foreign_key "supplier_documents", "users", column: "updated_by_id"
+  add_foreign_key "supplier_documents", "users", column: "uploaded_by_id"
+  add_foreign_key "supplier_event_deliveries", "suppliers"
+  add_foreign_key "supplier_event_deliveries", "users", column: "recipient_id"
+  add_foreign_key "supplier_events", "branches"
+  add_foreign_key "supplier_events", "suppliers"
+  add_foreign_key "supplier_events", "users", column: "created_by_id"
+  add_foreign_key "supplier_invoice_lines", "supplier_invoices"
+  add_foreign_key "supplier_invoice_receipts", "goods_receipts"
+  add_foreign_key "supplier_invoice_receipts", "supplier_invoices"
+  add_foreign_key "supplier_invoices", "currencies"
+  add_foreign_key "supplier_invoices", "organizations"
+  add_foreign_key "supplier_invoices", "purchase_orders"
+  add_foreign_key "supplier_invoices", "suppliers"
+  add_foreign_key "supplier_invoices", "users", column: "created_by_id"
+  add_foreign_key "supplier_payment_allocations", "account_payables"
+  add_foreign_key "supplier_payment_allocations", "organizations"
+  add_foreign_key "supplier_payment_allocations", "supplier_payments"
+  add_foreign_key "supplier_payments", "currencies"
+  add_foreign_key "supplier_payments", "organizations"
+  add_foreign_key "supplier_payments", "supplier_bank_accounts"
+  add_foreign_key "supplier_payments", "suppliers"
+  add_foreign_key "supplier_payments", "users", column: "created_by_id"
+  add_foreign_key "supplier_product_prices", "currencies"
+  add_foreign_key "supplier_product_prices", "supplier_products"
+  add_foreign_key "supplier_product_prices", "users", column: "recorded_by_id"
+  add_foreign_key "supplier_products", "currencies"
+  add_foreign_key "supplier_products", "organizations"
+  add_foreign_key "supplier_products", "products"
+  add_foreign_key "supplier_products", "suppliers"
+  add_foreign_key "supplier_schedule_exceptions", "branches"
+  add_foreign_key "supplier_schedule_exceptions", "supplier_schedules"
+  add_foreign_key "supplier_schedule_exceptions", "suppliers"
+  add_foreign_key "supplier_schedule_exceptions", "users", column: "created_by_id"
+  add_foreign_key "supplier_schedules", "branches"
+  add_foreign_key "supplier_schedules", "suppliers"
+  add_foreign_key "suppliers", "currencies"
+  add_foreign_key "suppliers", "organizations"
+  add_foreign_key "suppliers", "sat_fiscal_regimes"
+  add_foreign_key "suppliers", "users", column: "responsible_user_id"
+  add_foreign_key "system_role_permission_audit_events", "system_roles"
+  add_foreign_key "system_role_permission_audit_events", "users", column: "actor_id"
+  add_foreign_key "system_role_permissions", "permissions"
+  add_foreign_key "system_role_permissions", "system_roles"
+  add_foreign_key "system_role_status_events", "system_roles"
+  add_foreign_key "system_role_status_events", "users", column: "actor_id"
+  add_foreign_key "table_page_preferences", "organizations"
+  add_foreign_key "table_page_preferences", "users"
+  add_foreign_key "terminals", "branches"
+  add_foreign_key "translates", "languages"
+  add_foreign_key "user_invitations", "organizations"
+  add_foreign_key "user_invitations", "users"
+  add_foreign_key "user_role_audit_events", "branches"
+  add_foreign_key "user_role_audit_events", "organizations"
+  add_foreign_key "user_role_audit_events", "system_roles"
+  add_foreign_key "user_role_audit_events", "users"
+  add_foreign_key "user_role_audit_events", "users", column: "actor_id"
+  add_foreign_key "user_roles", "branches"
+  add_foreign_key "user_roles", "organizations"
+  add_foreign_key "user_roles", "system_roles"
+  add_foreign_key "user_roles", "users"
+  add_foreign_key "user_security_incidents", "organizations"
+  add_foreign_key "user_security_incidents", "users"
+  add_foreign_key "user_security_incidents", "users", column: "opened_by_id"
+  add_foreign_key "user_security_incidents", "users", column: "resolved_by_id"
+  add_foreign_key "user_status_events", "organizations"
+  add_foreign_key "user_status_events", "users"
+  add_foreign_key "user_status_events", "users", column: "actor_id"
+  add_foreign_key "users", "employees"
+  add_foreign_key "users", "languages"
+end
+::text", name: "chk_categories_code_valid", validate: false
+    t.check_constraint "status IS NOT NULL AND status::text = ANY (ARRAY['active'::character varying, 'inactive'::character varying]::text[])", name: "chk_categories_status_valid", validate: false
     t.index ["deleted_at"], name: "index_categories_on_deleted_at"
     t.index ["name"], name: "index_categories_on_name", where: "(deleted_at IS NULL)"
   end

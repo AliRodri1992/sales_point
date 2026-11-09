@@ -49,7 +49,10 @@ module CatalogDesignHelper
     records = scope.to_a
     if selected_id.present? && records.none? { |record| record.id == selected_id }
       retained = scope.klass.with_deleted.find_by(id: selected_id)
-      records << retained if retained
+      if retained && (scope.klass != Category || current_organization.nil? ||
+                      retained.organization_id == current_organization.id)
+        records << retained
+      end
     end
     records.map { |record| [record.public_send(label), record.id] }
   end

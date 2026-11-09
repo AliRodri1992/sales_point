@@ -1,6 +1,7 @@
 <%= form_with model: [:admin, category], html: { novalidate: true },
               class: 'space-y-6',
-              data: { turbo_frame: (local_assigns[:standalone] ? '_top' : 'category_modal') } do |form| %>
+              data: { turbo_frame: (local_assigns[:standalone] ? '_top' : 'category_modal'),
+                      turbo: !local_assigns[:standalone] } do |form| %>
   <div class="space-y-5">
     <div>
       <%= form.label :code, required_field_label(t('admin.categories.form.code')),

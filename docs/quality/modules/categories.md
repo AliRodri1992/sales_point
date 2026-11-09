@@ -164,5 +164,12 @@ IDs permanentes de esta primera auditoría. **Confirmado por código** significa
 - Se publicaron controles de baja de categorías en uso (Productos/Promociones), validación de índice de códigos retirados, constraints preventivos para nuevos datos, captura y visualización de descripción, búsqueda literal y respuestas de conflicto.
 - Se ajustaron formularios, selectores, etiquetas ARIA, rutas independientes, estados vacíos, skeleton, foco de modales y textos `es/en/ko`.
 - Se añadieron regresiones de solicitud y modelo en `spec/requests/admin/categories_spec.rb` y `spec/models/category_spec.rb`.
-- **Estado de los hallazgos:** CATEGORIES-002 a CATEGORIES-009 y 011–013: **IMPLEMENTADO SIN VERIFICAR** (excepto CATEGORIES-009: constraints `NOT VALID`, pendientes de limpieza y validación para registros antiguos). CATEGORIES-010: **EN CORRECCIÓN** (falta escenario de navegador y verificación). CATEGORIES-001: **ABIERTO**; requiere migración de tenant segura y remapeo de categorías que ya usan varias organizaciones. No se afirma resuelto.
+- **Estado de los hallazgos:** CATEGORIES-002 a CATEGORIES-009 y 011–013: **IMPLEMENTADO SIN VERIFICAR** (excepto CATEGORIES-009: constraints `NOT VALID`, pendientes de limpieza y validación para registros antiguos). CATEGORIES-010: **EN CORRECCIÓN** (falta escenario de navegador y verificación). CATEGORIES-001: **IMPLEMENTADO SIN VERIFICAR**; migración `20261110043000_scope_categories_to_organizations.rb` crea copias por organización, remapea referencias y conserva filas globales retiradas. No se afirma resuelto antes de migraciones/CI reales.
 - **Evidencia:** commits en `feature/fixes`, pendientes de RSpec/RuboCop/CI completos para SHA de aceptación. Se mantiene **NO CERRADO**.
+
+### Segunda etapa — alcance multiorganización
+
+- Categorías nuevas asignadas a `current_organization` desde el controlador; consultas, detalles, cambios y notificaciones restringidos a esa organización.
+- `CategoryPolicy::Scope`, la selección de categorías en Productos y las condiciones de Promociones se ajustaron al mismo contrato. Referencias cruzadas con organización distinta se rechazan en validaciones de modelos.
+- Migración gradual reversible **a nivel de transacción**; el `down` es deliberadamente irreversible porque los datos de dos organizaciones pueden divergir después de la copia. No se elimina ninguna categoría histórica; se marca como retirada después de reasignar las asociaciones.
+- **Bloqueo de aceptación:** revisar la ejecución real del backfill, tiempos y conteos antes/después, validación de constraints legados y pruebas de aislamiento multiorganización.

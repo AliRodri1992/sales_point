@@ -5,6 +5,8 @@ class Category < ApplicationRecord
   has_many :products, dependent: :restrict_with_error
   has_many :promotion_conditions, dependent: :restrict_with_error
 
+  validates :organization, presence: true, if: -> { CurrentOrganizationAccess.enforce_tenant }
+
   validates :name,
             presence: true,
             length: { maximum: 50 }
