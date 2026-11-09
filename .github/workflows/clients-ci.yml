@@ -1,0 +1,118 @@
+name: Clients CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/fixes
+    paths:
+      - '.github/workflows/clients-ci.yml'
+      - 'app/controllers/admin/clients_controller.rb'
+      - 'app/models/client.rb'
+      - 'app/policies/client_policy.rb'
+      - 'app/services/client_filter.rb'
+      - 'app/views/admin/clients/**'
+      - 'config/locales/clients.*.yml'
+      - 'spec/models/client_spec.rb'
+      - 'spec/requests/admin/clients_spec.rb'
+      - 'spec/features/clients_browser_spec.rb'
+      - 'docs/quality/modules/clients.md'
+
+permissions:
+  contents: read
+
+env:
+  RAILS_ENV: test
+  POSTGRES_DB_TEST: sale_point_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
+  REDIS_URL: redis://localhost:6379/0
+
+jobs:
+  lint:
+    name: Clients RuboCop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - name: Validate module registry
+        run: ruby script/audit_module_quality.rb
+      - name: Lint client-owned Ruby and specs
+        run: |
+          bin/rubocop -f simple \
+            app/controllers/admin/clients_controller.rb \
+            app/models/client.rb \
+            app/policies/client_policy.rb \
+            app/services/client_filter.rb \
+            spec/models/client_spec.rb \
+            spec/requests/admin/clients_spec.rb \
+            spec/features/clients_browser_spec.rb
+
+  specs:
+    name: Clients model, requests and browser
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sale_point_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d sale_point_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips
+      - name: Install Chrome and ChromeDriver
+        id: browser
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+          install-chromedriver: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - name: Install JavaScript dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build assets
+        run: |
+          yarn build:js
+          yarn build:css
+      - name: Prepare clean database
+        run: bin/rails db:drop db:create db:migrate
+      - name: Run customer regression scenarios
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec \
+            spec/models/client_spec.rb \
+            spec/requests/admin/clients_spec.rb \
+            spec/features/clients_browser_spec.rb
