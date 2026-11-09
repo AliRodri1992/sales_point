@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_040000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -125,11 +125,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
     t.index "organization_id, lower((code)::text)", name: "idx_branches_org_code_active", unique: true, where: "((deleted_at IS NULL) AND (code IS NOT NULL))"
     t.index "organization_id, lower((name)::text)", name: "idx_branches_org_name_active", unique: true, where: "((organization_id IS NOT NULL) AND (deleted_at IS NULL))"
     t.index ["deleted_at"], name: "index_branches_on_deleted_at"
-    t.index ["organization_id"], name: "index_branches_on_organization_id"
-    t.index ["organization_id", "operational_status"], name: "idx_branches_organization_operational_status"
     t.index ["organization_id", "created_at"], name: "idx_branches_active_org_created_at", where: "(deleted_at IS NULL)"
+    t.index ["organization_id", "operational_status"], name: "idx_branches_organization_operational_status"
+    t.index ["organization_id"], name: "index_branches_on_organization_id"
     t.check_constraint "code IS NULL OR code::text ~ '^[A-Z0-9_-]{1,30}$'::text", name: "branches_valid_code"
-    t.check_constraint "operational_status::text = ANY (ARRAY['preparing'::character varying, 'active'::character varying, 'suspended'::character varying, 'closed'::character varying]::text[])", name: "branches_operational_status_valid"
+    t.check_constraint "operational_status::text = ANY (ARRAY['preparing'::character varying::text, 'active'::character varying::text, 'suspended'::character varying::text, 'closed'::character varying::text])", name: "branches_operational_status_valid"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -157,16 +157,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["code"], name: "idx_clients_code_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["code"], name: "index_clients_on_code", unique: true, where: "(deleted_at IS NULL)"
     t.index ["deleted_at"], name: "index_clients_on_deleted_at"
+    t.index ["email"], name: "idx_clients_email_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["email"], name: "index_clients_on_email"
+    t.index ["name"], name: "idx_clients_name_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["rfc"], name: "idx_clients_rfc_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["rfc"], name: "index_clients_on_rfc", unique: true, where: "((rfc IS NOT NULL) AND ((rfc)::text <> ''::text) AND (deleted_at IS NULL))"
     t.index ["sat_fiscal_regime_id"], name: "index_clients_on_sat_fiscal_regime_id"
     t.index ["status"], name: "index_clients_on_status"
-    t.index ["code"], name: "idx_clients_code_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
-    t.index ["name"], name: "idx_clients_name_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
-    t.index ["email"], name: "idx_clients_email_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
-    t.index ["rfc"], name: "idx_clients_rfc_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
     t.check_constraint "code::text = btrim(code::text) AND code::text <> ''::text AND code::text ~ '^[A-Za-z0-9_-]+$'::text", name: "chk_clients_code_format"
     t.check_constraint "credit_limit >= 0::numeric", name: "chk_clients_credit_limit_non_negative"
     t.check_constraint "name::text = btrim(name::text) AND name::text <> ''::text", name: "chk_clients_name_format"
@@ -331,18 +331,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
     t.index ["assigned_to_id"], name: "index_demo_requests_on_assigned_to_id"
     t.index ["branches"], name: "index_demo_requests_on_branches"
     t.index ["business_type"], name: "index_demo_requests_on_business_type"
+    t.index ["company"], name: "idx_demo_requests_company_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["contact_outcome"], name: "index_demo_requests_on_contact_outcome"
     t.index ["deleted_at"], name: "index_demo_requests_on_deleted_at"
     t.index ["demo_outcome"], name: "index_demo_requests_on_demo_outcome"
+    t.index ["email"], name: "idx_demo_requests_email_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["email"], name: "index_demo_requests_on_email"
+    t.index ["name"], name: "idx_demo_requests_name_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["next_follow_up_at"], name: "index_demo_requests_on_next_follow_up_at"
+    t.index ["phone"], name: "idx_demo_requests_phone_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["status", "created_at"], name: "idx_demo_requests_status_created_active", where: "(deleted_at IS NULL)"
     t.index ["status"], name: "index_demo_requests_on_status"
     t.index ["terms_accepted"], name: "index_demo_requests_on_terms_accepted"
-    t.index ["name"], name: "idx_demo_requests_name_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
-    t.index ["email"], name: "idx_demo_requests_email_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
-    t.index ["company"], name: "idx_demo_requests_company_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
-    t.index ["phone"], name: "idx_demo_requests_phone_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
   end
 
   create_table "email_branding_settings", force: :cascade do |t|
@@ -461,16 +461,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
     t.bigint "source_template_id"
     t.index ["created_by_id"], name: "index_email_templates_on_created_by_id"
     t.index ["key", "locale"], name: "idx_email_templates_global_unique", unique: true, where: "(organization_id IS NULL)"
+    t.index ["key"], name: "idx_email_templates_key_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["locale", "enabled"], name: "idx_email_templates_available_locale", where: "(deleted_at IS NULL)"
+    t.index ["name"], name: "idx_email_templates_name_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["organization_id", "key", "locale"], name: "idx_email_templates_tenant_unique", unique: true, where: "(organization_id IS NOT NULL)"
     t.index ["organization_id", "status", "updated_at"], name: "idx_email_templates_tenant_status"
     t.index ["organization_id"], name: "index_email_templates_on_organization_id"
-    t.index ["source_template_id"], name: "idx_email_templates_source_template"
-    t.index ["updated_by_id"], name: "index_email_templates_on_updated_by_id"
     t.index ["published_version_id"], name: "idx_email_templates_published_version"
-    t.index ["key"], name: "idx_email_templates_key_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
-    t.index ["name"], name: "idx_email_templates_name_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
-    t.index ["subject"], name: "idx_email_templates_subject_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
+    t.index ["source_template_id"], name: "idx_email_templates_source_template"
+    t.index ["subject"], name: "idx_email_templates_subject_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
+    t.index ["updated_by_id"], name: "index_email_templates_on_updated_by_id"
     t.check_constraint "status::text = ANY (ARRAY['draft'::character varying::text, 'published'::character varying::text, 'inactive'::character varying::text, 'archived'::character varying::text])", name: "chk_email_templates_status"
   end
 
@@ -516,6 +516,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
     t.index ["event_key"], name: "index_financial_reminder_deliveries_on_event_key", unique: true
     t.index ["organization_id"], name: "index_financial_reminder_deliveries_on_organization_id"
     t.index ["recipient_id"], name: "index_financial_reminder_deliveries_on_recipient_id"
+  end
+
+  create_table "general_setting_audit_events", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "actor_id", null: false
+    t.integer "previous_page_size", null: false
+    t.integer "new_page_size", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_general_setting_audit_events_on_actor_id"
+    t.index ["deleted_at"], name: "index_general_setting_audit_events_on_deleted_at"
+    t.index ["organization_id", "created_at"], name: "idx_general_setting_audits_org_created"
+    t.index ["organization_id"], name: "index_general_setting_audit_events_on_organization_id"
+    t.check_constraint "new_page_size = ANY (ARRAY[5, 10, 15, 25, 50])", name: "chk_general_settings_audits_new"
+    t.check_constraint "previous_page_size = ANY (ARRAY[5, 10, 15, 25, 50])", name: "chk_general_settings_audits_previous"
   end
 
   create_table "goods_receipt_items", force: :cascade do |t|
@@ -893,11 +909,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_phones_on_deleted_at"
+    t.index ["number"], name: "idx_phones_number_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["organization_id"], name: "index_phones_on_organization_id"
     t.index ["phoneable_type", "phoneable_id", "kind"], name: "idx_phones_one_primary_per_kind", unique: true, where: "((deleted_at IS NULL) AND (\"primary\" = true))"
     t.index ["phoneable_type", "phoneable_id", "number", "extension"], name: "idx_phones_unique_active_number", unique: true, where: "(deleted_at IS NULL)", nulls_not_distinct: true
     t.index ["phoneable_type", "phoneable_id"], name: "index_phones_on_phoneable"
-    t.index ["number"], name: "idx_phones_number_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
     t.check_constraint "(phoneable_type::text <> ALL (ARRAY['Client'::character varying::text, 'Branch'::character varying::text, 'Employee'::character varying::text])) OR kind::text = 'mobile'::text AND \"primary\" = true", name: "chk_phones_mobile_only_for_direct_owners"
     t.check_constraint "country_code::text ~ '^[A-Z]{2}$'::text", name: "chk_phones_country"
     t.check_constraint "kind::text = ANY (ARRAY['mobile'::character varying::text, 'landline'::character varying::text, 'other'::character varying::text])", name: "chk_phones_kind"
@@ -2224,11 +2240,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
     t.datetime "updated_at", null: false
     t.datetime "deleted_at", precision: nil
     t.string "code", limit: 50, null: false
+    t.index "lower(btrim((name)::text)), role_type", name: "idx_system_roles_normalized_name_type", unique: true
     t.index ["code"], name: "index_system_roles_on_code", unique: true
     t.index ["created_at"], name: "index_system_roles_on_created_at"
     t.index ["deleted_at"], name: "index_system_roles_on_deleted_at"
     t.index ["name", "role_type"], name: "index_system_roles_on_name_and_role_type", unique: true
-    t.index "lower(btrim((name)::text)), role_type", name: "idx_system_roles_normalized_name_type", unique: true
     t.index ["role_type", "status"], name: "index_system_roles_on_role_type_and_status"
     t.check_constraint "deleted_at IS NULL AND status::text <> 'deprecated'::text OR deleted_at IS NOT NULL", name: "check_system_roles_deleted_status"
     t.check_constraint "role_type::text = ANY (ARRAY['system'::character varying::text, 'branch'::character varying::text])", name: "check_system_roles_role_type"
@@ -2329,13 +2345,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at", precision: nil
+    t.bigint "organization_id"
     t.index ["branch_id"], name: "index_user_roles_on_branch_id"
     t.index ["deleted_at"], name: "index_user_roles_on_deleted_at"
+    t.index ["organization_id", "user_id"], name: "idx_user_roles_tenant_user", where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_user_roles_on_organization_id"
+    t.index ["system_role_id", "branch_id", "user_id"], name: "idx_user_roles_active_role_branch_user", where: "(deleted_at IS NULL)"
     t.index ["system_role_id"], name: "index_user_roles_on_system_role_id"
     t.index ["user_id", "system_role_id", "branch_id"], name: "idx_user_roles_branch_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NOT NULL))"
-    t.index ["user_id", "system_role_id"], name: "idx_user_roles_global_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NULL))"
+    t.index ["user_id", "system_role_id", "organization_id"], name: "idx_user_roles_organization_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NULL) AND (organization_id IS NOT NULL))"
+    t.index ["user_id", "system_role_id"], name: "idx_user_roles_unassigned_unique", unique: true, where: "((deleted_at IS NULL) AND (branch_id IS NULL) AND (organization_id IS NULL))"
     t.index ["user_id"], name: "index_user_roles_on_user_id"
-    t.index ["system_role_id", "branch_id", "user_id"], name: "idx_user_roles_active_role_branch_user", where: "(deleted_at IS NULL)"
   end
 
   create_table "user_security_incidents", force: :cascade do |t|
@@ -2407,6 +2427,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
     t.index "lower((email)::text)", name: "idx_users_email", unique: true
     t.index ["deleted_at"], name: "index_users_on_deleted_at"
     t.index ["email", "status"], name: "index_users_on_email_and_status"
+    t.index ["email"], name: "idx_users_email_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["employee_id"], name: "index_users_on_employee_id"
     t.index ["language_id"], name: "index_users_on_language_id", where: "(language_id IS NOT NULL)"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -2415,8 +2436,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
     t.index ["status"], name: "index_users_on_status"
     t.index ["user_type", "status"], name: "index_users_on_user_type_and_status"
     t.index ["user_type"], name: "index_users_on_user_type"
-    t.index ["email"], name: "idx_users_email_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
-    t.index ["username"], name: "idx_users_username_trgm", using: :gin, opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)"
+    t.index ["username"], name: "idx_users_username_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'active'::character varying::text, 'suspended'::character varying::text, 'blocked'::character varying::text, 'deleted'::character varying::text])", name: "chk_users_status"
     t.check_constraint "user_type::text = ANY (ARRAY['employee'::character varying::text, 'customer'::character varying::text, 'supplier'::character varying::text])", name: "chk_users_user_type"
   end
@@ -2473,6 +2493,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
   add_foreign_key "financial_reminder_deliveries", "account_payables"
   add_foreign_key "financial_reminder_deliveries", "organizations"
   add_foreign_key "financial_reminder_deliveries", "users", column: "recipient_id"
+  add_foreign_key "general_setting_audit_events", "organizations"
+  add_foreign_key "general_setting_audit_events", "users", column: "actor_id"
   add_foreign_key "goods_receipt_items", "goods_receipts"
   add_foreign_key "goods_receipt_items", "purchase_order_items"
   add_foreign_key "goods_receipts", "branches"
@@ -2649,10 +2671,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
   add_foreign_key "suppliers", "organizations"
   add_foreign_key "suppliers", "sat_fiscal_regimes"
   add_foreign_key "suppliers", "users", column: "responsible_user_id"
-  add_foreign_key "system_role_permissions", "permissions"
-  add_foreign_key "system_role_permissions", "system_roles"
   add_foreign_key "system_role_permission_audit_events", "system_roles"
   add_foreign_key "system_role_permission_audit_events", "users", column: "actor_id"
+  add_foreign_key "system_role_permissions", "permissions"
+  add_foreign_key "system_role_permissions", "system_roles"
   add_foreign_key "system_role_status_events", "system_roles"
   add_foreign_key "system_role_status_events", "users", column: "actor_id"
   add_foreign_key "table_page_preferences", "organizations"
@@ -2667,6 +2689,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
   add_foreign_key "user_role_audit_events", "users"
   add_foreign_key "user_role_audit_events", "users", column: "actor_id"
   add_foreign_key "user_roles", "branches"
+  add_foreign_key "user_roles", "organizations"
   add_foreign_key "user_roles", "system_roles"
   add_foreign_key "user_roles", "users"
   add_foreign_key "user_security_incidents", "organizations"
