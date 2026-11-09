@@ -22,6 +22,18 @@ RSpec.describe EmailTemplates::TestDeliveryJob, type: :job do
     end.to change(ActionMailer::Base.deliveries, :count).by(1)
   end
 
+  it 'does not retry an ambiguous SMTP read timeout and records the failure once' do
+    template.new_draft!(actor:).publish!(actor:)
+    allow(EmailTemplateTestMailer).to receive(:sample).and_raise(Net::ReadTimeout)
+
+    expect do
+      expect do
+        described_class.perform_now(template.id, actor.id, 'recipient@example.org')
+      end.to raise_error(Net::ReadTimeout)
+    end.not_to have_enqueued_job(described_class)
+    expect(template.audits.where(action: 'test_failed', actor:).count).to eq(1)
+  end
+
   it 'records delivery only after the email has been sent' do
     template.new_draft!(actor:).publish!(actor:)
     expect do

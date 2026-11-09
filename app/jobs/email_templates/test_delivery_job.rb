@@ -6,10 +6,15 @@ module EmailTemplates
     queue_as :mailers
     self.enqueue_after_transaction_commit = true
 
-    retry_on StandardError, wait: :polynomially_longer, attempts: 3 do |job, error|
-      template = EmailTemplate.find_by(id: job.arguments.first)
-      actor = User.find_by(id: job.arguments.second)
-      template&.audit!(action: 'test_failed', actor:, metadata: { error_class: error.class.name })
+    rescue_from StandardError do |error|
+      record_test_failure(error)
+      raise
+    end
+
+    # Retry only before-acceptance SMTP failures, not ambiguous delivery responses.
+    retry_on Net::OpenTimeout, Errno::ECONNREFUSED, SocketError, Net::SMTPServerBusy,
+             wait: :polynomially_longer, attempts: 3 do |job, error|
+      job.send(:record_test_failure, error)
     end
 
     def perform(template_id, actor_id, recipient, version_id = nil)
@@ -21,6 +26,16 @@ module EmailTemplates
         # Never re-send an accepted message solely because the audit store failed.
         Rails.logger.error("Test email delivery audit failed: #{e.class}")
       end
+    end
+
+    private
+
+    def record_test_failure(error)
+      template = EmailTemplate.find_by(id: arguments.first)
+      actor = User.find_by(id: arguments.second)
+      template&.audit!(action: 'test_failed', actor:, metadata: { error_class: error.class.name })
+    rescue ActiveRecord::ActiveRecordError => audit_error
+      Rails.logger.error("Test email failure audit failed: #{audit_error.class}")
     end
   end
 end
