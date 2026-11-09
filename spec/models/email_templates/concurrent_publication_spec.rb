@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Concurrent email template publication', type: :model do
+RSpec.describe 'Concurrent email template publication', type: :model, concurrent_db: true do
   it 'serializes overlapping transactions and persists only one publication audit' do
     template = EmailTemplate.create!(
       key: 'overlapping_notice', name: 'Overlapping notice', category: 'security',
