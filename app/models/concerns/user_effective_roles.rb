@@ -28,6 +28,7 @@ module UserEffectiveRoles
     scope = user_roles.active
     return scope.none if organization && !organization_memberships.accessible.exists?(organization:)
 
+    scope = scope.where(organization:) if organization
     active_branches = Branch.not_deleted.where(operational_status: 'active')
     active_branches = active_branches.where(organization:) if organization
     scope.where(branch_id: nil).or(scope.where(branch_id: active_branches.select(:id)))
