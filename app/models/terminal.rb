@@ -2,6 +2,7 @@
 
 class Terminal < ApplicationRecord
   include RestrictsClosedBranchMutations
+
   belongs_to :branch
 
   enum :status, {
@@ -59,10 +60,14 @@ class Terminal < ApplicationRecord
 
   def branch_active_when_terminal_activated
     return unless active? && branch_state_sensitive_change?
-
-    return if branch&.operationally_active?
-    return if branch&.preparing? && branch.organization&.active? && !branch.organization.onboarding_completed?
+    return if branch_allows_active_terminal?
 
     errors.add(:branch, :invalid)
+  end
+
+  def branch_allows_active_terminal?
+    return true if branch&.operationally_active?
+
+    branch&.preparing? && branch.organization&.active? && !branch.organization.onboarding_completed?
   end
 end
