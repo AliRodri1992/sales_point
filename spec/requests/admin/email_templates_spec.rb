@@ -285,16 +285,15 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(document.at_css('#email-template-errors-title')).to be_nil
   end
 
-  it 'allows root administrators to create global templates without an organization' do
+  it 'allows root administrators with active membership to create tenantless global templates' do
     role.update!(code: 'super_admin')
-    actor = sign_in_without_organization
     get new_admin_email_template_path
     expect(response).to have_http_status(:ok)
     post admin_email_templates_path, params: {
       global: '1', email_template: { key: 'global_notice', name: 'Global notice', category: 'security', locale: 'es' }
     }
     expect(response).to have_http_status(:redirect)
-    expect(EmailTemplate.global.find_by!(key: 'global_notice').created_by).to eq(actor)
+    expect(EmailTemplate.global.find_by!(key: 'global_notice').created_by).to eq(administrator)
   end
 
   it 'requires an organization for ordinary administrators creating templates' do
@@ -917,7 +916,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(EmailTemplate.where(key: 'invalid-key')).to be_empty
   end
 
-  it 'does not create a global template from an unchecked form without an organization' do
+  it 'denies tenantless sessions from creating global templates, even for a root role' do
     role.update!(code: 'super_admin')
     sign_in_without_organization
 
@@ -925,8 +924,7 @@ RSpec.describe 'Admin email templates', type: :request do
       email_template: { key: 'unchecked_global', name: 'Unchecked', category: 'security', locale: 'es' }
     }
 
-    expect(response).to have_http_status(:unprocessable_content)
-    expect(response.body).to include(I18n.t('admin.email_templates.organization_required'))
+    expect(response).to have_http_status(:forbidden)
     expect(EmailTemplate.global.where(key: 'unchecked_global')).to be_empty
   end
 
@@ -1335,7 +1333,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.published_version).to eq(version)
     expect(template.audits.where(action: 'activated')).to exist
   end
-  it 'does not allow customizing global templates without an accessible organization' do
+  it 'does not expose global templates to tenantless accounts without active permissions' do
     global = EmailTemplate.create!(
       key: 'no_organization_copy', name: 'System notice', locale: 'es',
       category: 'security', subject: 'Notice', html_body: '<p>Notice</p>',
@@ -1346,7 +1344,7 @@ RSpec.describe 'Admin email templates', type: :request do
 
     post personalize_admin_email_template_path(global)
 
-    expect(response).to have_http_status(:forbidden)
+    expect(response).to have_http_status(:not_found)
     expect(EmailTemplate.where(source_template: global)).to be_empty
   end
 
