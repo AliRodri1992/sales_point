@@ -173,7 +173,9 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     JS
     click_button 'Create user'
 
-    expect(page).to have_css('section[data-user-access-error-group][aria-describedby="user_branch_role_assignments_error"]')
+    expect(page).to have_css(
+      'section[data-user-access-error-group][aria-describedby="user_branch_role_assignments_error"]'
+    )
     expect(page).to have_css('#user_branch_role_assignments_error')
     expect(page.evaluate_script('document.activeElement.dataset.userAccessErrorGroup !== undefined')).to be(true)
   end
