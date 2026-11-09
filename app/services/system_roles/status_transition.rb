@@ -3,7 +3,10 @@
 module SystemRoles
   class StatusTransition
     class InvalidTransition < StandardError
+      attr_reader :key
+
       def initialize(key)
+        @key = key
         super(I18n.t("admin.system_roles.lifecycle.errors.#{key}"))
       end
     end

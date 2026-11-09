@@ -22,6 +22,7 @@ class SystemRolesController < ApplicationController
     load_permissions
     @assigned_permission_ids = @system_role.permissions.available.ids
     load_status_history
+    load_permission_history
   end
 
   def new
@@ -88,14 +89,26 @@ class SystemRolesController < ApplicationController
     @system_role.status = @system_role.status_in_database
     load_permissions
     load_status_history
+    load_permission_history
     render :show, status: :unprocessable_content
   end
 
   def replace_permissions
+    previous_codes = @system_role.permissions.pluck(:code)
+    selected_codes = Permission.where(id: @assigned_permission_ids).pluck(:code)
+
     @system_role.system_role_permissions.where.not(permission_id: @assigned_permission_ids).delete_all
     @assigned_permission_ids.each do |permission_id|
       @system_role.system_role_permissions.find_or_create_by!(permission_id:)
     end
+
+    added = selected_codes - previous_codes
+    removed = previous_codes - selected_codes
+    return if added.empty? && removed.empty?
+
+    @system_role.permission_audit_events.create!(
+      actor: current_user, added_permission_codes: added.sort, removed_permission_codes: removed.sort
+    )
   end
 
   def load_permissions
@@ -110,7 +123,7 @@ class SystemRolesController < ApplicationController
     @system_role.valid?
     return if @system_role.inactive? && !@system_role.protected_permissions?
 
-    @system_role.errors.add(:base, t('admin.system_roles.lifecycle.errors.create_inactive'))
+    @system_role.errors.add(:status, t('admin.system_roles.lifecycle.errors.create_inactive'))
     raise ActiveRecord::RecordInvalid, @system_role
   end
 
@@ -119,6 +132,11 @@ class SystemRolesController < ApplicationController
     @history_pages = [(scope.count / 10.0).ceil, 1].max
     @history_page = params[:history_page].to_i.clamp(1, @history_pages)
     @status_events = scope.limit(10).offset((@history_page - 1) * 10)
+  end
+
+  def load_permission_history
+    @permission_audit_events = @system_role.permission_audit_events.includes(:actor)
+                                           .order(created_at: :desc, id: :desc).limit(20)
   end
 
   def notify_system_role(user, system_role, action)
@@ -135,7 +153,7 @@ class SystemRolesController < ApplicationController
     @assigned_permission_ids = selection.ids
     return selection.ids if selection.valid?
 
-    @system_role.errors.add(:base, t('admin.system_roles.form.invalid_permissions'))
+    @system_role.errors.add(:permission_ids, t("admin.system_roles.form.#{selection.error_key}"))
     raise ActiveRecord::RecordInvalid, @system_role
   end
 

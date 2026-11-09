@@ -9,6 +9,8 @@ class SystemRole < ApplicationRecord
   has_many :system_role_permissions, dependent: :destroy
   has_many :permissions, through: :system_role_permissions
   has_many :status_events, class_name: 'SystemRoleStatusEvent', dependent: :restrict_with_exception
+  has_many :permission_audit_events, class_name: 'SystemRolePermissionAuditEvent',
+                                     dependent: :restrict_with_exception
 
   enum :role_type, {
     system: 'system',
@@ -20,6 +22,9 @@ class SystemRole < ApplicationRecord
     inactive: 'inactive',
     deprecated: 'deprecated'
   }, validate: true, default: :inactive
+
+  normalizes :name, with: ->(value) { value.strip.gsub(/[[:space:]]+/, ' ') }
+  attr_accessor :permission_ids
 
   validates :name, presence: true, length: { maximum: 50 }
 
@@ -33,7 +38,7 @@ class SystemRole < ApplicationRecord
 
   validates :status, presence: true
 
-  validates :name, uniqueness: { scope: :role_type }
+  validates :name, uniqueness: { scope: :role_type, case_sensitive: false }
 
   before_validation :generate_code
   validate :reviewed_status_transition, if: :persisted?

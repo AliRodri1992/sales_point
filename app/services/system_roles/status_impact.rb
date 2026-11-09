@@ -10,7 +10,7 @@ module SystemRoles
       {
         users: user_ids.size, assignments: assignments.size,
         branches: assignments.filter_map { |row| row[2] }.uniq.size,
-        without_other_roles: (user_ids - other_assignments.pluck(1).uniq).size,
+        without_other_roles: (user_ids - effective_other_user_ids).size,
         permissions: permissions.size
       }
     end
@@ -18,7 +18,7 @@ module SystemRoles
     def fingerprint
       Digest::SHA256.hexdigest([
         @role.id, @role.status, @role.updated_at.iso8601(6), @role.deleted_at,
-        assignments, permissions, other_assignments
+        assignments, permissions, other_assignments, affected_branch_states
       ].to_json)
     end
 
@@ -41,6 +41,19 @@ module SystemRoles
 
     def permissions
       @permissions ||= @role.permissions.available.reorder(:id).pluck(:id, :code, :updated_at)
+    end
+
+    def effective_other_user_ids
+      return [] if user_ids.empty?
+
+      scope = UserRole.active.where(user_id: user_ids).where.not(system_role_id: @role.id)
+      active_branches = Branch.not_deleted.where(operational_status: 'active').select(:id)
+      scope.where(branch_id: nil).or(scope.where(branch_id: active_branches)).distinct.pluck(:user_id)
+    end
+
+    def affected_branch_states
+      branch_ids = (assignments.map { |row| row[2] } + other_assignments.map { |row| row[3] }).compact.uniq
+      Branch.with_deleted.where(id: branch_ids).order(:id).pluck(:id, :operational_status, :deleted_at, :updated_at)
     end
 
     def other_assignments

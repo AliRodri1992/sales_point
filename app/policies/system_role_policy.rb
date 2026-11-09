@@ -10,11 +10,11 @@ class SystemRolePolicy < ApplicationPolicy
   end
 
   def create?
-    admin?
+    global_manager?
   end
 
   def update?
-    admin? && !protected_role? && !record.deprecated?
+    global_manager? && !protected_role? && !record.deprecated?
   end
 
   def destroy?
@@ -26,10 +26,14 @@ class SystemRolePolicy < ApplicationPolicy
   end
 
   def change_status?
-    admin? && !protected_role?
+    global_manager? && !protected_role?
   end
 
   private
+
+  def global_manager?
+    user&.admin? && user&.role?('super_admin')
+  end
 
   def protected_role?
     record.is_a?(SystemRole) && record.protected_permissions?
