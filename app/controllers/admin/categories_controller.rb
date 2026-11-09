@@ -46,6 +46,9 @@ module Admin
       else
         render :new, status: :unprocessable_content
       end
+    rescue ActiveRecord::RecordNotUnique
+      @category.errors.add(:code, :taken)
+      render :new, status: :unprocessable_content
     end
 
     def update
@@ -64,10 +67,21 @@ module Admin
       else
         render :edit, status: :unprocessable_content
       end
+    rescue ActiveRecord::RecordNotUnique
+      @category.errors.add(:code, :taken)
+      render :edit, status: :unprocessable_content
     end
 
     def destroy
-      @category.update!(deleted_at: Time.current)
+      # Serialize concurrent removals and reject categories still in use.
+      removed = @category.with_lock do
+        next false if @category.in_use?
+
+        @category.update!(deleted_at: Time.current)
+        true
+      end
+      return category_in_use_response unless removed
+
       load_categories
       notify_category(current_user, @category, 'destroyed')
       return if redirect_without_catalog_listing(@category, :destroyed)
@@ -88,7 +102,7 @@ module Admin
     end
 
     def category_params
-      params.expect(category: %i[name code status])
+      params.expect(category: %i[name code description status])
     end
 
     def notify_category(user, category, action)
@@ -108,6 +122,7 @@ module Admin
     end
 
     def load_categories
+      @unfiltered_count = Category.not_deleted.count
       @categories = filter_scope(Category.not_deleted)
       @total_count = @categories.count
       @categories = apply_sorting(@categories)
@@ -115,7 +130,10 @@ module Admin
     end
 
     def filter_scope(scope)
-      scope = scope.where('name ILIKE :q OR code ILIKE :q', q: "%#{params[:search]}%") if params[:search].present?
+      if params[:search].present?
+        q = "%#{Category.sanitize_sql_like(params[:search].to_s.strip.first(100))}%"
+        scope = scope.where('name ILIKE :q OR code ILIKE :q', q:)
+      end
 
       return scope unless params[:status].present? && params[:status] != 'all'
 
@@ -144,6 +162,18 @@ module Admin
 
     def per_page_param
       table_page_size_for('categories')
+    end
+
+    def category_in_use_response
+      message = t('admin.categories.in_use')
+      respond_to do |format|
+        format.html { redirect_to admin_categories_path, alert: message, status: :see_other }
+        format.turbo_stream do
+          content = view_context.tag.div(message, role: 'alert',
+                                                    class: 'rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800')
+          render turbo_stream: turbo_stream.update('categories_alert', content), status: :unprocessable_content
+        end
+      end
     end
 
     def forbidden

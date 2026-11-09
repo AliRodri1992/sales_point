@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 class Category < ApplicationRecord
+  has_many :products, dependent: :restrict_with_error
+  has_many :promotion_conditions, dependent: :restrict_with_error
+
   validates :name,
             presence: true,
             length: { maximum: 50 }
 
   validates :code,
             presence: true,
-            uniqueness: true,
+            uniqueness: { conditions: -> { where(deleted_at: nil) } },
             length: { maximum: 20 },
             format: { with: /\A[a-z0-9_]+\z/ }
 
@@ -22,6 +25,11 @@ class Category < ApplicationRecord
        },
        validate: true,
        default: :active
+
+  # Soft deletion must not obscure active commercial references.
+  def in_use?
+    products.exists? || promotion_conditions.exists?
+  end
 
   scope :available, lambda {
     where(status: :active)
