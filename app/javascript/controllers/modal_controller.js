@@ -23,6 +23,7 @@ export default class extends Controller {
 
     disconnect() {
         this.observer?.disconnect()
+        if (this.isOpen) document.documentElement.classList.remove("overflow-hidden")
     }
 
     frameLoaded(event) {
@@ -34,6 +35,7 @@ export default class extends Controller {
     }
 
     open() {
+        if (!this.isOpen) this.previousFocus = document.activeElement
         this.isOpen = true
         this.element.classList.remove("hidden")
         this.element.classList.add("flex")
@@ -49,6 +51,9 @@ export default class extends Controller {
         this.element.setAttribute("aria-hidden", "true")
         this.element.innerHTML = ""
         document.documentElement.classList.remove("overflow-hidden")
+        if (this.previousFocus?.isConnected) this.previousFocus.focus()
+        else document.querySelector('main a, main button')?.focus()
+        this.previousFocus = null
     }
 
     // Triggered by keydown.esc@window, the X button, or a backdrop click.
@@ -70,6 +75,23 @@ export default class extends Controller {
             event.target.closest("[data-modal-dismiss]") !== null ||
             event.target === this.element
         )
+    }
+
+    trap(event) {
+        if (!this.isOpen || event.key !== "Tab" || !this.hasPanelTarget) return
+        const items = [...this.panelTarget.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )].filter((node) => node.getClientRects().length > 0 && node.getAttribute("aria-hidden") !== "true")
+        if (!items.length) return
+        const first = items[0]
+        const last = items[items.length - 1]
+        if (event.shiftKey && (document.activeElement === first || !this.panelTarget.contains(document.activeElement))) {
+            event.preventDefault()
+            last.focus()
+        } else if (!event.shiftKey && (document.activeElement === last || !this.panelTarget.contains(document.activeElement))) {
+            event.preventDefault()
+            first.focus()
+        }
     }
 
     focusPanel() {

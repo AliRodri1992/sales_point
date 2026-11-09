@@ -3,6 +3,7 @@
     back to the controller-set instance variables for normal requests. %>
 <% total_count = local_assigns[:total_count] || @total_count || 0 %>
 <% total_pages = local_assigns[:total_pages] || @total_pages || 1 %>
+<% unfiltered_count = local_assigns[:unfiltered_count] || @unfiltered_count || 0 %>
 
 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
   <div class="flex items-center justify-between px-6 py-4">
@@ -93,11 +94,13 @@
 >
         <div class="flex items-center gap-2 text-sm text-slate-600">
           <span><%= t('admin.categories.index.pagination.per_page_label') %>:</span>
+          <div class="relative min-w-20" data-controller="delta-select">
           <%= select_tag :per_page,
                 options_for_select(TablePagePreference::OPTIONS, @per_page || TablePagePreference::DEFAULT),
                 data: { controller: 'table-page-size', table_page_size_key_value: 'categories',
                         action: 'change->table-page-size#apply' },
-                class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+                class: 'w-full rounded-lg border border-slate-300 px-2 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+          </div>
         </div>
         <div class="flex items-center gap-1">
           <%= pagination_links(total_pages, frame: 'categories_list') if total_pages > 1 %>
@@ -107,12 +110,15 @@
   <% else %>
     <div class="flex flex-col items-center gap-2 p-12 text-center">
       <%= delta_icon('cog', class: 'size-8 text-slate-300') %>
-      <p class="text-sm font-semibold text-slate-500">
-        <%= t('admin.categories.index.empty_title') %>
-      </p>
-      <p class="text-xs text-slate-400">
-        <%= t('admin.categories.index.empty_subtitle') %>
-      </p>
+      <% if unfiltered_count.positive? %>
+        <p class="text-sm font-semibold text-slate-600"><%= t('admin.categories.index.no_results') %></p>
+        <%= link_to t('admin.categories.index.clear_filters'), admin_categories_path,
+                    data: { turbo_frame: '_top' },
+                    class: 'mt-2 inline-flex min-h-11 items-center rounded-xl border border-slate-200 px-4 text-sm font-semibold text-blue-700 hover:bg-slate-50' %>
+      <% else %>
+        <p class="text-sm font-semibold text-slate-500"><%= t('admin.categories.index.empty_title') %></p>
+        <p class="text-xs text-slate-400"><%= t('admin.categories.index.empty_subtitle') %></p>
+      <% end %>
     </div>
   <% end %>
 </div>

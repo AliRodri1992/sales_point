@@ -1,5 +1,5 @@
 <%= turbo_stream.update "category_modal", "" %>
 <%= turbo_stream.update "categories_list" do %>
-  <%= render "list", categories: @categories, total_count: @total_count, total_pages: @total_pages %>
+  <%= render "list", categories: @categories, total_count: @total_count, total_pages: @total_pages, unfiltered_count: @unfiltered_count %>
 <% end %>
 <turbo-stream action="swal" target="swal"><template><%= @swal_message %></template></turbo-stream>

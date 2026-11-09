@@ -19,12 +19,13 @@
 
     <%= form_with url: admin_categories_path, method: :get,
                   data: { turbo_frame: 'categories_list', controller: 'categories-search' },
-                  class: 'flex items-center gap-2' do |f| %>
+                  class: 'flex flex-wrap items-center gap-2' do |f| %>
       <%= text_field_tag :search, params[:search],
             placeholder: t('admin.categories.index.search_placeholder'),
             data: { action: 'input->categories-search#debouncedSubmit' },
             class: 'w-full min-w-48 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
 
+      <div class="relative min-w-40" data-controller="delta-select">
       <%= select_tag :status,
             options_for_select(
               [
@@ -34,7 +35,8 @@
               ],
               params[:status] || 'all'
             ),
-            class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+            class: 'w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+      </div>
 
       <%= button_tag type: 'submit',
             class: 'inline-flex items-center justify-center rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-200' do %>
@@ -44,6 +46,8 @@
     <% end %>
   </div>
 </div>
+
+<div id="categories_alert" aria-live="assertive" class="mb-3"></div>
 
 <%= turbo_stream_from "categories_catalog" %>
 
@@ -58,7 +62,7 @@
 <% end %>
   </div>
   <div data-skeleton-loading-target="placeholder" hidden>
-    <%= render Ui::SkeletonComponent.new(variant: :table, rows: 6, columns: 5) %>
+    <%= render Ui::SkeletonComponent.new(variant: :table, rows: 6, columns: 4) %>
   </div>
   <div data-skeleton-loading-target="error" hidden role="alert"
        class="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
