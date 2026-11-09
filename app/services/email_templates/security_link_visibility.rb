@@ -28,13 +28,16 @@ module EmailTemplates
 
     def self.hidden?(node)
       return false unless node.element?
-      return true if node.attribute('hidden') || node['aria-hidden'].to_s.casecmp?('true')
-      return true if node.name == 'img' && zero_sized_image?(node)
 
-      node['style'].to_s.split(';').any? do |declaration|
+      node.attribute('hidden') || node['aria-hidden'].to_s.casecmp?('true') ||
+        (node.name == 'img' && zero_sized_image?(node)) || hidden_style?(node['style'])
+    end
+
+    def self.hidden_style?(style)
+      style.to_s.split(';').any? do |declaration|
         property, value = declaration.split(':', 2)
-        value = value.to_s.sub(/\s*!important\s*\z/i, '').strip
-        HIDDEN_VALUES[property.to_s.strip.downcase]&.match?(value)
+        normalized = value.to_s.sub(/\s*!important\s*\z/i, '').strip
+        HIDDEN_VALUES[property.to_s.strip.downcase]&.match?(normalized)
       end
     end
   end
