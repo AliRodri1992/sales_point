@@ -5,7 +5,10 @@ module EmailTemplates
     queue_as :mailers
     self.enqueue_after_transaction_commit = true
 
-    retry_on StandardError, wait: :polynomially_longer, attempts: 3
+    # Retry only failures known to occur before SMTP accepts a message.
+    # Read timeouts and other ambiguous results must not trigger a blind second send.
+    retry_on Net::OpenTimeout, Errno::ECONNREFUSED, SocketError, Net::SMTPServerBusy,
+             wait: :polynomially_longer, attempts: 3
     discard_on ActiveJob::DeserializationError
 
     def perform(ciphertext)
