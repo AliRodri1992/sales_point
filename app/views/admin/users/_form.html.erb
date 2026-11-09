@@ -3,7 +3,8 @@
 <% selected_role_ids = if submitted_role_ids
                          Array(submitted_role_ids).map(&:to_i)
                        elsif editing
-                         @user.user_roles.where(branch_id: nil, deleted_at: nil).pluck(:system_role_id)
+                         @user.user_roles.where(branch_id: nil, deleted_at: nil, organization: current_organization)
+                              .pluck(:system_role_id)
                        else
                          []
                        end %>
@@ -139,7 +140,7 @@
         <div class="p-5 sm:p-6">
           <%= hidden_field_tag 'user[system_role_ids][]', '' %>
           <% if editing && !current_user.role?('super_admin') %>
-            <% protected_ids = @user.user_roles.where(deleted_at: nil, branch_id: nil)
+            <% protected_ids = @user.user_roles.where(deleted_at: nil, branch_id: nil, organization: current_organization)
                                    .joins(:system_role)
                                    .where(system_roles: { code: SystemRole::ADMINISTRATIVE_CODES })
                                    .pluck(:system_role_id) %>
