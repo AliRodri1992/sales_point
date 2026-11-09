@@ -37,4 +37,51 @@ RSpec.describe UnitOfMeasure, type: :model do
     expect(build(:unit_of_measure, decimal_precision: 0)).not_to be_allows_fractions
     expect(build(:unit_of_measure, decimal_precision: 3)).to be_allows_fractions
   end
+
+  it 'allows inactivation without changing the assigned fiscal key or deletion timestamp' do
+    unit = create(:unit_of_measure, organization:, sat_unit_key: sat)
+    sat.update!(valid_to: Date.yesterday)
+
+    expect(unit.update(status: 'inactive')).to be(true)
+    expect(unit.reload).to be_inactive
+    expect(unit.deleted_at).to be_nil
+    expect(unit.sat_unit_key_id).to eq(sat.id)
+    expect(unit).not_to be_sat_unit_key_current
+  end
+
+  it 'blocks reactivation with expired SAT and preserves the inactive record' do
+    unit = create(:unit_of_measure, organization:, sat_unit_key: sat, status: 'inactive')
+    sat.update!(valid_to: Date.yesterday)
+
+    expect(unit.update(status: 'active')).to be(false)
+    expect(unit.errors.attribute_names).to include(:sat_unit_key)
+    expect(unit.reload).to be_inactive
+    expect(unit.deleted_at).to be_nil
+  end
+
+  it 'allows reactivation with a current SAT key' do
+    unit = create(:unit_of_measure, organization:, sat_unit_key: sat, status: 'inactive')
+
+    expect(unit.update(status: 'active')).to be(true)
+    expect(unit.reload).to be_active
+    expect(unit).to be_sat_unit_key_current
+  end
+
+  it 'retains historical SAT association after soft-deleting the official key' do
+    unit = create(:unit_of_measure, organization:, sat_unit_key: sat, status: 'inactive')
+    sat.update!(deleted_at: Time.current)
+
+    expect(unit.reload.sat_unit_key.code).to eq('H87')
+    expect(unit).not_to be_sat_unit_key_current
+    expect(unit.update(status: 'active')).to be(false)
+    expect(unit.errors.attribute_names).to include(:sat_unit_key)
+  end
+
+  it 'allows editing an inactive unit whose SAT key is expired without reactivating it' do
+    unit = create(:unit_of_measure, organization:, sat_unit_key: sat, status: 'inactive')
+    sat.update!(valid_to: Date.yesterday)
+
+    expect(unit.update(name: 'Archived unit label')).to be(true)
+    expect(unit.reload.name).to eq('Archived unit label')
+  end
 end

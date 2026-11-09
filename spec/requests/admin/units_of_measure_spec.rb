@@ -80,4 +80,50 @@ RSpec.describe 'Admin::UnitsOfMeasure', type: :request do
     get admin_units_of_measure_path(search: '%')
     expect(response.body).to include(I18n.t('admin.units_of_measure.index.no_results'))
   end
+
+  it 'does not reactivate a unit linked to an expired SAT key and renders field errors' do
+    unit = create(:unit_of_measure, organization:, sat_unit_key: sat, status: 'inactive')
+    sat.update!(valid_to: Date.yesterday)
+
+    patch admin_unit_of_measure_path(unit), params: { unit_of_measure: { status: 'active' } }
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include('unit_of_measure_sat_unit_key_error')
+    expect(unit.reload).to be_inactive
+    expect(unit.deleted_at).to be_nil
+  end
+
+  it 'reactivates a unit with current SAT and keeps the historical key unchanged' do
+    unit = create(:unit_of_measure, organization:, sat_unit_key: sat, status: 'inactive')
+
+    patch admin_unit_of_measure_path(unit), params: { unit_of_measure: { status: 'active' } }
+    expect(response).to have_http_status(:see_other)
+    expect(unit.reload).to be_active
+    expect(unit.sat_unit_key_id).to eq(sat.id)
+  end
+
+  it 'allows deactivating an active unit with expired SAT while retaining its record' do
+    unit = create(:unit_of_measure, organization:, sat_unit_key: sat)
+    sat.update!(valid_to: Date.yesterday)
+
+    patch admin_unit_of_measure_path(unit), params: { unit_of_measure: { status: 'inactive' } }
+    expect(response).to have_http_status(:see_other)
+    expect(unit.reload).to be_inactive
+    expect(unit.deleted_at).to be_nil
+  end
+
+  it 'records the authenticated actor in the PaperTrail create update and logical deletion' do
+    post admin_units_of_measure_path, params: {
+      unit_of_measure: { code: 'AUD', name: 'Audit unit', abbreviation: 'aud',
+                         sat_unit_key_id: sat.id, decimal_precision: 0, status: 'active' }
+    }
+    unit = UnitOfMeasure.find_by!(code: 'AUD', organization:)
+    expect(unit.versions.last.whodunnit).to eq(user.id.to_s)
+
+    patch admin_unit_of_measure_path(unit), params: { unit_of_measure: { status: 'inactive' } }
+    expect(unit.reload.versions.last.whodunnit).to eq(user.id.to_s)
+
+    delete admin_unit_of_measure_path(unit)
+    expect(unit.reload.versions.last.whodunnit).to eq(user.id.to_s)
+    expect(unit.deleted_at).to be_present
+  end
 end

@@ -10,6 +10,7 @@ module Admin
     before_action :authorize_unit_of_measure
     before_action :set_unit, only: %i[show edit update destroy]
     before_action :load_sat_keys, only: %i[new edit create update]
+    around_action :with_unit_audit_actor, only: %i[create update destroy]
 
     def index
       load_units
@@ -48,6 +49,10 @@ module Admin
     end
 
     private
+
+    def with_unit_audit_actor(&)
+      PaperTrail.request(whodunnit: current_user.id.to_s, &)
+    end
 
     def require_organization
       head :forbidden unless current_organization
