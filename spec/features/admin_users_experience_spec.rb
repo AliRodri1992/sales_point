@@ -162,6 +162,22 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page.evaluate_script('document.activeElement.type')).to eq('checkbox')
   end
 
+  scenario 'focuses a branch assignment group when the server rejects its selection' do
+    visit new_admin_user_path
+    fill_in 'Email address', with: 'invalid-branch-assignment@example.com'
+    page.execute_script(<<~JS)
+      const type = document.querySelector('#user_user_type')
+      type.value = 'customer'
+      type.dispatchEvent(new Event('change', { bubbles: true }))
+      document.querySelector('input[name="user[branch_role_assignments][]"]').value = 'invalid-branch-role'
+    JS
+    click_button 'Create user'
+
+    expect(page).to have_css('section[data-user-access-error-group][aria-describedby="user_branch_role_assignments_error"]')
+    expect(page).to have_css('#user_branch_role_assignments_error')
+    expect(page.evaluate_script('document.activeElement.dataset.userAccessErrorGroup !== undefined')).to be(true)
+  end
+
   scenario 'renders field validation directly beneath the email input' do
     target = create(:user, username: 'Validation Employee')
     create(:organization_membership, organization:, user: target)
