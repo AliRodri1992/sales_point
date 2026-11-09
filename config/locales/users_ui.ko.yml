@@ -11,6 +11,7 @@ ko:
         deactivation_hint: "이 조직에서 사용자의 접근 권한을 중지하며 활성 세션이 종료될 수 있습니다. 변경 내역을 위해 사유를 입력하세요."
         deactivation_cancel: "취소"
         deactivation_confirm: "이용 중지 확인"
+        deactivation_request_failed: "사용자를 비활성화할 수 없습니다. 접근 권한을 확인하거나 다시 시도하세요."
         shared_sessions_warning: "이 사용자는 다른 조직에도 속해 있습니다. 보안을 위해 이 변경으로 다른 조직의 세션도 종료될 수 있습니다."
         invitation_not_ready: "직원을 초대하기 전에 이 조직에서 유효한 역할을 하나 이상 지정하세요."
         restored_needs_roles: "계정이 대기 상태로 복원되었습니다. 초대를 보내기 전에 직원 역할을 지정하세요."
