@@ -79,7 +79,7 @@ module SystemRoles
       role_ids = other_assignments.pluck(2).uniq
       SystemRolePermission.where(system_role_id: role_ids).joins(:permission)
                           .order(:system_role_id, :permission_id)
-                          .pluck(:system_role_id, :permission_id, :deleted_at,
+                          .pluck(:system_role_id, :permission_id, 'system_role_permissions.deleted_at',
                                  'permissions.status', 'permissions.deleted_at', 'permissions.updated_at')
     end
 
