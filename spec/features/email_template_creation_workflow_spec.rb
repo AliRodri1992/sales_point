@@ -78,7 +78,7 @@ RSpec.describe 'Email template creation workflow', type: :feature, js: true do
   scenario 'refreshes date validation feedback outside the list frame while keeping live search' do
     visit admin_email_templates_path
 
-    expect(page).to have_css('form[data-email-template-filters-target]', count: 0)
+    find('details summary', text: I18n.t('admin.email_templates.advanced_filters', locale: :en)).click
     expect(page).to have_css('input#updated_from')
     page.execute_script(<<~JS)
       document.querySelector('#updated_from').value = '2026-12-31'

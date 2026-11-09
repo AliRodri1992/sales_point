@@ -70,17 +70,23 @@ class EmailTemplateVersion < ApplicationRecord
   end
 
   def declared_variables
-    fields = %i[subject preheader html_body text_body]
-    fields.each do |field|
-      errors.add(field, :invalid) if EmailTemplates::Renderer.malformed_variables?(public_send(field))
-    end
+    validate_placeholder_syntax
     return unless allowed_variables.is_a?(Array)
     return if errors[:allowed_variables].any?
 
-    used = fields.flat_map do |field|
+    errors.add(:allowed_variables, :undeclared_placeholders) unless (used_variables - allowed_variables).empty?
+  end
+
+  def validate_placeholder_syntax
+    %i[subject preheader html_body text_body].each do |field|
+      errors.add(field, :invalid) if EmailTemplates::Renderer.malformed_variables?(public_send(field))
+    end
+  end
+
+  def used_variables
+    %i[subject preheader html_body text_body].flat_map do |field|
       public_send(field).to_s.scan(EmailTemplates::Renderer::VARIABLE_PATTERN).flatten
     end.uniq
-    errors.add(:allowed_variables, :undeclared_placeholders) unless (used - allowed_variables).empty?
   end
 
   def required_customization_variables
