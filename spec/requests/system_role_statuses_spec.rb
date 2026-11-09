@@ -119,14 +119,13 @@ RSpec.describe 'Reviewed role status changes', type: :request do
     expect(response.body).not_to include('name="review_token"')
   end
 
-  it 'does not disclose names of users in other organizations in the impact list' do
-    organization = create(:organization)
-    create(:organization_membership, user: admin, organization:)
+  it 'does not permit reviewing cross-organization changes or disclosing foreign users' do
     foreign_user = create(:user, username: 'ForeignPrivateName')
     create(:organization_membership, user: foreign_user)
     create(:user_role, user: foreign_user, system_role: role)
+
     review('inactive')
-    expect(response).to have_http_status(:ok)
+    expect(response).to have_http_status(:forbidden)
     expect(response.body).not_to include('ForeignPrivateName')
   end
 
