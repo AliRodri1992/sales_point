@@ -59,6 +59,7 @@ RSpec.describe 'Reviewed role status changes', type: :request do
 
   it 'enforces deactivation on the next operation without signing out the assigned user' do
     user = create(:user, :english)
+    create(:organization_membership, user:, organization: admin.organization_memberships.first!.organization)
     create(:user_role, user:, system_role: role)
     %w[languages.access languages.index].each do |code|
       create(:system_role_permission, system_role: role, permission: create(:permission, code:))

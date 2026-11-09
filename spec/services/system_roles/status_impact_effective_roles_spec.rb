@@ -11,6 +11,7 @@ RSpec.describe SystemRoles::StatusImpact do
   it 'does not count an alternate role on a non-operational branch as effective access' do
     branch_role = create(:system_role, :branch, code: 'branch_staff')
     branch = create(:branch, operational_state: 'preparing')
+    create(:organization_membership, user:, organization: branch.organization)
     create(:user_role, user:, system_role: role)
     create(:system_role_permission, system_role: branch_role, permission:)
     create(:user_role, user:, system_role: branch_role, branch:)
