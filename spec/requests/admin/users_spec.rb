@@ -379,7 +379,8 @@ RSpec.describe 'Admin::Users', type: :request do
       normal = create(:system_role, :system, code: 'cashier')
 
       get new_admin_user_path
-      expect(response.body).not_to include("value=\"#{privileged.id}\"")
+      role_inputs = Nokogiri::HTML(response.body).css('input[name="user[system_role_ids][]"]')
+      expect(role_inputs.map { |input| input['value'] }).not_to include(privileged.id.to_s)
 
       post admin_users_path, params: {
         user: { email: 'elevated@example.com', user_type: 'employee',

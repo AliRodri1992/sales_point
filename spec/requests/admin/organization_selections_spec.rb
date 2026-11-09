@@ -34,10 +34,12 @@ RSpec.describe 'Active organization selection', type: :request do
   it 'refuses selecting an organization without an accessible membership' do
     foreign = create(:organization)
     create(:organization_membership, user: create(:user), organization: primary)
+    get admin_users_path
+    expect(response).to have_http_status(:ok)
     patch admin_select_organization_path(foreign)
 
     expect(response).to have_http_status(:not_found)
     get admin_users_path
-    expect(response).to have_http_status(:ok)
+    expect(response).to have_http_status(:ok), "Unexpected redirect to #{response.location}"
   end
 end
