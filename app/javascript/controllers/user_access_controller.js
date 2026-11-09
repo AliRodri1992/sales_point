@@ -13,8 +13,12 @@ export default class extends Controller {
   connect() {
     this.summarize()
     this.updateReview()
-    // Server-side errors are authoritative. Focus the first invalid field after a 422.
-    this.element.querySelector('[aria-invalid="true"]')?.focus({ preventScroll: true })
+    // Model errors are authoritative; move both focus and the viewport to the first invalid field.
+    const invalidField = this.element.querySelector('[aria-invalid="true"]')
+    if (invalidField) {
+      invalidField.closest("details")?.setAttribute("open", "")
+      invalidField.focus()
+    }
   }
 
   filter(event) {
