@@ -125,10 +125,8 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
   end
 
   scenario 'searches a large official SAT catalog without duplicating options in the modal' do
-    now = Time.current
-    SatUnitKey.insert_all!((1..350).map do |number|
-      { code: format('Z%04d', number), description: "Bulk key #{number}",
-        created_at: now, updated_at: now }
+    SatUnitKey.create!((1..350).map do |number|
+      { code: format('Z%04d', number), description: "Bulk key #{number}" }
     end)
 
     started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
@@ -137,7 +135,8 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
     expect(page).to have_css('turbo-frame#unit_of_measure_modal.flex [role="dialog"]', wait: 10)
 
     select_control = find('#unit_of_measure_sat_unit_key_id', visible: :all).find(:xpath, '..')
-    expect(page.evaluate_script("document.querySelector('#unit_of_measure_sat_unit_key_id').options.length")).to be >= 351
+    options_count = page.evaluate_script("document.querySelector('#unit_of_measure_sat_unit_key_id').options.length")
+    expect(options_count).to be >= 351
     select_control.find('button[aria-haspopup="listbox"]').click
     select_control.find('input[type="search"]').set('Z0350')
     expect(select_control).to have_css('[role="option"]:not([hidden])', text: 'Z0350', wait: 10)

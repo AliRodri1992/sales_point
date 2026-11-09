@@ -56,7 +56,8 @@ jobs:
             app/models/unit_of_measure.rb \
             app/policies/unit_of_measure_policy.rb \
             spec/models/unit_of_measure_spec.rb \
-            spec/requests/admin/units_of_measure_spec.rb
+            spec/requests/admin/units_of_measure_spec.rb \
+            spec/features/units_of_measure_browser_spec.rb
 
   units_specs:
     name: Units of measure model and request regressions
