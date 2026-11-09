@@ -88,3 +88,14 @@
 
 **Dictamen:** AUDITADO POR CÓDIGO CON HALLAZGOS, **NO CERRADO**. Los hallazgos EM-011 y EM-012 requieren corrección, pruebas específicas y reevaluación; no se reabren EM-001, EM-002, EM-006 o EM-007 sin evidencia contraria. El registro se mantiene único en este documento; el anterior `email_templates.md` ya fue consolidado previamente y no se crea expediente paralelo. Las integraciones externas y CI global continúan bloqueando el cierre.
 
+
+## Adecuaciones EM-011 y EM-012 — 2026-11-08
+
+**Código implementado:** [commit 001b90d8](https://github.com/AliRodri1992/sales_point/commit/001b90d8da4afc8f76f51566ca11d256a6187c88). **Corrección de lint y registro:** en el commit que incluye esta sección. **Rama:** `feature/fixes`.
+
+- **EM-011 — IMPLEMENTADO, PENDIENTE DE REVERIFICACIÓN DEL SHA FINAL.** `email_template_preview_controller.js` conserva feedback mientras se valida, compara los errores Rails existentes con el 422, reemplaza los que cambian y elimina los obsoletos tras respuesta válida; sincroniza `aria-invalid`, `aria-describedby` y estilos. La spec de navegador comprueba 422 → corrección → 200, placeholders inválidos y que no se guarde contenido.
+- **EM-012 — IMPLEMENTADO, PENDIENTE DE REVERIFICACIÓN DEL SHA FINAL.** El helper de formularios asigna IDs a todos los mensajes únicos del modelo, incluidos varios por atributo, y los enlaza con ayudas de campo mediante `validation_describedby`. Aplicado a alta, borrador, remitentes, branding y correo de prueba. Specs request comprueban las asociaciones.
+
+**Ejecución inicial:** [Email Templates CI #42555889164](https://github.com/AliRodri1992/sales_point/actions/runs/42555889164): **264 ejemplos, 0 fallos**; traducciones aprobadas. RuboCop detectó seis ofensas de estilo en nuevas pruebas, motivando este commit. [CI global #42555889141](https://github.com/AliRodri1992/sales_point/actions/runs/42555889141): seguridad e I18n aprobados inicialmente y lint fallido antes de la corrección.
+
+**Puertas pendientes:** CI especializado y global completo en el mismo SHA de aceptación, verificación manual con lector de pantalla y zoom, contratos externos SMTP (EM-003/004/008/009). **NO CERRADO** hasta reunir evidencias.

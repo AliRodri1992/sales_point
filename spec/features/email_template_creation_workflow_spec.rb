@@ -106,7 +106,8 @@ RSpec.describe 'Email template creation workflow', type: :feature, js: true do
 
     expect(page).to have_css('#email_template_version_subject_error', text: /blank|empty/i)
     expect(page).to have_css('#email_template_version_subject[aria-invalid="true"]')
-    expect(page).to have_css('#email_template_version_subject[aria-describedby~="email_template_version_subject_error"]')
+    expect(find('#email_template_version_subject')['aria-describedby'].split)
+      .to include('email_template_version_subject_error')
     expect(page).to have_no_css('[data-email-preview-field-error]')
 
     find('#email_template_version_subject').set('Corrected without saving')
@@ -116,11 +117,12 @@ RSpec.describe 'Email template creation workflow', type: :feature, js: true do
     expect(template.versions.where(status: 'draft').first.reload.subject).to eq('Notice')
 
     find('#email_template_version_subject').set('{{not_approved}}')
-    expect(page).to have_css('#email_template_version_allowed_variables_error[data-email-preview-field-error]', count: 1)
-    expect(page).to have_css('#email_template_version_allowed_variables_csv[aria-invalid="true"]')
     expect(page).to have_css(
-      '#email_template_version_allowed_variables_csv[aria-describedby~="email_template_version_allowed_variables_error"]'
+      '#email_template_version_allowed_variables_error[data-email-preview-field-error]', count: 1
     )
+    expect(page).to have_css('#email_template_version_allowed_variables_csv[aria-invalid="true"]')
+    expect(find('#email_template_version_allowed_variables_csv')['aria-describedby'].split)
+      .to include('email_template_version_allowed_variables_error')
     find('#email_template_version_subject').set('Corrected again')
     expect(page).to have_no_css('#email_template_version_allowed_variables_error')
     expect(page).to have_css('#email_template_version_allowed_variables_csv[aria-invalid="false"]')

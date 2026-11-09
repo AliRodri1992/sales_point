@@ -467,19 +467,19 @@ RSpec.describe 'Admin email templates', type: :request do
     template = create_template(organization:)
     draft = template.new_draft!(actor: administrator)
     patch draft_admin_email_template_path(template, version_id: draft.id), params: {
-      email_template_version: { subject: "Invalid\n" + ('a' * 260) }
+      email_template_version: { subject: "Invalid\n#{'a' * 260}" }
     }
 
     expect(response).to have_http_status(:unprocessable_content)
     document = Nokogiri::HTML(response.body)
     messages = document.css('[data-server-field-error][data-validation-attribute="subject"]')
     expect(messages.size).to eq(2)
-    expect(messages.map { |node| node['id'] }).to eq(
+    expect(messages.pluck('id')).to eq(
       %w[email_template_version_subject_error email_template_version_subject_error_2]
     )
     subject = document.at_css('#email_template_version_subject')
     expect(subject['aria-invalid']).to eq('true')
-    expect(subject['aria-describedby'].split).to include(*messages.map { |node| node['id'] })
+    expect(subject['aria-describedby'].split).to include(*messages.pluck('id'))
     expect(draft.reload.subject).to eq('Order')
   end
 
