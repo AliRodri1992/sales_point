@@ -62,10 +62,14 @@ jobs:
             app/models/system_role.rb app/models/system_role_permission_audit_event.rb \
             app/services/system_roles app/services/administrator_permission_provisioner.rb \
             app/policies/system_role_policy.rb \
+            app/models/current_organization_access.rb app/models/concerns/user_effective_roles.rb \
+            app/models/user.rb app/controllers/application_controller.rb \
             spec/models/system_role_spec.rb spec/models/permission_spec.rb \
             spec/policies/system_role_policy_spec.rb spec/policies/system_role_membership_policy_spec.rb \
             spec/requests/system_roles_spec.rb spec/requests/system_roles_editor_spec.rb \
             spec/requests/system_roles_security_spec.rb spec/requests/system_roles_regressions_spec.rb \
+            spec/requests/system_roles_tenant_isolation_spec.rb \
+            spec/requests/system_roles_tenantless_access_spec.rb \
             spec/requests/system_role_statuses_spec.rb \
             spec/services/system_roles \
             spec/features/system_roles_spec.rb spec/features/system_roles_editor_browser_spec.rb \
@@ -135,6 +139,8 @@ jobs:
             spec/services/system_roles \
             spec/requests/system_roles_spec.rb spec/requests/system_roles_editor_spec.rb \
             spec/requests/system_roles_security_spec.rb spec/requests/system_roles_regressions_spec.rb \
+            spec/requests/system_roles_tenant_isolation_spec.rb \
+            spec/requests/system_roles_tenantless_access_spec.rb \
             spec/requests/system_role_statuses_spec.rb \
             spec/features/system_roles_spec.rb spec/features/system_roles_editor_browser_spec.rb \
             spec/features/system_role_statuses_browser_spec.rb \
