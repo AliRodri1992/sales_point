@@ -22,7 +22,6 @@ en:
           deactivated: "Template deactivated: %{name}"
           test_queued: "Test delivery for %{name} queued"
     email_templates:
-      sender_verification_disclaimer: "Matching the domain and its saved status does not confirm active SPF/DKIM or successful delivery. Check verification directly with your email provider."
       date_filter_invalid: "must contain a valid date"
       date_filter_before_start: "must be on or after the start date"
       current_published: "Currently published version"
@@ -165,7 +164,7 @@ en:
       sender_preferences_hint: "Select the default language and review the domain assigned to this sender."
       sender_organization_scope: "Your organization only"
       sender_delivery_title: "Sender used for deliveries"
-      sender_delivery_ready: "This organization's address and domain are verified. Its sender will be used for delivery."
+      sender_delivery_ready: "The domain and address are marked verified in settings. This sender will be used; confirm SPF/DKIM and delivery with your provider."
       sender_delivery_global: "This organization's sender is not ready yet. Deliveries will use the verified global sender when available."
       sender_delivery_default: "No verified sender is available for this organization. The platform's configured default sender will be used."
       sender_name_hint: "The name recipients see when an email arrives."

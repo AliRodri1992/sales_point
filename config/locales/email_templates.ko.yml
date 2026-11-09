@@ -22,7 +22,6 @@ ko:
           deactivated: "템플릿 비활성화: %{name}"
           test_queued: "%{name} 테스트 발송이 대기열에 추가되었습니다"
     email_templates:
-      sender_verification_disclaimer: "도메인 일치와 저장된 상태만으로 SPF/DKIM 활성화 또는 실제 전송 가능 여부를 확인할 수 없습니다. 이메일 제공업체에서 직접 인증 상태를 확인하세요."
       date_filter_invalid: "유효한 날짜여야 합니다"
       date_filter_before_start: "시작일보다 빠를 수 없습니다"
       current_published: "현재 게시된 버전"
@@ -165,7 +164,7 @@ ko:
       sender_preferences_hint: "기본 언어를 선택하고 발신자에 연결된 도메인을 확인하세요."
       sender_organization_scope: "현재 조직 전용"
       sender_delivery_title: "실제 발송에 사용하는 발신자"
-      sender_delivery_ready: "조직의 발신 주소와 도메인이 확인되었습니다. 해당 발신자로 이메일이 발송됩니다."
+      sender_delivery_ready: "설정에서 도메인과 주소가 인증됨으로 표시되어 이 발신자를 사용합니다. 실제 SPF/DKIM 및 전달 상태는 제공업체에서 확인하세요."
       sender_delivery_global: "조직 발신자가 아직 준비되지 않았습니다. 가능한 경우 확인된 전역 발신자를 사용합니다."
       sender_delivery_default: "조직에 확인된 발신자가 없습니다. 플랫폼에 설정된 기본 발신자를 사용합니다."
       sender_name_hint: "이메일 수신자에게 표시할 이름입니다."

@@ -36,6 +36,7 @@ on:
       - 'app/javascript/controllers/index.js'
       - 'app/javascript/controllers/email_template*'
       - 'config/locales/email_templates.*.yml'
+      - 'script/audit_i18n.py'
       - 'spec/**/email_template*'
       - 'spec/**/email_sender*'
       - 'spec/**/email_branding*'
@@ -56,6 +57,19 @@ env:
   REDIS_URL: redis://localhost:6379/0
 
 jobs:
+  email_locales:
+    name: Email locale integrity and translation parity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check PyYAML
+      - name: Check locale YAML duplicates and translation parity
+        run: I18N_STRICT_PARITY=1 python script/audit_i18n.py
+
   email_lint:
     name: Email module RuboCop
     runs-on: ubuntu-latest

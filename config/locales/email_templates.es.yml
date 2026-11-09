@@ -22,7 +22,6 @@ es:
           deactivated: "Plantilla desactivada: %{name}"
           test_queued: "Prueba de %{name} enviada a la cola"
     email_templates:
-      sender_verification_disclaimer: "La coincidencia del dominio y su estado guardado no confirman que SPF/DKIM estén activos ni que el correo sea entregable. Comprueba la verificación directamente con tu proveedor."
       date_filter_invalid: "debe contener una fecha válida"
       date_filter_before_start: "debe ser igual o posterior a la fecha inicial"
       current_published: "Versión actualmente publicada"
@@ -165,7 +164,7 @@ es:
       sender_preferences_hint: "Configura el idioma predeterminado y consulta el dominio vinculado al remitente."
       sender_organization_scope: "Solo tu organización"
       sender_delivery_title: "Remitente utilizado para envíos"
-      sender_delivery_ready: "El dominio y la dirección de esta organización están verificados. Se utilizará su remitente en los envíos."
+      sender_delivery_ready: "El dominio y la dirección están marcados como verificados en la configuración. Se utilizará este remitente; confirma SPF/DKIM y la entrega con tu proveedor."
       sender_delivery_global: "El remitente de esta organización aún no está listo. Los envíos usarán el remitente global verificado, si corresponde."
       sender_delivery_default: "No hay un remitente verificado disponible para esta organización. Se usará el remitente predeterminado configurado por la plataforma."
       sender_name_hint: "Es el nombre que verá la persona que recibe el correo."
