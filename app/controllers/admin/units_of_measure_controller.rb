@@ -2,8 +2,9 @@
 
 module Admin
   class UnitsOfMeasureController < ApplicationController
-    layout 'admin_dashboard'
     include Admin::UnitsOfMeasureListing
+
+    layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :require_organization
     before_action :authorize_unit_of_measure
@@ -71,7 +72,7 @@ module Admin
 
     def load_sat_keys
       @sat_keys = SatUnitKey.current.order(:code).to_a
-      return unless @unit&.sat_unit_key && !@sat_keys.include?(@unit.sat_unit_key)
+      return unless @unit&.sat_unit_key && @sat_keys.exclude?(@unit.sat_unit_key)
 
       @sat_keys.unshift(@unit.sat_unit_key)
     end

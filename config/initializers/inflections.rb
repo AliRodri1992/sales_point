@@ -14,3 +14,8 @@
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym "RESTful"
 # end
+
+# Keep REST collection and member route helpers distinct for the unit catalog.
+ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.irregular 'unit_of_measure', 'units_of_measure'
+end

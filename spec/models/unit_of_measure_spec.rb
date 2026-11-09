@@ -8,7 +8,7 @@ RSpec.describe UnitOfMeasure, type: :model do
 
   it 'requires the fiscal key and seven-field catalog rules' do
     unit = build(:unit_of_measure, organization:, sat_unit_key: sat, name: '', code: 'bad code',
-                                  abbreviation: '', decimal_precision: 7)
+                                   abbreviation: '', decimal_precision: 7)
     expect(unit).not_to be_valid
     expect(unit.errors.attribute_names).to include(:name, :code, :abbreviation, :decimal_precision)
   end

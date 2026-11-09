@@ -24,9 +24,16 @@ module Admin
     def filtered_units(scope)
       scope = search_units(scope) if params[:search].present?
       scope = scope.where(status: params[:status]) if UnitOfMeasure.statuses.key?(params[:status])
-      if params[:sat_unit_key_id].to_s.match?(/\A\d+\z/)
-        scope = scope.where(sat_unit_key_id: params[:sat_unit_key_id])
-      end
+      filter_fractional(filter_sat_key(scope))
+    end
+
+    def filter_sat_key(scope)
+      return scope unless params[:sat_unit_key_id].to_s.match?(/\A\d+\z/)
+
+      scope.where(sat_unit_key_id: params[:sat_unit_key_id])
+    end
+
+    def filter_fractional(scope)
       case params[:fractional]
       when 'yes' then scope.where('decimal_precision > 0')
       when 'no' then scope.where(decimal_precision: 0)

@@ -14,7 +14,6 @@ class UnitOfMeasure < ApplicationRecord
   normalizes :abbreviation, with: ->(value) { value.strip }
   normalizes :description, with: ->(value) { value.strip.presence }
 
-  validates :organization, presence: true
   validates :name, presence: true, length: { maximum: 100 }
   validates :code, presence: true, length: { maximum: 20 },
                    format: { with: /\A[A-Z0-9_]+\z/ },
@@ -37,7 +36,7 @@ class UnitOfMeasure < ApplicationRecord
 
   def sat_unit_key_is_current
     return if sat_unit_key.blank?
-    return if SatUnitKey.current.where(id: sat_unit_key_id).exists?
+    return if SatUnitKey.current.exists?(id: sat_unit_key_id)
 
     errors.add(:sat_unit_key, I18n.t('admin.units_of_measure.validation.sat_invalid'))
   end
