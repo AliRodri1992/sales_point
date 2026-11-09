@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_040000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_12_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -2195,7 +2195,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_040000) do
 
   create_table "system_role_permission_audit_events", force: :cascade do |t|
     t.bigint "system_role_id", null: false
-    t.bigint "actor_id", null: false
+    t.bigint "actor_id"
+    t.string "source", default: "user", null: false
     t.jsonb "added_permission_codes", default: [], null: false
     t.jsonb "removed_permission_codes", default: [], null: false
     t.datetime "created_at", null: false
@@ -2203,6 +2204,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_040000) do
     t.index ["actor_id"], name: "index_system_role_permission_audit_events_on_actor_id"
     t.index ["system_role_id", "created_at"], name: "idx_role_permission_audits_role_history"
     t.index ["system_role_id"], name: "index_system_role_permission_audit_events_on_system_role_id"
+    t.check_constraint "((source)::text = 'user'::text AND actor_id IS NOT NULL) OR ((source)::text = 'system'::text AND actor_id IS NULL)", name: "chk_role_permission_audit_source_actor"
   end
 
   create_table "system_role_permissions", force: :cascade do |t|
@@ -2342,12 +2344,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_040000) do
     t.bigint "user_id", null: false
     t.bigint "system_role_id", null: false
     t.bigint "branch_id"
+    t.bigint "organization_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at", precision: nil
     t.bigint "organization_id"
     t.index ["branch_id"], name: "index_user_roles_on_branch_id"
     t.index ["deleted_at"], name: "index_user_roles_on_deleted_at"
+    t.index ["organization_id", "user_id"], name: "idx_user_roles_tenant_user", where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_user_roles_on_organization_id"
     t.index ["organization_id", "user_id"], name: "idx_user_roles_tenant_user", where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_user_roles_on_organization_id"
     t.index ["system_role_id", "branch_id", "user_id"], name: "idx_user_roles_active_role_branch_user", where: "(deleted_at IS NULL)"
@@ -2689,6 +2694,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_040000) do
   add_foreign_key "user_role_audit_events", "users"
   add_foreign_key "user_role_audit_events", "users", column: "actor_id"
   add_foreign_key "user_roles", "branches"
+  add_foreign_key "user_roles", "organizations"
   add_foreign_key "user_roles", "organizations"
   add_foreign_key "user_roles", "system_roles"
   add_foreign_key "user_roles", "users"
