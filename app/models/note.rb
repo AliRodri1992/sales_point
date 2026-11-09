@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class Note < ApplicationRecord
-  has_paper_trail if: ->(record) { record.notable_type == 'Branch' }
+  has_paper_trail only: %i[body deleted_at], save_changes: true,
+                  if: ->(record) { record.notable_type == 'Branch' }
   include RestrictsClosedBranchMutations
   belongs_to :notable, polymorphic: true
   belongs_to :organization, optional: true

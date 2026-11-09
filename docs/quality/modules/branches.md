@@ -206,3 +206,8 @@ Los errores de otros módulos continúan identificados como EXTERNOS. Los IDs `B
 ### Tercera pasada de verificación
 
 En el SHA `5f3a52a4748d8d679aad68ef660d6e2704446724` Branches CI ejecutó **129 ejemplos / 2 fallos**: arreglados la concurrencia y el selector de sucursales, quedan el historial de bajas de teléfonos/notas y el fragmento de navegación. La comprobación Capybara de `current_path` no retiene fragmentos de URL, por lo que se reemplaza por `:target` y `window.location.hash` tras la espera. Se añaden comprobaciones del contenido `changeset` de PaperTrail y de búsquedas `with_deleted` para identificar cuál etapa descarta eventos de baja. RuboCop marcó una interpolación en el spec de navegación; ya no se usa concatenación. **Esta ronda requiere nuevo Branches CI verde; no cerrar aún.**
+
+
+### Causa raíz del historial de bajas — BR-004
+
+En `ecd15e869ea33f5f798053d70d03c8b1f6618f8e`, **128/129 pruebas pasaron**. El test de historial verificó que PaperTrail sí almacenaba una versión `update` de `Phone`, pero `version.changeset` retornó vacío, por lo que la vista no pudo mostrar `deleted_at` → «Retirado». Se delimita el cambio al rastro de teléfonos/notas **cuando pertenecen a Branch** y se exige conservar el diff de `number/kind/primary/whatsapp_enabled/deleted_at` o `body/deleted_at`. La verificación se mantiene en la prueba de historial; esta implementación NO equivale a aprobación hasta el nuevo CI.

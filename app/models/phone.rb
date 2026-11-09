@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class Phone < ApplicationRecord
-  has_paper_trail if: ->(record) { record.phoneable_type == 'Branch' }
+  has_paper_trail only: %i[number kind primary whatsapp_enabled deleted_at],
+                  save_changes: true,
+                  if: ->(record) { record.phoneable_type == 'Branch' }
   include RestrictsClosedBranchMutations
   KINDS = %w[mobile landline other].freeze
   PHONEABLE_TYPES = %w[Contact Client Branch Employee].freeze

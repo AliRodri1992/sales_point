@@ -10,6 +10,8 @@ on:
       - 'app/controllers/admin/branches_controller.rb'
       - 'app/controllers/concerns/admin/branch_*'
       - 'app/models/branch.rb'
+      - 'app/models/phone.rb'
+      - 'app/models/note.rb'
       - 'app/models/concerns/branch_lifecycle.rb'
       - 'app/services/branches/**'
       - 'app/policies/branch_policy.rb'
