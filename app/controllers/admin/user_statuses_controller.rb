@@ -36,12 +36,12 @@ module Admin
     def render_invalid_transition
       return render :edit, status: :unprocessable_content unless @target == 'deleted' && request.format.turbo_stream?
 
-      render turbo_stream: turbo_stream.update('users-deactivation-errors',
-                                              partial: 'admin/user_statuses/deactivation_errors',
-                                              locals: { status_form: @status_form }),
-             status: :unprocessable_content
+      render turbo_stream: turbo_stream.update(
+        'users-deactivation-errors',
+        partial: 'admin/user_statuses/deactivation_errors',
+        locals: { status_form: @status_form }
+      ), status: :unprocessable_content
     end
-
 
     def permitted_transition?
       helpers.allowed_user_transitions(@user, organization: current_organization).include?(@target)

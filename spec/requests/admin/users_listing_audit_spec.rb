@@ -39,6 +39,27 @@ RSpec.describe 'Audited users listing', type: :request do
     expect(card.text).to include(message)
   end
 
+  it 'matches status metrics to non-deleted users in the directory' do
+    hidden = create(:user, status: :deleted, deleted_at: Time.current)
+    create(:organization_membership, user: hidden, organization:, account_status: :active)
+
+    get admin_users_path
+
+    expect(response).to have_http_status(:ok)
+    doc = Nokogiri::HTML(response.body)
+    active_metric = doc.at_css('section[aria-label]')&.text
+    expect(active_metric).not_to include('Active\\n2')
+    expect(response.body).not_to include(hidden.email)
+  end
+
+  it 'exposes the active sort direction to screen readers' do
+    get admin_users_path, params: { sort: 'users.username', direction: 'asc' }
+
+    doc = Nokogiri::HTML(response.body)
+    expect(doc.at_css('th[aria-sort="ascending"]')).to be_present
+    expect(doc.css('th[aria-sort="none"]')).not_to be_empty
+  end
+
   it 'excludes revoked assignments from the role filter' do
     target = create(:user, email: 'revoked-search@example.com')
     create(:organization_membership, user: target, organization:)

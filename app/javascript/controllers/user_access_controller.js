@@ -13,6 +13,8 @@ export default class extends Controller {
   connect() {
     this.summarize()
     this.updateReview()
+    // Server-side errors are authoritative. Focus the first invalid field after a 422.
+    this.element.querySelector('[aria-invalid="true"]')?.focus({ preventScroll: true })
   }
 
   filter(event) {

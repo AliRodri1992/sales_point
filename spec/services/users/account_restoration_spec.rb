@@ -74,6 +74,20 @@ RSpec.describe Users::AccountRestoration do
     expect(user.organization_memberships.find_by!(organization:)).to be_account_active
   end
 
+  it 'restores a shared active employee as pending after revoking local roles' do
+    user.update!(user_type: :employee, status: :active, deleted_at: nil)
+    create(:organization_membership, user:, organization: create(:organization))
+    branch = create(:branch, organization:)
+    role = create(:system_role, :branch, code: 'restored_employee_branch')
+    assignment = create(:user_role, user:, branch:, system_role: role)
+
+    restore
+
+    expect(user.reload).to be_active
+    expect(user.organization_memberships.find_by!(organization:)).to be_account_pending
+    expect(assignment.reload.deleted_at).to be_present
+  end
+
   it 'refuses a misleading local restoration when another organization is accessible globally' do
     create(:organization_membership, user:)
 

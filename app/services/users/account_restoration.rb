@@ -60,7 +60,9 @@ module Users
       shared = @user.organization_memberships.active.where.not(organization: @organization).exists?
       globally_active = @user.active? && @user.deleted_at.nil?
       verify_shared_global_state!(shared, globally_active)
-      next_status = shared && globally_active ? 'active' : 'pending'
+      # An employee's local roles are revoked during restoration. Require a fresh
+      # invitation and review before granting access to the restored membership.
+      next_status = shared && globally_active && !@user.employee? ? 'active' : 'pending'
       @membership.update!(account_status: next_status, status_review_at: nil)
       restore_access!(shared, globally_active)
 

@@ -18,12 +18,12 @@
           <tr>
             <% { 'users.username' => 'username', 'users.user_type' => 'user_type',
                  'users.status' => 'status' }.each do |column, label| %>
-              <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">
+              <th scope="col" aria-sort="<%= params[:sort] == column ? (params[:direction] == 'asc' ? 'ascending' : 'descending') : 'none' %>" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">
                 <%= sort_link(column, t("admin.users.index.columns.#{label}"), frame: '_top') %>
               </th>
             <% end %>
             <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600"><%= t('admin.users.index.columns.roles') %></th>
-            <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600"><%= sort_link('users.created_at', t('admin.users.index.columns.created_at'), frame: '_top') %></th>
+            <th scope="col" aria-sort="<%= params[:sort] == 'users.created_at' ? (params[:direction] == 'asc' ? 'ascending' : 'descending') : 'none' %>" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600"><%= sort_link('users.created_at', t('admin.users.index.columns.created_at'), frame: '_top') %></th>
             <th scope="col" class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-600"><%= t('admin.users.index.columns.actions') %></th>
           </tr>
         </thead>

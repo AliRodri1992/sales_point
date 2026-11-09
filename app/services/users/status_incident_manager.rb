@@ -31,9 +31,15 @@ module Users
 
       incident = UserSecurityIncident.where(user: @user, organization: @organization, resolved_at: nil)
                                      .order(created_at: :desc).first
-      raise ArgumentError, 'Security incident not found' unless incident
-
-      incident.update!(resolution: @resolution, resolved_at: Time.current, resolved_by: @actor)
+      if incident
+        incident.update!(resolution: @resolution, resolved_at: Time.current, resolved_by: @actor)
+      else
+        UserSecurityIncident.create!(
+          user: @user, organization: @organization, opened_by: @actor,
+          description: I18n.t('admin.users.ui.legacy_incident_recovered'),
+          resolution: @resolution, resolved_at: Time.current, resolved_by: @actor
+        )
+      end
     end
   end
 end

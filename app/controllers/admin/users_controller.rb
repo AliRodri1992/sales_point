@@ -23,7 +23,8 @@ module Admin
       load_users
       @can_manage_users = policy(User).create?
       @user_status_counts = current_organization.organization_memberships.active
-                                                .where(deleted_at: nil).group(:account_status).count
+                                                .where(deleted_at: nil, user_id: scoped_users.select(:id))
+                                                .group(:account_status).count
       @filter_roles = SystemRole.active.not_deleted.order(:role_type, :name)
       @filter_branches = current_organization.branches.not_deleted.where(operational_status: 'active').order(:name)
     end
@@ -112,7 +113,7 @@ module Admin
     end
 
     def filtered_users
-      UsersQuery.new(scoped_users.includes(:organization_memberships, user_roles: %i[system_role branch]), params,
+      UsersQuery.new(scoped_users.includes(:organization_memberships, user_roles: [:system_role, { branch: :organization }]), params,
                      organization: current_organization).call
     end
 

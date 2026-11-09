@@ -29,7 +29,7 @@ module Users
       events = UserStatusEvent.where(user:, to_status: 'blocked')
       events = events.where(organization:) if organization
       previous = events.order(id: :desc).pick(:from_status)
-      targets & [previous, 'deleted']
+      targets & [previous || 'active', 'deleted']
     end
 
     def initialize(**attributes)

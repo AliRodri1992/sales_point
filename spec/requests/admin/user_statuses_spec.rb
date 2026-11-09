@@ -36,7 +36,7 @@ RSpec.describe 'Admin user statuses', type: :request do
 
   it 'responds with inline modal errors for a missing deactivation reason' do
     patch admin_user_status_path(target), params: { transition: 'deleted', reason: '' },
-          headers: { 'Accept' => Mime[:turbo_stream].to_s }
+                                          headers: { 'Accept' => Mime[:turbo_stream].to_s }
 
     expect(response).to have_http_status(:unprocessable_content)
     expect(response.media_type).to eq('text/vnd.turbo-stream.html')
@@ -48,7 +48,7 @@ RSpec.describe 'Admin user statuses', type: :request do
   it 'deactivates from a modal form and writes an audit event' do
     expect do
       patch admin_user_status_path(target), params: { transition: 'deleted', reason: 'Access terminated' },
-            headers: { 'Accept' => Mime[:turbo_stream].to_s }
+                                            headers: { 'Accept' => Mime[:turbo_stream].to_s }
     end.to change(UserStatusEvent, :count).by(1)
 
     expect(response).to redirect_to(admin_users_path)
@@ -146,6 +146,22 @@ RSpec.describe 'Admin user statuses', type: :request do
     expect(response).to redirect_to(admin_user_path(target))
     expect(target.reload).to be_pending
     expect(target.user_invitations.last).to be_usable
+  end
+
+  it 'allows a justified recovery from a historical block without a matching incident' do
+    target.update!(status: :blocked)
+    target.organization_memberships.find_by!(organization:).update!(account_status: :blocked)
+
+    expect do
+      patch admin_user_status_path(target), params: {
+        transition: 'active', reason: 'Legacy account review',
+        resolution: 'Verified with administrator'
+      }
+    end.to change(UserSecurityIncident, :count).by(1)
+
+    expect(response).to redirect_to(admin_user_path(target))
+    expect(target.reload).to be_active
+    expect(UserSecurityIncident.last.resolved_at).to be_present
   end
 
   it 'revokes the account session on an authorized block' do

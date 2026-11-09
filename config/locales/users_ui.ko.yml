@@ -2,6 +2,7 @@ ko:
   admin:
     users:
       ui:
+        legacy_incident_recovered: "기존 사고 기록이 없는 과거 차단의 감사 가능한 복구."
         deactivation_title: "사용자 이용 중지"
         deactivation_hint: "이 조직에서 사용자의 접근 권한을 중지하며 활성 세션이 종료될 수 있습니다. 변경 내역을 위해 사유를 입력하세요."
         deactivation_cancel: "취소"
