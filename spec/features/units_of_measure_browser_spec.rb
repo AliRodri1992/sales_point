@@ -144,4 +144,29 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
     elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - started
     Rails.logger.info("Units of measure SAT dropdown benchmark: 350 additional keys in #{(elapsed * 1000).round}ms")
   end
+
+  scenario 'confirms removal in SweetAlert without confusing it with temporary inactivity' do
+    unit = create(:unit_of_measure, organization:, sat_unit_key: sat_key, code: 'DROP_ME',
+                                    name: 'Removal candidate', status: 'inactive')
+    visit admin_units_of_measure_path
+
+    within('turbo-frame#units_of_measure_list tr', text: 'Removal candidate') do
+      find('button[aria-label="Remove unit"]').click
+    end
+    expect(page).to have_css('.swal2-popup', text: 'Remove this record?', wait: 10)
+    expect(page).to have_css('.swal2-popup', text: 'Removal candidate')
+    find('.delta-confirm-cancel').click
+    expect(page).to have_no_css('.swal2-popup', wait: 10)
+    expect(unit.reload.deleted_at).to be_nil
+    expect(unit).to be_inactive
+
+    within('turbo-frame#units_of_measure_list tr', text: 'Removal candidate') do
+      find('button[aria-label="Remove unit"]').click
+    end
+    expect(page).to have_css('.swal2-popup', text: 'Remove this record?', wait: 10)
+    find('.delta-confirm-accept').click
+    expect(page).to have_no_css('turbo-frame#units_of_measure_list tr', text: 'Removal candidate', wait: 10)
+    expect(unit.reload.deleted_at).to be_present
+    expect(unit).to be_inactive
+  end
 end

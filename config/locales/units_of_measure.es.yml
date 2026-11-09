@@ -79,7 +79,7 @@ es:
         cancel: "Cancelar"
         close: "Cerrar"
         back: "Volver"
-        confirm_delete: "¿Quieres dar de baja esta unidad de medida? El registro conservará su historial."
+        confirm_delete: "¿Quieres retirar este registro? Se ocultará del catálogo habitual y se conservará el historial."
       validation:
         sat_invalid: "debe estar vigente y activa"
       messages:
