@@ -39,7 +39,8 @@ RSpec.describe 'Email settings audit history', type: :request do
                                domain_status: 'verified')
     get edit_admin_email_sender_settings_path
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include(I18n.t('admin.email_templates.sender_verification_disclaimer'))
+    disclaimer = I18n.t('admin.email_templates.sender_verification_disclaimer')
+    expect(Nokogiri::HTML(response.body).text.scan(disclaimer).length).to eq(1)
   end
 
   it 'records a sender setting update with the actor and organization' do

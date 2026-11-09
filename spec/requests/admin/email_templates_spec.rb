@@ -600,6 +600,29 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.audits.where(action: 'archived')).to exist
   end
 
+  it 'reactivates an archived published email as an unpublished draft without losing version history' do
+    template = create_template(organization:)
+    published = template.new_draft!(actor: administrator)
+    published.publish!(actor: administrator)
+
+    patch archive_admin_email_template_path(template)
+    expect(template.reload).to have_attributes(status: 'archived', enabled: false)
+
+    patch reactivate_admin_email_template_path(template)
+    expect(response).to redirect_to(edit_admin_email_template_path(template))
+    expect(template.reload).to have_attributes(status: 'draft', enabled: false, published_version_id: published.id)
+    expect(template.versions.find(published.id)).to have_attributes(status: 'published')
+    draft = template.versions.find_by!(status: 'draft')
+    expect(draft.id).not_to eq(published.id)
+    expect(draft.subject).to eq(published.subject)
+    expect(template.audits.where(action: 'reactivated')).to exist
+    expect(EmailTemplate.published.where(id: template.id)).to be_empty
+
+    post publish_admin_email_template_path(template, version_id: draft.id)
+    expect(response).to redirect_to(admin_email_template_path(template))
+    expect(template.reload).to have_attributes(status: 'published', enabled: true, published_version_id: draft.id)
+  end
+
   it 'shows the audited version number alongside a lifecycle event' do
     template = create_template(organization:)
     version = template.new_draft!(actor: administrator)

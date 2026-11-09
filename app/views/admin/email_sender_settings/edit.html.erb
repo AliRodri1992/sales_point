@@ -31,9 +31,6 @@
         <%= t(@sender_ready ? 'admin.email_templates.sender_delivery_ready' :
               @global_sender_ready ? 'admin.email_templates.sender_delivery_global' : 'admin.email_templates.sender_delivery_default') %>
       </p>
-      <% if @sender_ready || @global_sender_ready %>
-        <p class="mt-2 text-xs leading-5 text-amber-800" role="note"><%= t('admin.email_templates.sender_verification_disclaimer') %></p>
-      <% end %>
     </div>
   </section>
 
