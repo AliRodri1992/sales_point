@@ -1,7 +1,7 @@
 # Registro de calidad — Roles y permisos
 
 **Módulo y ruta principal:** Roles y permisos — `/system_roles`  
-**Estado:** REAUDITADO · P1 ABIERTOS · SIN VERIFICACIÓN INTEGRAL · NO CERRADO.  
+**Estado:** REAUDITADO · 001/002/003/008 ABIERTOS O PARCIALES · 009 NUEVO · 010 HIPÓTESIS P1 · NO CERRADO.  
 **Fecha de auditoría:** 2026-11-08 (America/Mexico_City).  
 **Rama:** `feature/fixes`. **SHA de partida/auditado:** `8974fee011f9422066985a0ab088ed2d771e1c8a`.  
 **SHA de aceptación:** PENDIENTE. **Responsable/revisor independiente:** PENDIENTE.  
@@ -35,6 +35,18 @@
 - **Esperado:** una operación solo de metadatos no debe cambiar asociaciones de permisos. Separar cambio de metadatos y actualización expresa de permisos, o conservar sin pérdida las asociaciones no seleccionables.
 - **Regresión obligatoria:** request de metadatos con permiso inactivo, reactivación posterior y diff de auditoría; comparar antes/después.
 - **Propietario:** Roles y Permisos. **Estado:** ABIERTO, sin ejecución de escenario.
+
+### Contrato de organizaciones revisado tras avances simultáneos
+
+Mientras se elaboraba esta reauditoría, `feature/fixes` incorporó `db/migrate/20261111000000_scope_user_roles_by_organization.rb` y cambios en `UserEffectiveRoles`, `UserRole` y `User#admin?` (cambios posteriores al SHA `d7d2322`). Ahora `UserEffectiveRoles#effective_role_assignments` restringe asignaciones a la organización actual **cuando hay organización**. Por ello, la observación 008 sigue siendo relevante: `StatusImpact#effective_other_user_ids` **no** aplica la misma condición de tenant ni valida que el rol alternativo conceda permisos reales. Estos cambios recientes no quedaron cubiertos por el CI histórico de `d7d2322`.
+
+**SYSTEM_ROLES-010 — P1 · HIPÓTESIS DE SEGURIDAD PENDIENTE DE PRUEBA · Gestión de roles sin organización accesible.**
+
+- **Evidencia de código:** `SystemRolesController` solo exige `authenticate_user!`, sin guardia explícita para `current_organization.nil?`; `ApplicationController#current_organization` devuelve `nil` si no existen membresías accesibles; `User#admin?` y `UserEffectiveRoles#role?` con contexto de organización `nil` permiten comprobaciones de asignaciones activas sin filtrar `organization_id`. `User#organization_accessible?` devuelve `true` cuando no existen membresías no eliminadas.
+- **Hipótesis y precondiciones:** una cuenta globalmente activa con rol `super_admin` organizacional persistente, pero con todas sus membresías archivadas, podría superar la autorización de `/system_roles` sin organización accesible. No se afirma explotación ni se asume que los flujos normales de baja dejan asignaciones huérfanas; el contrato debe cubrir expresamente la condición.
+- **Prueba requerida:** crear una cuenta con rol de superadministrador y membresía en empresa A, retirar la membresía manteniendo la asignación como escenario de datos legados y verificar que `GET /system_roles`, `POST /system_roles` y `PATCH .../permissions` responden 403 cuando `current_organization` es `nil`. Distinguir de superadministración de plataforma explícita si el negocio la permite sin tenant.
+- **Corrección sugerida si se reproduce:** denegar la administración de roles globales sin contexto organizacional accesible, salvo identidad de plataforma con privilegio diseñado explícitamente, y endurecer la consulta de roles cuando el tenant no está definido. Propietario del endpoint: Roles y Permisos; contrato de autenticación/membresía: Usuarios.
+- **Estado:** HIPÓTESIS, pendiente de reproducir, decisión de negocio y prueba. No contabilizar como fallo confirmado.
 
 ### Evidencias objetivas del SHA auditado
 
