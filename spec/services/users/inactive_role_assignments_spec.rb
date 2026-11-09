@@ -9,6 +9,8 @@ RSpec.describe 'Retained inactive role assignments' do
   let(:branch_role) { create(:system_role, :branch) }
   let(:branch) { create(:branch, organization:) }
 
+  before { create(:organization_membership, user:, organization:) }
+
   def deactivate(role)
     role.assign_attributes(status: 'inactive')
     role.save!(context: :status_transition)
