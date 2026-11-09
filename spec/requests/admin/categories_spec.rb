@@ -121,8 +121,8 @@ RSpec.describe 'Admin::Categories', type: :request do
     end
 
     it 'persists the description and renders it in the detail page' do
-      post admin_categories_path, params: { category: { name: 'Food', code: 'food',
-                                                      description: 'Fresh groceries and produce' } }
+      attributes = { name: 'Food', code: 'food', description: 'Fresh groceries and produce' }
+      post admin_categories_path, params: { category: attributes }
       category = Category.find_by!(code: 'food')
       expect(category.description).to eq('Fresh groceries and produce')
       get admin_category_path(category)
@@ -188,8 +188,8 @@ RSpec.describe 'Admin::Categories', type: :request do
     end
 
     it 'refuses descriptions over 500 characters' do
-      post admin_categories_path, params: { category: { name: 'Long', code: 'long',
-                                                      description: 'x' * 501 } }
+      attributes = { name: 'Long', code: 'long', description: 'x' * 501 }
+      post admin_categories_path, params: { category: attributes }
       expect(response).to have_http_status(:unprocessable_content)
       expect(Category.find_by(code: 'long')).to be_nil
     end

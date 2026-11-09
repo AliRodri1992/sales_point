@@ -112,8 +112,10 @@ module Admin
       respond_to do |format|
         format.html { redirect_to admin_categories_path, alert: message, status: :see_other }
         format.turbo_stream do
-          content = view_context.tag.div(message, role: 'alert',
-                                                    class: 'rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800')
+          content = view_context.tag.div(
+            message, role: 'alert',
+                     class: 'rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800'
+          )
           render turbo_stream: turbo_stream.update('categories_alert', content), status: :unprocessable_content
         end
       end

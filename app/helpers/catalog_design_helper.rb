@@ -47,14 +47,19 @@ module CatalogDesignHelper
 
   def catalog_reference_choices(scope, selected_id, label: :name)
     records = scope.to_a
-    if selected_id.present? && records.none? { |record| record.id == selected_id }
-      retained = scope.klass.with_deleted.find_by(id: selected_id)
-      if retained && (scope.klass != Category || current_organization.nil? ||
-                      retained.organization_id == current_organization.id)
-        records << retained
-      end
-    end
+    retained = catalog_retained_reference(scope, selected_id, records)
+    records << retained if retained
     records.map { |record| [record.public_send(label), record.id] }
+  end
+
+  def catalog_retained_reference(scope, selected_id, records)
+    return if selected_id.blank? || records.any? { |record| record.id == selected_id }
+
+    record = scope.klass.with_deleted.find_by(id: selected_id)
+    return unless record
+    return record unless record.is_a?(Category)
+
+    record if current_organization && record.organization_id == current_organization.id
   end
 
   def product_money(amount, currency: nil)
@@ -62,7 +67,10 @@ module CatalogDesignHelper
   end
 
   def product_currency_code
-    @product_currency_code ||= current_organization&.organization_settings&.active_records&.first&.base_currency&.code || 'MXN'
+    return 'MXN' unless current_organization
+
+    settings = current_organization.organization_settings.active_records.first
+    @product_currency_code ||= settings&.base_currency&.code || 'MXN'
   end
 
   def product_image_form_token(product)

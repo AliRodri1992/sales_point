@@ -51,7 +51,10 @@ module Admin
       broadcast_categories_update
       respond_to do |format|
         format.turbo_stream { @swal_message = t("admin.categories.#{action}") }
-        format.html { redirect_to admin_categories_path(request.query_parameters), notice: t("admin.categories.#{action}") }
+        format.html do
+          redirect_to admin_categories_path(request.query_parameters),
+                      notice: t("admin.categories.#{action}")
+        end
       end
     end
   end
