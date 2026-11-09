@@ -7,7 +7,7 @@ module Users
 
     def prevent_last_admin!
       return unless @user.role?('administrator', organization: @organization) ||
-                  @user.role?('super_admin', organization: @organization)
+                    @user.role?('super_admin', organization: @organization)
       return if @target == 'active'
 
       members = @organization.organization_memberships.accessible.select(:user_id)
