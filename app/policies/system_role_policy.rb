@@ -36,7 +36,7 @@ class SystemRolePolicy < ApplicationPolicy
   private
 
   def global_manager?
-    user&.admin? && user&.role?('super_admin')
+    user&.admin? && user.role?('super_admin')
   end
 
   def protected_role?

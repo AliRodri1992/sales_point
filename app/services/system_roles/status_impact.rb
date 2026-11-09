@@ -52,7 +52,7 @@ module SystemRoles
     end
 
     def affected_branch_states
-      branch_ids = (assignments.map { |row| row[2] } + other_assignments.map { |row| row[3] }).compact.uniq
+      branch_ids = (assignments.pluck(2) + other_assignments.pluck(3)).compact.uniq
       Branch.with_deleted.where(id: branch_ids).order(:id).pluck(:id, :operational_status, :deleted_at, :updated_at)
     end
 

@@ -17,18 +17,27 @@ module SystemRoles
 
       selected = Permission.available.where(id: ids).pluck(:code)
       return false unless selected.size == ids.size
+      return true unless missing_base_access?(selected)
 
-      available_access = Permission.available.where(
+      @error_key = :access_required
+      false
+    end
+
+    private
+
+    def missing_base_access?(selected)
+      access_codes = Permission.available.where(
         code: DEPENDENT_PREFIXES.map { |prefix| "#{prefix}.access" }
       ).pluck(:code)
-      missing = selected.filter_map do |code|
-        prefix, action = code.split('.', 2)
-        access = "#{prefix}.access"
-        access if action.present? && action != 'access' && available_access.include?(access) &&
-                  !selected.include?(access)
-      end
-      @error_key = :access_required if missing.any?
-      missing.empty?
+      selected.any? { |code| dependent_access_missing?(code, selected, access_codes) }
+    end
+
+    def dependent_access_missing?(code, selected, access_codes)
+      prefix, action = code.split('.', 2)
+      return false if action.blank? || action == 'access' || DEPENDENT_PREFIXES.exclude?(prefix)
+
+      access = "#{prefix}.access"
+      access_codes.include?(access) && selected.exclude?(access)
     end
   end
 end
