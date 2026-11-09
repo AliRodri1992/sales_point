@@ -76,7 +76,14 @@ export default class extends Controller {
     this.drawerTarget.setAttribute("aria-hidden", "true")
     document.body.style.overflow = this.previousOverflow || ""
     const restoreTarget = this.opener?.isConnected ? this.opener : this.previousFocus
-    restoreTarget?.focus()
+    restoreTarget?.focus({ preventScroll: true })
+    // Other document-level Escape handlers can run after this listener.
+    // Restore focus once more after the event finishes, unless reopened.
+    requestAnimationFrame(() => {
+      if (this.drawerTarget.classList.contains("hidden") && restoreTarget?.isConnected) {
+        restoreTarget.focus({ preventScroll: true })
+      }
+    })
     this.opener = null
   }
 
@@ -84,6 +91,7 @@ export default class extends Controller {
     if (!this.hasDrawerTarget || this.drawerTarget.classList.contains("hidden")) return
     if (event.key === "Escape") {
       event.preventDefault()
+      event.stopPropagation()
       this.close()
     } else if (event.key === "Tab") {
       this.trapFocus(event)

@@ -94,7 +94,20 @@ RSpec.describe 'Supplier calendar browser workflow', type: :feature, js: true do
     expect(page).to have_css('[data-supplier-calendar-target="drawer"][aria-hidden="false"]')
     find('[name="supplier_event[title]"]').send_keys(:escape)
     expect(page).to have_css('[data-supplier-calendar-target="drawer"][aria-hidden="true"]', visible: :all)
-    expect(page.evaluate_script('document.activeElement.dataset.action')).to eq('supplier-calendar#open')
+    unless page.has_css?('header button[data-action="supplier-calendar#open"]:focus', wait: 5)
+      focus_details = page.evaluate_script(<<~JS)
+        (() => {
+          const active = document.activeElement
+          const opener = document.querySelector('header button[data-action="supplier-calendar#open"]')
+          return { activeTag: active?.tagName, activeAction: active?.dataset.action,
+                   openerConnected: opener?.isConnected, openerVisible: Boolean(opener?.getClientRects().length),
+                   openerDisabled: opener?.disabled, drawerHidden:
+                     document.querySelector('[data-supplier-calendar-target="drawer"]')?.classList.contains('hidden') }
+        })()
+      JS
+      warn("Supplier calendar focus after Escape: #{focus_details.inspect}")
+    end
+    expect(page).to have_css('header button[data-action="supplier-calendar#open"]:focus', wait: 5)
   end
 
   scenario 'shows an all-day multi-day visit on each affected daily calendar' do

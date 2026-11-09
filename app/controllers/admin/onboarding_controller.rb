@@ -85,7 +85,7 @@ module Admin
 
     def load_business
       @branch = active_branch || Branch.new(organization_id: @organization.id,
-                                            name: t('registration.initial_branch_name'), operational_status: 'preparing')
+                                            name: t('registration.initial_branch_name'), operational_status: :preparing)
       @settings = @organization.organization_settings.first ||
                   OrganizationSetting.new(organization_id: @organization.id, payment_method: :cash)
       @terminals = terminals_for(@branch)
