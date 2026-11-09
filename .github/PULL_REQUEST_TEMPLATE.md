@@ -1,7 +1,7 @@
 ## Alcance del cambio
 
 - **Módulo / ruta(s) propias:** 
-- **Registro de calidad modular:** enlace a `docs/quality/modules/<slug>.md` (o «No aplica» con justificación si no es cambio modular).
+- **Registro de calidad modular:** enlace al expediente en [índice de módulos](../docs/quality/modules/README.md) (o «No aplica» con justificación si no es cambio modular).
 - **Hallazgos que resuelve:** IDs permanentes (p. ej., `BR-001`) y causa raíz.
 - **Incluido / excluido:** acciones propias y frontera con módulos vecinos.
 - **Contratos de integración afectados:** descripción mínima, o «Ninguno»; no auditar/reformular internamente los módulos vecinos sin motivo.
@@ -10,6 +10,7 @@
 
 - [ ] Los cambios están limitados al alcance declarado; cualquier código externo cambiado tiene justificación y prueba de contrato.
 - [ ] Las correcciones atacan la causa raíz; los hallazgos ya existentes conservan su ID y evidencia.
+- [ ] Si se creó una nueva ruta o módulo, se actualizó `config/module_quality_registry.json`, el índice y su expediente; pasó `ruby script/audit_module_quality.rb`.
 - [ ] Las reglas de modelo/servidor, autorización Pundit, aislamiento organizacional y concurrencia aplicables tienen pruebas negativas.
 - [ ] Los formularios afectados tienen errores individuales **debajo de cada campo** y obligatorios señalados con asterisco rojo, sin `required` HTML5 como sustituto de la validación del modelo.
 - [ ] Se revisó UX, responsive, estados carga/vacío/error/422, navegación por teclado, foco y traducciones `es/en/ko`, o se documenta lo pendiente.
