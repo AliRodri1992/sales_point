@@ -1,13 +1,36 @@
 # Registro de calidad — Roles y permisos
 
 **Módulo y ruta principal:** Roles y permisos — `/system_roles`  
-**Estado:** REAUDITADO 2026-11-09 · CI FOCALIZADO VERDE · 001 REABIERTO · 011–013 NUEVOS · NO CERRADO.  
+**Estado:** SYSTEM_ROLES-001/011/012/013 IMPLEMENTADOS · CI FOCALIZADO EN VERIFICACIÓN · NO CERRADO.  
 **Fecha de auditoría:** 2026-11-09 (America/Mexico_City).  
 **Rama:** `feature/fixes`. **SHA de partida/auditado:** `d414ec7d6380dd75675836c05b501391c010365f`.  
 **SHA de aceptación:** PENDIENTE. **Responsable/revisor independiente:** PENDIENTE.  
 **Método:** AI Dev Suite — Ponytail Engineering, Impeccable, UI UX Pro Max. Inspección real de código por GitHub; no se ejecutó el detector CLI de terceros.
 
 > Este registro es la fuente de verdad de hallazgos del módulo. Lo observado en el código se distingue de las hipótesis y de pruebas pendientes. Un commit documental no equivale a una corrección ni al cierre de la auditoría. Conserva los IDs entre siguientes iteraciones.
+
+## Adecuaciones publicadas — 2026-11-09 (seguimiento de la reauditoría)
+
+**Rama:** `feature/fixes`; **sin merge**. Este bloque actualiza el estado de los IDs 001 y 011–013, conservando íntegra la reauditoría y las acciones anteriores. **Solución de alcance:** los roles aún son definiciones globales en la base de datos; se eligió un control conservador que **prohíbe a un superadministrador de empresa editar un rol que ya tenga asignaciones en otra organización**. No se introdujo un superadministrador de plataforma implícito.
+
+| Hallazgo | Implementación real | Prueba añadida y evidencia |
+|---|---|---|
+| **SYSTEM_ROLES-001 — P1** | `SystemRolePolicy#tenant_confined_role?` bloquea edición de metadatos/permisos, cambio de estado e historial de roles usados por otra organización; la autorización se valida dentro del bloqueo transaccional del rol. Las asociaciones con organización `nil` no confieren acceso en peticiones HTTP. | `spec/requests/system_roles_tenant_isolation_spec.rb` y `spec/policies/system_role_membership_policy_spec.rb` prueban actor A, rol compartido con B, rechazo 403, ausencia de cambios/auditorías y permiso de edición para roles usados solo en A. **Limitación consciente:** los roles compartidos entre empresas quedan de solo lectura para estos actores; la gestión futura multiplataforma necesita una política de negocio explícita. |
+| **SYSTEM_ROLES-011 — P1** | `CurrentOrganizationAccess.enforce_tenant` se activa durante las peticiones por `ApplicationController`; `UserEffectiveRoles` y `User#admin?` niegan privilegios sin contexto empresarial, y `enforce_active_account` invalida sesiones sin una membresía accesible si existió alguna. Se ajustaron los fixtures históricos de Catálogos para usar membresías reales. | `spec/requests/system_roles_tenantless_access_spec.rb` comprueba que Usuarios, Catálogos y Roles no concedan acceso sin empresa, y que se retire la sesión si se archiva la última membresía. `spec/requests/admin/categories_spec.rb` y `spec/requests/admin/languages_spec.rb` actualizan fixtures, pendiente su validación por CI general. |
+| **SYSTEM_ROLES-012 — P2** | `StatusImpact#fingerprint` incorpora estado/timestamps de permisos de roles alternativos y membresías organizacionales (incluidos registros archivados). Tokens antiguos ya no avalan una revisión cuyo impacto cambió tras revocar permisos o suspender una membresía. | Nuevo escenario en `spec/services/system_roles/status_transition_spec.rb`; confirma rechazo de una revisión obsoleta y ausencia de cambio de estado. |
+| **SYSTEM_ROLES-013 — P2** | Stimulus muestra y anuncia con `role="status"` los códigos `*.access` marcados automáticamente aunque el filtro oculte sus filas, mantiene contador y autoselección obligatoria. Localizaciones completas en es/en/ko. | Nuevo navegador Selenium en `spec/features/system_role_filtered_permissions_browser_spec.rb`: filtra `languages.update`, valida dependencia oculta, anuncio y guardado. |
+
+### Puerta de verificación (sin afirmar éxitos no obtenidos)
+
+- **Primer RSpec focalizado tras los cambios:** [System Roles CI 42612823167](https://github.com/AliRodri1992/sales_point/actions/runs/42612823167), 123 pruebas con 2 fallos en fixtures antiguos de relación usuario/empresa (alcance de sucursal y acceso a catálogos); las pruebas nuevas de 001/011/012/013 pasaron. Los fixtures se ajustaron sin debilitar la autorización en el commit `98ba908`.
+- **Nuevo workflow del mismo módulo en SHA `98ba908`:** [System Roles CI 42613572900](https://github.com/AliRodri1992/sales_point/actions/runs/42613572900), RuboCop del módulo **PASS**, pruebas de solicitudes, políticas, navegador y seeds aún en ejecución al momento de registrar esta actualización.
+- **Pendientes para cierre:** RSpec focalizado completo PASS en un SHA estable, CI global PASS, revisión manual de accesibilidad/zoom/teclado, verificación de BD histórica, aceptación independiente. El CI general se ve afectado por otros módulos y múltiples pushes simultáneos; no atribuir fallos externos a Roles sin evidencia.
+
+**Archivos de producción afectados:** `app/policies/system_role_policy.rb`, `app/models/current_organization_access.rb`, `app/controllers/application_controller.rb`, `app/models/user.rb`, `app/models/concerns/user_effective_roles.rb`, `app/services/system_roles/status_impact.rb`, `app/javascript/controllers/role_permissions_controller.js`, `app/views/system_roles/_permissions.html.erb` y los tres locales `config/locales/role_permission_editor.*.yml`. Workflow `.github/workflows/system-roles-ci.yml` incluye los nuevos tests.
+
+**Estado:** IMPLEMENTADO EN REVISIÓN. **No fusionado ni cerrado.**
+
+---
 
 ## Reauditoría de Roles y Permisos — 2026-11-09 · AI Dev Suite
 
