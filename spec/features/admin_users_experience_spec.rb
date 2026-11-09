@@ -197,6 +197,28 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(target.reload.organization_memberships.find_by!(organization:).account_status).to eq('deleted')
   end
 
+  scenario 'opens deactivation from details and restores keyboard focus on cancellation' do
+    permission = Permission.find_or_create_by!(code: 'users.destroy') do |item|
+      item.name = 'Deactivate users'
+      item.module_name = 'Usuarios'
+      item.status = :active
+    end
+    SystemRolePermission.find_or_create_by!(system_role: admin.system_roles.first, permission:)
+    target = create(:user, email: 'details-deactivation@example.com')
+    create(:organization_membership, organization:, user: target)
+
+    visit admin_user_path(target)
+    find("button[data-deactivation-account='#{target.email}']").click
+    expect(page).to have_css('dialog#users-deactivation-modal[open]', visible: true)
+
+    find('#users-deactivation-reason').send_keys(:escape)
+
+    expect(page).to have_no_css('dialog#users-deactivation-modal[open]', visible: :all)
+    expect(page).to have_current_path(admin_user_path(target))
+    expect(page.evaluate_script('document.activeElement.dataset.deactivationAccount')).to eq(target.email)
+    expect(target.reload.organization_memberships.find_by!(organization:).account_status).to eq('active')
+  end
+
   scenario 'presents accessible status actions on narrow screens' do
     role = admin.system_roles.first
     permission = Permission.find_or_create_by!(code: 'users.suspend') do |item|
