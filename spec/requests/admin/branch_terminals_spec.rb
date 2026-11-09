@@ -27,7 +27,7 @@ RSpec.describe 'Branch terminal administration', type: :request do
   it 'omits retired terminals from the detail, operational count and actions' do
     current = create(:terminal, branch:, name: 'Current register', status: 'inactive')
     retired = create(:terminal, branch:, name: 'Retired register', status: 'inactive')
-    retired.update_column(:deleted_at, Time.current)
+    retired.update!(deleted_at: Time.current)
 
     get admin_branch_path(branch)
 
@@ -44,7 +44,7 @@ RSpec.describe 'Branch terminal administration', type: :request do
 
   it 'rejects changes to a retired terminal without changing its state' do
     retired = create(:terminal, branch:, name: 'Retired register', status: 'inactive')
-    retired.update_column(:deleted_at, Time.current)
+    retired.update!(deleted_at: Time.current)
 
     patch change_terminal_admin_branch_path(branch),
           params: { terminal_id: retired.id, terminal_status: 'active' }
@@ -58,7 +58,7 @@ RSpec.describe 'Branch terminal administration', type: :request do
     20.times do |number|
       create(:terminal, branch:, code: format('POS-%03d', number + 1), status: 'inactive')
     end
-    branch.terminals.find_by!(code: 'POS-020').update_column(:deleted_at, Time.current)
+    branch.terminals.find_by!(code: 'POS-020').update!(deleted_at: Time.current)
     other = create(:branch, organization:, name: 'Another branch')
     create(:terminal, branch: other, code: 'POS-900', status: 'inactive')
 
