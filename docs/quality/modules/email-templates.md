@@ -165,3 +165,10 @@
 
 **Registros EM-017 y EM-018:** ABIERTOS, **sin cambios funcionales** en esta reauditoría. **EM-010:** ampliado sin duplicar ID; a diferencia de los errores de Sucursales/Inventarios/Compras, la ofensa de `email_templates_query.rb` pertenece a Plantillas. Ejecutar RSpec focalizado y especializado al corregir; exigir CI global verde del SHA de aceptación; contrastar UI real con teclado/zoom y SMTP/cliente real antes del cierre. NO hacer merge ni declarar el módulo completamente cerrado con estos pendientes.
 
+## Adecuaciones EM-010, EM-017 y EM-018 — 2026-11-08
+
+- **EM-017 — IMPLEMENTADO / CI PENDIENTE:** política niega archivar plantillas archivadas y se comprueba el estado bajo bloqueo de base de datos, sin auditorías ni notificaciones duplicadas al concurrir peticiones. Regresiones de PATCH/DELETE repetidos y política.
+- **EM-018 — IMPLEMENTADO / CI PENDIENTE:** error del logotipo debajo del control con ID estable y texto de campo; JavaScript sincroniza `aria-describedby`/`aria-invalid`, y restituye la semántica anterior cuando se selecciona un archivo válido o se quita. Se preservan mensajes Rails. Nueva prueba Capybara con archivo >2 MB, PNG válido y móvil.
+- **EM-010 — IMPLEMENTADO (PARTE PROPIA) / CI PENDIENTE:** corregida la ofensa `Style/IfUnlessModifier` de `EmailTemplatesQuery`. El workflow especializado observa/linta query y políticas, revisa sus specs e incluye la prueba de branding y la ruta canónica del expediente.
+
+**Límites:** pendiente CI focalizado, global y verificaciones externas de SMTP, SPF/DKIM/DMARC, Gmail/Outlook, lector de pantalla y zoom 200 %. Los errores internos de otros módulos mantienen propietario externo. No fusionar ni declarar cierre integral sin evidencias.

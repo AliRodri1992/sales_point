@@ -14,6 +14,7 @@
                 data: { controller: 'email-branding',
                         
                         email_branding_invalid_logo_value: t('admin.email_templates.branding_invalid_logo'),
+                        email_branding_logo_label_value: t('admin.email_templates.branding_optional_logo'),
                         email_branding_invalid_color_value: t('admin.email_templates.branding_invalid_color'),
                         email_branding_contrast_good_value: t('admin.email_templates.branding_contrast_good'),
                         email_branding_contrast_low_value: t('admin.email_templates.branding_contrast_low') } do |f| %>
@@ -65,7 +66,7 @@
                                  class: 'block w-full max-w-md cursor-pointer rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-1.5 file:font-semibold file:text-emerald-800' %>
                 <p id="branding-logo-guidance" class="mt-2 text-xs text-slate-500"><%= t('admin.email_templates.logo_hint') %></p>
                 <p class="mt-1 break-words text-xs text-slate-700" data-email-branding-target="logoName" aria-live="polite"></p>
-                <p class="mt-1 text-xs font-semibold text-rose-700" data-email-branding-target="logoError" role="alert" hidden></p>
+                <p id="branding-logo-client-error" class="mt-1 text-xs font-semibold text-rose-700" data-email-branding-target="logoError" role="alert" hidden></p>
                 <%= error_message_for(@branding, :logo, label: t('admin.email_templates.branding_optional_logo')) %>
               </div>
             </div>

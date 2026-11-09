@@ -678,6 +678,27 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.audits.where(action: 'archived')).to exist
   end
 
+  it 'rejects repeated archive and delete requests without duplicating audit evidence' do
+    template = create_template(organization:)
+    patch archive_admin_email_template_path(template)
+    expect(response).to redirect_to(admin_email_templates_path)
+    archived_at = template.reload.updated_at
+    expect(template.audits.where(action: 'archived').count).to eq(1)
+    notifications = administrator.notifications.count
+
+    expect do
+      patch archive_admin_email_template_path(template)
+    end.not_to change { template.audits.where(action: 'archived').count }
+    expect(response).to have_http_status(:forbidden)
+    expect(template.reload.updated_at).to eq(archived_at)
+    expect(administrator.notifications.count).to eq(notifications)
+
+    expect do
+      delete admin_email_template_path(template)
+    end.not_to change { template.audits.where(action: 'archived').count }
+    expect(response).to have_http_status(:forbidden)
+  end
+
   it 'reactivates an archived published email as an unpublished draft without losing version history' do
     template = create_template(organization:)
     published = template.new_draft!(actor: administrator)

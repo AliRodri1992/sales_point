@@ -7,11 +7,15 @@ on:
       - feature/fixes
     paths:
       - '.github/workflows/email-templates-ci.yml'
-      - 'docs/quality/modules/email_templates.md'
+      - 'docs/quality/modules/email-templates.md'
       - 'app/controllers/admin/email_*'
       - 'app/controllers/concerns/email_template*'
       - 'app/controllers/concerns/admin/email_setting*'
       - 'app/models/email_setting_audit.rb'
+      - 'app/queries/email_templates_query.rb'
+      - 'app/policies/email_template_policy.rb'
+      - 'app/policies/email_sender_setting_policy.rb'
+      - 'app/policies/email_branding_setting_policy.rb'
       - 'app/mailers/application_mailer.rb'
       - 'app/javascript/controllers/email_branding*'
       - 'app/javascript/controllers/email_sender*'
@@ -91,17 +95,22 @@ jobs:
             app/controllers/concerns/email_template* \
             app/controllers/concerns/admin/email_template* \
             app/models/email_template* app/models/email_sender_setting.rb \
-            app/models/email_branding_setting.rb app/services/email_templates \
+            app/models/email_branding_setting.rb app/queries/email_templates_query.rb \
+            app/policies/email_template_policy.rb app/policies/email_sender_setting_policy.rb \
+            app/policies/email_branding_setting_policy.rb app/services/email_templates \
             app/jobs/email_templates app/mailers/email_templates \
             app/mailers/email_template_test_mailer.rb \
             spec/models/email_template* spec/models/email_sender_setting_spec.rb \
             spec/models/email_branding_setting_spec.rb \
+            spec/policies/email_template_policy_spec.rb spec/policies/email_setting_policies_spec.rb \
+            spec/queries/email_templates_query_spec.rb \
             spec/services/email_templates spec/jobs/email_templates \
             spec/mailers/email_template_delivery_spec.rb \
             spec/requests/admin/email_templates_spec.rb \
             spec/requests/admin/email_template_activity_spec.rb \
             spec/requests/admin/email_setting_audits_spec.rb \
-            spec/features/email_template* spec/features/email_sender_settings_browser_spec.rb
+            spec/features/email_template* spec/features/email_sender_settings_browser_spec.rb \
+            spec/features/email_branding_settings_browser_spec.rb
 
   email_specs:
     name: Email module RSpec and browser flows
@@ -172,4 +181,5 @@ jobs:
             spec/requests/admin/email_templates_spec.rb \
             spec/requests/admin/email_template_activity_spec.rb \
             spec/requests/admin/email_setting_audits_spec.rb \
-            spec/features/email_template* spec/features/email_sender_settings_browser_spec.rb
+            spec/features/email_template* spec/features/email_sender_settings_browser_spec.rb \
+            spec/features/email_branding_settings_browser_spec.rb

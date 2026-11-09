@@ -4,11 +4,14 @@
 module EmailTemplateLifecycle
   def archive
     authorize @template, :archive?
-    EmailTemplate.transaction do
+    archived = @template.with_lock do
+      next false if @template.status == 'archived'
+
       @template.update!(status: 'archived', enabled: false, updated_by: current_user)
       @template.audit!(action: 'archived', actor: current_user)
+      true
     end
-    notify_email_template('archived')
+    notify_email_template('archived') if archived
     redirect_to admin_email_templates_path,
                 status: :see_other,
                 flash: { swal_message: t('admin.email_templates.archived') }

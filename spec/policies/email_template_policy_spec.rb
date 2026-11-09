@@ -41,10 +41,13 @@ RSpec.describe EmailTemplatePolicy do
     end
   end
 
-  it 'does not allow removing archived templates again' do
+  it 'does not allow archiving or deleting an already archived template' do
     template = template_for(organization)
     template.status = 'archived'
-    expect(described_class.new(user, template).destroy?).to be(false)
+    policy = described_class.new(user, template)
+    expect(policy.archive?).to be(false)
+    expect(policy.destroy?).to be(false)
+    expect(policy.reactivate?).to be(true)
   end
 
   it 'permits global viewing while limiting global changes to root administrators' do

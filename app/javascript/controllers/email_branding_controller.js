@@ -9,7 +9,7 @@ export default class extends Controller {
   ]
 
   static values = {
-    invalidLogo: String, invalidColor: String, contrastGood: String, contrastLow: String
+    invalidLogo: String, logoLabel: String, invalidColor: String, contrastGood: String, contrastLow: String
   }
 
   connect() {
@@ -18,6 +18,8 @@ export default class extends Controller {
     this.originalLogoHidden = this.logoPreviewTarget.classList.contains("hidden")
     this.originalOrganizationLogoSrc = this.previewOrganizationLogoTarget.getAttribute("src")
     this.originalOrganizationLogoHidden = this.previewOrganizationLogoTarget.classList.contains("hidden")
+    this.initialLogoInvalid = this.logoTarget.getAttribute("aria-invalid") || "false"
+    this.initialLogoDescription = this.logoTarget.getAttribute("aria-describedby") || ""
     this.updatePreview()
     this.updateColors()
   }
@@ -75,16 +77,14 @@ export default class extends Controller {
 
   logoChanged(event) {
     const file = event.target.files[0]
-    this.logoErrorTarget.hidden = true
+    this.clearLogoError()
     if (!file) return
 
     const allowed = ["image/png", "image/jpeg", "image/webp"]
-    if (!allowed.includes(file.type) || file.size > 2 * 1024 * 1024) {
+    if (!allowed.includes(file.type) || file.size === 0 || file.size > 2 * 1024 * 1024) {
       event.target.value = ""
       this.resetLogoPreview()
-      this.logoErrorTarget.textContent = this.invalidLogoValue
-      this.logoErrorTarget.hidden = false
-      this.logoNameTarget.textContent = ""
+      this.showLogoError()
       return
     }
     if (this.objectUrl) URL.revokeObjectURL(this.objectUrl)
@@ -98,6 +98,7 @@ export default class extends Controller {
   }
 
   removeLogoChanged(event) {
+    this.clearLogoError()
     if (event.target.checked) {
       this.logoTarget.value = ""
       this.resetLogoPreview()
@@ -106,6 +107,24 @@ export default class extends Controller {
     } else if (!this.logoTarget.files.length) {
       this.resetLogoPreview()
     }
+  }
+
+  showLogoError() {
+    this.logoErrorTarget.textContent = `${this.logoLabelValue} ${this.invalidLogoValue}`
+    this.logoErrorTarget.hidden = false
+    this.logoTarget.setAttribute("aria-invalid", "true")
+    const ids = [...new Set([...this.initialLogoDescription.split(/\s+/), this.logoErrorTarget.id].filter(Boolean))]
+    this.logoTarget.setAttribute("aria-describedby", ids.join(" "))
+    this.logoTarget.classList.add("border-rose-400")
+  }
+
+  clearLogoError() {
+    this.logoErrorTarget.hidden = true
+    this.logoErrorTarget.textContent = ""
+    this.logoTarget.setAttribute("aria-invalid", this.initialLogoInvalid)
+    if (this.initialLogoDescription) this.logoTarget.setAttribute("aria-describedby", this.initialLogoDescription)
+    else this.logoTarget.removeAttribute("aria-describedby")
+    this.logoTarget.classList.remove("border-rose-400")
   }
 
   resetLogoPreview() {

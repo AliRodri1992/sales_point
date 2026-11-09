@@ -24,7 +24,8 @@ class EmailTemplatePolicy < ApplicationPolicy
   end
 
   def archive?
-    allowed?('email_templates.archive') && same_tenant? && !record.protected_global?
+    allowed?('email_templates.archive') && same_tenant? &&
+      record.status != 'archived' && !record.protected_global?
   end
 
   def destroy?

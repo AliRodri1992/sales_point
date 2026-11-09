@@ -69,9 +69,7 @@ class EmailTemplatesQuery
   def filter_updated_at(scope)
     from = parsed_date(:updated_from)
     to = parsed_date(:updated_to)
-    if from && to && from > to
-      @date_errors[:updated_to] = :before_start
-    end
+    @date_errors[:updated_to] = :before_start if from && to && from > to
     return scope if @date_errors.any?
 
     scope = scope.where(updated_at: from.beginning_of_day..) if from
