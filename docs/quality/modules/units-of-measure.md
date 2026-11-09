@@ -33,6 +33,28 @@
 - **Adecuación:** incluir el nuevo catálogo en `db/schema.rb`, conservar la migración junto a Productos y añadir migración defensiva `20261110130100` para bases ya migradas sin tabla.
 - **Verificación:** PASÓ preparación desde cero y batería focalizada en #42634181533; actualización de una base legada ya desplegada aún pendiente de prueba independiente.
 
+## Auditoría de reglas de estatus — 2026-11-09
+
+**Base revisada:** `29278fd120329cea35f5da723d012f54bd07eae8`. **Método:** AI Dev Suite / Impeccable, UI UX Pro Max y Ponytail, con revisión estática de código y evidencia de GitHub Actions. No se ejecutó auditoría visual manual ni se probaron estos hallazgos de transición en entorno Rails. Se respetó el límite del módulo; no existen cambios nuevos en Productos.
+
+**Política esperada:** crear en Activo por defecto; permitir Activo ↔ Inactivo; Inactivo conserva datos y no debe estar disponible para nuevas asociaciones futuras; al reactivar exigir clave SAT vigente; SAT expirado no debe alterar automáticamente el estatus interno; la baja lógica es distinta de Inactivo y exige autorización, confirmación, actor/fecha e historial.
+
+| ID | Gravedad | Evidencia del código y efecto | Corrección / prueba requerida | Estado |
+|---|---|---|---|---|
+| UOM-010 | **P1** | `app/models/unit_of_measure.rb`: la validación fiscal solo se ejecuta en registros nuevos o cuando cambia `sat_unit_key_id`. La transición `inactive → active` con clave SAT vencida queda sin validación. | Validar también reactivaciones; error en Unidad SAT; specs de clave vigente, caducada y eliminada, incluidas solicitudes PATCH. | **ABIERTO, confirmado por lectura** |
+| UOM-011 | **P1** | `_list.html.erb` y `_show.html.erb` muestran únicamente estado interno y clave fiscal, sin estado de vigencia SAT. Un registro `active` con clave posteriormente vencida se presenta sin advertencia. | Badge fiscal independiente «SAT no vigente», sin desactivar la unidad; detalle y filtros de incidencias si resulta útil. | **ABIERTO, confirmado por lectura** |
+| UOM-012 | **P2** | `app/controllers/concerns/admin/units_of_measure_listing.rb` usa `SatUnitKey.current` para opciones de filtro, omitiendo claves SAT vencidas que aún referencian unidades existentes. | Incluir claves asociadas a unidades de la empresa incluso si están vencidas; señalizarlas como no vigentes; prueba de filtro histórico. | **ABIERTO, confirmado por lectura** |
+| UOM-013 | **P1** | `spec/models/unit_of_measure_spec.rb`, `spec/requests/admin/units_of_measure_spec.rb` y `spec/features/units_of_measure_browser_spec.rb` cubren creación, edición y expiración en alta, pero no `active → inactive → active`, reactivación inválida ni diferencia estatus/baja. | Incorporar matriz de transición y no regresión en modelo, requests y navegador; probar que no se altere `deleted_at` al inactivar. | **ABIERTO, brecha de pruebas confirmada** |
+| UOM-014 | **P2** | `destroy` establece `deleted_at`; el modelo tiene PaperTrail. No hay en el controlador del módulo un registro explícito del actor o motivo de baja, y el expediente anterior no acredita dicha atribución. | Verificar `whodunnit` de PaperTrail para cambios y baja con usuario real; establecer motivo obligatorio solo si se confirma como regla global del sistema; prueba audit trail. | **PENDIENTE de comprobación**, no afirmar ausencia global |
+| UOM-015 | **P2** | La tabla solo muestra el botón destructivo «Dar de baja» y el formulario permite «Inactivo». No hay explicación visible de la diferencia entre suspender y retirar, ni advertencia sobre SAT vencido. | Mensaje contextual y ayuda breve, confirmación SweetAlert2 conservando la identidad Delta POS; comparar con Sucursales. | **ABIERTO, observación UX estática** |
+| UOM-016 | **P3** | `load_sat_keys` materializa todo `SatUnitKey.current.order(:code).to_a` y el form renderiza todas las opciones. No se midió coste real con volumen SAT. | Medir render y usabilidad de búsqueda; considerar carga acotada si los datos demuestran necesidad; no introducir nuevas dependencias preventivas. | **RIESGO POR MEDIR**, no fallo confirmado |
+
+**Controles sanos verificados en código:** enum `active/inactive` con default `active`; `deleted_at` como baja independiente; `sat_unit_keys` como referencia oficial; validación de vigencia en nuevas asociaciones SAT; índice único parcial por empresa y código; formularios sin HTML5 `required`; acceso Pundit y aislamiento por organización; listado paginado. No se ha conectado con Productos.
+
+**Evidencia automatizada previa:** [Units of measure CI #42635319602](https://github.com/AliRodri1992/sales_point/actions/runs/42635319602), 15 ejemplos / 0 fallos. Esa ejecución **no** cubre la regla de reactivación; el hallazgo UOM-010 es consistente con ella. En el mismo SHA, CI global #42635319559 tiene fallos en RuboCop y RSpec; seguridad, traducciones y migraciones en limpio aprobaron. No atribuir fallos externos al catálogo sin evidencia.
+
+**Condición de cierre:** atender P1, añadir regresiones explícitas, verificar baja y autoría, realizar inspección visual real (320/390/768/1440, 200 % zoom, teclado y lector de pantalla) y contrastar con el diseño de Sucursales. Estado **NO CERRADO**.
+
 ## Evidencias y límites
 
 - **PASÓ:** [Units of measure CI #42634181533](https://github.com/AliRodri1992/sales_point/actions/runs/42634181533) en SHA `9e81ac30f9f76ca5c156e902d85a8ec4279d8d0e`: 15 ejemplos (modelos + solicitudes + navegador Chrome), 0 fallos; RuboCop focalizado aprobado. Se verificaron altas, errores, consulta, edición y cierre con Escape, además de límites del panel en 320/390/768/1440 px.
