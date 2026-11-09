@@ -21,6 +21,13 @@ RSpec.describe 'Admin email templates', type: :request do
     sign_in administrator
   end
 
+  def sign_in_without_organization
+    sign_out administrator
+    actor = create(:user, system_roles: [role])
+    sign_in actor
+    actor
+  end
+
   def create_template(organization:)
     EmailTemplate.create!(
       organization:, key: 'order_notice', name: 'Order notice',
@@ -280,18 +287,18 @@ RSpec.describe 'Admin email templates', type: :request do
 
   it 'allows root administrators to create global templates without an organization' do
     role.update!(code: 'super_admin')
-    administrator.organization_memberships.destroy_all
+    actor = sign_in_without_organization
     get new_admin_email_template_path
     expect(response).to have_http_status(:ok)
     post admin_email_templates_path, params: {
       global: '1', email_template: { key: 'global_notice', name: 'Global notice', category: 'security', locale: 'es' }
     }
     expect(response).to have_http_status(:redirect)
-    expect(EmailTemplate.global.find_by!(key: 'global_notice').created_by).to eq(administrator)
+    expect(EmailTemplate.global.find_by!(key: 'global_notice').created_by).to eq(actor)
   end
 
   it 'requires an organization for ordinary administrators creating templates' do
-    administrator.organization_memberships.destroy_all
+    sign_in_without_organization
     get new_admin_email_template_path
     expect(response).to have_http_status(:forbidden)
     post admin_email_templates_path, params: {
@@ -912,7 +919,7 @@ RSpec.describe 'Admin email templates', type: :request do
 
   it 'does not create a global template from an unchecked form without an organization' do
     role.update!(code: 'super_admin')
-    administrator.organization_memberships.destroy_all
+    sign_in_without_organization
 
     post admin_email_templates_path, params: {
       email_template: { key: 'unchecked_global', name: 'Unchecked', category: 'security', locale: 'es' }
@@ -1335,7 +1342,7 @@ RSpec.describe 'Admin email templates', type: :request do
       text_body: 'Notice', status: 'draft', enabled: false
     )
     global.new_draft!(actor: administrator).publish!(actor: administrator)
-    administrator.organization_memberships.destroy_all
+    sign_in_without_organization
 
     post personalize_admin_email_template_path(global)
 
