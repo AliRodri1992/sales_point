@@ -79,15 +79,13 @@ Para UI, adjuntar evidencia de flujos reales y anchuras móvil/escritorio, error
 - Reabrir cuando cambie el contrato, se rompa una prueba, CI dé rojo o una reproducción contradiga la evidencia. Conservar el ID y el historial, sin borrar registros anteriores.
 - Durante el desarrollo de un módulo futuro (Onboarding, Terminales, Inventario, Compras), auditar su interior en **su propio registro** y reutilizar los contratos ya registrados sin duplicarlos.
 
-## 8. Índice de módulos
+## 8. Inventario de módulos y ampliación futura
 
-| Módulo | Registro | Estado del proceso |
-|---|---|---|
-| Sucursales — `/admin/branches` | [Sucursales](modules/branches.md) | Auditoría base registrada; **pendiente de verificación y cierre** |
-| Onboarding | Por crear al iniciar su auditoría | Sin cierre modular bajo este estándar |
-| Terminales | Por crear al iniciar su auditoría | Sin cierre modular bajo este estándar |
-| Inventario | Por crear al iniciar su auditoría | Sin cierre modular bajo este estándar |
-| Purchases / Compras | Por crear al iniciar su auditoría | Sin cierre modular bajo este estándar |
-| Demás módulos actuales o futuros | Usar la plantilla cuando se auditen | El estándar aplica desde ahora; no presumir auditorías realizadas |
+El [índice de calidad de todos los módulos](modules/README.md) contiene **31 expedientes iniciales**, incluidos los ámbitos compartidos o embebidos, y [el registro de Sucursales](modules/branches.md). La pertenencia y el estado documental se declaran en `config/module_quality_registry.json`; una entrada no implica auditoría ni aprobación.
 
-Este estándar complementa `AGENTS.md` y el [checklist de Pull Request](../../.github/PULL_REQUEST_TEMPLATE.md); no reemplaza el CI ni las políticas de seguridad.
+- Al introducir una nueva ruta o módulo: decidir su **propietario funcional**, crear `docs/quality/modules/<slug>.md` con la plantilla, incluirlo en el índice y manifest, y declarar el dueño de los recursos administrativos superiores.
+- CI comprueba automáticamente presencia e indexación de los expedientes y correspondencia de recursos administrativos mediante `ruby script/audit_module_quality.rb`. El control documental **no reemplaza** RSpec, seguridad, revisiones visuales ni la aprobación de cierre.
+- Terminales se registra como ámbito **embebido** en Sucursales hasta que tenga rutas propias; Inventario es un módulo aparte aunque su ruta esté anidada. Los controles cruzados no transfieren propiedad de sus defectos.
+- Los registros inicialmente abiertos para Usuarios, Onboarding, Plantillas y otros módulos **no importan ni certifican** auditorías históricas. Cuando se retomen, consolidar hallazgos y evidencias existentes con los IDs del expediente, y evitar duplicados.
+
+Este estándar complementa `AGENTS.md`, el [checklist de Pull Request](../../.github/PULL_REQUEST_TEMPLATE.md) y el CI existente. No sustituye la configuración de protección de rama o rulesets, que debe exigir checks satisfactorios para permitir fusiones.
