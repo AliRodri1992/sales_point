@@ -10,6 +10,9 @@ module EmailTemplates
       raise ArgumentError, 'Invalid recipient' unless recipient.to_s.match?(URI::MailTo::EMAIL_REGEXP)
 
       delivery_organization = organization || template.organization
+      missing = DeliveryReadiness.missing_contacts(source: template.published_version, organization: delivery_organization)
+      raise ArgumentError, "Unconfigured email contacts: #{missing.join(', ')}" if missing.any?
+
       branding = EmailTemplates::Branding.values(organization: delivery_organization)
       sender_headers = EmailTemplates::Sender.headers_for(organization: delivery_organization)
       ciphertext = EncryptedPayload.encrypt(

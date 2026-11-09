@@ -81,6 +81,8 @@ module Admin
                   flash: { swal_message: t('admin.email_templates.published') }
     rescue ActiveRecord::RecordInvalid => e
       handle_publish_validation_error(e)
+    rescue ActiveRecord::StaleObjectError
+      redirect_publish_error(t('admin.email_templates.publish_conflict'))
     rescue ArgumentError => e
       redirect_publish_error(e.message)
     end

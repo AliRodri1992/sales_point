@@ -129,6 +129,21 @@ RSpec.describe EmailTemplates::Renderer do
     end
   end
 
+  it 'refuses to render sensitive links in headers from legacy published content' do
+    %w[activation_url recovery_url].each do |name|
+      %i[subject preheader].each do |field|
+        source = template('<a href="{{activation_url}}">Activate</a>')
+        source.allowed_variables = %w[recipient_name activation_url recovery_url]
+        source.public_send("#{field}=", "Secret {{#{name}}}")
+
+        expect do
+          described_class.new(source:, values: { recipient_name: 'Test', activation_url: 'https://delta.test/start',
+                                                 recovery_url: 'https://delta.test/reset' }).render
+        end.to raise_error(ArgumentError, /Sensitive email URL in header/)
+      end
+    end
+  end
+
   it 'injects an escaped, variable-aware preheader into sent HTML' do
     source = template('<p>Body</p>')
     source.preheader = 'Hola {{recipient_name}} & gracias'

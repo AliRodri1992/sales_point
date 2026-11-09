@@ -206,6 +206,64 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(draft.reload.subject).to eq('First change')
   end
 
+  it 'rejects security URLs in both headers before publishing in every locale' do
+    %w[es en ko].each do |locale|
+      template.update!(locale:)
+      version = template.new_draft!(actor: nil)
+      %w[activation_url recovery_url].each do |url_variable|
+        %i[subject preheader].each do |header|
+          version.public_send("#{header}=", "Token {{#{url_variable}}}")
+          version.allowed_variables = [url_variable]
+          expect(version).not_to be_valid
+          expect(version.errors[header]).to be_present
+          version.reload
+        end
+      end
+    end
+  end
+
+  it 'prevents stale publication from generating a second version update' do
+    version = template.new_draft!(actor: nil)
+    stale = described_class.find(version.id)
+
+    version.publish!(actor: nil)
+
+    expect { stale.publish!(actor: nil) }.to raise_error(ActiveRecord::StaleObjectError)
+    expect(template.reload.published_version).to eq(version)
+    expect(template.versions.where(status: 'published').count).to eq(1)
+  end
+
+  it 'rejects unconfigured contact details in production only when a template uses them' do
+    organization = create(:organization)
+    local = EmailTemplate.create!(
+      organization:, key: 'receipt_email', name: 'Receipt', category: 'transactional',
+      locale: 'es', subject: 'Receipt', html_body: '<p>Receipt</p>',
+      text_body: 'Receipt', status: 'draft', enabled: false
+    )
+    version = local.new_draft!(actor: nil)
+    version.update!(html_body: '<p>{{support_email}}</p><a href="{{support_url}}">Help</a>',
+                    text_body: '{{support_email}} {{support_url}}',
+                    allowed_variables: %w[support_email support_url])
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+
+    expect { version.publish!(actor: nil) }.to raise_error(ActiveRecord::RecordInvalid)
+    expect(version.errors[:allowed_variables].join).to include('support_email', 'support_url')
+    expect(local.reload.published_version).to be_nil
+
+    EmailBrandingSetting.create!(organization:, display_name: 'Shop',
+                                 support_email: 'help@delta.test', support_url: 'https://delta.test/support')
+    version.publish!(actor: nil)
+    expect(local.reload.published_version).to eq(version)
+  end
+
+  it 'does not require unused branding contacts to publish in production' do
+    version = template.new_draft!(actor: nil)
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+
+    version.publish!(actor: nil)
+    expect(template.reload.published_version).to eq(version)
+  end
+
   it 'rejects header line breaks in subjects and preheaders' do
     version = template.new_draft!(actor: nil)
 

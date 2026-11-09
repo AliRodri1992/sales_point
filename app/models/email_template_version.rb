@@ -25,15 +25,20 @@ class EmailTemplateVersion < ApplicationRecord
   validate :variables_are_safe
   validate :declared_variables
   validate :single_line_header_fields
+  validate :sensitive_header_variables
+  validate :deliverable_branding_contacts, if: -> { status == 'published' && Rails.env.production? }
   validate :only_one_draft_per_template, if: -> { status == 'draft' && email_template_id.present? }
   validate :required_customization_variables, if: -> { status == 'published' }
   validate :published_version_is_immutable, on: :update
   before_destroy :protect_published_version
 
   def publish!(actor:)
-    raise ArgumentError, 'Only draft versions may be published' unless status == 'draft'
-
     email_template.with_lock do
+      # Serialize competing publish requests and recheck the database state under
+      # the template lock. The second request must not publish/audit twice.
+      reload
+      raise ActiveRecord::StaleObjectError.new(self, 'publish') unless status == 'draft'
+
       update!(status: 'published', published_by: actor, published_at: Time.current)
       email_template.update!(
         published_version: self, status: 'published', enabled: true,
@@ -54,6 +59,22 @@ class EmailTemplateVersion < ApplicationRecord
     %i[subject preheader].each do |attribute|
       errors.add(attribute, :invalid) if public_send(attribute).to_s.match?(/[\r\n]/)
     end
+  end
+
+  def sensitive_header_variables
+    %i[subject preheader].each do |attribute|
+      next unless EmailTemplates::Renderer.sensitive_header?(public_send(attribute))
+
+      errors.add(attribute, I18n.t('admin.email_templates.sensitive_header_variable'))
+    end
+  end
+
+  def deliverable_branding_contacts
+    missing = EmailTemplates::DeliveryReadiness.missing_contacts(source: self, organization: email_template.organization)
+    return if missing.empty?
+
+    errors.add(:allowed_variables, I18n.t('admin.email_templates.delivery_contacts_required',
+                                          variables: missing.join(', ')))
   end
 
   def only_one_draft_per_template

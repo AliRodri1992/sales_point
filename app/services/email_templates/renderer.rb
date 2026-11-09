@@ -3,6 +3,7 @@
 module EmailTemplates
   class Renderer
     VARIABLE_PATTERN = /\{\{([a-z][a-z0-9_]*)\}\}/
+    SENSITIVE_URL_VARIABLES = %w[activation_url recovery_url].freeze
     STANDARD_LOGO_TAG = /<img\b[^>]*\bsrc=(["'])\{\{platform_logo\}\}\1[^>]*>/i
     URL_VARIABLES = %w[activation_url recovery_url support_url privacy_url
                        logo_url organization_logo platform_logo].freeze
@@ -12,6 +13,10 @@ module EmailTemplates
       current_year activation_url recovery_url expiration_hours status_label
       primary_color secondary_color button_color footer_text
     ].freeze
+
+    def self.sensitive_header?(content)
+      content.to_s.scan(VARIABLE_PATTERN).flatten.intersect?(SENSITIVE_URL_VARIABLES)
+    end
 
     def self.malformed_variables?(content)
       remaining = content.to_s.gsub(VARIABLE_PATTERN, '')
@@ -89,6 +94,8 @@ module EmailTemplates
       contents = [@source.subject, (@source.preheader if @source.respond_to?(:preheader)),
                   @source.html_body, @source.text_body]
       raise ArgumentError, 'Malformed email variable' if contents.any? { |body| self.class.malformed_variables?(body) }
+      headers = [@source.subject, (@source.preheader if @source.respond_to?(:preheader))]
+      raise ArgumentError, 'Sensitive email URL in header' if headers.any? { |header| self.class.sensitive_header?(header) }
 
       used = contents.flat_map { |body| body.to_s.scan(VARIABLE_PATTERN).flatten }.uniq
       raise ArgumentError, 'Unapproved email variables' unless (used - allowed).empty?

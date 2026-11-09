@@ -195,3 +195,12 @@
 ### Dictamen y criterio de cierre
 
 **EM-019/020/021: ABIERTOS para adecuación y nuevas regresiones, NO CORREGIDOS NI PROBADOS EN ESTA REAUDITORÍA.** Las observaciones se sustentan en rutas de código; no hay evidencia de fuga real de tokens, publicación simultánea que haya causado 500 ni correo perdido en producción. **EM-010** sigue pendiente por CI global y cobertura residual; **EM-003/004/008/009** por proveedores y pruebas manuales. No tocar ramas ni módulos externos, ni declarar calidad integral cerrada sin sus verificaciones. La siguiente intervención debe usar estos mismos identificadores y evitar reiniciar el registro.
+
+## Adecuaciones EM-019 a EM-021 y EM-010 — 2026-11-08
+
+- **EM-019 — IMPLEMENTADO / CI PENDIENTE:** tanto modelo como renderer rechazan enlaces de activación/recuperación en `subject` y `preheader`, incluidas versiones publicadas heredadas. Mensajes del modelo por campo, traducciones es/en/ko y regresiones.
+- **EM-020 — IMPLEMENTADO / CI PENDIENTE:** la publicación recarga la versión después de tomar el bloqueo del template, detecta versiones que dejaron de ser borrador, genera `StaleObjectError` y responde desde controlador con aviso localizado, sin segunda auditoría. Pruebas de snapshots desactualizados y solicitud duplicada (no prueba de carrera real).
+- **EM-021 — IMPLEMENTADO / CI PENDIENTE:** el modelo valida en producción solo los contactos `support_email`, `support_url`, `privacy_url` realmente usados antes de publicar, con error en `allowed_variables`; el dispatcher vuelve a verificar antes de encolar un snapshot legado. Conserva `Renderer` seguro y las previsualizaciones con muestras. Regresiones de fallos y configuración válida.
+- **EM-010 — COBERTURA ESPECIALIZADA IMPLEMENTADA / CI PENDIENTE:** `EmailSettingAuditPolicy` y `EmailTemplateNotification` ya están en disparadores y RuboCop especializado; las dependencias del CI global permanecen en sus módulos.
+
+**Limitaciones de cierre:** no se ha verificado un proveedor SMTP real, SPF/DKIM/DMARC, idempotencia efectiva del proveedor ni Gmail/Outlook y lector de pantalla/zoom 200 %; EM-003/004/008/009 mantienen su estado externo hasta contar con el entorno. Los errores de CI global fuera de Plantillas conservan propietario externo. Sin merge.

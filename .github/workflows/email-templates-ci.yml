@@ -14,6 +14,8 @@ on:
       - 'app/models/email_setting_audit.rb'
       - 'app/queries/email_templates_query.rb'
       - 'app/policies/email_template_policy.rb'
+      - 'app/policies/email_setting_audit_policy.rb'
+      - 'app/notifications/email_template_notification.rb'
       - 'app/policies/email_sender_setting_policy.rb'
       - 'app/policies/email_branding_setting_policy.rb'
       - 'app/mailers/application_mailer.rb'
@@ -97,7 +99,8 @@ jobs:
             app/models/email_template* app/models/email_sender_setting.rb \
             app/models/email_branding_setting.rb app/queries/email_templates_query.rb \
             app/policies/email_template_policy.rb app/policies/email_sender_setting_policy.rb \
-            app/policies/email_branding_setting_policy.rb app/services/email_templates \
+            app/policies/email_branding_setting_policy.rb app/policies/email_setting_audit_policy.rb \
+            app/notifications/email_template_notification.rb app/services/email_templates \
             app/jobs/email_templates app/mailers/email_templates \
             app/mailers/email_template_test_mailer.rb \
             spec/models/email_template* spec/models/email_sender_setting_spec.rb \

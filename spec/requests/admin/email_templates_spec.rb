@@ -79,6 +79,35 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.reload.published_version).to eq(draft)
     expect(template.audits.where(action: 'published')).to exist
   end
+  it 'handles a second publish request without duplicating the publication audit' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+
+    post publish_admin_email_template_path(template, version_id: draft.id)
+    expect(response).to redirect_to(admin_email_template_path(template))
+    expect(template.audits.where(action: 'published').count).to eq(1)
+
+    expect do
+      post publish_admin_email_template_path(template, version_id: draft.id)
+    end.not_to(change { template.audits.where(action: 'published').count })
+    expect(response).to redirect_to(admin_email_template_path(template))
+    expect(flash[:swal_message]).to eq(I18n.t('admin.email_templates.publish_conflict'))
+  end
+
+  it 'shows an inline model error rather than publishing contacts with placeholder URLs' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+    draft.update!(html_body: '<a href="{{support_url}}">Support</a>',
+                  text_body: '{{support_url}}', allowed_variables: ['support_url'])
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+
+    post publish_admin_email_template_path(template, version_id: draft.id)
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(Nokogiri::HTML(response.body).at_css('#email_template_version_allowed_variables_error')).to be_present
+    expect(template.reload.published_version).to be_nil
+  end
+
   it 'renders a saved preview using demonstration links even when production rules reject sending them' do
     template = create_template(organization:)
     draft = template.new_draft!(actor: administrator)

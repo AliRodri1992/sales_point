@@ -67,6 +67,26 @@ RSpec.describe EmailTemplates::Dispatcher do
                          values: { recipient_name: 'Buyer' }, organization:)
   end
 
+  it 'refuses to enqueue legacy published templates with unconfigured contact links in production' do
+    version = template.versions.create!(
+      version_number: 2, status: 'published', subject: 'Contact',
+      html_body: '<p>{{support_email}}</p>', text_body: '{{support_email}}',
+      allowed_variables: %w[support_email]
+    )
+    template.update!(published_version: version)
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+
+    expect(EmailTemplates::DeliveryJob).not_to receive(:perform_later)
+    expect do
+      described_class.call(key: template.key, locale: 'es', recipient: 'customer@delta.test', values: {})
+    end.to raise_error(ArgumentError, /Unconfigured email contacts: support_email/)
+
+    EmailBrandingSetting.create!(display_name: 'Global',
+                                 support_email: 'help@delta.test')
+    expect(EmailTemplates::DeliveryJob).to receive(:perform_later)
+    described_class.call(key: template.key, locale: 'es', recipient: 'customer@delta.test', values: {})
+  end
+
   it 'uses organization branding even when the global template is selected' do
     organization = create(:organization)
     expect(EmailTemplates::Branding).to receive(:values).with(organization:).and_call_original
