@@ -100,6 +100,7 @@ RSpec.describe User, type: :model do
 
     it 'filters by branch' do
       branch = create(:branch)
+      create(:organization_membership, user:, organization: branch.organization)
       create(:user_role, user:, system_role: role, branch:)
 
       expect(user.role?('sales', branch:)).to be(true)
