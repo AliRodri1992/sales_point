@@ -57,6 +57,23 @@ RSpec.describe 'Admin archived user restoration', type: :request do
     expect(flash[:notice]).to eq(I18n.t('admin.users.ui.restored_needs_roles'))
   end
 
+  it 'allows a restored employee to receive an invitation after an administrator assigns a role' do
+    user.update!(user_type: :employee)
+    post admin_user_restoration_path(user), params: { reason: 'Authorized review' }
+    expect(user.reload).to be_pending
+    expect(user.user_invitations).to be_empty
+
+    role_for_employee = create(:system_role, :system, code: 'restored_employee_role')
+    patch admin_user_path(user), params: { user: { system_role_ids: ['', role_for_employee.id.to_s] } }
+    expect(response).to redirect_to(admin_user_path(user))
+
+    expect do
+      post admin_user_invitation_path(user)
+    end.to change(UserInvitation, :count).by(1)
+    expect(response).to redirect_to(admin_user_path(user))
+    expect(user.user_invitations.last).to be_usable
+  end
+
   it 'reports a missing reason without restoring the account' do
     post admin_user_restoration_path(user), params: { reason: '' }
     expect(response).to have_http_status(:unprocessable_content)

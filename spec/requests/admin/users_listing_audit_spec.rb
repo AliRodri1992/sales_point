@@ -25,6 +25,20 @@ RSpec.describe 'Audited users listing', type: :request do
     expect(row.text).to include(label)
   end
 
+  it 'distinguishes local active membership from globally inaccessible account status' do
+    target = create(:user, email: 'globally-suspended@example.com', status: :suspended)
+    create(:organization_membership, user: target, organization:, account_status: :active)
+
+    get admin_users_path
+
+    document = Nokogiri::HTML(response.body)
+    row = document.css('tr[data-skeleton-record]').find { |node| node.text.include?(target.email) }
+    card = document.css('article[data-skeleton-record]').find { |node| node.text.include?(target.email) }
+    message = I18n.t('admin.users.ui.effective_access_unavailable')
+    expect(row.text).to include(message)
+    expect(card.text).to include(message)
+  end
+
   it 'excludes revoked assignments from the role filter' do
     target = create(:user, email: 'revoked-search@example.com')
     create(:organization_membership, user: target, organization:)

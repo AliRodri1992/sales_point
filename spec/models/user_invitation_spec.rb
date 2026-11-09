@@ -20,6 +20,21 @@ RSpec.describe UserInvitation, type: :model do
                               password_confirmation: 'newpassword456')).to be(false)
   end
 
+  it 'keeps a second organization invitation usable after a first organization is activated' do
+    secondary = create(:organization)
+    create(:organization_membership, user:, organization: secondary, account_status: :pending)
+    original = described_class.issue!(user:, organization:)
+    second = described_class.issue!(user:, organization: secondary)
+
+    expect(original.accept!(token: original.raw_token, password: 'newpassword123',
+                            password_confirmation: 'newpassword123')).to be(true)
+
+    expect(second.reload).to be_usable
+    expect(second.accept_existing!(token: second.raw_token, signed_in_user: user)).to be(true)
+    expect(user.organization_memberships.find_by!(organization: secondary)).to be_account_active
+    expect(second.reload.accepted_at).to be_present
+  end
+
   it 'revokes older invitations on resend' do
     previous = described_class.issue!(user:, organization:)
     current = described_class.issue!(user:, organization:)

@@ -93,9 +93,7 @@ jobs:
             spec/requests/admin/organization_selections_spec.rb \
             spec/requests/admin/granular_catalog_permissions_spec.rb \
             spec/features/admin_users*spec.rb spec/requests/user_invitations_spec.rb \
-            spec/models/users_query_spec.rb spec/requests/admin/organization_selections_spec.rb \
             spec/jobs/users spec/mailers/user_invitation_mailer_spec.rb \
-            spec/requests/admin/organization_selections_spec.rb \
             spec/requests/admin/granular_catalog_permissions_spec.rb \
             spec/requests/admin/users_cross_organization_permissions_spec.rb
 
@@ -160,4 +158,6 @@ jobs:
             spec/services/users \
             spec/requests/admin/users*spec.rb spec/requests/admin/user_*spec.rb \
             spec/features/admin_users*spec.rb spec/requests/user_invitations_spec.rb \
+            spec/requests/admin/organization_selections_spec.rb \
+            spec/requests/admin/granular_catalog_permissions_spec.rb \
             spec/jobs/users spec/mailers/user_invitation_mailer_spec.rb

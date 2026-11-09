@@ -150,6 +150,16 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page).to have_no_css('form[data-controller="user-access"] [required]')
   end
 
+  scenario 'describes the employee role group for accessible model errors' do
+    visit new_admin_user_path
+    fill_in 'Email address', with: 'unassigned@example.com'
+    click_button 'Create user'
+
+    expect(page).to have_css('section[aria-labelledby="users-access-title"]')
+    expect(page).to have_css('#user_system_role_ids_error')
+    expect(page).to have_css('section[aria-describedby="user_system_role_ids_error"]')
+  end
+
   scenario 'renders field validation directly beneath the email input' do
     target = create(:user, username: 'Validation Employee')
     create(:organization_membership, organization:, user: target)
