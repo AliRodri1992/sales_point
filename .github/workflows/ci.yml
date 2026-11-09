@@ -231,6 +231,9 @@ jobs:
           ruby-version-file: .ruby-version
           bundler-cache: true
 
+      - name: Validate module quality registry and route ownership
+        run: ruby script/audit_module_quality.rb
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
