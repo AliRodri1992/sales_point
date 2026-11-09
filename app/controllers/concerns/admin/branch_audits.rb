@@ -11,6 +11,7 @@ module Admin
       'Phone' => %w[number kind primary whatsapp_enabled deleted_at],
       'Note' => %w[body deleted_at]
     }.freeze
+    AUDIT_YAML_CLASSES = [Date, Time, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone].freeze
 
     private
 
@@ -39,8 +40,18 @@ module Admin
     end
 
     def branch_audit_entry(event)
-      fields = event.changeset.to_h.slice(*AUDITED_FIELDS.fetch(event.item_type))
+      fields = branch_audit_changes(event).stringify_keys.slice(*AUDITED_FIELDS.fetch(event.item_type))
       { event:, fields: } if fields.present?
+    end
+
+    def branch_audit_changes(event)
+      changes = event.changeset.to_h
+      return changes if changes.present? || event.object_changes.blank?
+
+      parsed = YAML.safe_load(event.object_changes, permitted_classes: AUDIT_YAML_CLASSES, aliases: true)
+      parsed.is_a?(Hash) ? parsed : {}
+    rescue Psych::Exception, TypeError
+      {}
     end
 
     def load_branch_change_countries

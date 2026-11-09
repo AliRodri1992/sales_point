@@ -211,3 +211,10 @@ En el SHA `5f3a52a4748d8d679aad68ef660d6e2704446724` Branches CI ejecutó **129 
 ### Causa raíz del historial de bajas — BR-004
 
 En `ecd15e869ea33f5f798053d70d03c8b1f6618f8e`, **128/129 pruebas pasaron**. El test de historial verificó que PaperTrail sí almacenaba una versión `update` de `Phone`, pero `version.changeset` retornó vacío, por lo que la vista no pudo mostrar `deleted_at` → «Retirado». Se delimita el cambio al rastro de teléfonos/notas **cuando pertenecen a Branch** y se exige conservar el diff de `number/kind/primary/whatsapp_enabled/deleted_at` o `body/deleted_at`. La verificación se mantiene en la prueba de historial; esta implementación NO equivale a aprobación hasta el nuevo CI.
+
+
+### Resolución del historial BR-004 — lectura segura de versiones
+
+PaperTrail 17.0.0 almacenó los diffs de baja como YAML con marcas `!ruby/object:ActiveSupport::TimeWithZone`. El test constató que `object_changes` contiene `deleted_at` mientras `version.changeset` devolvía `{}`, de modo que `Admin::BranchAudits` descartaba cambios de Phone y Note. La corrección incorpora un fallback **YAML.safe_load** con una lista restringida de clases temporales y control de excepciones, limitado a los eventos que el lector actual no pudo decodificar; no usa `unsafe_load` ni modifica versiones almacenadas.
+
+Se ajustan las expectativas de RSpec para verificar el diff crudo y el historial visible de teléfonos/notas retirados. **Estado: implementación pendiente de nueva verificación CI.**
