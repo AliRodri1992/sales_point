@@ -76,6 +76,9 @@ class User < ApplicationRecord
   end
 
   def admin?
+    organization = CurrentOrganizationAccess.organization
+    return SystemRole::ADMINISTRATIVE_CODES.any? { |code| role?(code, organization:) } if organization
+
     user_roles.active.joins(:system_role).exists?(
       branch_id: nil, system_roles: { code: SystemRole::ADMINISTRATIVE_CODES }
     )
