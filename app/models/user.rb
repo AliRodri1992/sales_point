@@ -98,7 +98,9 @@ class User < ApplicationRecord
   end
 
   def display_role_name
-    @display_role_name ||= system_roles.active.order(:name).pick(:name)
+    assignments = user_roles.active
+    assignments = assignments.where(organization: CurrentOrganizationAccess.organization) if CurrentOrganizationAccess.organization
+    assignments.joins(:system_role).order('system_roles.name').pick('system_roles.name')
   end
 
   def notifications
