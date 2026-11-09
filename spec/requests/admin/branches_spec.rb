@@ -613,7 +613,7 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response).to have_http_status(:unprocessable_content)
       document = Nokogiri::HTML(response.body)
       textarea = document.at_css('textarea[name="reason"]')
-      expect(textarea.text).to eq(attempted_reason)
+      expect(textarea.text.delete_prefix("\n")).to eq(attempted_reason)
       expect(textarea['aria-invalid']).to eq('true')
       expect(textarea['aria-describedby']).to include('branch-transition-reason-error')
       expect(document.at_css('#branch-transition-reason-error')).to be_present
