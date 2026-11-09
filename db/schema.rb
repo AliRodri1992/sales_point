@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_121000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -1037,7 +1037,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["organization_id", "product_id", "id"], name: "idx_variant_tenant_product", unique: true
-    t.index ["organization_id", "sku"], name: "index_product_variants_on_organization_id_and_sku", unique: true, where: "((sku IS NOT NULL) AND ((sku)::text <> ''::text))"
+    t.index "organization_id, lower((sku)::text)", name: "idx_product_variants_org_sku_ci", unique: true, where: "((deleted_at IS NULL) AND (sku IS NOT NULL) AND ((sku)::text <> ''::text))"
     t.index ["organization_id"], name: "index_product_variants_on_organization_id"
     t.index ["product_id"], name: "index_product_variants_on_product_id"
   end
