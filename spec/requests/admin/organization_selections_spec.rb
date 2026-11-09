@@ -33,6 +33,7 @@ RSpec.describe 'Active organization selection', type: :request do
 
   it 'refuses selecting an organization without an accessible membership' do
     foreign = create(:organization)
+    create(:organization_membership, user: create(:user), organization: primary)
     patch admin_select_organization_path(foreign)
 
     expect(response).to have_http_status(:not_found)

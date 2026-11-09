@@ -63,6 +63,13 @@ RSpec.describe 'Admin archived user restoration', type: :request do
     expect(user.reload).to be_pending
     expect(user.user_invitations).to be_empty
 
+    invitation_permission = Permission.find_or_create_by!(code: 'users.resend_invitation') do |item|
+      item.name = 'Resend user invitations'
+      item.module_name = 'Usuarios'
+      item.status = :active
+    end
+    SystemRolePermission.find_or_create_by!(system_role: role, permission: invitation_permission)
+
     role_for_employee = create(:system_role, :system, code: 'restored_employee_role')
     patch admin_user_path(user), params: { user: { system_role_ids: ['', role_for_employee.id.to_s] } }
     expect(response).to redirect_to(admin_user_path(user))
