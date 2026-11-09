@@ -89,3 +89,18 @@ El [índice de calidad de todos los módulos](modules/README.md) contiene **31 e
 - Los registros inicialmente abiertos para Usuarios, Onboarding, Plantillas y otros módulos **no importan ni certifican** auditorías históricas. Cuando se retomen, consolidar hallazgos y evidencias existentes con los IDs del expediente, y evitar duplicados.
 
 Este estándar complementa `AGENTS.md`, el [checklist de Pull Request](../../.github/PULL_REQUEST_TEMPLATE.md) y el CI existente. No sustituye la configuración de protección de rama o rulesets, que debe exigir checks satisfactorios para permitir fusiones.
+
+## 9. Estándar visual permanente — diseño web moderno y elegante
+
+**Vigencia:** a partir del 2026-11-08, obligatorio para **todas las adecuaciones de diseño web** de Delta POS, tanto módulos actuales como nuevos. Los cambios no pueden limitarse a que la pantalla «funcione»: deben alcanzar calidad visual y de interacción de software empresarial moderno.
+
+- **Carácter visual:** moderno, elegante, sobrio, profesional, preciso, confiable y coherente con la marca Delta POS; diseño de producto real, no colección de plantillas genéricas. Conservar tokens, tipografía, iconografía SVG propia y componentes compartidos, y no introducir Heroicons ni estilos inconsistentes.
+- **Jerarquía:** un objetivo principal claro por pantalla, títulos escaneables, composición equilibrada, retícula y espaciado sistemáticos, alineación rigurosa y ancho de lectura cómodo. Evitar saturación de cards, adornos, degradados, bordes, etiquetas y sombras. Cada elemento decorativo debe aportar orientación o comunicación.
+- **Componentes:** dropdowns con identidad visual sin radio buttons internos, CTAs y estados activos coherentes, menús, modales, tooltips y notificaciones bien resueltos; prevenir saltos de layout al validar y conservar el foco. Cargas con skeleton relacionado con la estructura real cuando sea pertinente.
+- **Estados de uso:** diseñar explícitamente normal, hover, foco, seleccionado, pendiente, guardando, éxito, error, vacío, deshabilitado, conflicto, carga y recuperación. Distinguir cambios sin guardar del valor persistido; no comunicar éxito si nada cambió cuando ello pueda confundir.
+- **Accesibilidad medible:** contraste WCAG AA mínimo de 4.5:1 para texto normal y 3:1 para texto grande/componentes gráficos relevantes; navegación completamente operable por teclado, etiquetas y errores asociados al campo, foco visible, lectores de pantalla y reducción de movimiento.
+- **Responsive y localización:** probar 320, 390, 768 y 1440 px, zoom 200 %, textos largos y traducciones es/en/ko, sin scroll horizontal involuntario, controles cortados ni ventanas desbordadas.
+- **Movimiento:** microinteracciones discretas y útiles, sin transiciones innecesarias; respetar `prefers-reduced-motion`. Priorizar rendimiento, estabilidad visual y tiempos de respuesta perceptibles.
+- **Puerta visual real:** inspeccionar el resultado renderizado antes/después, incluyendo móvil, escritorio, teclado y estados de validación; adjuntar capturas cuando haya acceso. La lectura del ERB/CSS no acredita por sí sola estética, contraste renderizado ni WCAG completo. Registrar **NO PROBADO** cuando falte acceso al navegador.
+
+El criterio de diseño no sustituye ninguna puerta de seguridad o funcionalidad. Para un cambio visual, además de los tests, verificar coherencia con la biblioteca de componentes existente; documentar el motivo de cualquier excepción.

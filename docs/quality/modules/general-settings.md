@@ -1,6 +1,6 @@
 # Registro de calidad — General (`/admin/general_settings`)
 
-**Estado:** EN CORRECCIÓN; cambios y pruebas de regresión preparados; pendientes de GitHub Actions y pruebas browser; NO CERRADO.  
+**Estado actual:** REAUDITADO POR CÓDIGO; 35 PRUEBAS FOCALES PASARON EN EL SHA 9e438205; NUEVAS ADECUACIONES Y CI GLOBAL PENDIENTES; NO CERRADO.  
 **Fecha:** 2026-11-08 (America/Mexico_City). **Rama:** `feature/fixes`.  
 **SHA base de inspección:** `8974fee011f9422066985a0ab088ed2d771e1c8a`. **SHA revisado posteriormente:** `719ae720c3464bbab3478ef7cd91399b5c911b53` (comparación sin cambios en archivos de General).  
 **SHA de aceptación:** PENDIENTE. **Responsable propuesto:** equipo Delta POS. **Revisor independiente:** PENDIENTE.  
@@ -136,3 +136,45 @@ Este seguimiento conserva los IDs de la auditoría. La presencia de cambios en G
 **Decisiones conscientes:** El rol administrativo del sistema sigue siendo global; la organización activa solo se selecciona entre membresías accesibles. No se trasladó una remodelación de roles/organizaciones al alcance de General.
 
 **Dictamen actualizado:** implementación **verificada focalmente en GitHub Actions** sobre `9e438205`; el módulo permanece **NO CERRADO** de acuerdo con el estándar modular hasta disponer de CI global verde para el SHA de aceptación, verificación final y revisión independiente. Mantener todos los IDs originales sin reiniciar la auditoría.
+
+## 7. Reauditoría independiente — calidad visual premium y regresiones (2026-11-08)
+
+**Referencia estática del código:** `e8c4627bbb315f7d9e567f082703ed736226cfb9`, rama `feature/fixes`. **Código no cambiado por esta reauditoría.** AI Dev Suite: Impeccable + UI UX Pro Max + Ponytail (procedimientos de inspección aplicados al código). No se ejecutó CLI original de terceros. La pestaña local de la app no estuvo disponible en esta revisión, por lo que no se produjeron capturas ni una nueva prueba visual manual.
+
+**Evidencia heredada y verificada:** General Settings CI https://github.com/AliRodri1992/sales_point/actions/runs/42560618778, SHA `9e438205e94dca7e44afd021b3cb32d8bde886d7`: RSpec focalizado y navegador Chrome **35 ejemplos / 0 fallos**, RuboCop PASS, YAML/I18n PASS y preparación de BD con migración PASS. Entre ese SHA y el de inspección, la comparación de GitHub mostró 8 commits y **ningún cambio en controlador/vista/modelos/JS/migraciones de General o componentes compartidos inspeccionados**; el registro de calidad sí cambió. Esto **no** sustituye la puerta de CI global sobre el SHA final ni pruebas manuales de accesibilidad.
+
+### 7.1 Revisión de IDs originales (no reiniciar conteo)
+
+| ID | Estado de reauditoría | Fundamento |
+|---|---|---|
+| GENERAL_SETTINGS-001 | IMPLEMENTADO; evidencia focalizada PASS | Claves es/en/ko presentes en `breadcrumbs_controllers.*.yml` y prueba de traducción |
+| GENERAL_SETTINGS-002 | IMPLEMENTADO; accesibilidad completa PENDIENTE | Asterisco, ARIA, error bajo campo y CSS compartido `[data-controller~="delta-select"] > button[aria-invalid="true"]` que **sí** aplica borde rojo visible; no marcar como fallo nuevamente |
+| GENERAL_SETTINGS-003 | IMPLEMENTADO; regresión PASS | Contexto `:general_settings` valida el tamaño sin bloquear por campos de Onboarding |
+| GENERAL_SETTINGS-004 | IMPLEMENTADO; regresión browser PASS | Resumen de vista previa reactivo; 3 filas identificadas como ilustrativas |
+| GENERAL_SETTINGS-005 | **REABIERTO, P2** | Código del redirect y `OnboardingController#show` revela huecos de recuperación para organización completada y posible desajuste de organización; detalle abajo |
+| GENERAL_SETTINGS-006 | IMPLEMENTADO; regresiones PASS | Solo `active_records` tanto en lectura como al crear preferencia por tabla |
+| GENERAL_SETTINGS-007 | IMPLEMENTADO; regresiones PASS, contrato de esquema INCOMPLETO | Cambios con actor, organización y antes/después; esquema versionado pendiente (011) |
+| GENERAL_SETTINGS-008 | SEMÁNTICA ACTUAL CONOCIDA; REVISIÓN DE POLÍTICA PENDIENTE | `User#admin?` refleja rol administrativo de sistema; `current_organization` exige membresía accesible. No declarar vulnerabilidad sin una política contraria |
+| GENERAL_SETTINGS-009 | COBERTURA FOCAL PASS; verificación UI ampliada PENDIENTE | 35 tests, pero no se ensayaron zoom 200 %, navegación por teclado/lector ni todos los estados con capturas en esta revisión |
+| GENERAL_SETTINGS-010 | **PARCIAL, P2** | Hay verificación de valor esperado con `with_lock` y test 409; el parámetro `expected_default_table_page_size` es opcional, y el chequeo de valor no detecta cambios A→B→A. No se confirma corrupción, pero la protección no es universal |
+
+### 7.2 Hallazgos actuales y recomendaciones nuevas
+
+**GENERAL_SETTINGS-005 · P2 · PROPIO + CONTRATO de Onboarding · confirmado por inspección de código.** Si una organización *ya completó* el onboarding pero no tiene `OrganizationSetting` activo ni archivado, General la redirige a `admin_onboarding_path`; `Admin::OnboardingController#show` responde al estado `onboarding_completed?` enviándola de nuevo al dashboard. El administrador no obtiene vía General una recuperación. Además, Onboarding selecciona la primera membresía accesible en su propio `set_organization`, no necesariamente la organización seleccionada en General. **Reproducción pendiente:** dos organizaciones accesibles con seleccionada B, y B sin configuración. **Esperado:** recuperación de B acotada y autorizada, sin afectar A; estado archivado intencional separado. **Propietarios:** General (flujo de entrada); Onboarding (solo contrato de organización). **Pruebas:** organización completada sin ajustes, selección A/B, permisos y archivo.
+
+**GENERAL_SETTINGS-010 · P2 · PROPIO · caso límite confirmado por código, efecto por reproducir.** Con PATCH sin `expected_default_table_page_size` el control de conflicto se omite (`stale_preference?` devuelve falso), aunque el controlador lo exige desde el formulario. Un ciclo 10→25→10 tampoco se distingue de la versión previa de 10. **Esperado:** política explícita de compatibilidad y un token de versión verificable en servidor cuando se exija protección contra sobrescritura; test sin token y de cambio concurrente real, no solo un test manual de 409. **No afirmar una explotación de seguridad.**
+
+**GENERAL_SETTINGS-011 · P2 · PROPIO · confirmado por inspección de artefacto.** `db/schema.rb` en el SHA de revisión define versión `2026_11_10_010100` y no tiene `create_table "general_setting_audit_events"`. La tabla aparece en las migraciones `20261109071000` y de reparación `20261110020000`, y `deleted_at` se completa en `20261110030000`; migrar durante la preparación focalizada **sí pasó**, pero **la carga del snapshot sola no contiene la tabla**. **Esperado:** regenerar y versionar un schema coherente con las migraciones, ejecutar tanto `db:schema:load` como `db:migrate` en bases efímeras; sin regenerar manualmente columnas, índices ni checks. **Prueba:** crear base vacía por ambos caminos, comprobar tabla, índices, FK, checks, columna `deleted_at` y escritura del audit.
+
+**GENERAL_SETTINGS-012 · P2 · PROPIO · confirmado por CSS y cálculo de contraste.** Los encabezados pequeños `Registro` y `Estado` del ejemplo en `show.html.erb` usan `text-slate-400` (#94a3b8) sobre blanco (#fff): razón de contraste aproximada **2.56:1**; no alcanza 4.5:1 de WCAG AA para texto pequeño. **Esperado:** usar un token de texto más oscuro (p.ej. `text-slate-600`, ~4.76:1 en blanco), comprobar contraste renderizado en ambos temas y no alterar otros componentes ajenos. **Prueba:** axe/contrast checker y captura de la pantalla.
+
+**GENERAL_SETTINGS-013 · P3 · PROPIO · confirmado por controlador y vista.** El botón `Guardar preferencia` sigue activo sin cambios; un PATCH igual al valor anterior vuelve a redirigir con `saved` («actualizada correctamente») aunque **no** genera auditoría. No hay estado visible «Sin cambios»/«Cambios pendientes». **Esperado:** deshabilitar el CTA hasta modificar el valor (sin bloquear teclado/fallback) o comunicar guardado sin novedades de forma precisa; detectar cambio respecto al valor inicial y restaurar estado tras respuesta. **Prueba:** load sin cambios, elegir opción, volver al valor inicial, guardar, error y Turbo.
+
+**GENERAL_SETTINGS-014 · P3 · RECOMENDACIÓN VISUAL, NO BUG CONFIRMADO.** La pantalla ya tiene una jerarquía coherente, dos superficies responsivas, paleta esmeralda/gris y un componente de selección consistente. Para elevarla a estética empresarial **moderna, elegante y sobria**, conviene reducir el exceso de fondos esmeralda repetidos, reservar el color acento para control principal/confirmación, alinear título/ayuda con la acción principal, dar al preview una representación compacta y funcional de paginación, y evaluar si la mascota decorativa añade valor en una vista operativa. **No** rediseñar por cambiar; comparar capturas antes/después y verificar el sistema de diseño. **Prueba:** review visual 320/390/768/1440, zoom 200 %, locales y accesibilidad.
+
+### 7.3 Prioridades, límites y salida de aceptación
+
+- **P0 confirmados:** 0. **P1 confirmado:** 0. **P2 abiertos o parciales:** 005, 010, 011, 012 (4); **P3:** 013 y recomendación visual 014 (2). El caso de permisos 008 queda como decisión de política y la cobertura 009 como puerta de verificación, no bug probado.
+- **Secuencia:** solucionar 005 y 011; endurecer y probar 010; resolver 012; realizar el pulido 013/014 sin sacrificar accesibilidad; ejecutar pruebas de regresión y reevaluar **estos mismos IDs**.
+- **Puertas:** RSpec focalizado, navegador con teclado y zoom, RuboCop, Brakeman, I18n, migración y schema-load desde cero, **CI global verde sobre SHA final**, revisión independiente y evidencia visual antes/después.
+- **Estado:** REAUDITADO, NO CERRADO. No se realizaron adecuaciones funcionales en esta reauditoría, solo el seguimiento documental y el estándar de diseño.
