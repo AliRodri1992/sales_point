@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_09_111000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_010100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -2177,6 +2177,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_111000) do
     t.check_constraint "status::text = ANY (ARRAY['active'::character varying::text, 'inactive'::character varying::text])", name: "chk_suppliers_status"
   end
 
+  create_table "system_role_permission_audit_events", force: :cascade do |t|
+    t.bigint "system_role_id", null: false
+    t.bigint "actor_id", null: false
+    t.jsonb "added_permission_codes", default: [], null: false
+    t.jsonb "removed_permission_codes", default: [], null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.index ["actor_id"], name: "index_system_role_permission_audit_events_on_actor_id"
+    t.index ["system_role_id", "created_at"], name: "idx_role_permission_audits_role_history"
+    t.index ["system_role_id"], name: "index_system_role_permission_audit_events_on_system_role_id"
+  end
+
   create_table "system_role_permissions", force: :cascade do |t|
     t.bigint "system_role_id", null: false
     t.bigint "permission_id", null: false
@@ -2216,6 +2228,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_111000) do
     t.index ["created_at"], name: "index_system_roles_on_created_at"
     t.index ["deleted_at"], name: "index_system_roles_on_deleted_at"
     t.index ["name", "role_type"], name: "index_system_roles_on_name_and_role_type", unique: true
+    t.index "lower(btrim((name)::text)), role_type", name: "idx_system_roles_normalized_name_type", unique: true
     t.index ["role_type", "status"], name: "index_system_roles_on_role_type_and_status"
     t.check_constraint "deleted_at IS NULL AND status::text <> 'deprecated'::text OR deleted_at IS NOT NULL", name: "check_system_roles_deleted_status"
     t.check_constraint "role_type::text = ANY (ARRAY['system'::character varying::text, 'branch'::character varying::text])", name: "check_system_roles_role_type"
@@ -2638,6 +2651,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_111000) do
   add_foreign_key "suppliers", "users", column: "responsible_user_id"
   add_foreign_key "system_role_permissions", "permissions"
   add_foreign_key "system_role_permissions", "system_roles"
+  add_foreign_key "system_role_permission_audit_events", "system_roles"
+  add_foreign_key "system_role_permission_audit_events", "users", column: "actor_id"
   add_foreign_key "system_role_status_events", "system_roles"
   add_foreign_key "system_role_status_events", "users", column: "actor_id"
   add_foreign_key "table_page_preferences", "organizations"
