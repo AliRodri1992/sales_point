@@ -81,3 +81,19 @@
 Mantener **NO CERRADO** hasta que todas las comprobaciones del estándar estén verdes, los hallazgos tengan regresiones y se haya realizado la auditoría visual real. Ninguna modificación implica aceptación automática ni fusión a `development`.
 
 [Estándar modular](../module-quality-standard.md) · [Índice](README.md).
+
+## Reauditoría focalizada — 2026-11-09 (estado de filtros y teclado)
+
+**Base auditada:** `b4bebde435ff54a27abb9c4ef9799f4ef1bb7d9b` en `feature/fixes`. **Método:** AI Dev Suite (`impeccable-audit`, `ui-ux-pro-max`, `ponytail-engineering`), lectura estática del código y comprobación de GitHub Actions. Alcance limitado a `/admin/units_of_measure` y contratos de UI compartidos usados por sus pantallas; **no se relaciona con Productos**. Se conservaron los IDs UOM-001 a UOM-016 y su historial.
+
+| ID | Gravedad | Propiedad | Evidencia y reproducción razonada | Adecuación y regresión requerida | Estado |
+|---|---|---|---|---|---|
+| **UOM-017** | **P2** | Propio (Turbo, controlador y vistas) | En `index.html.erb` los filtros están fuera de `turbo-frame#units_of_measure_list`. Los enlaces de edición y los formularios no incluyen los parámetros actuales del listado; `saved_unit` vuelve a ejecutar `load_units` con los parámetros de la operación y `create/update/destroy.turbo_stream.erb` sustituyen únicamente estadísticas y tabla. Tras guardar desde un listado filtrado o paginado pueden permanecer controles y URL antiguos mientras la tabla vuelve a condiciones predeterminadas. **Confirmado por trazado de código; no reproducido aún en navegador.** | Preservar o restablecer coherentemente `search`, `status`, `sat_unit_key_id`, `fractional`, `sat_health`, `sort`, `direction` y `page` tras el CRUD; cubrir alta, edición y baja desde página filtrada/ordenada con Capybara Chrome, incluyendo resultados vacíos. | **ABIERTO — sin corrección ni regresión ejecutada** |
+| **UOM-018** | **P2** | Integración UI compartida (`delta_select_controller.js` ↔ modal de Unidades) | `delta_select_controller.js` maneja `Escape` cerrando el dropdown pero no detiene su propagación. En `admin_dashboard.html.erb`, el modal de Unidades escucha `keydown.esc@window->modal#close`. La misma pulsación puede cerrar también el modal, perdiendo la edición no guardada. **Flujo confirmado por código; falta reproducción independiente Chrome.** | Al tener un dropdown abierto, primer Escape debe cerrar solo el dropdown y conservar el modal; segundo Escape debe cerrar el modal. Ajuste del contrato compartido con tests del módulo y regresiones en consumidores del dropdown. No modificar otros módulos salvo la corrección mínima del componente común. | **ABIERTO — sin corrección ni regresión ejecutada** |
+
+### Estado de verificación de esta pasada
+
+- **Focalizada en SHA base:** [Units of measure CI #42642541300](https://github.com/AliRodri1992/sales_point/actions/runs/42642541300) **PASÓ**: jobs `Units of measure RuboCop` y `Units of measure model and request regressions` (incluida preparación `db:drop db:create db:migrate` y navegador Chrome). Estas pruebas **no cubren UOM-017 ni UOM-018**.
+- **Global en SHA base:** [CI #42642541385](https://github.com/AliRodri1992/sales_point/actions/runs/42642541385) **EN EJECUCIÓN al momento de la consulta**; volver a comprobar resultado final. Un CI posterior a este registro documental debe validarse con su propio SHA.
+- **Pendiente:** reproducción en navegador de UOM-017 y UOM-018, corrección y pruebas; revisión visual independiente con 320/390/768/1440, zoom 200 %, recorrido completo con teclado, lector de pantalla y contraste. Base legada con migración de reparación sin validación independiente.
+- **Dictamen:** sin P0/P1 nuevos identificados en la lectura estática; **2 P2 nuevos abiertos**, sin aceptación formal. **MÓDULO NO CERRADO** según el estándar de calidad modular. Esta auditoría no modifica código de producto.
