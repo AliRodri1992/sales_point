@@ -92,14 +92,19 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
     visit admin_units_of_measure_path
     expect(page).to have_css('#units_of_measure_list', text: 'SAT not current', wait: 10)
     click_link 'Units with SAT issues'
+    # The row existed before clicking the summary card. Wait for the actual
+    # Turbo navigation to complete rather than matching stale list content.
+    expect(page).to have_css('#units-sat-health option[value="invalid"]:checked',
+                             visible: :all, wait: 10)
     expect(page).to have_css('#units_of_measure_list', text: 'HIST', wait: 10)
+    expect(page).to have_css('turbo-frame#unit_of_measure_modal', visible: :all, wait: 10)
 
     within('turbo-frame#units_of_measure_list tr', text: 'HIST') do
       find('a[aria-label="Edit"]').click
     end
     unless page.has_css?('turbo-frame#unit_of_measure_modal [role="dialog"]', wait: 5)
       frame = page.evaluate_script("document.querySelector('#unit_of_measure_modal')?.outerHTML")
-      Rails.logger.error("UOM edit modal did not open; browser_url=#{current_url} frame=#{frame.to_s[0, 1200]}")
+      warn("UOM EDIT MODAL TRACE: url=#{current_url} frame=#{frame.to_s[0, 1200]}")
     end
     expect(page).to have_css('turbo-frame#unit_of_measure_modal [role="dialog"]', wait: 10)
     expect(page).to have_text('reactivation requires a current SAT code')

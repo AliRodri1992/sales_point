@@ -12,6 +12,7 @@
     <p class="mt-2 font-jakarta text-2xl font-bold tabular-nums text-slate-900"><%= @fractional_count %></p>
   </div>
   <%= link_to admin_units_of_measure_path(sat_health: 'invalid'),
+              data: { turbo_frame: '_top' },
               class: 'group rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-4 shadow-sm transition hover:border-amber-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500' do %>
     <p class="text-xs font-semibold uppercase tracking-wider text-amber-800"><%= t('admin.units_of_measure.index.invalid_sat') %></p>
     <div class="mt-2 flex items-center justify-between gap-2">
