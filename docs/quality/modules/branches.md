@@ -110,3 +110,52 @@ Ver las [reglas de cierre](../module-quality-standard.md) y la [plantilla](../mo
 - **BR-003 (ampliación, mismo ID):** confirmado por inspección estática que la tarjeta de estado operativo estaba inmediatamente debajo del encabezado y carecía de reglas propias de separación/ritmo interior. Se introducen clases `branch-lifecycle-body`, `branch-lifecycle-heading`, `branch-lifecycle-description` y estilos acotados responsive en `branch_workspace.css`; no se modifican transiciones, permisos ni módulos vecinos.
 - **Regresión añadida:** `spec/requests/admin/branches_spec.rb` valida estructura de encabezado, descripción y panel operativo; **NO EJECUTADA** desde este entorno. Requiere prueba visual de escritorio/móvil, foco, zoom y ejecución de CI del SHA final antes de marcar BR-003 verificado.
 - **Estado:** CAMBIO IMPLEMENTADO, PENDIENTE DE VERIFICACIÓN; las demás comprobaciones BR-001 a BR-005 continúan vigentes.
+
+
+## Auditoría transversal AI Dev Suite — 2026-11-08 (segunda ronda)
+
+- **Rama y SHA inspeccionados:** `feature/fixes`, `3c31725cdf41ef0c2b45caa33df6e0b3735a931d`. **SHA de aceptación:** PENDIENTE.
+- **Método:** lectura de código y documentación vía GitHub + inspección de logs reales de GitHub Actions. Procedimientos de AI Dev Suite: Impeccable (UI/estados/accesibilidad), UI UX Pro Max (consistencia y responsive), Ponytail (simplicidad, lógica, consultas y regresiones). **No se ejecutaron sus CLIs originales ni navegador local**.
+- **Propiedad:** exclusivamente rutas `/admin/branches` (index/new/create/show/edit/update/destroy/select/transition_status/postal_suggestions y acciones de terminal en la pantalla de detalle); servicios de estado y componentes directamente consumidos. Inventario, Compras, Onboarding, Usuarios y Terminales autónomas quedan fuera salvo contrato observable.
+
+### Resultado del inventario estático
+
+| Superficie propia | Revisión realizada | Resultado / límite |
+|---|---|---|
+| Directorio, filtros, búsqueda y paginación | `BranchesController`, `BranchFilters`, `BranchesListing`, `index`, `_filters`, `_list`, `branch_directory_controller.js` | Filtros normalizados en servidor; orden limitado a columnas predefinidas; abort de solicitudes obsoletas, skeleton y reintento presentes. Falta navegación real y medir consultas |
+| Alta/edición | `BranchForm`, `Branch`, `BranchLifecycle`, `_form`, `_phone_fields` | Parámetros permitidos explícitos, `novalidate` y validaciones principales de modelo; error 422 representado en vista. Falta recorrer errores por cada país/teléfono y comprobar persistencia por navegador |
+| Ver sucursal/Estado operativo | `show`, `BranchesHelper`, `branch_workspace.css`, `branch_transition_controller.js` | Espaciado focalizado BR-003 ya implementado; hay resumen de requisitos, estados/bloqueos y confirmación dinámica. Sin validación visual, teclado ni zoom 200 % |
+| Ciclo de vida, eliminación y auditoría | `TransitionStatus`, `LifecycleRequirements`, `BranchLifecycle`, `BranchAudits`, `BranchPolicy` | Transiciones con bloqueo, actor, motivo y registros; eliminación lógica restringida; permisos y scopes presentes. Faltan pruebas end-to-end y aceptación de concurrencia en SHA final |
+| Terminales incrustadas | `BranchTerminals`, `_terminal_management` | Restringe alta/activación según estado y utiliza validaciones del modelo. Solo verificar contrato desde la pantalla de sucursal |
+
+### Hallazgos y seguimientos (IDs persistentes)
+
+**BR-001 · P2 · UI del directorio — PENDIENTE DE REPRODUCCIÓN.** Hay implementación de carga, error, reintento, filtros y controles móviles, pero faltan evidencias de teclado, atrás/adelante, rapidez, composición IME, errores y actualización correcta de controles tras las respuestas Turbo. No registrar un fallo funcional antes de reproducirlo.
+
+**BR-002 · P2 · Alta/edición — PENDIENTE DE REPRODUCCIÓN.** Las validaciones de modelo, etiquetas y mensajes por campo están presentes en el código revisado; ejecutar matriz por país (MX/otros), dirección, celular, email, nombre duplicado, 422, actualización y preservación de datos. No se ha demostrado que falle cada caso.
+
+**BR-003 · P2 · Estado operativo — CAMBIO IMPLEMENTADO / NO VERIFICADO.** Mantener la corrección anterior de espaciado. La vista recalcula `branch_transition_blockers` al renderizar avisos, elegir estado y generar opciones. Ver BR-007 por coste de consultas. Validar confirmación dinámica, motivos, anuncio de bloqueos, foco, responsive y estados vacíos.
+
+**BR-004 · P2 · Historial/soft delete/terminales — PENDIENTE DE REPRODUCCIÓN.** Existen protecciones y request specs, pero faltan pruebas UI integrales de 403/404/422, registros, confirmación y operaciones bloqueadas. Mantener dueño separado para lógica interna de los otros módulos.
+
+**BR-005 · P1 de proceso · ACEPTACIÓN CI — BLOQUEADO.** En el SHA inspeccionado, job global RuboCop **FALLÓ** (55 ofensas en 1123 archivos). Job RSpec estaba **EN EJECUCIÓN** al consultar; I18n/YAML, seguridad y migraciones limpias/semillas **PASARON**. Evidencia: https://github.com/AliRodri1992/sales_point/actions/runs/42556277587 . Hay errores de sintaxis RuboCop en `spec/services/inventories/fefo_allocator_spec.rb` y `spec/services/purchases/receive_spec.rb`: **EXTERNOS**; bloquean CI pero no se atribuyen a Sucursales. No certificar cierre con ese SHA.
+
+**BR-006 · P1 de calidad · RuboCop propio — CONFIRMADO POR CI, ABIERTO.** El log de RuboCop reporta ofensas directamente en `app/controllers/admin/branches_controller.rb` (filtro de acciones definido en concerns), `app/controllers/concerns/admin/branch_audits.rb` (Performance/ReverseFirst), `app/helpers/branches_helper.rb` (complejidad y uso de variable de instancia), `app/models/branch.rb` (formato/WhereExists), `app/models/concerns/branch_lifecycle.rb` (asociación sin política `dependent`), `app/services/branches/lifecycle_requirements.rb` (complejidad y consultas), así como specs de modelo y concurrencia (espacios). Corregir sin cambiar las reglas de estado ni borrar historial; comprobar con RuboCop focalizado, RSpec y CI. **Evidencia:** https://github.com/AliRodri1992/sales_point/actions/runs/42556277587/job/128962631510 .
+
+**BR-007 · P2 de rendimiento · Cálculo reiterado de bloqueos — RIESGO CONFIRMADO POR CÓDIGO, IMPACTO NO MEDIDO.** `show.html.erb` invoca varias veces `branch_transition_blockers` por estado, que a su vez construye `LifecycleRequirements` y consulta membresías, terminales, inventarios, órdenes y roles. Consolidar los resultados una sola vez por estado en la solicitud, reutilizarlos en advertencias/selector/botón, y medir consultas con specs para estados `preparing`, `active`, `suspended` y `closed`. No atribuir un tiempo de respuesta sin medición.
+
+**BR-008 · P3 de navegación · Estado operativo no incluido en enlaces de sección — CONFIRMADO POR CÓDIGO.** `show.html.erb` crea navegación anclada solamente a `identity/contact/location/notes/operations`, aunque la sección operativa tiene título e ID. Revisar si conviene incluir ancla al panel, especialmente para móvil y teclado, y mantener nombres i18n. Requiere revisión visual antes de cambio final.
+
+### Verificación y dictamen
+
+| Fuente | Resultado real al consultar | Alcance |
+|---|---|---|
+| Revisión estática de rutas, controlador, helpers, modelo, servicio, vistas, JS y CSS | REALIZADA | Evidencia de código; no ejecución |
+| GitHub Actions `RuboCop` del SHA base | **FALLÓ** · 55 ofensas | Incluye propios y externos |
+| GitHub Actions `Security scans` | **PASÓ** | General, no sustituye prueba de seguridad focalizada |
+| GitHub Actions `Rails I18n and YAML audit` | **PASÓ** | General, no sustituye comprobación visual de traducciones |
+| GitHub Actions `Fresh migrations and seed data` | **PASÓ** | General |
+| GitHub Actions `RSpec` | **EN EJECUCIÓN** al momento de consulta | No inferir aprobación |
+| Pruebas focalizadas de Sucursales y navegador real | **NO EJECUTADAS en esta ronda** | Pendientes |
+
+**Dictamen de esta ronda: AUDITADO ESTÁTICAMENTE; NO VERIFICADO; NO CERRADO.** No se cambió la funcionalidad; este registro es diagnóstico. No hay evidencia suficiente para afirmar ausencia de defectos P0/P1. Retomar los mismos IDs en la corrección y reauditoría, sin duplicarlos.
