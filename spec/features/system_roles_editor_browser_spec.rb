@@ -24,14 +24,14 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
 
   scenario 'selects a module, retains hidden selections and persists them together' do
     visit system_role_path(role)
-    check 'Select all: Suppliers'
+    check 'Select visible: Suppliers'
     expect(page).to have_checked_field("permission_#{view_permission.id}")
     expect(page).to have_checked_field("permission_#{create_permission.id}")
     expect(page).to have_unchecked_field("permission_#{other_permission.id}")
     expect(page).to have_css('[data-role-permissions-target="total"]', text: '2')
 
     uncheck "permission_#{create_permission.id}"
-    group_selector = '[data-select-group][aria-label="Select all: Suppliers"]'
+    group_selector = '[data-select-group][aria-label="Select visible: Suppliers"]'
     expect(find(group_selector).evaluate_script('this.indeterminate')).to be(true)
     fill_in 'Search modules or actions', with: 'Sales'
     expect(page).to have_no_css("#permission_#{view_permission.id}")
