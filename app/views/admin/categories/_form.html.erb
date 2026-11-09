@@ -1,59 +1,69 @@
-<%= form_with model: [:admin, category],
-              class: 'space-y-5',
-              data: {
-                controller: 'swal-confirm',
-                turbo_frame: 'category_modal',
-                swal_cancel_text: t('admin.categories.confirm.cancel')
-              } do |form| %>
-  <div class="mx-auto max-w-sm space-y-5">
-    <div class="grid gap-5 sm:grid-cols-1">
+<%= form_with model: [:admin, category], html: { novalidate: true },
+              class: 'space-y-6',
+              data: { turbo_frame: (local_assigns[:standalone] ? '_top' : 'category_modal') } do |form| %>
+  <div class="space-y-5">
+    <div>
+      <%= form.label :code, required_field_label(t('admin.categories.form.code')),
+                     class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :code, maxlength: 20, autocomplete: 'off',
+                          data: { autofocus: true },
+                          aria: { invalid: category.errors[:code].any?,
+                                  describedby: validation_describedby(category, :code, 'category_code_hint') },
+                          class: "input-field w-full rounded-xl #{form_state_classes(category, :code)} px-4 py-3 text-sm font-medium text-slate-800 transition placeholder:text-slate-400",
+                          placeholder: t('admin.categories.form.code_placeholder') %>
+      <p id="category_code_hint" class="mt-1 text-xs text-slate-500"><%= t('admin.categories.form.code_hint') %></p>
+      <%= error_message_for(category, :code) %>
+    </div>
+    <div>
+      <%= form.label :name, required_field_label(t('admin.categories.form.name')),
+                     class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :name, maxlength: 50,
+                          aria: { invalid: category.errors[:name].any?,
+                                  describedby: validation_describedby(category, :name) },
+                          class: "input-field w-full rounded-xl #{form_state_classes(category, :name)} px-4 py-3 text-sm font-medium text-slate-800 transition placeholder:text-slate-400",
+                          placeholder: t('admin.categories.form.name_placeholder') %>
+      <%= error_message_for(category, :name) %>
+    </div>
+    <div>
+      <%= form.label :description, t('admin.categories.form.description'),
+                     class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_area :description, rows: 3, maxlength: 500,
+                         aria: { invalid: category.errors[:description].any?,
+                                 describedby: validation_describedby(category, :description) },
+                         class: "input-field w-full resize-y rounded-xl #{form_state_classes(category, :description)} px-4 py-3 text-sm text-slate-800 transition placeholder:text-slate-400",
+                         placeholder: t('admin.categories.form.description_placeholder') %>
+      <%= error_message_for(category, :description) %>
+    </div>
+    <% if category.persisted? %>
       <div>
-        <%= form.label :code, t('admin.categories.form.code'),
+        <%= form.label :status, t('admin.categories.form.status'),
                        class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.text_field :code,
-                            data: { autofocus: true },
-                            class: "input-field w-full rounded-xl #{form_state_classes(category, :code)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                            placeholder: t('admin.categories.form.code_placeholder') %>
-        <%= error_message_for(category, :code) %>
-        <p class="mt-1 text-xs text-slate-400"><%= t('admin.categories.form.code_hint') %></p>
-      </div>
-
-      <div>
-        <%= form.label :name, t('admin.categories.form.name'),
-                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.text_field :name,
-                            class: "input-field w-full rounded-xl #{form_state_classes(category, :name)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200 placeholder:text-slate-400",
-                            placeholder: t('admin.categories.form.name_placeholder') %>
-        <%= error_message_for(category, :name) %>
-      </div>
-
-      <% if category.persisted? %>
-        <div>
-          <%= form.label :status, t('admin.categories.form.status'),
-                         class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <div class="relative" data-controller="delta-select">
           <%= form.select :status,
                           options_for_select(
                             Category.statuses.keys.map { |status| [t("admin.categories.statuses.#{status}"), status] },
                             category.status || 'active'
                           ),
                           {},
-                          class: "input-field w-full rounded-xl #{form_state_classes(category, :status)} px-4 py-3 text-sm font-medium text-slate-800 transition-all duration-200" %>
-          <%= error_message_for(category, :status) %>
+                          aria: { invalid: category.errors[:status].any?,
+                                  describedby: validation_describedby(category, :status) },
+                          class: "input-field w-full rounded-xl #{form_state_classes(category, :status)} px-4 py-3 text-sm text-slate-800" %>
         </div>
-      <% end %>
-    </div>
+        <%= error_message_for(category, :status) %>
+      </div>
+    <% end %>
   </div>
-
-  <div class="flex items-center justify-center gap-2 border-t border-slate-100 pt-5">
-    <button
-      type="button"
-      data-modal-dismiss
-      data-action="modal#close"
-      class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
-    >
-      <%= t('admin.categories.form.cancel') %>
-    </button>
+  <div class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-5">
+    <% if local_assigns[:standalone] %>
+      <%= link_to t('admin.categories.form.cancel'), catalog_back_path(Category),
+                  class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50' %>
+    <% else %>
+      <button type="button" data-modal-dismiss data-action="modal#close"
+              class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+        <%= t('admin.categories.form.cancel') %>
+      </button>
+    <% end %>
     <%= form.submit category.persisted? ? t('admin.categories.form.update') : t('admin.categories.form.create'),
-                    class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' %>
+                    class: 'inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' %>
   </div>
 <% end %>

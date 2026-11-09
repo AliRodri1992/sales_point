@@ -1,8 +1,10 @@
 <% category = @category %>
 <div
-  data-modal-target="panel"
-  role="dialog"
-  aria-modal="true"
+  <% unless local_assigns[:standalone] %>
+    data-modal-target="panel"
+    role="dialog"
+    aria-modal="true"
+  <% end %>
   aria-labelledby="category-show-title"
   class="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-xl"
 >
@@ -15,6 +17,7 @@
         <%= t('admin.categories.show.subtitle') %>
       </p>
     </div>
+    <% unless local_assigns[:standalone] %>
     <button
       type="button"
       data-modal-dismiss
@@ -24,6 +27,7 @@
     >
       <%= delta_icon('x-mark', class: 'size-5') %>
     </button>
+    <% end %>
   </div>
 
   <dl class="divide-y divide-slate-100 px-6">
@@ -46,9 +50,17 @@
         </span>
       </dd>
     </div>
+    <div class="flex flex-col gap-2 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <dt class="text-sm font-semibold text-slate-500"><%= t('admin.categories.form.description') %></dt>
+      <dd class="max-w-sm whitespace-pre-wrap break-words text-sm text-slate-800"><%= category.description.presence || '—' %></dd>
+    </div>
   </dl>
 
   <div class="flex items-center justify-end gap-2 border-t border-slate-100 px-6 py-4">
+    <% if local_assigns[:standalone] %>
+      <%= link_to t('admin.catalog_design.back'), catalog_back_path(Category),
+                  class: 'inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50' %>
+    <% else %>
     <button
       type="button"
       data-modal-dismiss
@@ -57,6 +69,7 @@
     >
       <%= t('admin.categories.show.close') %>
     </button>
+    <% end %>
     <% if policy(Category).update? %>
 <%= link_to edit_admin_category_path(category),
                 data: { turbo_frame: 'category_modal' },

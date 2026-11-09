@@ -1,3 +1,9 @@
-<%= turbo_frame_tag "category_modal" do %>
-  <%= render "show" %>
+<% if turbo_frame_request? %>
+  <%= turbo_frame_tag "category_modal" do %>
+    <%= render "show" %>
+  <% end %>
+<% else %>
+  <div class="mx-auto max-w-2xl">
+    <%= render "show", standalone: true %>
+  </div>
 <% end %>
