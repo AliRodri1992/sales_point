@@ -91,6 +91,16 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - name: Install JavaScript dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build application assets
+        run: |
+          yarn build:js
+          yarn build:css
       - name: Prepare fresh database
         run: bin/rails db:drop db:create db:migrate
       - name: Run model, tenant and HTTP request regressions
