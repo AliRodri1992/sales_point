@@ -1,0 +1,94 @@
+name: Units of measure CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/fixes
+    paths:
+      - '.github/workflows/units-of-measure-ci.yml'
+      - 'app/controllers/admin/units_of_measure_controller.rb'
+      - 'app/controllers/concerns/admin/units_of_measure_listing.rb'
+      - 'app/models/unit_of_measure.rb'
+      - 'app/policies/unit_of_measure_policy.rb'
+      - 'app/views/admin/units_of_measure/**'
+      - 'config/initializers/inflections.rb'
+      - 'db/migrate/*units_of_measure*'
+      - 'db/migrate/*unit_of_measure*'
+      - 'config/locales/units_of_measure.*.yml'
+      - 'spec/models/unit_of_measure_spec.rb'
+      - 'spec/requests/admin/units_of_measure_spec.rb'
+      - 'docs/quality/modules/units-of-measure.md'
+
+permissions:
+  contents: read
+
+env:
+  RAILS_ENV: test
+  POSTGRES_DB_TEST: sale_point_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
+  REDIS_URL: redis://localhost:6379/0
+
+jobs:
+  units_lint:
+    name: Units of measure RuboCop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - name: Lint catalog-owned Ruby and specs
+        run: |
+          bin/rubocop -f simple \
+            app/controllers/admin/units_of_measure_controller.rb \
+            app/controllers/concerns/admin/units_of_measure_listing.rb \
+            app/models/unit_of_measure.rb \
+            app/policies/unit_of_measure_policy.rb \
+            spec/models/unit_of_measure_spec.rb \
+            spec/requests/admin/units_of_measure_spec.rb
+
+  units_specs:
+    name: Units of measure model and request regressions
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sale_point_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d sale_point_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - name: Prepare fresh database
+        run: bin/rails db:drop db:create db:migrate
+      - name: Run model, tenant and HTTP request regressions
+        run: bundle exec rspec spec/models/unit_of_measure_spec.rb spec/requests/admin/units_of_measure_spec.rb

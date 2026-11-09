@@ -21,6 +21,12 @@ RSpec.describe 'Admin::UnitsOfMeasure', type: :request do
 
   after { sign_out user }
 
+  it 'keeps collection and member routes distinct' do
+    expect(admin_units_of_measure_path).to eq('/admin/units_of_measure')
+    unit = create(:unit_of_measure, organization:, sat_unit_key: sat)
+    expect(admin_unit_of_measure_path(unit)).to eq("/admin/units_of_measure/#{unit.id}")
+  end
+
   it 'shows the list, modal trigger and translated labels' do
     get admin_units_of_measure_path
     expect(response).to have_http_status(:ok)
