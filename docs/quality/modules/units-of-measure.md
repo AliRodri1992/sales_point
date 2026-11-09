@@ -30,7 +30,7 @@
 
 ### UOM-009 · P1 · Compatibilidad de esquema histórico
 - **Hallazgo confirmado por RSpec focalizado:** `db:drop db:create db:migrate` cargó el esquema previo y marcó como aplicada la versión antigua de creación de `units_of_measure` sin crear la tabla, provocando `PG::UndefinedTable`.
-- **Adecuación:** incluir el nuevo catálogo en `db/schema.rb`, conservar la migración junto a Productos y añadir migración defensiva `20261110140000` para bases ya migradas sin tabla.
+- **Adecuación:** incluir el nuevo catálogo en `db/schema.rb`, conservar la migración junto a Productos y añadir migración defensiva `20261110130100` para bases ya migradas sin tabla.
 - **Verificación:** PENDIENTE de repetir `db:drop db:create db:migrate` y RSpec en CI del nuevo SHA.
 
 ## Evidencias y límites
