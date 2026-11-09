@@ -60,3 +60,31 @@
 
 
 <!-- Canonical record consolidated from legacy `email_templates.md` on 2026-11-08. Historical IDs EM-001..EM-010 preserved. -->
+
+## Reauditoría 2026-11-08 — AI Dev Suite y estándar modular
+
+**Método:** aplicación guiada de Impeccable Audit (estados, foco y errores), UI UX Pro Max (formularios, accesibilidad y consistencia) y Ponytail Engineering (contratos, integridad y regresiones). Se revisó el código disponible en GitHub; no se ejecutaron las CLI externas de estos proyectos.  
+**Rama:** `feature/fixes`. **SHA de código inspeccionado:** `0b7491bbbbaf0a625fb75738a17695ed05284200` (los archivos funcionales del módulo no cambiaron en la comparación desde `9c214de97e7ef2a8481810a8c3e4787c083bf90d`). **SHA de aceptación:** PENDIENTE.  
+**Alcance:** rutas propias de plantillas, versiones, previsualización, comparación, borrador/publicación, catálogo, remitentes y branding; modelos, autorización, servicios de entrega, renderización, vistas, Stimulus, specs, migraciones y locales. Las entregas reales, SPF/DKIM/DMARC y Gmail/Outlook son contratos externos, no auditoría interna de otros módulos.
+
+### Hallazgos nuevos, no equivalentes a los históricos
+
+| ID | Prioridad / clase | Hallazgo y evidencia concreta | Causa raíz y prueba exigida | Estado |
+|---|---|---|---|---|
+| EM-011 | P2 / PROPIO | En el editor, al recibir 422, los errores renderizados por servidor pueden permanecer visibles aunque el usuario corrija el campo y la siguiente vista previa responda 200. `app/javascript/controllers/email_template_preview_controller.js` elimina solo `[data-email-preview-field-error]` y no invalida mensajes `[data-server-field-error]`; la spec existente `spec/features/email_template_creation_workflow_spec.rb` comprueba que no se dupliquen, pero no que desaparezcan cuando dejan de aplicar. | Separar mensajes persistentes del último guardado y resultado vigente de la validación por vista previa; borrar/reemplazar errores obsoletos sin duplicación ni engañar al usuario. Añadir escenario 422 → corregir → 200, comprobando texto, `aria-invalid`, `aria-describedby` y no persistencia hasta guardar. | **CONFIRMADO POR CÓDIGO; reproducción navegador pendiente** |
+| EM-012 | P2 / PROPIO | La función compartida `error_message_for` genera elementos `*_error` (`app/helpers/application_helper.rb`), pero campos de `app/views/admin/email_templates/edit.html.erb`, `new.html.erb`, `app/views/admin/email_sender_settings/edit.html.erb` y `app/views/admin/email_branding_settings/edit.html.erb` asignan `aria-invalid` sin referenciar sistemáticamente el mensaje de error mediante `aria-describedby` ni anunciarlo. En Nuevo, algunos `aria-describedby` solo apuntan al texto de ayuda. | Asociar los IDs reales de ayuda y error al campo en 422, sin duplicar mensajes, y validar navegación con teclado/lector de pantalla. Añadir specs para todos los formularios con errores del modelo y regresión para múltiples errores por campo. | **CONFIRMADO POR CÓDIGO; lector de pantalla pendiente** |
+
+### Evidencia de verificación y bloqueos
+
+| Control | Resultado para esta reauditoría |
+|---|---|
+| Código y permisos | Inspección estática de políticas Pundit, scopes de organización, modelos, transiciones, índices, servicios de envío y previsualizaciones con iframe sandbox. **No equivalen a pruebas ejecutadas.** |
+| CI especializado previo | [Email Templates CI #42551159288](https://github.com/AliRodri1992/sales_point/actions/runs/42551159288) **PASÓ** en `9c214de97e7ef2a8481810a8c3e4787c083bf90d`: RSpec/navegador, RuboCop especializado y paridad YAML. El expediente histórico registra **262 ejemplos, 0 fallos**. |
+| Comparación entre SHAs | Desde `9c214de` hasta `0b7491b` no se modificaron archivos funcionales del módulo; hubo cambios documentales y de workflow. Esto no certifica el SHA de aceptación posterior. |
+| CI global del SHA inspeccionado | [CI #42552457726](https://github.com/AliRodri1992/sales_point/actions/runs/42552457726) **CANCELADO** para `0b7491b`; no puede usarse como evidencia de éxito. |
+| RSpec / RuboCop / Brakeman / YAML ejecutados en esta reauditoría | **NO EJECUTADOS** en entorno Rails local. No se atribuyen aprobaciones al presente análisis. |
+| Vista real, responsive exhaustivo, 200 % de zoom, lector de pantalla | **NO EJECUTADOS** en navegador de una instancia viva. |
+| SMTP real, SPF/DKIM/DMARC, Gmail/Outlook e idempotencia de proveedor | **NO VERIFICADOS**; conservar EM-003, EM-004, EM-008 y EM-009 abiertos o mitigados según su historial. |
+
+**Dictamen:** AUDITADO POR CÓDIGO CON HALLAZGOS, **NO CERRADO**. Los hallazgos EM-011 y EM-012 requieren corrección, pruebas específicas y reevaluación; no se reabren EM-001, EM-002, EM-006 o EM-007 sin evidencia contraria. El registro se mantiene único en este documento; el anterior `email_templates.md` ya fue consolidado previamente y no se crea expediente paralelo. Las integraciones externas y CI global continúan bloqueando el cierre.
+
