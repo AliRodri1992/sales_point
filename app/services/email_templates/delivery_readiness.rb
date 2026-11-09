@@ -10,8 +10,8 @@ module EmailTemplates
       missing = self.class.missing_contacts(source: version, organization: version.email_template.organization)
       return if missing.empty?
 
-      version.errors.add(:allowed_variables, I18n.t('admin.email_templates.delivery_contacts_required',
-                                                     variables: missing.join(', ')))
+      message = I18n.t('admin.email_templates.delivery_contacts_required', variables: missing.join(', '))
+      version.errors.add(:allowed_variables, message)
     end
 
     def self.missing_contacts(source:, organization:)

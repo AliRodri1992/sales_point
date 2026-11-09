@@ -7,7 +7,7 @@ module EmailTemplates
       template = EmailTemplate.resolve(key:, locale:, organization:)
       raise ActiveRecord::RecordNotFound, 'Published template not found' unless template&.published_version
 
-      raise ArgumentError, 'Invalid recipient' unless recipient.to_s.match?(URI::MailTo::EMAIL_REGEXP)
+      validate_recipient!(recipient)
 
       delivery_organization = organization || template.organization
       ensure_delivery_ready!(template, delivery_organization)
@@ -19,6 +19,10 @@ module EmailTemplates
         sender_headers:, values: values.symbolize_keys.merge(branding)
       )
       EmailTemplates::DeliveryJob.perform_later(ciphertext)
+    end
+
+    def self.validate_recipient!(recipient)
+      raise ArgumentError, 'Invalid recipient' unless recipient.to_s.match?(URI::MailTo::EMAIL_REGEXP)
     end
 
     def self.ensure_delivery_ready!(template, organization)

@@ -100,9 +100,8 @@ module EmailTemplates
     end
 
     def validate_header_placeholders!(contents)
-      if contents.any? { |body| self.class.malformed_variables?(body) }
-        raise ArgumentError, 'Malformed email variable'
-      end
+      invalid = contents.any? { |body| self.class.malformed_variables?(body) }
+      raise ArgumentError, 'Malformed email variable' if invalid
 
       headers = [@source.subject, (@source.preheader if @source.respond_to?(:preheader))]
       return unless headers.any? { |header| self.class.sensitive_header?(header) }

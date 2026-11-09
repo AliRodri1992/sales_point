@@ -63,9 +63,7 @@ class EmailTemplateVersion < ApplicationRecord
 
   def sensitive_header_variables
     %i[subject preheader].each do |attribute|
-      next unless EmailTemplates::Renderer.sensitive_header?(public_send(attribute))
-
-      errors.add(attribute, I18n.t('admin.email_templates.sensitive_header_variable'))
+      errors.add(attribute, :invalid) if EmailTemplates::Renderer.sensitive_header?(public_send(attribute))
     end
   end
 
