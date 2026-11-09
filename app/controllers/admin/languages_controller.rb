@@ -66,6 +66,7 @@ module Admin
 
     def destroy
       return redirect_destroy_failure unless @language.update(deleted_at: Time.current)
+
       load_languages
       notify_language(current_user, @language, 'destroyed')
       return if redirect_without_catalog_listing(@language, :destroyed)
