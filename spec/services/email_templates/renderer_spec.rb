@@ -130,8 +130,9 @@ RSpec.describe EmailTemplates::Renderer do
   end
 
   it 'refuses to render sensitive links in headers from legacy published content' do
+    header_fields = %i[subject preheader]
     %w[activation_url recovery_url].each do |name|
-      %i[subject preheader].each do |field|
+      header_fields.each do |field|
         source = template('<a href="{{activation_url}}">Activate</a>')
         source.allowed_variables = %w[recipient_name activation_url recovery_url]
         source.public_send("#{field}=", "Secret {{#{name}}}")

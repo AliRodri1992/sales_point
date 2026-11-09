@@ -93,12 +93,21 @@ module EmailTemplates
     def validate_variables!(allowed)
       contents = [@source.subject, (@source.preheader if @source.respond_to?(:preheader)),
                   @source.html_body, @source.text_body]
-      raise ArgumentError, 'Malformed email variable' if contents.any? { |body| self.class.malformed_variables?(body) }
-      headers = [@source.subject, (@source.preheader if @source.respond_to?(:preheader))]
-      raise ArgumentError, 'Sensitive email URL in header' if headers.any? { |header| self.class.sensitive_header?(header) }
+      validate_header_placeholders!(contents)
 
       used = contents.flat_map { |body| body.to_s.scan(VARIABLE_PATTERN).flatten }.uniq
       raise ArgumentError, 'Unapproved email variables' unless (used - allowed).empty?
+    end
+
+    def validate_header_placeholders!(contents)
+      if contents.any? { |body| self.class.malformed_variables?(body) }
+        raise ArgumentError, 'Malformed email variable'
+      end
+
+      headers = [@source.subject, (@source.preheader if @source.respond_to?(:preheader))]
+      return unless headers.any? { |header| self.class.sensitive_header?(header) }
+
+      raise ArgumentError, 'Sensitive email URL in header'
     end
 
     def validate_url!(key, value)

@@ -207,11 +207,13 @@ RSpec.describe EmailTemplateVersion, type: :model do
   end
 
   it 'rejects security URLs in both headers before publishing in every locale' do
+    url_variables = %w[activation_url recovery_url]
+    header_fields = %i[subject preheader]
     %w[es en ko].each do |locale|
       template.update!(locale:)
       version = template.new_draft!(actor: nil)
-      %w[activation_url recovery_url].each do |url_variable|
-        %i[subject preheader].each do |header|
+      url_variables.each do |url_variable|
+        header_fields.each do |header|
           version.public_send("#{header}=", "Token {{#{url_variable}}}")
           version.allowed_variables = [url_variable]
           expect(version).not_to be_valid

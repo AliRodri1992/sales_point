@@ -26,7 +26,7 @@ class EmailTemplateVersion < ApplicationRecord
   validate :declared_variables
   validate :single_line_header_fields
   validate :sensitive_header_variables
-  validate :deliverable_branding_contacts, if: -> { status == 'published' && Rails.env.production? }
+  validates_with EmailTemplates::DeliveryReadiness, if: -> { status == 'published' && Rails.env.production? }
   validate :only_one_draft_per_template, if: -> { status == 'draft' && email_template_id.present? }
   validate :required_customization_variables, if: -> { status == 'published' }
   validate :published_version_is_immutable, on: :update
@@ -67,14 +67,6 @@ class EmailTemplateVersion < ApplicationRecord
 
       errors.add(attribute, I18n.t('admin.email_templates.sensitive_header_variable'))
     end
-  end
-
-  def deliverable_branding_contacts
-    missing = EmailTemplates::DeliveryReadiness.missing_contacts(source: self, organization: email_template.organization)
-    return if missing.empty?
-
-    errors.add(:allowed_variables, I18n.t('admin.email_templates.delivery_contacts_required',
-                                          variables: missing.join(', ')))
   end
 
   def only_one_draft_per_template
