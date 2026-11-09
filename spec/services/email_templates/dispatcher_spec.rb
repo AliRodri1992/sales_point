@@ -75,6 +75,8 @@ RSpec.describe EmailTemplates::Dispatcher do
     )
     template.update!(published_version: version)
     allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:[]).with('DELTA_POS_PUBLIC_HOST').and_return('mail.delta.test')
 
     expect(EmailTemplates::DeliveryJob).not_to receive(:perform_later)
     expect do
