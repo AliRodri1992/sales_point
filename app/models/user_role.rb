@@ -4,13 +4,17 @@ class UserRole < ApplicationRecord
   belongs_to :user
   belongs_to :system_role
   belongs_to :branch, optional: true
+  belongs_to :organization, optional: true
 
   validates :user_id,
             uniqueness: {
-              scope: %i[system_role_id branch_id],
+              scope: %i[system_role_id branch_id organization_id],
               conditions: -> { where(deleted_at: nil) }
             }
 
+  before_validation :resolve_organization
+  validate :organization_matches_branch
+  validate :organization_required_for_shared_user
   validate :branch_role_requires_branch
   validate :global_role_cannot_have_branch
   validate :assignable_role
@@ -21,6 +25,31 @@ class UserRole < ApplicationRecord
   scope :active, -> { joins(:system_role).where(deleted_at: nil, system_roles: { status: 'active', deleted_at: nil }) }
 
   private
+
+  def resolve_organization
+    return if organization_id.present?
+    if branch
+      self.organization = branch.organization
+    elsif CurrentOrganizationAccess.organization
+      self.organization = CurrentOrganizationAccess.organization
+    elsif user&.persisted?
+      memberships = user.organization_memberships.where(deleted_at: nil)
+      self.organization_id = memberships.pick(:organization_id) if memberships.limit(2).count == 1
+    end
+  end
+
+  def organization_matches_branch
+    return unless branch && organization_id != branch.organization_id
+
+    errors.add(:organization, :invalid)
+  end
+
+  def organization_required_for_shared_user
+    return if branch_id.present? || organization_id.present? || !user&.persisted?
+    return unless user.organization_memberships.where(deleted_at: nil).limit(2).count > 1
+
+    errors.add(:organization, :blank)
+  end
 
   def branch_assignment_change?
     branch_id.present? && new_assignment?
