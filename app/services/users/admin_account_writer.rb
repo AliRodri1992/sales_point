@@ -118,14 +118,14 @@ module Users
     end
 
     def active_assignment_pairs
-      @user.user_roles.active.where(organization: @organization)
-                    .pluck(:system_role_id, :branch_id).sort_by { |id, branch| [id, branch || 0] }
+      pairs = @user.user_roles.active.where(organization: @organization).pluck(:system_role_id, :branch_id)
+      pairs.sort_by { |id, branch| [id, branch || 0] }
     end
 
     def sync_system_roles!(role_ids)
       assignments = @user.user_roles.joins(:system_role)
-                                  .where(branch_id: nil, deleted_at: nil, organization: @organization)
-                         .where(system_roles: { role_type: 'system' })
+      assignments = assignments.where(branch_id: nil, deleted_at: nil, organization: @organization)
+                               .where(system_roles: { role_type: 'system' })
       current_ids = assignments.pluck(:system_role_id)
       assignments.where.not(system_role_id: role_ids).find_each do |assignment|
         assignment.update!(deleted_at: Time.current)
