@@ -23,6 +23,7 @@ on:
       - 'spec/models/organization_setting_spec.rb'
       - 'spec/models/general_setting_audit_event_spec.rb'
       - 'spec/features/general_settings_browser_spec.rb'
+      - 'db/schema.rb'
 
 permissions:
   contents: read
@@ -126,6 +127,13 @@ jobs:
           yarn build:css
       - name: Prepare test database with a fresh migration run
         run: bin/rails db:create db:migrate
+      - name: Emit generated Rails schema snapshot for review
+        run: |
+          bin/rails db:schema:dump
+          echo SCHEMA_BASE64_START
+          base64 -w0 db/schema.rb
+          echo
+          echo SCHEMA_BASE64_END
       - name: Run general settings and preference regressions
         env:
           CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}

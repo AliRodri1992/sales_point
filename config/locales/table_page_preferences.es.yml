@@ -1,6 +1,23 @@
 es:
   admin:
     general_settings:
+      pending_changes: "Cambios pendientes de guardar"
+      no_changes: "Sin cambios pendientes"
+      created: "Configuración inicial guardada correctamente."
+      recovery_title: "Completa la configuración de esta organización"
+      recovery_description: "Esta organización todavía no tiene configuración general. Selecciona los datos básicos para habilitar sus preferencias sin modificar otras organizaciones."
+      recovery_currency: "Moneda base"
+      recovery_timezone: "Zona horaria"
+      recovery_payment_method: "Método de pago"
+      recovery_select: "Selecciona una opción"
+      recovery_no_currencies: "No hay monedas activas disponibles. Habilita una moneda antes de continuar."
+      recovery_conflict: "La configuración se creó o archivó en otra sesión. Recarga la página antes de continuar."
+      recovery_save: "Guardar configuración inicial"
+      preview_hint: "Ejemplo visual. La cantidad elegida se aplica a los listados, no a estas tres filas de muestra."
+      recovery_payment_methods:
+        cash: "Efectivo"
+        card: "Tarjeta"
+        qr: "Código QR"
       page_title: "Configuración general"
       title: "Preferencias generales"
       subtitle: "Define cómo se presenta la información en las tablas de la organización."

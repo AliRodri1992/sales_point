@@ -13,6 +13,12 @@ RSpec.describe 'Admin general settings', type: :request do
     sign_in user
   end
 
+  def update_default(size, token: settings.reload.updated_at.utc.iso8601(6))
+    patch admin_general_settings_path,
+          params: { organization_setting: { default_table_page_size: size },
+                    expected_settings_updated_at: token }
+  end
+
   it 'shows the organization default page-size preference' do
     get admin_general_settings_path
 
@@ -24,7 +30,7 @@ RSpec.describe 'Admin general settings', type: :request do
 
   it 'updates the default without overwriting user-specific overrides' do
     preference = create(:table_page_preference, user:, organization:, per_page: 5)
-    patch admin_general_settings_path, params: { organization_setting: { default_table_page_size: 25 } }
+    update_default(25)
 
     expect(response).to redirect_to(admin_general_settings_path)
     expect(settings.reload.default_table_page_size).to eq(25)
@@ -32,14 +38,14 @@ RSpec.describe 'Admin general settings', type: :request do
   end
 
   it 'rejects invalid default sizes' do
-    patch admin_general_settings_path, params: { organization_setting: { default_table_page_size: 99 } }
+    update_default(99)
 
     expect(response).to have_http_status(:unprocessable_content)
     expect(settings.reload.default_table_page_size).to eq(10)
   end
 
   it 'renders individual model errors with accessible field references' do
-    patch admin_general_settings_path, params: { organization_setting: { default_table_page_size: 99 } }
+    update_default(99)
 
     expect(response).to have_http_status(:unprocessable_content)
     document = Nokogiri::HTML(response.body)
@@ -58,7 +64,7 @@ RSpec.describe 'Admin general settings', type: :request do
   it 'uses the dedicated model context without blocking on unrelated legacy settings' do
     settings.base_currency.update!(active: false)
 
-    patch admin_general_settings_path, params: { organization_setting: { default_table_page_size: 25 } }
+    update_default(25)
 
     expect(response).to redirect_to(admin_general_settings_path)
     expect(settings.reload.default_table_page_size).to eq(25)
@@ -66,23 +72,50 @@ RSpec.describe 'Admin general settings', type: :request do
 
   it 'records an immutable audit event for each changed value, never for invalid or unchanged submissions' do
     expect do
-      patch admin_general_settings_path, params: { organization_setting: { default_table_page_size: 25 } }
+      update_default(25)
     end.to change(GeneralSettingAuditEvent, :count).by(1)
 
     event = GeneralSettingAuditEvent.last
     expect(event).to have_attributes(organization:, actor: user, previous_page_size: 10, new_page_size: 25)
 
     expect do
-      patch admin_general_settings_path, params: { organization_setting: { default_table_page_size: 25 } }
-      patch admin_general_settings_path, params: { organization_setting: { default_table_page_size: 99 } }
+      update_default(25)
+      update_default(99)
     end.not_to change(GeneralSettingAuditEvent, :count)
   end
 
+  it 'rejects a PATCH without the required revision token' do
+    patch admin_general_settings_path, params: { organization_setting: { default_table_page_size: 25 } }
+
+    expect(response).to have_http_status(:conflict)
+    expect(settings.reload.default_table_page_size).to eq(10)
+  end
+
+  it 'detects concurrent A-to-B-to-A updates even when the selected size is unchanged' do
+    original_token = settings.updated_at.utc.iso8601(6)
+    settings.update_columns(default_table_page_size: 25, updated_at: 1.minute.from_now)
+    settings.update_columns(default_table_page_size: 10, updated_at: 2.minutes.from_now)
+
+    update_default(50, token: original_token)
+
+    expect(response).to have_http_status(:conflict)
+    expect(settings.reload.default_table_page_size).to eq(10)
+    expect(GeneralSettingAuditEvent.count).to eq(0)
+  end
+
+  it 'does not announce a successful change or create an audit event for a no-op' do
+    update_default(10)
+
+    expect(response).to redirect_to(admin_general_settings_path)
+    expect(flash[:swal_message]).to be_nil
+    expect(GeneralSettingAuditEvent.count).to eq(0)
+  end
+
   it 'returns a model error with conflict status instead of overwriting a newer preference' do
+    token = settings.updated_at.utc.iso8601(6)
     settings.update!(default_table_page_size: 25)
 
-    patch admin_general_settings_path,
-          params: { organization_setting: { default_table_page_size: 50 }, expected_default_table_page_size: 10 }
+    update_default(50, token:)
 
     expect(response).to have_http_status(:conflict)
     expect(response.body).to include('changed in another session')
@@ -90,14 +123,65 @@ RSpec.describe 'Admin general settings', type: :request do
     expect(GeneralSettingAuditEvent.count).to eq(0)
   end
 
-  it 'routes an organization without initial settings to setup without restoring archived records' do
+  it 'offers an explicit recovery form for an organization missing initial settings' do
+    currency = settings.base_currency
+    organization.update_columns(onboarding_status: 'completed', onboarding_completed_at: Time.current)
     settings.really_destroy!
 
     get admin_general_settings_path
-    expect(response).to redirect_to(admin_onboarding_path)
 
-    patch admin_general_settings_path, params: { organization_setting: { default_table_page_size: 25 } }
-    expect(response).to redirect_to(admin_onboarding_path)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Complete this organization')
+    expect(response.body).to include('organization_setting[base_currency_id]')
+    expect(response.body).to include('organization_setting[timezone]')
+    expect(response.body).to include('organization_setting[payment_method]')
+
+    patch admin_general_settings_path, params: {
+      organization_setting: { base_currency_id: currency.id, timezone: 'UTC',
+                              payment_method: 'cash', default_table_page_size: 25 }
+    }
+
+    expect(response).to redirect_to(admin_general_settings_path)
+    expect(organization.organization_settings.active_records.sole).to have_attributes(
+      base_currency: currency, timezone: 'UTC', payment_method: 'cash', default_table_page_size: 25
+    )
+  end
+
+  it 'validates each recovery field on the server without creating incomplete settings' do
+    settings.really_destroy!
+
+    patch admin_general_settings_path, params: {
+      organization_setting: { base_currency_id: '', timezone: '', payment_method: '',
+                              default_table_page_size: 99 }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('#organization_setting_base_currency_error')).to be_present
+    expect(document.at_css('#organization_setting_timezone_error')).to be_present
+    expect(document.at_css('#organization_setting_payment_method_error')).to be_present
+    expect(document.at_css('#organization_setting_default_table_page_size_error')).to be_present
+    expect(organization.organization_settings.active_records).to be_empty
+  end
+
+  it 'limits recovery to the selected organization when a user has two memberships' do
+    currency = settings.base_currency
+    other = create(:organization)
+    create(:organization_membership, user:, organization: other)
+    patch admin_select_organization_path(other)
+
+    get admin_general_settings_path
+    expect(response).to have_http_status(:ok)
+
+    patch admin_general_settings_path, params: {
+      organization_setting: { base_currency_id: currency.id, timezone: 'UTC',
+                              payment_method: 'cash', default_table_page_size: 15 },
+      organization_id: organization.id
+    }
+
+    expect(response).to redirect_to(admin_general_settings_path)
+    expect(other.organization_settings.active_records.sole.default_table_page_size).to eq(15)
+    expect(settings.reload.default_table_page_size).to eq(10)
   end
 
   it 'updates only the selected organization even when another id is submitted' do
@@ -107,7 +191,9 @@ RSpec.describe 'Admin general settings', type: :request do
 
     patch admin_select_organization_path(other)
     patch admin_general_settings_path,
-          params: { organization_setting: { default_table_page_size: 15 }, organization_id: organization.id }
+          params: { organization_setting: { default_table_page_size: 15 },
+                    expected_settings_updated_at: other_settings.reload.updated_at.utc.iso8601(6),
+                    organization_id: organization.id }
 
     expect(response).to redirect_to(admin_general_settings_path)
     expect(other_settings.reload.default_table_page_size).to eq(15)
@@ -122,8 +208,7 @@ RSpec.describe 'Admin general settings', type: :request do
 
     expect(response).to have_http_status(:not_found)
     sign_in user
-    patch admin_general_settings_path,
-          params: { organization_setting: { default_table_page_size: 50 }, organization_id: foreign.id }
+    update_default(50)
 
     expect(response).to redirect_to(admin_general_settings_path)
     expect(foreign_settings.reload.default_table_page_size).to eq(10)
@@ -143,7 +228,7 @@ RSpec.describe 'Admin general settings', type: :request do
     get admin_general_settings_path
     expect(response).to have_http_status(:not_found)
 
-    patch admin_general_settings_path, params: { organization_setting: { default_table_page_size: 25 } }
+    update_default(25)
     expect(response).to have_http_status(:not_found)
   end
 

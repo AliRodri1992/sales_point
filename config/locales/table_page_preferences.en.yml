@@ -1,6 +1,23 @@
 en:
   admin:
     general_settings:
+      pending_changes: "Unsaved changes"
+      no_changes: "No pending changes"
+      created: "Initial organization settings saved successfully."
+      recovery_title: "Complete this organization's settings"
+      recovery_description: "This organization has no general settings yet. Choose its basic settings to enable preferences without changing other organizations."
+      recovery_currency: "Base currency"
+      recovery_timezone: "Time zone"
+      recovery_payment_method: "Payment method"
+      recovery_select: "Select an option"
+      recovery_no_currencies: "No active currencies are available. Enable a currency before continuing."
+      recovery_conflict: "Settings were created or archived in another session. Reload this page to continue."
+      recovery_save: "Save initial settings"
+      preview_hint: "Visual example. The selected page size applies to actual lists, not these three sample rows."
+      recovery_payment_methods:
+        cash: "Cash"
+        card: "Card"
+        qr: "QR code"
       page_title: "General settings"
       title: "General preferences"
       subtitle: "Control how organization tables display their records."

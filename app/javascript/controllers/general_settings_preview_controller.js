@@ -1,20 +1,32 @@
 import { Controller } from "@hotwired/stimulus"
 
-// The sample rows are illustrative; only the page-size caption is dynamic.
+// Keeps the illustrative table and the save state in sync with the native select.
 export default class extends Controller {
-  static targets = ["select", "summary"]
-  static values = { template: String }
+  static targets = ["select", "summary", "save", "dirty"]
+  static values = {
+    template: String,
+    original: String,
+    recovery: Boolean,
+    unsaved: String,
+    unchanged: String
+  }
 
   connect() {
     this.update()
   }
 
   update() {
-    if (!this.hasSelectTarget || !this.hasSummaryTarget) return
+    if (!this.hasSelectTarget) return
 
     const size = this.selectTarget.value
-    if (!["5", "10", "15", "25", "50"].includes(size)) return
+    if (this.hasSummaryTarget && ["5", "10", "15", "25", "50"].includes(size)) {
+      this.summaryTarget.textContent = this.templateValue.replace("__PAGE_SIZE__", size)
+    }
 
-    this.summaryTarget.textContent = this.templateValue.replace("__PAGE_SIZE__", size)
+    const hasChanges = this.recoveryValue || size !== this.originalValue
+    if (this.hasSaveTarget) this.saveTarget.disabled = !hasChanges
+    if (this.hasDirtyTarget) {
+      this.dirtyTarget.textContent = hasChanges ? this.unsavedValue : this.unchangedValue
+    }
   }
 }

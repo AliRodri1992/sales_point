@@ -14,12 +14,14 @@ module Admin
       load_settings
       return if performed?
 
-      update_preference
+      @recovering_settings ? recover_settings : update_preference
+      return render :show, status: (@stale_preference ? :conflict : :unprocessable_content) if @settings.errors.any?
 
-      if @settings.errors.empty?
-        redirect_to admin_general_settings_path, flash: { swal_message: t('admin.general_settings.saved') }
+      if @updated
+        key = @recovering_settings ? 'created' : 'saved'
+        redirect_to admin_general_settings_path, flash: { swal_message: t("admin.general_settings.#{key}") }
       else
-        render :show, status: @stale_preference ? :conflict : :unprocessable_content
+        redirect_to admin_general_settings_path
       end
     end
 
@@ -36,7 +38,9 @@ module Admin
 
       return head :not_found if scope.with_deleted.exists?
 
-      redirect_to admin_onboarding_path, alert: t('admin.general_settings.missing_configuration')
+      @recovering_settings = true
+      @settings = scope.build(default_table_page_size: TablePagePreference::DEFAULT)
+      @currencies = Currency.active.order(:code)
     end
 
     def update_preference
@@ -56,16 +60,34 @@ module Admin
           organization: current_organization, actor: current_user,
           previous_page_size: previous_size, new_page_size: @settings.default_table_page_size
         )
+        @updated = true
+      end
+    end
+
+    def recover_settings
+      @settings.assign_attributes(recovery_params)
+
+      current_organization.with_lock do
+        if current_organization.organization_settings.with_deleted.exists?
+          @stale_preference = true
+          @settings.errors.add(:base_currency, t('admin.general_settings.recovery_conflict'))
+        else
+          @updated = @settings.save
+        end
       end
     end
 
     def stale_preference?
-      expected = params[:expected_default_table_page_size].presence
-      expected && expected.to_s != @settings.default_table_page_size.to_s
+      expected = params[:expected_settings_updated_at].presence
+      expected.nil? || expected.to_s != @settings.updated_at.utc.iso8601(6)
     end
 
     def settings_params
       params.expect(organization_setting: [:default_table_page_size])
+    end
+
+    def recovery_params
+      params.expect(organization_setting: %i[base_currency_id timezone payment_method default_table_page_size])
     end
   end
 end
