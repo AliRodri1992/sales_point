@@ -56,6 +56,13 @@
 
 | **USERS-013** | **P2 PROPIO — petición UX** | **Implementado en código y probado en CI anterior:** la baja se inicia desde un `<dialog>` en el listado y detalle, sin visitar otra pantalla. La confirmación exige `reason` validado por Rails, devuelve error 422 inline y respeta Pundit. | Conservar modal accesible, cierre por cancelar/Escape, foco restaurado, manejo de error y registro de baja. El formulario de estado directo queda como alternativa técnica para otros cambios de estado. | `spec/features/admin_users_experience_spec.rb` (baja con 422 y éxito; nuevo escenario Escape desde detalle), `spec/requests/admin/user_statuses_spec.rb`. | **VERIFICADO EN USERS CI `a4a4f488`** · 306 pruebas verdes, Escape y foco comprobados en Chrome automatizado; validación manual pendiente |
 
+### Reauditoría UI/UX de modal — 2026-11-08
+
+- **USERS-013 (mismo ID, sin duplicar hallazgo):** en `app/views/admin/users/_deactivation_modal.html.erb`, el `dialog` no declaraba posición fija ni centrado explícito; el comportamiento visual dependía de estilos nativos y globales. **Corregido en código** en `e59aafce`: `fixed inset-0 m-auto`, límite de altura por viewport dinámico y desplazamiento interno en pantallas pequeñas/zoom.
+- Se conservan `showModal()`, foco inicial al motivo, Escape/cancelación con restauración de foco, validación en Rails y mensajes de error por campo; **inspeccionado estáticamente**, no probado de nuevo en navegador real.
+- Validación pendiente para este nuevo SHA: Users CI y CI global, zoom 200 %, viewport móvil y lector de pantalla. La verificación anterior de 306 pruebas pertenece únicamente a `a4a4f488`.
+- En la auditoría de este pase también se revisaron `UsersController`, `UserStatusesController`, `UserPolicy`, modelo `User`, directorio, detalle y controlador Stimulus. **USERS-002 continúa abierto**; no modificar privilegios multiempresa sin contrato definido.
+
 ## 4. Matriz de aceptación por pantalla
 
 | Pantalla / flujo | Servidor, autorización y datos | UX y errores | Evidencia aún exigida |
