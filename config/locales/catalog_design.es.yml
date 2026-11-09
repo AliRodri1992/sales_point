@@ -168,7 +168,19 @@
         "user_roles_hint": "Los roles generales determinan el acceso a módulos. Configura los roles por sucursal en la siguiente sección.",
         "requested_by": "Solicitó",
         "reviewed_by": "Revisó",
-        "currency_fixed": "La moneda se conserva para proteger el historial. Crea otra lista o promoción para usar una moneda diferente."
+        "currency_fixed": "La moneda se conserva para proteger el historial. Crea otra lista o promoción para usar una moneda diferente.",
+        "advanced_filters": "Filtros avanzados",
+        "all_categories": "Todas las categorías",
+        "all_options": "Todos",
+        "yes_option": "Sí",
+        "no_option": "No",
+        "featured_filter": "Destacado",
+        "stock_status_filter": "Existencias",
+        "stock_available": "Con existencias",
+        "stock_out": "Sin existencias",
+        "stock_low": "Stock bajo",
+        "minimum_price": "Precio mínimo",
+        "maximum_price": "Precio máximo"
       },
       "breadcrumbs": {
         "controllers": {

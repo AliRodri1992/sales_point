@@ -351,6 +351,59 @@ RSpec.describe 'Admin::Products', type: :request do
     end
   end
 
+  describe 'advanced product filters' do
+    it 'renders an expandable filter panel with a compact apply action' do
+      get admin_products_path
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('details.products-filters__advanced')).to be_present
+      button = document.at_css('button.products-filters__apply')
+      expect(button).to be_present
+      expect(button['class']).to include('products-filters__apply')
+    end
+
+    it 'combines category, tracking, featured and price filters within this organization' do
+      category = create(:category)
+      chosen = create(:product, organization:, category:, tracking_mode: :lot,
+                      featured: true, price: 80, name: 'Matching catalog item')
+      create(:product, organization:, category:, tracking_mode: :none,
+             featured: false, price: 140, name: 'Not matching item')
+      create(:product, organization: create(:organization), category:, tracking_mode: :lot,
+             featured: true, price: 80, name: 'Foreign catalog item')
+
+      get admin_products_path, params: { category_id: category.id, tracking_mode: 'lot',
+                                         featured: 'true', min_price: '60', max_price: '90' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(chosen.name)
+      expect(response.body).not_to include('Not matching item', 'Foreign catalog item')
+      expect(Nokogiri::HTML(response.body).at_css('details.products-filters__advanced')['open']).to be_present
+    end
+
+    it 'filters available, depleted and low-stock products using tenant inventories' do
+      branch = create(:branch, organization:)
+      available = create(:product, organization:, name: 'Low quantity item')
+      depleted = create(:product, organization:, name: 'Depleted item')
+      create(:inventory, organization:, branch:, product: available, stock: 2, min_stock: 5)
+      create(:inventory, organization:, branch:, product: depleted, stock: 0, min_stock: 5)
+
+      get admin_products_path(stock_status: 'low')
+      expect(response.body).to include(available.name, depleted.name)
+      get admin_products_path(stock_status: 'available')
+      expect(response.body).to include(available.name)
+      expect(response.body).not_to include(depleted.name)
+      get admin_products_path(stock_status: 'out')
+      expect(response.body).to include(depleted.name)
+      expect(response.body).not_to include(available.name)
+    end
+
+    it 'ignores invalid negative or nonnumeric price filters' do
+      item = create(:product, organization:, price: 60, name: 'Visible price filter')
+      get admin_products_path(min_price: '-1', max_price: 'not-a-number')
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(item.name)
+    end
+  end
+
   describe 'GET /admin/products filter and pagination edge cases' do
     it 'filters to featured products' do
       featured = create(:product, organization:, name: 'Featured Item', featured: true)

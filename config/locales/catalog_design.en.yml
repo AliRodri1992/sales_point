@@ -168,7 +168,19 @@
         "user_roles_hint": "Global roles determine module access. Configure branch roles in the next section.",
         "requested_by": "Requested by",
         "reviewed_by": "Reviewed by",
-        "currency_fixed": "The currency is fixed to preserve history. Create another list or promotion to use a different currency."
+        "currency_fixed": "The currency is fixed to preserve history. Create another list or promotion to use a different currency.",
+        "advanced_filters": "Advanced filters",
+        "all_categories": "All categories",
+        "all_options": "All",
+        "yes_option": "Yes",
+        "no_option": "No",
+        "featured_filter": "Featured",
+        "stock_status_filter": "Stock",
+        "stock_available": "In stock",
+        "stock_out": "Out of stock",
+        "stock_low": "Low stock",
+        "minimum_price": "Minimum price",
+        "maximum_price": "Maximum price"
       },
       "breadcrumbs": {
         "controllers": {

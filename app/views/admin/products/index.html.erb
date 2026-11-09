@@ -24,7 +24,52 @@
 </div>
 
 <nav class="catalog-nav" aria-label="<%= t('admin.catalog_design.commercial') %>"><% if policy(PriceList).index? %><%= link_to t('admin.catalog_design.price_lists'), admin_price_lists_path %><% end %><% if policy(Promotion).index? %><%= link_to t('admin.catalog_design.promotions'), admin_promotions_path %><% end %></nav>
-<%= form_with url: admin_products_path, method: :get, class: 'catalog-filter', data: { turbo_frame: 'admin_products_list' } do %><div><%= label_tag :search, t('admin.catalog_design.search') %><%= search_field_tag :search, params[:search], placeholder: t('admin.products.index.search_placeholder') %></div><div><%= label_tag :status, t('admin.catalog_design.status') %><%= select_tag :status, options_for_select([[t('admin.catalog_design.all_statuses'), 'all'], [t('admin.catalog_design.active'), 'active'], [t('admin.catalog_design.inactive'), 'inactive']], params[:status]) %></div><%= submit_tag t('admin.catalog_design.filter'), class: 'catalog-button' %><%= link_to t('admin.catalog_design.clear'), admin_products_path, class: 'catalog-button', data: { turbo_frame: '_top' } %><% end %>
+<%= form_with url: admin_products_path, method: :get, class: 'products-filters', data: { turbo_frame: 'admin_products_list' } do %>
+  <div class="products-filters__primary">
+    <div class="products-filters__field">
+      <%= label_tag :search, t('admin.catalog_design.search') %>
+      <%= search_field_tag :search, params[:search], placeholder: t('admin.products.index.search_placeholder') %>
+    </div>
+    <div class="products-filters__field">
+      <%= label_tag :status, t('admin.catalog_design.status') %>
+      <%= select_tag :status, options_for_select([[t('admin.catalog_design.all_statuses'), 'all'], [t('admin.catalog_design.active'), 'active'], [t('admin.catalog_design.inactive'), 'inactive']], params[:status] || 'all') %>
+    </div>
+  </div>
+  <% advanced_active = %i[category_id featured tracking_mode stock_status min_price max_price].any? { |key| params[key].present? && params[key] != 'all' } %>
+  <details class="products-filters__advanced" <%= 'open' if advanced_active %>>
+    <summary><%= delta_icon('adjustments-horizontal', class: 'size-4') %><%= t('admin.catalog_design.advanced_filters') %></summary>
+    <div class="products-filters__grid">
+      <div class="products-filters__field">
+        <%= label_tag :category_id, t('admin.catalog_design.category_id') %>
+        <%= select_tag :category_id, options_for_select([[t('admin.catalog_design.all_categories'), '']] + Category.not_deleted.order(:name).pluck(:name, :id), params[:category_id]), include_blank: false %>
+      </div>
+      <div class="products-filters__field">
+        <%= label_tag :featured, t('admin.catalog_design.featured_filter') %>
+        <%= select_tag :featured, options_for_select([[t('admin.catalog_design.all_options'), 'all'], [t('admin.catalog_design.yes_option'), 'true'], [t('admin.catalog_design.no_option'), 'false']], params[:featured] || 'all') %>
+      </div>
+      <div class="products-filters__field">
+        <%= label_tag :tracking_mode, t('admin.catalog_design.tracking_mode') %>
+        <%= select_tag :tracking_mode, options_for_select([[t('admin.catalog_design.all_options'), 'all']] + Product.tracking_modes.keys.map { |mode| [t("admin.catalog_design.tracking_#{mode}"), mode] }, params[:tracking_mode] || 'all') %>
+      </div>
+      <div class="products-filters__field">
+        <%= label_tag :stock_status, t('admin.catalog_design.stock_status_filter') %>
+        <%= select_tag :stock_status, options_for_select([[t('admin.catalog_design.all_options'), 'all'], [t('admin.catalog_design.stock_available'), 'available'], [t('admin.catalog_design.stock_out'), 'out'], [t('admin.catalog_design.stock_low'), 'low']], params[:stock_status] || 'all') %>
+      </div>
+      <div class="products-filters__field">
+        <%= label_tag :min_price, t('admin.catalog_design.minimum_price') %>
+        <%= number_field_tag :min_price, params[:min_price], min: 0, step: '0.01', inputmode: 'decimal' %>
+      </div>
+      <div class="products-filters__field">
+        <%= label_tag :max_price, t('admin.catalog_design.maximum_price') %>
+        <%= number_field_tag :max_price, params[:max_price], min: 0, step: '0.01', inputmode: 'decimal' %>
+      </div>
+    </div>
+  </details>
+  <div class="products-filters__actions">
+    <%= link_to t('admin.catalog_design.clear'), admin_products_path, class: 'catalog-button', data: { turbo_frame: '_top' } %>
+    <%= button_tag t('admin.catalog_design.filter'), type: :submit, class: 'catalog-button catalog-button-primary products-filters__apply' %>
+  </div>
+<% end %>
 <div class="delta-skeleton-region" data-controller="skeleton-loading"
      data-skeleton-loading-region-value="admin_products_list" aria-busy="false"
      data-action="skeleton:begin@document->skeleton-loading#begin skeleton:end@document->skeleton-loading#finish turbo:before-fetch-request@document->skeleton-loading#turboStart turbo:frame-load@document->skeleton-loading#turboFinish turbo:fetch-request-error@document->skeleton-loading#turboError turbo:frame-missing@document->skeleton-loading#turboMissing turbo:before-cache@document->skeleton-loading#clear">

@@ -168,7 +168,19 @@
         "user_roles_hint": "전체 역할은 모듈 접근 권한을 결정합니다. 지점별 역할은 다음 섹션에서 설정하세요.",
         "requested_by": "요청자",
         "reviewed_by": "검토자",
-        "currency_fixed": "이력을 보존하기 위해 통화는 변경할 수 없습니다. 다른 통화를 사용하려면 새 가격표나 프로모션을 만드세요."
+        "currency_fixed": "이력을 보존하기 위해 통화는 변경할 수 없습니다. 다른 통화를 사용하려면 새 가격표나 프로모션을 만드세요.",
+        "advanced_filters": "고급 필터",
+        "all_categories": "모든 카테고리",
+        "all_options": "전체",
+        "yes_option": "예",
+        "no_option": "아니요",
+        "featured_filter": "추천 상품",
+        "stock_status_filter": "재고",
+        "stock_available": "재고 있음",
+        "stock_out": "품절",
+        "stock_low": "재고 부족",
+        "minimum_price": "최소 가격",
+        "maximum_price": "최대 가격"
       },
       "breadcrumbs": {
         "controllers": {
