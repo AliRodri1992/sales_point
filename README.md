@@ -4,7 +4,9 @@ A modern **Point of Sale (POS)** system built with **Ruby on Rails 8**, designed
 
 ## Estándar de calidad modular
 
-Para auditar o modificar cualquier módulo, seguir el [estándar de calidad modular](docs/quality/module-quality-standard.md), registrar los hallazgos con [la plantilla reutilizable](docs/quality/module-audit-template.md) y documentar las pruebas realmente ejecutadas. El primer expediente es [Sucursales (`/admin/branches`)](docs/quality/modules/branches.md).
+Para auditar o modificar cualquier módulo, seguir el [estándar de calidad modular](docs/quality/module-quality-standard.md), registrar los hallazgos con [la plantilla reutilizable](docs/quality/module-audit-template.md) y documentar las pruebas realmente ejecutadas. El [índice de todos los módulos](docs/quality/modules/README.md) agrupa los 31 expedientes iniciales, empezando por [Sucursales (`/admin/branches`)](docs/quality/modules/branches.md).
+
+El manifiesto `config/module_quality_registry.json` y `ruby script/audit_module_quality.rb` exigen que los recursos administrativos tengan expediente y dueño documental en CI. Esta comprobación **no certifica** las auditorías.
 
 Las relaciones con otros módulos se verifican **solo como contratos de integración**. Una modificación publicada no se considera cerrada hasta verificar RSpec, RuboCop, los checks de CI y, cuando corresponde, los flujos visuales sobre el SHA final.
 
