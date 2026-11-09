@@ -62,6 +62,8 @@ class UserPolicy < CatalogPolicy
     account.user_roles.any? do |assignment|
       role = assignment.system_role
       role && assignment.deleted_at.nil? && role.deleted_at.nil? && role.active? &&
+        (CurrentOrganizationAccess.organization.nil? ||
+         assignment.organization_id == CurrentOrganizationAccess.organization.id) &&
         SystemRole::ADMINISTRATIVE_CODES.include?(role.code)
     end
   end
