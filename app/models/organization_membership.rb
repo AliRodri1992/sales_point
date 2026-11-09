@@ -21,6 +21,16 @@ class OrganizationMembership < ApplicationRecord
 
   scope :accessible, -> { active.where(account_status: 'active', deleted_at: nil) }
 
+  after_create :scope_orphan_roles_on_first_membership
+
   validates :status, presence: true
   validates :account_status, presence: true
+
+  private
+
+  def scope_orphan_roles_on_first_membership
+    return unless user.organization_memberships.where(deleted_at: nil).count == 1
+
+    user.user_roles.where(branch_id: nil, organization_id: nil).update_all(organization_id:)
+  end
 end
