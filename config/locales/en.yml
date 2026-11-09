@@ -306,6 +306,7 @@ en:
     categories:
       confirm:
         cancel: Cancel
+      in_use: "This category is used by products or promotions. Deactivate it or reassign its references before removing it."
       created: Category created successfully
       destroyed: Category deleted successfully
       edit:
@@ -334,6 +335,8 @@ en:
         delete: Delete
         edit: Edit
         empty_subtitle: Create your first category to get started.
+        no_results: "No categories match your filters."
+        clear_filters: "Clear filters"
         empty_title: No categories yet
         filters:
           all_statuses: All statuses

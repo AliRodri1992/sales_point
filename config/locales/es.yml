@@ -307,6 +307,7 @@ es:
     categories:
       confirm:
         cancel: Cancelar
+      in_use: "No se puede retirar una categoría utilizada por productos o promociones. Desactívala o reasigna sus referencias."
       created: Categoría creada correctamente
       destroyed: Categoría eliminada correctamente
       edit:
@@ -335,6 +336,8 @@ es:
         delete: Eliminar
         edit: Editar
         empty_subtitle: Crea tu primera categoría para empezar.
+        no_results: "No hay categorías que coincidan con los filtros."
+        clear_filters: "Limpiar filtros"
         empty_title: Aún no hay categorías
         filters:
           all_statuses: Todos los estados

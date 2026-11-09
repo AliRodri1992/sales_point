@@ -39,6 +39,20 @@ RSpec.describe Category, type: :model do
     end
   end
 
+  describe 'soft delete integrity' do
+    it 'allows reusing a code from a retired category' do
+      old = create(:category, code: 'retired_code')
+      old.update!(deleted_at: Time.current)
+      expect(build(:category, code: 'retired_code')).to be_valid
+    end
+
+    it 'recognizes active product references' do
+      category = create(:category)
+      create(:product, organization: create(:organization), category:)
+      expect(category.in_use?).to be(true)
+    end
+  end
+
   describe 'defaults' do
     it 'defaults new records to active status' do
       category = Category.new(name: 'Test', code: 'test')

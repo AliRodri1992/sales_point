@@ -306,6 +306,7 @@ ko:
     categories:
       confirm:
         cancel: 취소
+      in_use: "상품 또는 프로모션에서 사용 중인 카테고리는 제외할 수 없습니다. 비활성화하거나 연결 항목을 변경하세요."
       created: 카테고리가 성공적으로 생성되었습니다
       destroyed: 카테고리가 성공적으로 삭제되었습니다
       edit:
@@ -334,6 +335,8 @@ ko:
         delete: 삭제
         edit: 수정
         empty_subtitle: 첫 번째 카테고리를 만들어 시작하세요.
+        no_results: "필터에 일치하는 카테고리가 없습니다."
+        clear_filters: "필터 초기화"
         empty_title: 아직 카테고리가 없습니다
         filters:
           all_statuses: 모든 상태

@@ -96,6 +96,40 @@ RSpec.describe 'Admin::Categories', type: :request do
     end
   end
 
+  describe 'Category audit regressions' do
+    it 'renders a standalone form without duplicate modal frames' do
+      get new_admin_category_path
+
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      expect(document.css('turbo-frame#category_modal').size).to eq(1)
+      expect(document.at_css('textarea[name="category[description]"]')).to be_present
+      expect(document.at_css('input[name="category[code]"]')['aria-describedby']).to include('category_code_hint')
+    end
+
+    it 'keeps filter-empty results distinct from an empty catalog' do
+      create(:category, name: 'Existing', code: 'existing')
+      get admin_categories_path(search: 'no-such-category')
+      expect(response.body).to include(I18n.t('admin.categories.index.no_results'))
+      expect(response.body).not_to include(I18n.t('admin.categories.index.empty_title'))
+    end
+
+    it 'treats LIKE wildcard characters as literal search text' do
+      create(:category, name: 'Existing', code: 'existing')
+      get admin_categories_path(search: '%')
+      expect(response.body).to include(I18n.t('admin.categories.index.no_results'))
+    end
+
+    it 'persists the description and renders it in the detail page' do
+      post admin_categories_path, params: { category: { name: 'Food', code: 'food',
+                                                      description: 'Fresh groceries and produce' } }
+      category = Category.find_by!(code: 'food')
+      expect(category.description).to eq('Fresh groceries and produce')
+      get admin_category_path(category)
+      expect(response.body).to include('Fresh groceries and produce')
+    end
+  end
+
   describe 'POST /admin/categories' do
     it 'sends a "created" notification to the current user' do
       expect do
@@ -145,6 +179,19 @@ RSpec.describe 'Admin::Categories', type: :request do
         post admin_categories_path(format: :turbo_stream),
              params: { category: { name: 'Test Category', code: '' } }
       end.not_to change(Category, :count)
+    end
+
+    it 'displays field errors for invalid records without discarding entered values' do
+      post admin_categories_path, params: { category: { name: '', code: 'kept_code' } }
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('kept_code', 'aria-invalid="true"', 'category_name_error')
+    end
+
+    it 'refuses descriptions over 500 characters' do
+      post admin_categories_path, params: { category: { name: 'Long', code: 'long',
+                                                      description: 'x' * 501 } }
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(Category.find_by(code: 'long')).to be_nil
     end
 
     it 'does not persist the category when code is already taken' do
@@ -203,6 +250,26 @@ RSpec.describe 'Admin::Categories', type: :request do
 
   describe 'DELETE /admin/categories/:id' do
     let!(:category) { create(:category, name: 'ToDelete', code: 'del_category') }
+
+    it 'protects categories referenced by active products' do
+      organization = user.organization_memberships.first.organization
+      create(:product, organization:, category:)
+      delete admin_category_path(category)
+
+      expect(response).to have_http_status(:see_other)
+      expect(category.reload.deleted_at).to be_nil
+      expect(flash[:alert]).to eq(I18n.t('admin.categories.in_use'))
+    end
+
+    it 'shows a translated error in Turbo Stream for an in-use category' do
+      organization = user.organization_memberships.first.organization
+      create(:product, organization:, category:)
+      delete admin_category_path(category, format: :turbo_stream)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('categories_alert', I18n.t('admin.categories.in_use'))
+      expect(category.reload.deleted_at).to be_nil
+    end
 
     it 'sends a "destroyed" notification to the current user' do
       expect do

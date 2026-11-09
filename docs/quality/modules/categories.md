@@ -158,3 +158,11 @@ IDs permanentes de esta primera auditoría. **Confirmado por código** significa
 - **Revisor y fecha de aceptación:** PENDIENTES.
 
 [Estándar modular](../module-quality-standard.md) · [Plantilla](../module-audit-template.md). Los IDs deben mantenerse en todas las reauditorías; no se da por cerrado ningún hallazgo solo por existir un commit.
+
+## Implementación incremental 2026-11-09
+
+- Se publicaron controles de baja de categorías en uso (Productos/Promociones), validación de índice de códigos retirados, constraints preventivos para nuevos datos, captura y visualización de descripción, búsqueda literal y respuestas de conflicto.
+- Se ajustaron formularios, selectores, etiquetas ARIA, rutas independientes, estados vacíos, skeleton, foco de modales y textos `es/en/ko`.
+- Se añadieron regresiones de solicitud y modelo en `spec/requests/admin/categories_spec.rb` y `spec/models/category_spec.rb`.
+- **Estado de los hallazgos:** CATEGORIES-002 a CATEGORIES-009 y 011–013: **IMPLEMENTADO SIN VERIFICAR** (excepto CATEGORIES-009: constraints `NOT VALID`, pendientes de limpieza y validación para registros antiguos). CATEGORIES-010: **EN CORRECCIÓN** (falta escenario de navegador y verificación). CATEGORIES-001: **ABIERTO**; requiere migración de tenant segura y remapeo de categorías que ya usan varias organizaciones. No se afirma resuelto.
+- **Evidencia:** commits en `feature/fixes`, pendientes de RSpec/RuboCop/CI completos para SHA de aceptación. Se mantiene **NO CERRADO**.
