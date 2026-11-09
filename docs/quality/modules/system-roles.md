@@ -2,8 +2,8 @@
 
 **Módulo y ruta principal:** Roles y permisos — `/system_roles`  
 **Estado:** REAUDITADO 2026-11-09 · CI FOCALIZADO VERDE · 001 REABIERTO · 011–013 NUEVOS · NO CERRADO.  
-**Fecha de auditoría:** 2026-11-08 (America/Mexico_City).  
-**Rama:** `feature/fixes`. **SHA de partida/auditado:** `8974fee011f9422066985a0ab088ed2d771e1c8a`.  
+**Fecha de auditoría:** 2026-11-09 (America/Mexico_City).  
+**Rama:** `feature/fixes`. **SHA de partida/auditado:** `d414ec7d6380dd75675836c05b501391c010365f`.  
 **SHA de aceptación:** PENDIENTE. **Responsable/revisor independiente:** PENDIENTE.  
 **Método:** AI Dev Suite — Ponytail Engineering, Impeccable, UI UX Pro Max. Inspección real de código por GitHub; no se ejecutó el detector CLI de terceros.
 
