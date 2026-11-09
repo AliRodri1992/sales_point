@@ -114,7 +114,8 @@ jobs:
           yarn build:js
           yarn build:css
       - name: Prepare test database
-        run: bin/rails db:create db:migrate
+        # The service creates sale_point_test before steps run; reset this ephemeral DB to avoid stale schema and constraint collisions.
+        run: bin/rails db:drop db:create db:migrate
       - name: Run branch module regressions and browser flows
         env:
           CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}

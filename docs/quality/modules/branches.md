@@ -301,3 +301,8 @@ Durante la verificación del SHA `dd94f85921e75675ecac5e5a90fdb9f9f580b746`, Bra
 ### BR-003 — resultado de regresión y ajuste de lectura HTML
 
 Branches CI [42565000001](https://github.com/AliRodri1992/sales_point/actions/runs/42565000001), sobre `359ec8480afdd0f6d64c32dc38e24afbb5074c66`: RuboCop de Sucursales **PASÓ** y **la base de datos de pruebas se preparó correctamente**, pero RSpec finalizó **132 ejemplos / 1 fallo**. El único fallo fue una comparación excesivamente literal de `textarea.text`: ActionView agrega un salto de línea al inicio de los contenidos renderizados de `textarea` y Nokogiri lo conserva en `.text`. Se actualiza el spec para comparar el valor tras retirar únicamente ese salto de línea HTML. Las demás 131 pruebas, incluida la nueva validación Chrome, pasaron en esa ejecución. **Aún requiere un nuevo CI especializado verde para marcar BR-003 verificado.** No se modifican reglas de negocio ni validaciones del servidor.
+
+
+### BR-005 — reinicio seguro de la base exclusiva de CI (2026-11-08)
+
+En Branches CI [42565321011](https://github.com/AliRodri1992/sales_point/actions/runs/42565321011), SHA `db06e4b`, el job se detuvo antes de RSpec con `PG::DuplicateObject` en la clave foránea `user_roles`. El servicio de PostgreSQL de Actions ya crea `sale_point_test` y el workflow repetía `db:create db:migrate`. Se cambia únicamente el paso **Prepare test database** de `.github/workflows/branches-ci.yml` a `db:drop db:create db:migrate`, siguiendo el procedimiento de base limpia del CI global. **Alcance destructor limitado a la base efímera sale_point_test del runner CI**, sin tocar desarrollo/producción ni datos reales. **Estado de la nueva ejecución: pendiente**, no se presume corregida la causa sin resultado verde.
