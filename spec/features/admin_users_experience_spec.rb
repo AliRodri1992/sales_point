@@ -217,6 +217,33 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(target.reload.organization_memberships.find_by!(organization:).account_status).to eq('deleted')
   end
 
+  scenario 'does not blame the reason field for a failed deactivation request' do
+    permission = Permission.find_or_create_by!(code: 'users.destroy') do |item|
+      item.name = 'Deactivate users'
+      item.module_name = 'Usuarios'
+      item.status = :active
+    end
+    SystemRolePermission.find_or_create_by!(system_role: admin.system_roles.first, permission:)
+    target = create(:user, email: 'failed-deactivation@example.com')
+    create(:organization_membership, organization:, user: target)
+
+    visit admin_users_path
+    find("button[data-deactivation-account='#{target.email}']").click
+    page.execute_script(<<~JS)
+      document.querySelector('#users-deactivation-modal form').dispatchEvent(
+        new CustomEvent('turbo:submit-end', {
+          bubbles: true,
+          detail: { success: false, fetchResponse: { statusCode: 403 } }
+        })
+      )
+    JS
+
+    expect(page).to have_css('#users-deactivation-errors', text: /could not deactivate/i)
+    expect(page).to have_no_css('#users-deactivation-reason[aria-invalid="true"]')
+    expect(page.evaluate_script('document.activeElement.id')).to eq('users-deactivation-errors')
+    expect(target.reload.organization_memberships.find_by!(organization:).account_status).to eq('active')
+  end
+
   scenario 'centers the deactivation dialog within a compact mobile viewport' do
     permission = Permission.find_or_create_by!(code: 'users.destroy') do |item|
       item.name = 'Deactivate users'
