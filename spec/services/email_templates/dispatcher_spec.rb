@@ -78,14 +78,13 @@ RSpec.describe EmailTemplates::Dispatcher do
     allow(ENV).to receive(:[]).and_call_original
     allow(ENV).to receive(:[]).with('DELTA_POS_PUBLIC_HOST').and_return('mail.delta.test')
 
-    expect(EmailTemplates::DeliveryJob).not_to receive(:perform_later)
+    expect(EmailTemplates::DeliveryJob).to receive(:perform_later).once
     expect do
       described_class.call(key: template.key, locale: 'es', recipient: 'customer@delta.test', values: {})
     end.to raise_error(ArgumentError, /Unconfigured email contacts: support_email/)
 
     EmailBrandingSetting.create!(display_name: 'Global',
                                  support_email: 'help@delta.test')
-    expect(EmailTemplates::DeliveryJob).to receive(:perform_later)
     described_class.call(key: template.key, locale: 'es', recipient: 'customer@delta.test', values: {})
   end
 
