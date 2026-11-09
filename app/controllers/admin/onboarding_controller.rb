@@ -29,10 +29,8 @@ module Admin
       load_onboarding
       return update_recovery if params[:intent].present?
 
-      if Onboarding::StepUpdater.call(
-        organization: @organization, step: @step, params:, user: current_user,
-        branch: @branch, settings: @settings, terminals: @terminals
-      )
+      step_args = { organization: @organization, step: @step, params:, user: current_user }
+      if Onboarding::StepUpdater.call(**step_args, branch: @branch, settings: @settings, terminals: @terminals)
         handle_update_success
       else
         handle_update_failure

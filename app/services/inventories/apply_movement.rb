@@ -72,8 +72,16 @@ module Inventories
                                .where(to_status: 'suspended').order(created_at: :desc).pick(:created_at)
       return false unless receipt && item.persisted? && suspension_at
 
+      receipt_precedes_suspension?(receipt:, item:, suspension_at:) &&
+        return_matches_inventory?(inventory:, source:, item:, receipt:)
+    end
+
+    def self.receipt_precedes_suspension?(receipt:, item:, suspension_at:)
+      receipt.created_at <= suspension_at && item.created_at <= suspension_at
+    end
+
+    def self.return_matches_inventory?(inventory:, source:, item:, receipt:)
       receipt.branch_id == inventory.branch_id &&
-        receipt.created_at <= suspension_at && item.created_at <= suspension_at &&
         item.purchase_order_item&.product_id == inventory.product_id &&
         source.purchase_return&.goods_receipt_id == receipt.id
     end
@@ -88,9 +96,14 @@ module Inventories
         new_quantity = lot.quantity + amount
         raise ArgumentError, 'Lot quantity cannot become negative' if new_quantity.negative?
 
-        status = new_quantity.zero? ? :depleted : (lot.depleted? ? :available : lot.status)
-        lot.update!(quantity: new_quantity, status:)
+        lot.update!(quantity: new_quantity, status: lot_status_for(lot, new_quantity))
       end
+    end
+
+    def self.lot_status_for(lot, quantity)
+      return :depleted if quantity.zero?
+
+      lot.depleted? ? :available : lot.status
     end
 
     def self.validate_movement!(inventory:, amount:, kind:, lot:)
