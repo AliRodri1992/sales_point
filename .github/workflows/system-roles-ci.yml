@@ -1,0 +1,144 @@
+name: System Roles CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/fixes
+    paths:
+      - '.github/workflows/system-roles-ci.yml'
+      - 'app/controllers/system_role*'
+      - 'app/controllers/concerns/system_roles/**'
+      - 'app/models/system_role*'
+      - 'app/models/permission.rb'
+      - 'app/policies/system_role_policy.rb'
+      - 'app/services/system_roles/**'
+      - 'app/services/administrator_permission_provisioner.rb'
+      - 'app/javascript/controllers/role_permissions_controller.js'
+      - 'app/views/system_roles/**'
+      - 'config/locales/role_permission_editor.*'
+      - 'config/locales/system_role_lifecycle.*'
+      - 'db/migrate/*role_permission_audit*'
+      - 'db/schema.rb'
+      - 'spec/models/system_role*'
+      - 'spec/models/permission_spec.rb'
+      - 'spec/policies/system_role*'
+      - 'spec/requests/system_role*'
+      - 'spec/services/system_roles/**'
+      - 'spec/services/system_roles/**'
+      - 'spec/features/system_role*'
+      - 'spec/seeds/full_seed_repeatability_spec.rb'
+      - 'docs/quality/modules/system-roles.md'
+
+permissions:
+  contents: read
+
+env:
+  RAILS_ENV: test
+  POSTGRES_DB_TEST: sale_point_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
+  REDIS_URL: redis://localhost:6379/0
+
+jobs:
+  roles_lint:
+    name: Roles module RuboCop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: .ruby-version
+          bundler-cache: true
+      - name: Lint role permissions and audit regressions
+        run: |
+          bin/rubocop -f simple \
+            app/controllers/system_roles_controller.rb \
+            app/controllers/system_role_statuses_controller.rb \
+            app/controllers/concerns/system_roles \
+            app/models/system_role.rb app/models/system_role_permission_audit_event.rb \
+            app/services/system_roles app/services/administrator_permission_provisioner.rb \
+            app/policies/system_role_policy.rb \
+            spec/models/system_role_spec.rb spec/models/permission_spec.rb \
+            spec/policies/system_role_policy_spec.rb spec/policies/system_role_membership_policy_spec.rb \
+            spec/requests/system_roles_spec.rb spec/requests/system_roles_editor_spec.rb \
+            spec/requests/system_roles_security_spec.rb spec/requests/system_roles_regressions_spec.rb \
+            spec/requests/system_role_statuses_spec.rb \
+            spec/services/system_roles \
+            spec/features/system_roles_spec.rb spec/features/system_roles_editor_browser_spec.rb \
+            spec/features/system_role_statuses_browser_spec.rb \
+            spec/features/system_role_filtered_permissions_browser_spec.rb \
+            spec/seeds/full_seed_repeatability_spec.rb
+
+  roles_specs:
+    name: Roles requests, policies, services and real browser flows
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sale_point_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d sale_point_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips
+      - name: Install matching Chrome and ChromeDriver
+        id: browser
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+          install-chromedriver: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: .ruby-version
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Build assets
+        run: |
+          yarn build:js
+          yarn build:css
+      - name: Recreate test schema from migrations
+        run: bin/rails db:create db:migrate
+      - name: Verify role security and browser regressions
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec \
+            spec/models/system_role_spec.rb spec/models/permission_spec.rb \
+            spec/policies/system_role_policy_spec.rb spec/policies/system_role_membership_policy_spec.rb \
+            spec/services/system_roles \
+            spec/requests/system_roles_spec.rb spec/requests/system_roles_editor_spec.rb \
+            spec/requests/system_roles_security_spec.rb spec/requests/system_roles_regressions_spec.rb \
+            spec/requests/system_role_statuses_spec.rb \
+            spec/features/system_roles_spec.rb spec/features/system_roles_editor_browser_spec.rb \
+            spec/features/system_role_statuses_browser_spec.rb \
+            spec/features/system_role_filtered_permissions_browser_spec.rb
+      - name: Verify seed repeatability after superadmin policy change
+        run: bundle exec rspec spec/seeds/full_seed_repeatability_spec.rb
