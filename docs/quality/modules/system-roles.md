@@ -1,7 +1,7 @@
 # Registro de calidad — Roles y permisos
 
 **Módulo y ruta principal:** Roles y permisos — `/system_roles`  
-**Estado:** AUDITADO POR INSPECCIÓN ESTÁTICA · HALLAZGOS ABIERTOS · NO VERIFICADO · NO CERRADO.  
+**Estado:** IMPLEMENTADO PENDIENTE DE VERIFICACIÓN · NO CERRADO.  
 **Fecha de auditoría:** 2026-11-08 (America/Mexico_City).  
 **Rama:** `feature/fixes`. **SHA de partida/auditado:** `8974fee011f9422066985a0ab088ed2d771e1c8a`.  
 **SHA de aceptación:** PENDIENTE. **Responsable/revisor independiente:** PENDIENTE.  
@@ -43,7 +43,7 @@
 - **Causa raíz:** autorización basada en admin genérico, sin distinción de propiedad global/de organización en el recurso.
 - **Acción:** definir matriz de responsabilidad; si la intención es aislamiento tenant, separar roles por organización o restringir gestión global al superadministrador (sin alterar otras políticas indiscriminadamente).
 - **Regresión:** administrador de una organización intenta modificar/retirar rol con asignaciones ajenas; superadministrador permitido; ninguna lectura de datos ajenos no autorizados.
-- **Estado:** ABIERTO — decisión de seguridad y prueba de integración pendientes.
+- **Estado:** IMPLEMENTADO SIN VERIFICAR — decisión de seguridad y prueba de integración pendientes.
 
 ### SYSTEM_ROLES-002 — P1 · PROPIO · Sin auditoría durable de altas/bajas de permisos
 
@@ -51,7 +51,7 @@
 - **Riesgo:** no existe un historial propio, consultable e inmutable para reconstruir quién cambió qué permiso y cuándo; especialmente relevante para privilegios sensibles.
 - **Acción:** evento de auditoría estructurado y append-only con actor, rol, permisos añadidos/revocados y contexto; escribir en la misma transacción que el cambio y presentar historial con autorización.
 - **Regresión:** comparar evento antes/después, fallo transaccional, cambios concurrentes, protección de roles administrativos.
-- **Estado:** ABIERTO — confirmado por código; no reproducido en ejecución.
+- **Estado:** IMPLEMENTADO SIN VERIFICAR — confirmado por código; no reproducido en ejecución.
 
 ### SYSTEM_ROLES-003 — P1 · PROPIO/CONTRATO · Dependencias `*.access` solo aplicadas por JavaScript
 
@@ -60,7 +60,7 @@
 - **Riesgo:** diferencias entre permisos guardados, opciones visibles y acceso efectivo. También puede surgir desmarcando manualmente `*.access` después de seleccionar una acción.
 - **Acción:** decidir explícitamente entre autocompletar o rechazar con error contextual en servidor. Alinear el editor y las pruebas para todas las dependencias reales, sin asumir que todos los módulos comparten la misma regla.
 - **Regresión:** request sin JS, selección/desselección y restauración, autorización real del consumidor.
-- **Estado:** ABIERTO — inconsistencia demostrable por lectura; request pendiente.
+- **Estado:** IMPLEMENTADO SIN VERIFICAR — inconsistencia demostrable por lectura; request pendiente.
 
 ### SYSTEM_ROLES-004 — P1 · PROPIO · Selección masiva incluye permisos ocultos por filtro
 
@@ -69,7 +69,7 @@
 - **Riesgo:** sobreasignación accidental de privilegios.
 - **Acción:** aclarar semántica visible (todo el módulo vs resultados filtrados); preferir seleccionar solo los resultados visibles o pedir confirmación explícita de la acción sobre todos. Mostrar conteos consistentes.
 - **Regresión:** navegador con filtro parcial, grupos cerrados/abiertos y permisos previamente seleccionados.
-- **Estado:** ABIERTO — confirmado por código; interacción pendiente.
+- **Estado:** IMPLEMENTADO SIN VERIFICAR — confirmado por código; interacción pendiente.
 
 ### SYSTEM_ROLES-005 — P2 · PROPIO · Formularios incumplen validación por campo
 
@@ -77,14 +77,14 @@
 - **Regla vigente:** validaciones en modelo/servidor; debajo de cada campo mostrar «nombreCampo mensajeValidación», marcado obligatorio en rojo, `aria-invalid` y `aria-describedby`; evitar resumen duplicado y `required` HTML5 como mecanismo de validación.
 - **Acción:** unificar con componentes de formulario Delta POS; definir presentación para errores de permisos no asignables al único campo; mantener valores tras 422 y traducir es/en/ko.
 - **Regresión:** crear/editar nombre vacío, largo o duplicado; tipo inválido; teclado/lector y 422.
-- **Estado:** ABIERTO — confirmado por plantilla.
+- **Estado:** IMPLEMENTADO SIN VERIFICAR — confirmado por plantilla.
 
 ### SYSTEM_ROLES-006 — P2 · PROPIO · Revisión de estado sin feedback bajo motivo y confirmación
 
 - **Evidencia:** `app/views/system_roles/status_review.html.erb` usa `required: true` para motivo y checkbox; muestra `@status_error` en alerta general y no asocia individualmente error/ayuda a cada campo.
 - **Acción:** mantener validación en `StatusTransition`, devolver errores de motivo y confirmación junto a cada control; conservar texto y estado después de 422; sin resumen duplicado.
 - **Regresión:** motivo vacío/excesivo, confirmación ausente, token caducado, teclado y foco.
-- **Estado:** ABIERTO — confirmado por plantilla.
+- **Estado:** IMPLEMENTADO SIN VERIFICAR — confirmado por plantilla.
 
 ### SYSTEM_ROLES-007 — P2 · PROPIO · Normalización insuficiente del nombre
 
@@ -92,7 +92,7 @@
 - **Riesgo:** variantes como `Vendedor` y `vendedor` o espacios laterales originan denominaciones difíciles de diferenciar y búsquedas confusas.
 - **Acción:** normalización controlada; validación y índice PostgreSQL compatibles; definir migración/conversión para datos preexistentes antes de imponer unicidad.
 - **Regresión:** variantes de caso/espacio, no romper roles actuales ni códigos estables.
-- **Estado:** ABIERTO — confirmado por modelo; casos reales pendientes.
+- **Estado:** IMPLEMENTADO SIN VERIFICAR — confirmado por modelo; casos reales pendientes.
 
 ### SYSTEM_ROLES-008 — P2 · PROPIO/CONTRATO · Contador de usuarios con acceso residual puede ser optimista
 
@@ -100,20 +100,41 @@
 - **Situación:** una asignación alternativa a una sucursal no operativa puede reducir el contador «sin otro rol activo» aunque no proporcione permisos efectivos.
 - **Acción:** definir si el KPI representa «sin otro rol asignado activo» o «sin acceso efectivo»; alinear etiqueta, cálculo y prueba con sucursales no operativas y otras organizaciones.
 - **Regresión:** rol alternativo en sucursal activa, cerrada/en preparación, distinto tenant y rol global.
-- **Estado:** ABIERTO — confirmado por diferencia de definición; cálculo de casos pendiente.
+- **Estado:** IMPLEMENTADO SIN VERIFICAR — confirmado por diferencia de definición; cálculo de casos pendiente.
 
 ## Matriz de seguimiento resumida
 
 | ID | Prioridad | Propiedad | Prueba indispensable | Estado |
 |---|---|---|---|---|
-| SYSTEM_ROLES-001 | P1 | propio / contrato Usuarios | request multi-organización + definición de producto | abierto |
-| SYSTEM_ROLES-002 | P1 | propio | auditoría de cambio de permisos en transacción | abierto |
-| SYSTEM_ROLES-003 | P1 | propio / integración políticas | request sin JS + permiso efectivo | abierto |
-| SYSTEM_ROLES-004 | P1 | propio | navegador con filtro y seleccionar todo | abierto |
-| SYSTEM_ROLES-005 | P2 | propio | 422 por campo + accesibilidad | abierto |
-| SYSTEM_ROLES-006 | P2 | propio | review 422 + validación de token | abierto |
-| SYSTEM_ROLES-007 | P2 | propio | modelo y constraints | abierto |
-| SYSTEM_ROLES-008 | P2 | propio / integración Sucursales | casos de sucursal no operativa | abierto |
+| SYSTEM_ROLES-001 | P1 | propio / contrato Usuarios | request multi-organización + definición de producto | implementado / sin verificar |
+| SYSTEM_ROLES-002 | P1 | propio | auditoría de cambio de permisos en transacción | implementado / sin verificar |
+| SYSTEM_ROLES-003 | P1 | propio / integración políticas | request sin JS + permiso efectivo | implementado / sin verificar |
+| SYSTEM_ROLES-004 | P1 | propio | navegador con filtro y seleccionar todo | implementado / sin verificar |
+| SYSTEM_ROLES-005 | P2 | propio | 422 por campo + accesibilidad | implementado / sin verificar |
+| SYSTEM_ROLES-006 | P2 | propio | review 422 + validación de token | implementado / sin verificar |
+| SYSTEM_ROLES-007 | P2 | propio | modelo y constraints | implementado / sin verificar |
+| SYSTEM_ROLES-008 | P2 | propio / integración Sucursales | casos de sucursal no operativa | implementado / sin verificar |
+
+## Implementación aplicada (2026-11-08)
+
+Cada ID se conserva como se documentó en la auditoría. Las correcciones **están presentes en GitHub**, pero ninguna se ha cerrado sin evidencia del SHA final:
+
+| ID | Corrección implementada | Archivos principales | Estado |
+|---|---|---|---|
+| SYSTEM_ROLES-001 | Reservar altas, ediciones y transiciones globales a `super_admin`; administradores consultan sin editar ni ver el historial global de actores | `SystemRolePolicy`, `SystemRolesController`, `views/system_roles/index/show` | IMPLEMENTADO / NO VERIFICADO |
+| SYSTEM_ROLES-002 | Evento append-only por altas/bajas de permisos, guardado en transacción, vista con paginación y actor | `SystemRoles::PermissionUpdater`, `SystemRolePermissionAuditEvent`, migración `20261110010000`, `_permission_history` | IMPLEMENTADO / NO VERIFICADO |
+| SYSTEM_ROLES-003 | Verificar `*.access` en el servidor y sincronizar accesos al marcar acciones en el editor sin alterar roles al abrirlos | `SystemRoles::PermissionSelection`, `role_permissions_controller.js` | IMPLEMENTADO / NO VERIFICADO |
+| SYSTEM_ROLES-004 | La selección por grupo cambia solo permisos visibles; el texto del control lo identifica en es/en/ko | `role_permissions_controller.js`, `_permission_group`, locales | IMPLEMENTADO / NO VERIFICADO |
+| SYSTEM_ROLES-005 | Mensajes junto a campo, asteriscos, `aria-invalid`/`aria-describedby`, formulario `novalidate` y dropdown Delta POS | `_form.html.erb`, `_permissions.html.erb`, `SystemRolesController` | IMPLEMENTADO / NO VERIFICADO |
+| SYSTEM_ROLES-006 | Motivo y confirmación muestran errores bajo su control sin `required` HTML5 y conservan el texto del usuario tras 422 | `StatusTransition`, `SystemRoleStatusesController`, `status_review.html.erb` | IMPLEMENTADO / NO VERIFICADO |
+| SYSTEM_ROLES-007 | Normalizar nombre, validar unicidad case-insensitive e índice funcional PostgreSQL | `SystemRole`, migración `20261110010100`, `db/schema.rb` | IMPLEMENTADO / NO VERIFICADO |
+| SYSTEM_ROLES-008 | Calcular alternativas efectivas sobre sucursales operativas e incluir cambios de sucursal en el fingerprint de revisión | `SystemRoles::StatusImpact` | IMPLEMENTADO / NO VERIFICADO |
+
+**Commits del módulo:** `ddf45c5` (seguridad, servicios y auditoría), `52d6581` (editor), `96167cc` (traducciones), `1f76ec4` (regresiones), `9128409` (schema), `7154d23` (protección de historial multiempresa), `9b01dc3` (YAML inglés), `5ae9fc8` (RuboCop/refactor), `dab7cd9` (paginación y sincronización explícita), `be216f7` (spec etiquetas); todos en `feature/fixes`.
+
+**Pruebas nuevas:** `spec/requests/system_roles_security_spec.rb`, `spec/features/system_role_filtered_permissions_browser_spec.rb`, `spec/services/system_roles/status_impact_effective_roles_spec.rb`; también se actualizaron fixtures de superadministrador y specs existentes de roles.
+
+**Operaciones de base de datos:** las dos migraciones están presentes y `db/schema.rb` está actualizado. **No afirmar que se aplicaron correctamente** hasta que termine el job Fresh migrations. La unicidad funcional puede requerir remediación de nombres legados duplicados (no se renombraron datos de usuario automáticamente).
 
 ## Cobertura existente localizada (no ejecutada en esta auditoría)
 
@@ -142,10 +163,13 @@
 | 2026-11-08 | `8974fee011f9422066985a0ab088ed2d771e1c8a` | Revisión estática GitHub + heurísticas AI Dev Suite | REALIZADA | Inspección de archivos descritos; no ejecución de aplicación ni de CLIs externos |
 | 2026-11-08 | `8974fee011f9422066985a0ab088ed2d771e1c8a` | CI general | EN CURSO al consultar | https://github.com/AliRodri1992/sales_point/actions/runs/42557591638 |
 | 2026-11-08 | `8974fee011f9422066985a0ab088ed2d771e1c8a` | Hook configuration | PASÓ | https://github.com/AliRodri1992/sales_point/actions/runs/42557591788 ; no sustituye CI global |
-| 2026-11-08 | — | RSpec focalizado / RuboCop / Brakeman / I18n | NO EJECUTADO | Acceso por API GitHub, sin proceso Rails/Docker de proyecto |
+| 2026-11-08 | `7154d23` | Rails I18n and YAML audit | PASÓ en ejecución previa `42559988289` (SHA `be216f7`; misma serie de cambios, no SHA final) | https://github.com/AliRodri1992/sales_point/actions/runs/42559988289 |
+| 2026-11-08 | `be216f7` | Security scans | PASÓ en ejecución previa `42559988289` | https://github.com/AliRodri1992/sales_point/actions/runs/42559988289 |
+| 2026-11-08 | `7154d23` y siguientes | RSpec / RuboCop / Fresh migrations | INICIADOS en GitHub Actions; ejecución cancelada por pushes concurrentes, sin resultado de aceptación | https://github.com/AliRodri1992/sales_point/actions/runs/42559988289 |
+| 2026-11-08 | — | Comandos locales Ruby/Docker/RSpec focalizado | NO EJECUTADO | Sin acceso a la instancia Rails/Docker del usuario |
 | 2026-11-08 | — | Pruebas manuales de navegador, capturas, dispositivos | NO EJECUTADO | No se dispone de instancia de la aplicación con sesión autorizada |
 
-**Nota de concurrencia:** durante esta auditoría avanzó la rama a `956cb93dfbe6fe7bdd9d119f48e086ddf28ff2d0`, mediante un commit limitado a Plantillas de correo. No afecta los archivos propios de Roles y Permisos observados; el SHA inicial sigue siendo la base de esta inspección. Antes de corregir, comprobar HEAD y conservar cambios paralelos.
+**Nota de concurrencia:** otros agentes realizan pushes de Plantillas, Usuarios y Sucursales sobre `feature/fixes`; se conservaron sus cambios y no se fusionó ninguna rama. GitHub Actions cancela ejecuciones anteriores al llegar nuevos pushes. Los fallos de lint y sintaxis en módulos ajenos (Inventario/Compras/Onboarding) observados en ejecuciones previas son EXTERNOS, no se atribuyen a Roles; pueden bloquear el CI global.
 
 ## Dependencias y traspasos
 
@@ -157,6 +181,6 @@
 
 ## Dictamen
 
-**AUDITADO ESTÁTICAMENTE, NO VERIFICADO, NO CERRADO.** Cuatro hallazgos P1 y cuatro P2 quedan abiertos; no se han realizado correcciones de aplicación en esta auditoría. El cierre exige correcciones, regresiones focalizadas, pruebas visuales, controles de calidad, CI global verde en SHA final y revisión independiente.
+**IMPLEMENTADO, PENDIENTE DE VERIFICACIÓN, NO CERRADO.** Los 8 hallazgos tienen cambios de código publicados, sin validación final de RSpec, Ruby lint, migraciones limpias y navegador. Se preservan IDs para toda regresión. El cierre exige correcciones, regresiones focalizadas, pruebas visuales, controles de calidad, CI global verde en SHA final y revisión independiente.
 
 Política: [Estándar modular](../module-quality-standard.md) · [Plantilla ampliada](../module-audit-template.md).
