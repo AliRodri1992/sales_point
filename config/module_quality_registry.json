@@ -1,0 +1,192 @@
+{
+  "version": 1,
+  "description": "Canonical registry of Delta POS module-quality record ownership. An entry is not an audit or certification.",
+  "modules": [
+    {
+      "slug": "branches",
+      "entry_route": "/admin/branches",
+      "kind": "module",
+      "record": "docs/quality/modules/branches.md"
+    },
+    {
+      "slug": "onboarding",
+      "entry_route": "/admin/onboarding",
+      "kind": "module",
+      "record": "docs/quality/modules/onboarding.md"
+    },
+    {
+      "slug": "users",
+      "entry_route": "/admin/users",
+      "kind": "module",
+      "record": "docs/quality/modules/users.md"
+    },
+    {
+      "slug": "email-templates",
+      "entry_route": "/admin/email_templates",
+      "kind": "module",
+      "record": "docs/quality/modules/email-templates.md"
+    },
+    {
+      "slug": "authentication",
+      "entry_route": "/users/sign_in",
+      "kind": "module",
+      "record": "docs/quality/modules/authentication.md"
+    },
+    {
+      "slug": "dashboard",
+      "entry_route": "/admin/dashboard",
+      "kind": "module",
+      "record": "docs/quality/modules/dashboard.md"
+    },
+    {
+      "slug": "general-settings",
+      "entry_route": "/admin/general_settings",
+      "kind": "module",
+      "record": "docs/quality/modules/general-settings.md"
+    },
+    {
+      "slug": "languages",
+      "entry_route": "/admin/languages",
+      "kind": "module",
+      "record": "docs/quality/modules/languages.md"
+    },
+    {
+      "slug": "categories",
+      "entry_route": "/admin/categories",
+      "kind": "module",
+      "record": "docs/quality/modules/categories.md"
+    },
+    {
+      "slug": "products",
+      "entry_route": "/admin/products",
+      "kind": "module",
+      "record": "docs/quality/modules/products.md"
+    },
+    {
+      "slug": "price-lists",
+      "entry_route": "/admin/price_lists",
+      "kind": "module",
+      "record": "docs/quality/modules/price-lists.md"
+    },
+    {
+      "slug": "promotions",
+      "entry_route": "/admin/promotions",
+      "kind": "module",
+      "record": "docs/quality/modules/promotions.md"
+    },
+    {
+      "slug": "clients",
+      "entry_route": "/admin/clients",
+      "kind": "module",
+      "record": "docs/quality/modules/clients.md"
+    },
+    {
+      "slug": "suppliers",
+      "entry_route": "/admin/suppliers",
+      "kind": "module",
+      "record": "docs/quality/modules/suppliers.md"
+    },
+    {
+      "slug": "purchases",
+      "entry_route": "/admin/purchase_requests",
+      "kind": "module",
+      "record": "docs/quality/modules/purchases.md"
+    },
+    {
+      "slug": "inventory",
+      "entry_route": "/admin/branches/:branch_id/inventories",
+      "kind": "module",
+      "record": "docs/quality/modules/inventory.md"
+    },
+    {
+      "slug": "terminals",
+      "entry_route": "/admin/branches/:id/add_terminal",
+      "kind": "embedded",
+      "record": "docs/quality/modules/terminals.md"
+    },
+    {
+      "slug": "demo-requests",
+      "entry_route": "/admin/demo_requests",
+      "kind": "module",
+      "record": "docs/quality/modules/demo-requests.md"
+    },
+    {
+      "slug": "accounts-payable",
+      "entry_route": "/admin/account_payables",
+      "kind": "module",
+      "record": "docs/quality/modules/accounts-payable.md"
+    },
+    {
+      "slug": "supplier-invoices",
+      "entry_route": "/admin/supplier_invoices",
+      "kind": "module",
+      "record": "docs/quality/modules/supplier-invoices.md"
+    },
+    {
+      "slug": "supplier-payments",
+      "entry_route": "/admin/supplier_payments",
+      "kind": "module",
+      "record": "docs/quality/modules/supplier-payments.md"
+    },
+    {
+      "slug": "supplier-credit-notes",
+      "entry_route": "/admin/supplier_credit_notes",
+      "kind": "module",
+      "record": "docs/quality/modules/supplier-credit-notes.md"
+    },
+    {
+      "slug": "organization-contacts",
+      "entry_route": "/admin/organization/contacts",
+      "kind": "module",
+      "record": "docs/quality/modules/organization-contacts.md"
+    },
+    {
+      "slug": "profile",
+      "entry_route": "/admin/profile",
+      "kind": "module",
+      "record": "docs/quality/modules/profile.md"
+    },
+    {
+      "slug": "system-roles",
+      "entry_route": "/system_roles",
+      "kind": "module",
+      "record": "docs/quality/modules/system-roles.md"
+    },
+    {
+      "slug": "notifications",
+      "entry_route": "/notifications/mark_all_read",
+      "kind": "module",
+      "record": "docs/quality/modules/notifications.md"
+    },
+    {
+      "slug": "conversations",
+      "entry_route": "/conversations",
+      "kind": "module",
+      "record": "docs/quality/modules/conversations.md"
+    },
+    {
+      "slug": "assistant",
+      "entry_route": "/admin/assistant/reply",
+      "kind": "module",
+      "record": "docs/quality/modules/assistant.md"
+    },
+    {
+      "slug": "guide",
+      "entry_route": "/admin/guide",
+      "kind": "module",
+      "record": "docs/quality/modules/guide.md"
+    },
+    {
+      "slug": "navigation-preferences",
+      "entry_route": "/admin/sidebar",
+      "kind": "shared",
+      "record": "docs/quality/modules/navigation-preferences.md"
+    },
+    {
+      "slug": "public-pages",
+      "entry_route": "/",
+      "kind": "public",
+      "record": "docs/quality/modules/public-pages.md"
+    }
+  ]
+}
