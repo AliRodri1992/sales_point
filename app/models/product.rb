@@ -103,7 +103,11 @@ class Product < ApplicationRecord
       attribute = "#{association}_id"
       next unless will_save_change_to_attribute?(attribute) && public_send(attribute).present?
 
-      errors.add(attribute, :invalid) if public_send(association).nil?
+      reference = public_send(association)
+      if reference.nil? || (association == :category && reference.organization_id.present? &&
+                            reference.organization_id != organization_id)
+        errors.add(attribute, :invalid)
+      end
     end
   end
 

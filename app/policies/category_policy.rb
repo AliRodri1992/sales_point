@@ -5,7 +5,8 @@ class CategoryPolicy < CatalogPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.all
+      organization = CurrentOrganizationAccess.organization
+      organization ? scope.where(organization_id: organization.id) : scope.none
     end
   end
 end

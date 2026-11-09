@@ -49,7 +49,7 @@
 
 <div id="categories_alert" aria-live="assertive" class="mb-3"></div>
 
-<%= turbo_stream_from "categories_catalog" %>
+<%= turbo_stream_from "categories_catalog_#{current_organization.id}" %>
 
 <div class="delta-skeleton-region" data-controller="skeleton-loading"
      data-skeleton-loading-region-value="categories_list" aria-busy="false"

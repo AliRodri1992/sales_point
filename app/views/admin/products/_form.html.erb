@@ -23,7 +23,7 @@
     <section class="catalog-card" id="product-classification">
       <%= catalog_heading(t('admin.catalog_design.classification'), t('admin.catalog_design.classification_hint'), icon: 'squares-2x2') %>
       <div class="catalog-card-body catalog-fields">
-        <%= catalog_select(form, :category_id, catalog_reference_choices(Category.available.order(:name), product.category_id), label: t('admin.products.form.category')) %>
+        <%= catalog_select(form, :category_id, catalog_reference_choices(current_organization.categories.available.order(:name), product.category_id), label: t('admin.products.form.category')) %>
         <%= catalog_select(form, :tracking_mode, Product.tracking_modes.keys.map { |mode| [t("admin.catalog_design.tracking_#{mode}"), mode] }, label: t('admin.catalog_design.tracking_mode'), include_blank: false) %>
         <%= catalog_select(form, :sat_unit_key_id, catalog_reference_choices(SatUnitKey.current.order(:code), product.sat_unit_key_id, label: :to_label), label: t('admin.products.form.sat_unit_key')) %>
         <%= catalog_select(form, :sat_tax_id, catalog_reference_choices(SatTax.active.for_products.order(:code), product.sat_tax_id), label: t('admin.products.form.sat_tax')) %>

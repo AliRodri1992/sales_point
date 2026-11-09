@@ -679,12 +679,14 @@ SeedConsole.track('Clientes', Client) do
 end
 
 SeedConsole.track('Categorías', Category) do
+  organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
   30.times do |index|
     number = index + 1
     code = format('cat%04d', number)
-    next if Category.unscoped.exists?(code:)
+    next if Category.unscoped.exists?(organization:, code:)
 
     Category.create!(
+      organization:,
       code:,
       name: "Categoría #{number}",
       description: "Categoría de ejemplo #{number} para Delta POS.",
@@ -695,7 +697,7 @@ end
 
 SeedConsole.track('Productos', Product) do
   organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
-  categories = Category.not_deleted.order(:id).to_a
+  categories = organization.categories.not_deleted.order(:id).to_a
   raise 'No hay categorías disponibles para crear productos' if categories.empty?
 
   30.times do |index|

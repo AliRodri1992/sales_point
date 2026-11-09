@@ -7,6 +7,7 @@ module Admin
     include CatalogAuthorization
     include CatalogNavigation
 
+    before_action :require_organization
     before_action :set_category, only: %i[show edit update destroy]
 
     rescue_from Pundit::NotAuthorizedError, with: :forbidden
@@ -29,7 +30,7 @@ module Admin
     def edit; end
 
     def create
-      @category = Category.new(category_params)
+      @category = Category.new(category_params.merge(organization: current_organization))
 
       if @category.save
         load_categories
@@ -98,7 +99,15 @@ module Admin
     private
 
     def set_category
-      @category = Category.not_deleted.find(params[:id])
+      @category = scoped_categories.find(params[:id])
+    end
+
+    def scoped_categories
+      current_organization.categories.not_deleted
+    end
+
+    def require_organization
+      head :forbidden unless current_organization
     end
 
     def category_params
@@ -118,12 +127,12 @@ module Admin
     # requesting client that receives the HTTP turbo_stream response).
     def broadcast_categories_update
       # Each browser refreshes its own URL, keeping the user's saved page size.
-      Turbo::StreamsChannel.broadcast_refresh_to('categories_catalog')
+      Turbo::StreamsChannel.broadcast_refresh_to("categories_catalog_#{current_organization.id}")
     end
 
     def load_categories
-      @unfiltered_count = Category.not_deleted.count
-      @categories = filter_scope(Category.not_deleted)
+      @unfiltered_count = scoped_categories.count
+      @categories = filter_scope(scoped_categories)
       @total_count = @categories.count
       @categories = apply_sorting(@categories)
       @categories = paginate(@categories)

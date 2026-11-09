@@ -25,5 +25,8 @@ class PromotionCondition < ApplicationRecord
   def same_organization
     validate_commercial_parent(promotion, :promotion)
     validate_commercial_parent(product, :product) if product
+    if category && category.organization_id.present? && category.organization_id != organization_id
+      errors.add(:category, :invalid)
+    end
   end
 end

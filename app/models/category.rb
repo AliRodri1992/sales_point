@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Category < ApplicationRecord
+  belongs_to :organization, optional: true
   has_many :products, dependent: :restrict_with_error
   has_many :promotion_conditions, dependent: :restrict_with_error
 
@@ -10,7 +11,7 @@ class Category < ApplicationRecord
 
   validates :code,
             presence: true,
-            uniqueness: { conditions: -> { where(deleted_at: nil) } },
+            uniqueness: { scope: :organization_id, conditions: -> { where(deleted_at: nil) } },
             length: { maximum: 20 },
             format: { with: /\A[a-z0-9_]+\z/ }
 
@@ -30,6 +31,8 @@ class Category < ApplicationRecord
   def in_use?
     products.exists? || promotion_conditions.exists?
   end
+
+  scope :for_organization, ->(organization) { where(organization_id: organization&.id) }
 
   scope :available, lambda {
     where(status: :active)
