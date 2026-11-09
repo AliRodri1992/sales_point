@@ -4,6 +4,7 @@ class Note < ApplicationRecord
   has_paper_trail only: %i[body deleted_at], save_changes: true,
                   if: ->(record) { record.notable_type == 'Branch' }
   include RestrictsClosedBranchMutations
+
   belongs_to :notable, polymorphic: true
   belongs_to :organization, optional: true
   belongs_to :created_by, class_name: 'User', optional: true

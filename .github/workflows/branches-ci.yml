@@ -55,7 +55,8 @@ jobs:
           bin/rubocop -f simple \
             app/controllers/admin/branches_controller.rb \
             app/controllers/concerns/admin/branch_*.rb \
-            app/models/branch.rb app/models/concerns/branch_lifecycle.rb \
+            app/models/branch.rb app/models/phone.rb app/models/note.rb \
+            app/models/concerns/branch_lifecycle.rb \
             app/services/branches app/policies/branch_policy.rb app/helpers/branches_helper.rb \
             spec/models/branch_spec.rb spec/services/branches \
             spec/requests/admin/branches_spec.rb spec/requests/admin/branch_workspace_spec.rb \

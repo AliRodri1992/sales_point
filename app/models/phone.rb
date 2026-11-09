@@ -5,6 +5,7 @@ class Phone < ApplicationRecord
                   save_changes: true,
                   if: ->(record) { record.phoneable_type == 'Branch' }
   include RestrictsClosedBranchMutations
+
   KINDS = %w[mobile landline other].freeze
   PHONEABLE_TYPES = %w[Contact Client Branch Employee].freeze
 
