@@ -1,7 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["search", "group", "permission", "total", "empty", "results"]
+  static targets = ["search", "group", "permission", "total", "empty", "results", "dependencyNotice"]
+  static values = { dependencyTemplate: String }
 
   connect() {
     this.filter()
@@ -57,13 +58,23 @@ export default class extends Controller {
         .filter(permission => !permission.closest("[data-permission-row]").hidden && permission.checked) :
       [input].filter(Boolean)
 
+    const autoSelected = []
     if (input?.checked) {
       changedInputs.forEach(permission => {
         const [module, action] = permission.dataset.permissionCode?.split(".") || []
         if (!dependent.includes(module) || !action || action === "access") return
         const access = this.permissionTargets.find(item => item.dataset.permissionCode === `${module}.access`)
-        if (access && !access.disabled) access.checked = true
+        if (access && !access.disabled && !access.checked) {
+          access.checked = true
+          autoSelected.push(access.dataset.permissionCode)
+        }
       })
+    }
+    if (input && this.hasDependencyNoticeTarget) {
+      const unique = [...new Set(autoSelected)]
+      this.dependencyNoticeTarget.hidden = unique.length === 0
+      this.dependencyNoticeTarget.textContent = unique.length ?
+        this.dependencyTemplateValue.replace("%{permissions}", unique.join(", ")) : ""
     }
 
     this.totalTarget.textContent = String(this.permissionTargets.filter(permission => permission.checked).length)

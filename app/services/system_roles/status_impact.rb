@@ -18,7 +18,8 @@ module SystemRoles
     def fingerprint
       Digest::SHA256.hexdigest([
         @role.id, @role.status, @role.updated_at.iso8601(6), @role.deleted_at,
-        assignments, permissions, other_assignments, affected_branch_states
+        assignments, permissions, other_assignments, other_role_permissions,
+        organization_membership_states, affected_branch_states
       ].to_json)
     end
 
@@ -70,6 +71,22 @@ module SystemRoles
                       .joins(system_role: { system_role_permissions: :permission })
                       .where(system_role_permissions: { deleted_at: nil }, permissions: { status: 'active' })
       scope.where(branch_id: nil).or(scope.where(branch_id: branches))
+    end
+
+    # Any change to a competing role's available permissions may alter the
+    # reviewed number of users left without effective access.
+    def other_role_permissions
+      role_ids = other_assignments.pluck(2).uniq
+      SystemRolePermission.where(system_role_id: role_ids).joins(:permission)
+                          .order(:system_role_id, :permission_id)
+                          .pluck(:system_role_id, :permission_id, :deleted_at,
+                                 'permissions.status', 'permissions.deleted_at', 'permissions.updated_at')
+    end
+
+    def organization_membership_states
+      OrganizationMembership.with_deleted.where(user_id: user_ids).order(:id)
+                            .pluck(:id, :user_id, :organization_id, :status,
+                                   :account_status, :deleted_at, :updated_at)
     end
 
     def affected_branch_states

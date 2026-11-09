@@ -74,7 +74,7 @@ class ApplicationController < ActionController::Base
   end
 
   def with_user_permission_context(&)
-    CurrentOrganizationAccess.set(organization: current_organization, &)
+    CurrentOrganizationAccess.set(organization: current_organization, enforce_tenant: true, &)
   end
 
   def with_organization_timezone(&)

@@ -12,6 +12,7 @@ es:
         no_results: No hay permisos que coincidan con tu búsqueda.
         empty: No hay permisos activos disponibles.
         access_hint: 'Las acciones que requieren acceso al módulo seleccionan automáticamente el permiso Acceder.'
+        auto_added_access: 'También se seleccionaron permisos de acceso necesarios, aunque estén ocultos por el filtro: %{permissions}.'
         select_visible: 'Seleccionar visibles: %{module}'
         select_module: 'Seleccionar todo: %{module}'
         save_hint: Los cambios se aplican al guardar.

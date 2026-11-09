@@ -26,6 +26,9 @@ module UserEffectiveRoles
 
   def effective_role_assignments(organization:)
     scope = user_roles.active
+    return scope.none if CurrentOrganizationAccess.enforce_tenant && organization.nil?
+    return scope.none if organization.nil? && organization_memberships.with_deleted.exists? &&
+                             !organization_memberships.accessible.exists?
     return scope.none if organization && !organization_memberships.accessible.exists?(organization:)
 
     scope = scope.where(organization:) if organization

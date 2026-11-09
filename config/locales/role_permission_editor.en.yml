@@ -12,6 +12,7 @@ en:
         no_results: No permissions match your search.
         empty: No active permissions are available.
         access_hint: 'Actions requiring module access automatically select the Access permission.'
+        auto_added_access: 'Required access permissions were also selected, even though the filter hides them: %{permissions}.'
         select_visible: 'Select visible: %{module}'
         select_module: 'Select all: %{module}'
         save_hint: Changes take effect when you save.

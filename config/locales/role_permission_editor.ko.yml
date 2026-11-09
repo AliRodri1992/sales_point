@@ -11,6 +11,7 @@ ko:
         no_results: 검색과 일치하는 권한이 없습니다.
         empty: 사용 가능한 활성 권한이 없습니다.
         access_hint: '모듈 접근이 필요한 작업을 선택하면 접근 권한이 자동으로 선택됩니다.'
+        auto_added_access: '검색 필터에 표시되지 않지만 필요한 접근 권한도 자동 선택되었습니다: %{permissions}.'
         select_visible: '보이는 항목 선택: %{module}'
         select_module: '전체 선택: %{module}'
         save_hint: 저장하면 변경 사항이 적용됩니다.

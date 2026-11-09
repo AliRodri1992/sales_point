@@ -69,15 +69,14 @@ class User < ApplicationRecord
   end
 
   def organization_accessible?
-    membership_scope = organization_memberships.where(deleted_at: nil)
-    return true unless membership_scope.exists?
+    return true unless organization_memberships.with_deleted.exists?
 
-    membership_scope.accessible.exists?
+    organization_memberships.accessible.exists?
   end
 
   def admin?
     organization = CurrentOrganizationAccess.organization
-    assignments = organization ? effective_role_assignments(organization:) : user_roles.active
+    assignments = effective_role_assignments(organization:)
     assignments.where(branch_id: nil).exists?(
       system_roles: { code: SystemRole::ADMINISTRATIVE_CODES }
     )
