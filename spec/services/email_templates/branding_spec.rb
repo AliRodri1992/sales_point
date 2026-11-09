@@ -73,6 +73,7 @@ RSpec.describe EmailTemplates::Branding do
       allowed_variables: %w[support_email support_url privacy_url]
     )
     allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    allow(ENV).to receive(:fetch).and_call_original
     %w[DELTA_POS_SUPPORT_EMAIL DELTA_POS_SUPPORT_URL DELTA_POS_PRIVACY_URL].zip(
       ['support@example.org', 'https://example.org/support', 'https://example.org/privacy']
     ).each do |key, value|
@@ -97,6 +98,7 @@ RSpec.describe EmailTemplates::Branding do
   it 'rejects credential-bearing contact URLs even when provided as an environment fallback' do
     source = EmailTemplateVersion.new(subject: 'Privacy', html_body: '{{privacy_url}}', text_body: 'Privacy')
     allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    allow(ENV).to receive(:fetch).and_call_original
     allow(ENV).to receive(:fetch).with('DELTA_POS_PRIVACY_URL', 'https://example.org/privacy')
                        .and_return('https://user:password@delta-pos.mx/privacy')
 
