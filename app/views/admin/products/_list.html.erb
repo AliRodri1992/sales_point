@@ -57,7 +57,7 @@
                 <div class="flex items-center gap-3"><span class="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50"><% if product.image.attached? %><%= image_tag product.image, alt: '', loading: 'lazy', class: 'size-10 object-cover' %><% else %><%= delta_icon('cube', class: 'size-5 text-slate-400') %><% end %></span><span class="min-w-0"><span class="block"><%= product.name %></span><span class="mt-1 block text-xs font-normal text-slate-500"><%= product.sku %></span></span></div>
               </td>
               <td class="px-6 py-4 text-right">
-                <%= number_to_currency(product.price) %>
+                <%= product_money(product.price) %>
               </td>
               <td class="px-6 py-4 text-right">
                 <%= number_with_precision(stock_totals.fetch(product.id, 0), strip_insignificant_zeros: true, precision: 3) %>

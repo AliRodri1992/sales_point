@@ -55,8 +55,11 @@ module CatalogDesignHelper
   end
 
   def product_money(amount, currency: nil)
-    currency ||= current_organization&.organization_settings&.active_records&.first&.base_currency&.code || 'MXN'
-    "#{number_to_currency(amount)} #{currency}"
+    "#{number_to_currency(amount)} #{currency || product_currency_code}"
+  end
+
+  def product_currency_code
+    @product_currency_code ||= current_organization&.organization_settings&.active_records&.first&.base_currency&.code || 'MXN'
   end
 
   def product_image_form_token(product)

@@ -180,7 +180,8 @@
         "stock_out": "Sin existencias",
         "stock_low": "Stock bajo",
         "minimum_price": "Precio mínimo",
-        "maximum_price": "Precio máximo"
+        "maximum_price": "Precio máximo",
+        "tracking_mode_locked": "no se puede cambiar cuando hay existencias o historial de movimientos o lotes"
       },
       "breadcrumbs": {
         "controllers": {

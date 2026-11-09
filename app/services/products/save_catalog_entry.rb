@@ -20,7 +20,11 @@ module Products
         update_existing?
       end
     rescue ActiveRecord::RecordInvalid => e
-      @product.errors.add(:base, e.record.errors.full_messages.to_sentence) unless e.record == @product
+      if e.record.is_a?(ProductBarcode) && e.record.primary?
+        @product.errors.add(:barcode, :invalid)
+      elsif e.record != @product
+        @product.errors.add(:base, e.record.errors.full_messages.to_sentence)
+      end
       false
     end
 

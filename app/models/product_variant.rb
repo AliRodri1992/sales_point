@@ -9,13 +9,20 @@ class ProductVariant < ApplicationRecord
   store_accessor :options, :size, :color, :model
   normalizes :sku, with: ->(value) { value.strip.presence }
   validates :name, presence: true, length: { maximum: 100 }
-  validates :sku, length: { maximum: 50 }, uniqueness: { scope: :organization_id, allow_nil: true }
+  validates :sku, length: { maximum: 50 }, uniqueness: { scope: :organization_id, allow_nil: true, case_sensitive: false }
   enum :status, { active: 'active', inactive: 'inactive' }, validate: true, default: :active
   validate :same_organization
+  validate :sku_available_among_products, if: -> { sku.present? }
   validate :valid_options
   before_validation :inherit_organization
 
   private
+
+  def sku_available_among_products
+    parent_uses_sku = product&.sku.present? && product.sku.casecmp?(sku)
+    existing = Product.where(organization_id:).where('lower(sku) = lower(?)', sku).exists?
+    errors.add(:sku, :taken) if parent_uses_sku || existing
+  end
 
   def inherit_organization
     self.organization ||= product&.organization

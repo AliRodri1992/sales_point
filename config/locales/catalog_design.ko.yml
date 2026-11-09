@@ -180,7 +180,8 @@
         "stock_out": "품절",
         "stock_low": "재고 부족",
         "minimum_price": "최소 가격",
-        "maximum_price": "최대 가격"
+        "maximum_price": "최대 가격",
+        "tracking_mode_locked": "재고, 이동 내역 또는 로트 기록이 있으면 변경할 수 없습니다"
       },
       "breadcrumbs": {
         "controllers": {

@@ -180,7 +180,8 @@
         "stock_out": "Out of stock",
         "stock_low": "Low stock",
         "minimum_price": "Minimum price",
-        "maximum_price": "Maximum price"
+        "maximum_price": "Maximum price",
+        "tracking_mode_locked": "cannot be changed while stock, movements or lot history exist"
       },
       "breadcrumbs": {
         "controllers": {
