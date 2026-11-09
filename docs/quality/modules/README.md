@@ -28,6 +28,7 @@ Consulta primero el [estándar de calidad modular](../module-quality-standard.md
 |---|---|---|
 | Productos | `/admin/products` | [Productos](products.md) |
 | Categorías | `/admin/categories` | [Categorías](categories.md) |
+| Unidades de medida | `/admin/units_of_measure` | [Unidades de medida](units-of-measure.md) |
 | Listas de precios | `/admin/price_lists` | [Listas de precios](price-lists.md) |
 | Promociones | `/admin/promotions` | [Promociones](promotions.md) |
 | Clientes | `/admin/clients` | [Clientes](clients.md) |

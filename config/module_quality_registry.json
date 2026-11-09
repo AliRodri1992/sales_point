@@ -57,6 +57,12 @@
       "record": "docs/quality/modules/categories.md"
     },
     {
+      "slug": "units-of-measure",
+      "entry_route": "/admin/units_of_measure",
+      "kind": "module",
+      "record": "docs/quality/modules/units-of-measure.md"
+    },
+    {
       "slug": "products",
       "entry_route": "/admin/products",
       "kind": "module",
@@ -216,6 +222,7 @@
     "supplier_invoices": "supplier-invoices",
     "supplier_payments": "supplier-payments",
     "supplier_credit_notes": "supplier-credit-notes",
-    "suppliers": "suppliers"
+    "suppliers": "suppliers",
+    "units_of_measure": "units-of-measure"
   }
 }
