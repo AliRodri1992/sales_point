@@ -53,6 +53,11 @@
                       class: "min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm" %>
     </div>
     <p id="unit-sat-hint" class="mt-2 text-xs leading-relaxed text-slate-500"><%= t('admin.units_of_measure.form.sat_hint') %></p>
+    <% if unit.persisted? && !unit.sat_unit_key_current? %>
+      <p class="mt-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900" role="status">
+        <%= t('admin.units_of_measure.sat.invalid_hint') %>
+      </p>
+    <% end %>
     <%= error_message_for(unit, :sat_unit_key_id, label: t('admin.units_of_measure.form.sat')) %>
     <%= error_message_for(unit, :sat_unit_key, label: t('admin.units_of_measure.form.sat')) %>
   </div>
@@ -74,6 +79,7 @@
                         aria: { invalid: unit.errors[:status].any?, describedby: validation_describedby(unit, :status) },
                         class: 'min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm' %>
       </div>
+      <p class="mt-1 text-xs leading-relaxed text-slate-500"><%= t('admin.units_of_measure.form.status_hint') %></p>
       <%= error_message_for(unit, :status, label: t('admin.units_of_measure.form.status')) %>
     </div>
   </div>

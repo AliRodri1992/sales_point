@@ -12,19 +12,24 @@ module Admin
       scope = filtered_units(scope)
       @total_count = scope.count
       paginate_units(scope)
-      @sat_filter_options = SatUnitKey.current.order(:code).pluck(:code, :id)
+      @sat_filter_options = linked_sat_keys.map do |key|
+        label = "#{key.code} — #{key.description}"
+        label = "#{label} (#{t('admin.units_of_measure.sat.invalid_suffix')})" unless key.active? && key.valid_for_date?
+        [label, key.id]
+      end
     end
 
     def count_units(scope)
       @unfiltered_count = scope.count
       @active_count = scope.where(status: 'active').count
       @fractional_count = scope.where('decimal_precision > 0').count
+      @invalid_sat_count = scope.where.not(sat_unit_key_id: SatUnitKey.current.select(:id)).count
     end
 
     def filtered_units(scope)
       scope = search_units(scope) if params[:search].present?
       scope = scope.where(status: params[:status]) if UnitOfMeasure.statuses.key?(params[:status])
-      filter_fractional(filter_sat_key(scope))
+      filter_sat_health(filter_fractional(filter_sat_key(scope)))
     end
 
     def filter_sat_key(scope)
@@ -39,6 +44,20 @@ module Admin
       when 'no' then scope.where(decimal_precision: 0)
       else scope
       end
+    end
+
+    def filter_sat_health(scope)
+      keys = SatUnitKey.current.select(:id)
+      case params[:sat_health]
+      when 'current' then scope.where(sat_unit_key_id: keys)
+      when 'invalid' then scope.where.not(sat_unit_key_id: keys)
+      else scope
+      end
+    end
+
+    def linked_sat_keys
+      SatUnitKey.with_deleted.where(id: scoped_units.select(:sat_unit_key_id))
+                .order(:code).to_a
     end
 
     def search_units(scope)

@@ -1,4 +1,4 @@
-<div id="units_of_measure_stats" class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+<div id="units_of_measure_stats" class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
   <div class="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
     <p class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.units_of_measure.index.total') %></p>
     <p class="mt-2 font-jakarta text-2xl font-bold tabular-nums text-slate-900"><%= @unfiltered_count %></p>
@@ -11,4 +11,12 @@
     <p class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.units_of_measure.index.fractional') %></p>
     <p class="mt-2 font-jakarta text-2xl font-bold tabular-nums text-slate-900"><%= @fractional_count %></p>
   </div>
+  <%= link_to admin_units_of_measure_path(sat_health: 'invalid'),
+              class: 'group rounded-2xl border border-amber-200 bg-amber-50/60 px-5 py-4 shadow-sm transition hover:border-amber-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500' do %>
+    <p class="text-xs font-semibold uppercase tracking-wider text-amber-800"><%= t('admin.units_of_measure.index.invalid_sat') %></p>
+    <div class="mt-2 flex items-center justify-between gap-2">
+      <span class="font-jakarta text-2xl font-bold tabular-nums text-amber-900"><%= @invalid_sat_count %></span>
+      <%= delta_icon('arrow-right', class: 'size-4 text-amber-700 transition group-hover:translate-x-0.5') %>
+    </div>
+  <% end %>
 </div>

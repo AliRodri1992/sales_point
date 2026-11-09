@@ -30,6 +30,13 @@
               <td class="px-4 py-4">
                 <span class="font-semibold text-emerald-800"><%= unit.sat_unit_key.code %></span>
                 <span class="ml-1 block max-w-52 truncate text-xs text-slate-500" title="<%= unit.sat_unit_key.description %>"><%= unit.sat_unit_key.description %></span>
+                <% unless unit.sat_unit_key_current? %>
+                  <span class="mt-1 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-800"
+                        title="<%= t('admin.units_of_measure.sat.invalid_hint') %>">
+                    <%= delta_icon('exclamation-triangle', class: 'size-3') %>
+                    <%= t('admin.units_of_measure.sat.invalid') %>
+                  </span>
+                <% end %>
               </td>
               <td class="px-4 py-4 text-center">
                 <span class="font-semibold tabular-nums text-slate-700"><%= unit.decimal_precision %></span>
@@ -58,7 +65,8 @@
                   <% if policy(UnitOfMeasure).destroy? %>
                     <%= button_to admin_unit_of_measure_path(unit), method: :delete,
                                   data: { controller: 'swal-confirm', turbo_confirm: t('admin.units_of_measure.actions.confirm_delete'),
-                                          swal_cancel_text: t('admin.units_of_measure.actions.cancel'), turbo_frame: 'units_of_measure_list' },
+                                          swal_cancel_text: t('admin.units_of_measure.actions.cancel'),
+                                          confirm_record: unit.name, turbo_frame: 'units_of_measure_list' },
                                   aria: { label: t('admin.units_of_measure.actions.delete') },
                                   class: 'inline-flex size-10 items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700' do %>
                       <%= delta_icon('trash', class: 'size-4') %>
