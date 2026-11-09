@@ -489,4 +489,73 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(response.body).not_to include('No Match')
     end
   end
+  describe 'product catalog integrity regressions' do
+    it 'soft-retires an existing secondary barcode through the product editor' do
+      product = create(:product, organization:)
+      barcode = product.product_barcodes.create!(value: 'SECONDARY-BAR-01', symbology: 'code128')
+
+      patch admin_product_path(product),
+            params: { product: { product_barcodes_attributes: [{ id: barcode.id, _destroy: '1' }] } }
+
+      expect(response).to redirect_to(admin_products_path)
+      expect(ProductBarcode.with_deleted.find(barcode.id).deleted_at).to be_present
+    end
+
+    it 'refuses to retire the canonical primary barcode by forging nested attributes' do
+      product = create(:product, organization:, barcode: 'PRIMARY-BAR-01')
+      product.update!(barcode: 'PRIMARY-BAR-02')
+      primary = product.product_barcodes.find_by!(primary: true)
+
+      patch admin_product_path(product),
+            params: { product: { product_barcodes_attributes: [{ id: primary.id, _destroy: '1' }] } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(ProductBarcode.find(primary.id)).to be_present
+      expect(product.reload.barcode).to eq('PRIMARY-BAR-02')
+    end
+
+    it 'reports main barcode format failures directly below the barcode field' do
+      post admin_products_path,
+           params: { product: { name: 'Bad barcode', code: 'BAD-BAR-01', price: 20,
+                                barcode: "bad\\nbarcode" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      field = document.at_css('#product_barcode')
+      expect(field['aria-invalid']).to eq('true')
+      expect(document.at_css("##{field['aria-describedby']}")).to be_present
+    end
+
+    it 'gives each invalid nested variant a distinct, associated error element' do
+      post admin_products_path,
+           params: { product: { name: 'Nested errors', code: 'BAD-NEST-01', price: 20,
+                                product_variants_attributes: {
+                                  '0' => { name: '', sku: 'BAD-VARIANT-A' },
+                                  '1' => { name: '', sku: 'BAD-VARIANT-B' }
+                                } } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      fields = document.css('#product-variants input[name$="[name]"]')
+      expect(fields.size).to eq(2)
+      ids = fields.map { |field| field['aria-describedby'] }
+      expect(ids).to all(be_present)
+      expect(ids.uniq.size).to eq(2)
+      ids.each { |id| expect(document.at_css("##{id}")).to be_present }
+    end
+
+    it 'explains a segment-mismatched price list in the quote response' do
+      product = create(:product, organization:)
+      price_list = organization.price_lists.create!(name: 'Wholesale', code: 'WHS-QUO',
+                                                   currency: 'MXN', status: 'active',
+                                                   customer_segment: 'wholesale')
+
+      get quote_admin_product_path(product), params: { price_list_id: price_list.id,
+                                                        customer_segment: 'retail' }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.parsed_body.fetch('error')).to be_present
+    end
+  end
+
 end

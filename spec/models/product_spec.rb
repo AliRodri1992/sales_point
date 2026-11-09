@@ -234,4 +234,61 @@ RSpec.describe Product, type: :model do
       expect(product.slug).to eq('custom-slug')
     end
   end
+  describe 'catalog identifiers and historical tracking' do
+    let(:organization) { create(:organization) }
+
+    it 'validates a printable primary barcode with at most 100 characters' do
+      product = build(:product, organization:, barcode: "bad\\nbarcode")
+      expect(product).not_to be_valid
+      expect(product.errors[:barcode]).to be_present
+      product.barcode = 'B' * 101
+      expect(product).not_to be_valid
+      expect(product.errors[:barcode]).to be_present
+    end
+
+    it 'does not accept a product SKU already assigned to a variant in the tenant' do
+      parent = create(:product, organization:)
+      parent.product_variants.create!(name: 'Large', sku: 'SHARED-SKU')
+      product = build(:product, organization:, sku: 'shared-sku')
+      expect(product).not_to be_valid
+      expect(product.errors[:sku]).to be_present
+    end
+
+    it 'does not accept a variant SKU already assigned to a product' do
+      parent = create(:product, organization:, sku: 'SHARED-VARIANT-SKU')
+      variant = parent.product_variants.build(name: 'Variant', sku: 'shared-variant-sku')
+      expect(variant).not_to be_valid
+      expect(variant.errors[:sku]).to be_present
+    end
+
+    it 'allows tracking changes before operation and blocks them when there is stock' do
+      product = create(:product, organization:, tracking_mode: 'none')
+      expect(product.update(tracking_mode: 'lot')).to be(true)
+      create(:inventory, organization:, product:, stock: 3)
+      expect(product.update(tracking_mode: 'serial')).to be(false)
+      expect(product.errors[:tracking_mode]).to be_present
+      expect(product.reload.tracking_mode).to eq('lot')
+    end
+
+    it 'enforces case-insensitive product codes at the database level' do
+      create(:product, organization:, code: 'CASE-DB-1')
+      expect do
+        Product.insert_all!([{ organization_id: organization.id, code: 'case-db-1',
+                               name: 'Duplicate code', price: 1, cost: 0,
+                               created_at: Time.current, updated_at: Time.current }])
+      end.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+
+    it 'enforces case-insensitive canonical barcodes at the database level' do
+      first = create(:product, organization:, barcode: 'FIRST-BAR-1')
+      first.update!(barcode: 'FIRST-BAR-2')
+      other = create(:product, organization:)
+      expect do
+        ProductBarcode.insert_all!([{ organization_id: organization.id, product_id: other.id,
+                                      value: 'first-bar-2', symbology: 'code128',
+                                      created_at: Time.current, updated_at: Time.current }])
+      end.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+  end
+
 end
