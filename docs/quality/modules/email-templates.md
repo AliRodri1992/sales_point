@@ -93,9 +93,43 @@
 
 **Código implementado:** [commit 001b90d8](https://github.com/AliRodri1992/sales_point/commit/001b90d8da4afc8f76f51566ca11d256a6187c88). **Corrección de lint y registro:** en el commit que incluye esta sección. **Rama:** `feature/fixes`.
 
-- **EM-011 — IMPLEMENTADO, PENDIENTE DE REVERIFICACIÓN DEL SHA FINAL.** `email_template_preview_controller.js` conserva feedback mientras se valida, compara los errores Rails existentes con el 422, reemplaza los que cambian y elimina los obsoletos tras respuesta válida; sincroniza `aria-invalid`, `aria-describedby` y estilos. La spec de navegador comprueba 422 → corrección → 200, placeholders inválidos y que no se guarde contenido.
-- **EM-012 — IMPLEMENTADO, PENDIENTE DE REVERIFICACIÓN DEL SHA FINAL.** El helper de formularios asigna IDs a todos los mensajes únicos del modelo, incluidos varios por atributo, y los enlaza con ayudas de campo mediante `validation_describedby`. Aplicado a alta, borrador, remitentes, branding y correo de prueba. Specs request comprueban las asociaciones.
+- **EM-011 — VERIFICADO POR CI ESPECIALIZADO EN `3c31725c` (lectores de pantalla manuales pendientes).** `email_template_preview_controller.js` conserva feedback mientras se valida, compara los errores Rails existentes con el 422, reemplaza los que cambian y elimina los obsoletos tras respuesta válida; sincroniza `aria-invalid`, `aria-describedby` y estilos. La spec de navegador comprueba 422 → corrección → 200, placeholders inválidos y que no se guarde contenido.
+- **EM-012 — VERIFICADO POR CI ESPECIALIZADO EN `3c31725c` (lectores de pantalla manuales pendientes).** El helper de formularios asigna IDs a todos los mensajes únicos del modelo, incluidos varios por atributo, y los enlaza con ayudas de campo mediante `validation_describedby`. Aplicado a alta, borrador, remitentes, branding y correo de prueba. Specs request comprueban las asociaciones.
 
 **Ejecución inicial:** [Email Templates CI #42555889164](https://github.com/AliRodri1992/sales_point/actions/runs/42555889164): **264 ejemplos, 0 fallos**; traducciones aprobadas. RuboCop detectó seis ofensas de estilo en nuevas pruebas, motivando este commit. [CI global #42555889141](https://github.com/AliRodri1992/sales_point/actions/runs/42555889141): seguridad e I18n aprobados inicialmente y lint fallido antes de la corrección.
 
 **Puertas pendientes:** CI especializado y global completo en el mismo SHA de aceptación, verificación manual con lector de pantalla y zoom, contratos externos SMTP (EM-003/004/008/009). **NO CERRADO** hasta reunir evidencias.
+
+
+## Reauditoría de regresiones — AI Dev Suite, 2026-11-08
+
+**Alcance técnico:** catálogo, filtros/Turbo Frame, alta, editor de versiones y vista previa, publicación, prueba de envío, remitentes, branding, permisos, servicios/renderer y traducciones. Inspección de `feature/fixes` en el SHA `3c31725cdf41ef0c2b45caa33df6e0b3735a931d`. AI Dev Suite: heurísticas documentadas de Impeccable (estados/errores), UI UX Pro Max (semántica/responsive) y Ponytail (contratos/regresión); **no se ejecutaron CLIs externos ni prueba real de navegador o de proveedor SMTP en esta reauditoría**. Este registro amplía los IDs previos; no crea un segundo expediente.
+
+### Resultado de las correcciones ya aplicadas
+
+- **EM-011 — VERIFICADO en CI especializado:** conciliación de mensajes 422 con el resultado vigente de vista previa, conservación de `aria-describedby`, eliminación de mensajes obsoletos. El flujo de navegador está automatizado.
+- **EM-012 — VERIFICADO en CI especializado:** IDs y asociación accesible de errores Rails, incluidos mensajes múltiples, en alta, borrador, remitentes, branding y prueba de envío.
+- **Evidencia:** [Email Templates CI #42556277586](https://github.com/AliRodri1992/sales_point/actions/runs/42556277586) `success`, SHA `3c31725c`: **264 RSpec, 0 fallos**, RuboCop especializado aprobado, paridad YAML es/en/ko aprobada. La evaluación de lector de pantalla y zoom sigue en EM-009.
+
+### Hallazgos propios nuevos (no duplicados)
+
+| ID | Prioridad y tipo | Evidencia / causa raíz | Corrección y regresión requerida | Estado |
+|---|---|---|---|---|
+| **EM-013** | **P2 / funcionalidad** | `EmailTemplates::Renderer::KNOWN_VARIABLES` acepta `name`; `EmailTemplates::SampleData.call` no provee `name`. Un borrador válido con `{{name}}` no se puede previsualizar, porque `Renderer#replace` levanta `Missing email variable`. La spec `spec/requests/admin/email_templates_spec.rb` actualmente espera redirección de error para ese ejemplo, normalizando el problema. | Incorporar un valor de prueba coherente para todas las variables conocidas, en particular `name`, y cambiar la prueba para esperar vista previa exitosa sin enviar ni persistir datos. Comprobar las tres locales. | **CONFIRMADO POR CÓDIGO / sin reproducción UI en vivo** |
+| **EM-014** | **P2 / UX-filtros** | Los mensajes de fechas inválidas o rango invertido se dibujan en `app/views/admin/email_templates/index.html.erb`, **fuera** de `<turbo-frame id="email_templates_list">`. El formulario `GET` usa `data-turbo-frame="email_templates_list"`; al filtrar dentro del marco solo se reemplaza la lista, por lo que los errores nuevos del formulario no se actualizan en la pantalla. La spec actual verifica respuesta GET completa, no navegación Turbo. | Reconciliar también el formulario o manejar la navegación de filtros a nivel `_top`, conservando enfoque/búsqueda según diseño; prueba Capybara con rango inicial mayor al final y comprobación del mensaje visible bajo el campo después de filtrar. | **CONFIRMADO POR ESTRUCTURA DE CÓDIGO / pendiente navegador** |
+| **EM-015** | **P2 / validaciones** | `EmailTemplateVersion#declared_variables` y `Renderer::VARIABLE_PATTERN` solo reconocen la sintaxis exacta `{{recipient_name}}`. Tokens mal escritos como `{{ recipient_name }}` o `{{recipient-name}}` no se detectan como inválidos y el renderer los deja literales en el correo. | Rechazar o señalar los delimitadores `{{...}}` mal formados en modelo antes de publicar, sin tratar texto ordinario como placeholder; probar borrador, vista previa, publicación y HTML/texto. | **CONFIRMADO POR REGEX / sin prueba Rails específica** |
+| **EM-016** | **P1 / activación-recuperación** | `EmailTemplateVersion#validate_required_security_variable` comprueba `html_body.to_s.include?('{{activation_url}}')` o `{{recovery_url}}`. La coincidencia puede estar solo en un comentario HTML, que el `Renderer#render_html` sanitiza y elimina. Así, la publicación puede superar la regla sin que el enlace sea visible o accionable en el HTML recibido, aunque exista en texto plano. | Validar el contenido **renderizado y sanitizado** y la presencia de un enlace efectivo en `href` para plantillas críticas, además de conservar el requisito en texto plano. Añadir casos de comentario, etiqueta ocultada y enlace correcto. | **RIESGO CONFIRMADO POR REVISIÓN DE FLUJO / reproducción de correo pendiente** |
+
+### Comprobaciones de alcance y aceptación
+
+| Área | Resultado |
+|---|---|
+| Modelos y CRUD | Se revisaron `EmailTemplate`, `EmailTemplateVersion`, políticas, scopes de organización y flujos de borrador/publicación/restauración; correcciones previas mantienen regresiones automatizadas. |
+| Vistas/UI | Se inspeccionaron catálogo, búsqueda, filtros, alta, editor, vista previa, comparación y las pantallas de Remitentes/Branding; los hallazgos EM-013/014 requieren un caso de navegador adicional. |
+| Renderizado y seguridad | Se revisaron placeholders, saneamiento HTML, URLs, cabeceras, pruebas de envío y auditoría; EM-015/016 requieren regresiones funcionales. Los contratos de proveedor siguen bajo EM-003/004/008. |
+| CI especializado | **APROBADO** para el SHA auditado, [ejecución #42556277586](https://github.com/AliRodri1992/sales_point/actions/runs/42556277586). |
+| CI global | [Ejecución #42556277587](https://github.com/AliRodri1992/sales_point/actions/runs/42556277587): seguridad, migraciones/semillas e I18n aprobaron; **RuboCop falló por ofensas fuera del módulo** (p. ej. `spec/services/purchases/receive_spec.rb` tiene error sintáctico y archivos de Sucursales tienen otras ofensas). RSpec global estaba en curso durante la revisión. No alterar esos módulos en esta auditoría. |
+| Navegador manual / zoom 200 % / lector de pantalla / Gmail-Outlook / SMTP real | **NO EJECUTADOS**; conservar EM-003, EM-004, EM-008 y EM-009 con su estado anterior. |
+
+**Dictamen:** EM-011/012 verificados por CI especializado; EM-013/014/015/016 pendientes de adecuación y nueva prueba. **AUDITORÍA ACTUALIZADA; MÓDULO NO CERRADO.** Solo registrar hallazgos reproducidos o demostrables, evitar reabrir IDs históricos aprobados, y no confundir aprobación del CI especializado con el cierre del sistema.
+
