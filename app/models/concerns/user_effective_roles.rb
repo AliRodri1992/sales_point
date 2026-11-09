@@ -26,14 +26,19 @@ module UserEffectiveRoles
 
   def effective_role_assignments(organization:)
     scope = user_roles.active
-    return scope.none if CurrentOrganizationAccess.enforce_tenant && organization.nil?
-    return scope.none if organization.nil? && organization_memberships.with_deleted.exists? &&
-                             !organization_memberships.accessible.exists?
-    return scope.none if organization && !organization_memberships.accessible.exists?(organization:)
+    return scope.none unless valid_role_context?(organization)
 
     scope = scope.where(organization:) if organization
     active_branches = Branch.not_deleted.where(operational_status: 'active')
     active_branches = active_branches.where(organization:) if organization
     scope.where(branch_id: nil).or(scope.where(branch_id: active_branches.select(:id)))
+  end
+
+  def valid_role_context?(organization)
+    return organization_memberships.accessible.exists?(organization:) if organization
+    return false if CurrentOrganizationAccess.enforce_tenant
+    return true unless organization_memberships.with_deleted.exists?
+
+    organization_memberships.accessible.exists?
   end
 end
