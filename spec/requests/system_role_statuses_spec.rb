@@ -135,6 +135,8 @@ RSpec.describe 'Reviewed role status changes', type: :request do
     user = create(:user, :english)
     create(:organization_membership, user:, organization:)
     assignment = create(:user_role, user:, system_role: role)
+    alternative = create(:system_role, :system, code: 'backup_operations')
+    create(:user_role, user:, system_role: alternative)
     change_status('inactive')
     get edit_admin_user_path(user)
     expect(response).to have_http_status(:ok)
@@ -142,7 +144,7 @@ RSpec.describe 'Reviewed role status changes', type: :request do
     expect(input).to be_present
     expect(input.key?('checked')).to be(true)
     expect(response.body).to include('Inactive · grants no access.')
-    patch admin_user_path(user), params: { user: { system_role_ids: [''] } }
+    patch admin_user_path(user), params: { user: { system_role_ids: [alternative.id.to_s] } }
     expect(response).to have_http_status(:redirect)
     expect(UserRole.with_deleted.find(assignment.id).deleted_at).to be_present
     change_status('deprecated')

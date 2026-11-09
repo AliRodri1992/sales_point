@@ -26,6 +26,7 @@ RSpec.describe 'Visible-only bulk permission selection', type: :feature, js: tru
     expect(page).to have_no_css("#permission_#{hidden_permission.id}")
     check 'Select visible: Suppliers'
     click_button 'Save permissions'
+    expect(page).to have_css('.swal2-popup')
     expect(page).to have_current_path(system_role_path(role))
     expect(role.permissions.reload).to contain_exactly(visible)
   end
