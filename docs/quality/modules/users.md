@@ -119,6 +119,14 @@
 
 **Aceptación visual:** pendiente inspección real de zoom 200 %, contraste WCAG, lector de pantalla, navegación móvil y teclado. No se ha comprobado por observación en navegador local.
 
+### Adecuaciones posteriores a la auditoría — 2026-11-09
+
+- **USERS-014 — CORREGIDO EN CÓDIGO:** la respuesta Turbo de validación incluye `data-deactivation-reason-error` únicamente cuando el servidor reporta errores del campo `reason`. El controlador Stimulus muestra `aria-invalid="true"` y enfoca el textarea solo para ese caso. Los `422` de negocio conservan el foco sobre el contenedor de errores. Regresión de ambos casos añadida en `admin_users_experience_spec.rb`.
+- **USERS-015 — MITIGADO, REQUIERE VERIFICACIÓN:** `UserRole` rechaza roles nuevos cuando la organización solicitada no está en las membresías del usuario, y exige empresa para una asignación nueva si ya existe membresía. **Excepción deliberada de bootstrap:** el flujo heredado asigna roles a la cuenta antes de crear su primera membresía. En esa primera membresía histórica se materializan solo esas preasignaciones y quedan acotadas a esa empresa; nunca se propagan a una segunda membresía. Se comprueba `with_deleted.one?` para evitar que una membresía reactivada tras una eliminación antigua active roles huérfanos. Este contrato se debe documentar y someter a aprobación de seguridad para un cierre de P1.
+- **USERS-012 — CORREGIDO EN CÓDIGO:** `OrganizationMembership` dejó de utilizar `update_all` para este proceso y ahora se incluye junto a sus specs en el lint/CI especializado; `Style/CollectionQuerying` se resuelve con `one?`. Las infracciones de módulos externos siguen siendo un bloqueo de CI global independiente.
+- **USERS-002 — REPORTE OPERATIVO DISPONIBLE:** `bin/rails users:audit_role_grants` genera por defecto `tmp/user_role_grants_review.csv` con concesiones sin empresa, sin membresía activa y roles replicados históricamente a varias empresas. **No ejecutado contra la base de producción** desde este chat; requiere revisión de un administrador autorizado. Tarea de solo lectura, sin cambios en usuarios ni permisos.
+- **CI:** las nuevas regresiones y la cobertura especializada de `OrganizationMembership` deben aprobar en el SHA final. No confundir commits intermedios con aprobación definitiva.
+
 ## 4. Matriz de aceptación por pantalla
 
 | Pantalla / flujo | Servidor, autorización y datos | UX y errores | Evidencia aún exigida |
