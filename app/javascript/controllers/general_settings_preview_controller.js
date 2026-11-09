@@ -18,12 +18,13 @@ export default class extends Controller {
   update() {
     if (!this.hasSelectTarget) return
 
-    const size = this.selectTarget.value
-    if (this.hasSummaryTarget && ["5", "10", "15", "25", "50"].includes(size)) {
+    const selectedSize = this.selectTarget.value
+    const size = ["5", "10", "15", "25", "50"].includes(selectedSize) ? selectedSize : this.originalValue
+    if (this.hasSummaryTarget) {
       this.summaryTarget.textContent = this.templateValue.replace("__PAGE_SIZE__", size)
     }
 
-    const hasChanges = this.recoveryValue || size !== this.originalValue
+    const hasChanges = this.recoveryValue || selectedSize !== this.originalValue
     if (this.hasSaveTarget) this.saveTarget.disabled = !hasChanges
     if (this.hasDirtyTarget) {
       this.dirtyTarget.textContent = hasChanges ? this.unsavedValue : this.unchangedValue

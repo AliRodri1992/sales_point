@@ -1,9 +1,13 @@
 <% content_for :title, t('admin.general_settings.page_title') %>
+<% persisted_page_size = @settings.default_table_page_size_in_database %>
+<% persisted_page_size = TablePagePreference::DEFAULT unless TablePagePreference::OPTIONS.include?(persisted_page_size) %>
+<% preview_page_size = @settings.default_table_page_size %>
+<% preview_page_size = persisted_page_size unless TablePagePreference::OPTIONS.include?(preview_page_size) %>
 
 <div class="mx-auto max-w-6xl space-y-7 pb-10"
      data-controller="general-settings-preview"
      data-general-settings-preview-template-value="<%= t('admin.general_settings.example_rows', count: '__PAGE_SIZE__') %>"
-     data-general-settings-preview-original-value="<%= @settings.default_table_page_size_in_database || @settings.default_table_page_size %>"
+     data-general-settings-preview-original-value="<%= persisted_page_size %>"
      data-general-settings-preview-recovery-value="<%= !!@recovering_settings %>"
      data-general-settings-preview-unsaved-value="<%= t('admin.general_settings.pending_changes') %>"
      data-general-settings-preview-unchanged-value="<%= t('admin.general_settings.no_changes') %>">
@@ -167,7 +171,7 @@
           <% end %>
           <div class="border-t border-slate-100 bg-slate-50 px-4 py-3 text-xs text-slate-500"
                role="status" aria-live="polite" data-general-settings-preview-target="summary">
-            <%= t('admin.general_settings.example_rows', count: @settings.default_table_page_size) %>
+            <%= t('admin.general_settings.example_rows', count: preview_page_size) %>
           </div>
         </div>
         <p class="mt-4 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-xs leading-5 text-slate-600">

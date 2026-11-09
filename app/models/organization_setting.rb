@@ -12,7 +12,7 @@ class OrganizationSetting < ApplicationRecord
     cash: 'cash',
     card: 'card',
     qr: 'qr'
-  }
+  }, validate: { allow_nil: true }
 
   ONBOARDING_TIMEZONES = %w[
     UTC

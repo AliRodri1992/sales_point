@@ -29,6 +29,17 @@ RSpec.describe OrganizationSetting, type: :model do
       expect(subject).to be_valid(:general_settings)
     end
 
+    it 'validates unsupported enum values instead of raising at assignment' do
+      expect { subject.payment_method = 'crypto' }.not_to raise_error
+      expect(subject).not_to be_valid(:create)
+      expect(subject.errors[:payment_method]).to be_present
+    end
+
+    it 'does not require the payment method in the unrelated first onboarding step' do
+      subject.payment_method = nil
+      expect(subject).to be_valid(:onboardingstep1)
+    end
+
     it { is_expected.to validate_presence_of(:payment_method) }
     it 'exposes the supported payment methods' do
       expect(described_class.payment_methods.keys).to contain_exactly('cash', 'card', 'qr')

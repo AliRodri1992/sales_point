@@ -59,6 +59,52 @@ RSpec.describe 'General settings page', type: :feature, js: true do
     expect(page).to have_css('[data-general-settings-preview-target="dirty"]', text: 'No pending changes')
   end
 
+  scenario 'recovers missing settings through accessible, keyboard-dismissible dropdowns' do
+    setting = organization.organization_settings.active_records.sole
+    currency = setting.base_currency
+    setting.really_destroy!
+
+    page.current_window.resize_to(390, 900)
+    visit admin_general_settings_path
+    expect(page).to have_button('Save initial settings', disabled: false)
+    expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
+
+    %w[base_currency_id timezone payment_method].each do |field|
+      wrapper = find("select[name='organization_setting[#{field}]']", visible: :all).find(:xpath, '..')
+      button = wrapper.find('button[aria-haspopup="listbox"]')
+      expect(button['aria-required']).to eq('true')
+      button.click
+      expect(button['aria-expanded']).to eq('true')
+      button.send_keys(:escape)
+      expect(button['aria-expanded']).to eq('false')
+    end
+
+    click_button 'Save initial settings'
+    expect(page).to have_css('#organization_setting_base_currency_error')
+    currency_button = find('select[name="organization_setting[base_currency_id]"]', visible: :all)
+                      .find(:xpath, '..').find('button[aria-haspopup="listbox"]')
+    expect(currency_button['aria-invalid']).to eq('true')
+    expect(currency_button['aria-describedby']).to include('organization_setting_base_currency_error')
+
+    currency_button.click
+    currency_button.find(:xpath, '..').find('[role="option"]', text: currency.code).click
+
+    timezone = find('select[name="organization_setting[timezone]"]', visible: :all).find(:xpath, '..')
+    timezone.find('button[aria-haspopup="listbox"]').click
+    timezone.find('[role="option"]', text: 'America/Mexico_City').click
+
+    payment = find('select[name="organization_setting[payment_method]"]', visible: :all).find(:xpath, '..')
+    payment.find('button[aria-haspopup="listbox"]').click
+    payment.find('[role="option"]', text: 'Card').click
+
+    click_button 'Save initial settings'
+
+    expect(page).to have_current_path(admin_general_settings_path)
+    expect(organization.organization_settings.active_records.sole).to have_attributes(
+      base_currency: currency, timezone: 'America/Mexico_City', payment_method: 'card'
+    )
+  end
+
   scenario 'keeps the form within mobile and desktop viewports with an accessible select' do
     [320, 390, 768, 1440].each do |width|
       page.current_window.resize_to(width, 900)

@@ -44,6 +44,19 @@ RSpec.describe 'Admin general settings', type: :request do
     expect(settings.reload.default_table_page_size).to eq(10)
   end
 
+  it 'keeps the persisted preview value after rejecting an unsupported page size' do
+    update_default(99)
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    summary = document.at_css('[data-general-settings-preview-target="summary"]')
+    expect(summary.text).to include('Showing 10 records per page by default.')
+    expect(summary.text).not_to include('99 records')
+    expect(document.at_css('[data-general-settings-preview-original-value]')[
+      'data-general-settings-preview-original-value'
+    ]).to eq('10')
+  end
+
   it 'renders individual model errors with accessible field references' do
     update_default(99)
 
@@ -123,6 +136,19 @@ RSpec.describe 'Admin general settings', type: :request do
     expect(GeneralSettingAuditEvent.count).to eq(0)
   end
 
+  it 'allows a conflict to be retried after refreshing the version' do
+    token = settings.updated_at.utc.iso8601(6)
+    settings.update!(default_table_page_size: 25)
+
+    update_default(50, token:)
+    expect(response).to have_http_status(:conflict)
+
+    update_default(50)
+    expect(response).to redirect_to(admin_general_settings_path)
+    expect(settings.reload.default_table_page_size).to eq(50)
+    expect(GeneralSettingAuditEvent.last.new_page_size).to eq(50)
+  end
+
   it 'offers an explicit recovery form for an organization missing initial settings' do
     currency = settings.base_currency
     organization.update!(onboarding_status: :completed, onboarding_completed_at: Time.current)
@@ -145,6 +171,46 @@ RSpec.describe 'Admin general settings', type: :request do
     expect(organization.organization_settings.active_records.sole).to have_attributes(
       base_currency: currency, timezone: 'UTC', payment_method: 'cash', default_table_page_size: 25
     )
+  end
+
+  it 'renders a model error for an unsupported payment method during initial recovery' do
+    currency = settings.base_currency
+    settings.really_destroy!
+
+    expect do
+      patch admin_general_settings_path, params: {
+        organization_setting: {
+          base_currency_id: currency.id, timezone: 'UTC',
+          payment_method: 'crypto', default_table_page_size: 25
+        }
+      }
+    end.not_to change(OrganizationSetting, :count)
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    field = document.at_css('select[name="organization_setting[payment_method]"]')
+    expect(field['aria-invalid']).to eq('true')
+    expect(field['aria-describedby']).to include('organization_setting_payment_method_error')
+    expect(document.at_css('#organization_setting_payment_method_error').text).to include('Payment method')
+  end
+
+  it 'rejects missing payment method and an inactive currency during initial recovery' do
+    currency = settings.base_currency
+    settings.really_destroy!
+    currency.update!(active: false)
+
+    patch admin_general_settings_path, params: {
+      organization_setting: {
+        base_currency_id: currency.id, timezone: 'UTC',
+        payment_method: '', default_table_page_size: 25
+      }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('#organization_setting_payment_method_error')).to be_present
+    expect(document.at_css('#organization_setting_base_currency_error')).to be_present
+    expect(organization.organization_settings.active_records).to be_empty
   end
 
   it 'validates each recovery field on the server without creating incomplete settings' do
