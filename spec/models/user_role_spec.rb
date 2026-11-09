@@ -84,6 +84,17 @@ RSpec.describe UserRole, type: :model do
       expect(user.role?('initial_preassigned_role', organization: other)).to be(false)
     end
 
+    it 'rejects organizationless grants inside a tenant-enforced request before the first membership' do
+      user = create(:user)
+      role = create(:system_role, :system)
+
+      CurrentOrganizationAccess.set(enforce_tenant: true) do
+        assignment = build(:user_role, user:, system_role: role)
+        expect(assignment).to be_invalid
+        expect(assignment.errors[:organization]).to be_present
+      end
+    end
+
     it 'rejects new organizationless role grants after a membership exists' do
       user = create(:user)
       first = create(:organization)
