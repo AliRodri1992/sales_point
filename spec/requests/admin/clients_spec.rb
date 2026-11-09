@@ -172,9 +172,9 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'preserves an archived fiscal regime on an existing customer edit' do
-      regime = create(:sat_fiscal_regime, valid_from: 30.days.ago, valid_to: Date.yesterday)
-      client = create(:client, sat_fiscal_regime: nil)
-      client.update_column(:sat_fiscal_regime_id, regime.id)
+      regime = create(:sat_fiscal_regime, valid_from: 30.days.ago, valid_to: Date.tomorrow)
+      client = create(:client, sat_fiscal_regime: regime)
+      regime.update!(valid_to: Date.yesterday)
       get edit_admin_client_path(client)
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(regime.code)
