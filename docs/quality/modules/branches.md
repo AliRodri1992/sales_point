@@ -159,3 +159,6 @@ Ver las [reglas de cierre](../module-quality-standard.md) y la [plantilla](../mo
 | Pruebas focalizadas de Sucursales y navegador real | **NO EJECUTADAS en esta ronda** | Pendientes |
 
 **Dictamen de esta ronda: AUDITADO ESTÁTICAMENTE; NO VERIFICADO; NO CERRADO.** No se cambió la funcionalidad; este registro es diagnóstico. No hay evidencia suficiente para afirmar ausencia de defectos P0/P1. Retomar los mismos IDs en la corrección y reauditoría, sin duplicarlos.
+
+
+**Actualización CI posterior a la consulta inicial:** el job global RSpec del SHA `3c31725` terminó **CANCELADO** (no aprobado), tras haberse observado inicialmente en ejecución. La nueva actualización documental genera otro SHA; sus propios checks requieren consulta separada. Se conserva el historial de ambos estados para trazabilidad.
