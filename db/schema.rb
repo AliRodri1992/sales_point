@@ -2692,7 +2692,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_010000) do
   add_foreign_key "user_role_audit_events", "users", column: "actor_id"
   add_foreign_key "user_roles", "branches"
   add_foreign_key "user_roles", "organizations"
-  add_foreign_key "user_roles", "organizations"
   add_foreign_key "user_roles", "system_roles"
   add_foreign_key "user_roles", "users"
   add_foreign_key "user_security_incidents", "organizations"
