@@ -109,6 +109,23 @@ RSpec.describe User, type: :model do
     end
   end
 
+  it 'preserves global super admins without a tenant but denies unscoped ordinary admins' do
+    root = create(:user)
+    root_role = create(:system_role, :system, code: 'super_admin')
+    create(:user_role, user: root, system_role: root_role)
+
+    ordinary = create(:user)
+    ordinary_role = create(:system_role, :system, code: 'administrator')
+    create(:user_role, user: ordinary, system_role: ordinary_role)
+
+    CurrentOrganizationAccess.set(organization: nil, enforce_tenant: true) do
+      expect(root.role?('super_admin')).to be(true)
+      expect(root.admin?).to be(true)
+      expect(ordinary.role?('administrator')).to be(false)
+      expect(ordinary.admin?).to be(false)
+    end
+  end
+
   it 'keeps a valid global role available independently of branch state' do
     system_role = create(:system_role, :system, code: 'effective_global_role')
     create(:user_role, user:, system_role:)
