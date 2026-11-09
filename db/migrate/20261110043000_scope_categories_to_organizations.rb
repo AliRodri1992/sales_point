@@ -22,10 +22,12 @@ class ScopeCategoriesToOrganizations < ActiveRecord::Migration[8.1]
 
   def replace_uniqueness_indexes
     remove_index :categories, name: 'index_categories_on_code'
-    add_index :categories, %i[organization_id code], unique: true,
-              where: 'deleted_at IS NULL AND organization_id IS NOT NULL', name: 'idx_categories_organization_code'
-    add_index :categories, :code, unique: true,
-              where: 'deleted_at IS NULL AND organization_id IS NULL', name: 'idx_categories_legacy_code'
+    add_index :categories, %i[organization_id code],
+              unique: true, where: 'deleted_at IS NULL AND organization_id IS NOT NULL',
+              name: 'idx_categories_organization_code'
+    add_index :categories, :code,
+              unique: true, where: 'deleted_at IS NULL AND organization_id IS NULL',
+              name: 'idx_categories_legacy_code'
   end
 
   def validate_legacy_rows!
