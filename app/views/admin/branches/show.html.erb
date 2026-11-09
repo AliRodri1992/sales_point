@@ -43,9 +43,9 @@
   </header>
 
   <section class="catalog-card branch-lifecycle-panel" aria-labelledby="branch-lifecycle-title">
-    <div class="catalog-card-body">
-      <h2 id="branch-lifecycle-title" class="font-jakarta text-base font-bold"><%= t('admin.branch_lifecycle.title') %></h2>
-      <p class="catalog-hint"><%= t("admin.branch_lifecycle.descriptions.#{@branch.operational_status}") %></p>
+    <div class="catalog-card-body branch-lifecycle-body">
+      <h2 id="branch-lifecycle-title" class="branch-lifecycle-heading font-jakarta text-base font-bold"><%= t('admin.branch_lifecycle.title') %></h2>
+      <p class="catalog-hint branch-lifecycle-description"><%= t("admin.branch_lifecycle.descriptions.#{@branch.operational_status}") %></p>
 
       <% if @branch.preparing? || @branch.suspended? %>
         <h3 class="mt-4 font-semibold"><%= t('admin.branch_lifecycle.requirements_title') %></h3>

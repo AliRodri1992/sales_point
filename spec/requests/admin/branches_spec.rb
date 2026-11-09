@@ -243,6 +243,19 @@ RSpec.describe 'Admin::Branches', type: :request do
   end
 
   describe 'GET /admin/branches/:id' do
+    it 'keeps the operational status panel visually separated on the detail page' do
+      branch = create(:branch, organization:, name: 'Sucursal Centro')
+
+      get admin_branch_path(branch)
+
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      panel = document.at_css('section.branch-lifecycle-panel[aria-labelledby="branch-lifecycle-title"]')
+      expect(panel).to be_present
+      expect(panel.at_css('.branch-lifecycle-body .branch-lifecycle-heading')).to be_present
+      expect(panel.at_css('.branch-lifecycle-description')).to be_present
+    end
+
     it 'shows an assigned branch to a branch user' do
       branch = create(:branch, organization:, name: 'Sucursal Centro')
       branch_user = create(:user)

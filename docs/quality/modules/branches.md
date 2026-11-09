@@ -103,3 +103,10 @@ No se afirma que BR-001 a BR-004 sean defectos confirmados. Cuando un caso falle
 - **Reapertura:** si un hallazgo reaparece, se reabre el mismo ID y se conserva el historial.
 
 Ver las [reglas de cierre](../module-quality-standard.md) y la [plantilla](../module-audit-template.md).
+
+## Revisión focalizada de presentación — 2026-11-08
+
+- **Alcance:** `GET /admin/branches/:id`, sección Estado operativo. AI Dev Suite aplicado como metodología Impeccable + UI UX Pro Max + Ponytail; no se ejecutaron las CLIs externas.
+- **BR-003 (ampliación, mismo ID):** confirmado por inspección estática que la tarjeta de estado operativo estaba inmediatamente debajo del encabezado y carecía de reglas propias de separación/ritmo interior. Se introducen clases `branch-lifecycle-body`, `branch-lifecycle-heading`, `branch-lifecycle-description` y estilos acotados responsive en `branch_workspace.css`; no se modifican transiciones, permisos ni módulos vecinos.
+- **Regresión añadida:** `spec/requests/admin/branches_spec.rb` valida estructura de encabezado, descripción y panel operativo; **NO EJECUTADA** desde este entorno. Requiere prueba visual de escritorio/móvil, foco, zoom y ejecución de CI del SHA final antes de marcar BR-003 verificado.
+- **Estado:** CAMBIO IMPLEMENTADO, PENDIENTE DE VERIFICACIÓN; las demás comprobaciones BR-001 a BR-005 continúan vigentes.

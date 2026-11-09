@@ -250,3 +250,18 @@
 @media(prefers-reduced-motion:reduce) {
   .branch-workspace[aria-busy="true"] .branch-loading-skeleton-line { animation:none; }
 }
+
+/* Operational status is a separate decision area, with breathing room from the detail header. */
+.branch-details .branch-lifecycle-panel { margin:1.5rem 0; }
+.branch-details .branch-lifecycle-body { padding:1.5rem; }
+.branch-lifecycle-heading { line-height:1.5; color:#0f172a; }
+.branch-lifecycle-description { margin-top:.625rem; max-width:75ch; line-height:1.7; }
+.branch-lifecycle-body > h3 { margin-top:1.5rem; }
+.branch-lifecycle-body > ul { margin-top:.75rem; }
+.branch-lifecycle-body > form { margin-top:1.5rem; padding:1.25rem; background:#f8fafc; }
+.branch-lifecycle-body > ol { margin-top:.75rem; }
+@media(max-width:639px) {
+  .branch-details .branch-lifecycle-panel { margin:1.25rem 0; }
+  .branch-details .branch-lifecycle-body { padding:1.125rem; }
+  .branch-lifecycle-body > form { padding:1rem; }
+}
