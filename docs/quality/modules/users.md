@@ -65,7 +65,7 @@
 
 ### Adecuaciones complementarias — 2026-11-08
 
-- **USERS-010:** el controlador `user_access_controller.js` ahora muestra cualquier acordeón que contenga el primer control `aria-invalid="true"`, enfoca el control y deja que el navegador lo desplace al área visible. Cambio publicado en `d77db915`; falta CI del SHA definitivo.
+- **USERS-010:** el controlador `user_access_controller.js` ahora muestra cualquier acordeón que contenga el primer control `aria-invalid="true"`, enfoca el control y deja que el navegador lo desplace al área visible. Cambio publicado en `d77db915`; falta CI del SHA definitivo. Se agregó además una aserción de foco sobre un checkbox inválido de roles en `5c33d451`.
 - **USERS-013:** incorporada regresión Capybara para centrado horizontal/vertical, permanencia dentro del viewport de 390 × 420 y cierre sin cambiar el estado de cuenta. Prueba publicada en `9d245f2e`; su resultado **no está certificado** hasta completar Users CI.
 - **USERS-002:** sigue como decisión contractual de seguridad sobre roles globales en distintas organizaciones. No se cambia la concesión de privilegios sin regla formal y migración de datos.
 - **USERS-011:** se conservan los KPI existentes; no se dispone de pruebas de usabilidad que justifiquen eliminarlos.
