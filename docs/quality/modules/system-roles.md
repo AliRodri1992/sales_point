@@ -1,7 +1,7 @@
 # Registro de calidad — Roles y permisos
 
 **Módulo y ruta principal:** Roles y permisos — `/system_roles`  
-**Estado:** SYSTEM_ROLES-001/011/012/013 IMPLEMENTADOS · CI FOCALIZADO EN VERIFICACIÓN · NO CERRADO.  
+**Estado:** SYSTEM_ROLES-001/011/012/013 IMPLEMENTADOS · CI FOCALIZADO VERDE (126/126) · CI GLOBAL PENDIENTE · NO CERRADO.  
 **Fecha de auditoría:** 2026-11-09 (America/Mexico_City).  
 **Rama:** `feature/fixes`. **SHA de partida/auditado:** `d414ec7d6380dd75675836c05b501391c010365f`.  
 **SHA de aceptación:** PENDIENTE. **Responsable/revisor independiente:** PENDIENTE.  
@@ -23,12 +23,12 @@
 ### Puerta de verificación (sin afirmar éxitos no obtenidos)
 
 - **Primer RSpec focalizado tras los cambios:** [System Roles CI 42612823167](https://github.com/AliRodri1992/sales_point/actions/runs/42612823167), 123 pruebas con 2 fallos en fixtures antiguos de relación usuario/empresa (alcance de sucursal y acceso a catálogos); las pruebas nuevas de 001/011/012/013 pasaron. Los fixtures se ajustaron sin debilitar la autorización en el commit `98ba908`.
-- **Nuevo workflow del mismo módulo en SHA `98ba908`:** [System Roles CI 42613572900](https://github.com/AliRodri1992/sales_point/actions/runs/42613572900), RuboCop del módulo **PASS**, pruebas de solicitudes, políticas, navegador y seeds aún en ejecución al momento de registrar esta actualización.
+- **Validación focalizada completa en SHA `98ba908`:** [System Roles CI 42613572900](https://github.com/AliRodri1992/sales_point/actions/runs/42613572900), **SUCCESS**: RuboCop propio, migración de BD limpia, 123 pruebas de modelos/políticas/requests/servicios/navegador con **0 fallos** y 3 pruebas de repetibilidad de seeds con **0 fallos** (**126/126**). El SHA verificado incluye la corrección final de fixtures de organización. El commit documental posterior no modificó lógica de roles.
 - **Pendientes para cierre:** RSpec focalizado completo PASS en un SHA estable, CI global PASS, revisión manual de accesibilidad/zoom/teclado, verificación de BD histórica, aceptación independiente. El CI general se ve afectado por otros módulos y múltiples pushes simultáneos; no atribuir fallos externos a Roles sin evidencia.
 
 **Archivos de producción afectados:** `app/policies/system_role_policy.rb`, `app/models/current_organization_access.rb`, `app/controllers/application_controller.rb`, `app/models/user.rb`, `app/models/concerns/user_effective_roles.rb`, `app/services/system_roles/status_impact.rb`, `app/javascript/controllers/role_permissions_controller.js`, `app/views/system_roles/_permissions.html.erb` y los tres locales `config/locales/role_permission_editor.*.yml`. Workflow `.github/workflows/system-roles-ci.yml` incluye los nuevos tests.
 
-**Estado:** IMPLEMENTADO EN REVISIÓN. **No fusionado ni cerrado.**
+**Estado:** IMPLEMENTADO Y CI FOCALIZADO VERDE. **No fusionado ni cerrado:** pendiente CI global estable, revisión visual/manual, migración sobre BD histórica y revisor independiente.
 
 ---
 
