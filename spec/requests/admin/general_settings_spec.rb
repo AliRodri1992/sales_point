@@ -93,8 +93,8 @@ RSpec.describe 'Admin general settings', type: :request do
 
   it 'detects concurrent A-to-B-to-A updates even when the selected size is unchanged' do
     original_token = settings.updated_at.utc.iso8601(6)
-    settings.update_columns(default_table_page_size: 25, updated_at: 1.minute.from_now)
-    settings.update_columns(default_table_page_size: 10, updated_at: 2.minutes.from_now)
+    settings.update!(default_table_page_size: 25, updated_at: 1.minute.from_now)
+    settings.update!(default_table_page_size: 10, updated_at: 2.minutes.from_now)
 
     update_default(50, token: original_token)
 
@@ -125,7 +125,7 @@ RSpec.describe 'Admin general settings', type: :request do
 
   it 'offers an explicit recovery form for an organization missing initial settings' do
     currency = settings.base_currency
-    organization.update_columns(onboarding_status: 'completed', onboarding_completed_at: Time.current)
+    organization.update!(onboarding_status: :completed, onboarding_completed_at: Time.current)
     settings.really_destroy!
 
     get admin_general_settings_path
@@ -168,6 +168,7 @@ RSpec.describe 'Admin general settings', type: :request do
     currency = settings.base_currency
     other = create(:organization)
     create(:organization_membership, user:, organization: other)
+    create(:user_role, user:, organization: other, system_role: user.user_roles.active.first.system_role)
     patch admin_select_organization_path(other)
 
     get admin_general_settings_path
@@ -188,6 +189,7 @@ RSpec.describe 'Admin general settings', type: :request do
     other = create(:organization)
     other_settings = create(:organization_setting, organization: other, default_table_page_size: 50)
     create(:organization_membership, user:, organization: other)
+    create(:user_role, user:, organization: other, system_role: user.user_roles.active.first.system_role)
 
     patch admin_select_organization_path(other)
     patch admin_general_settings_path,
@@ -199,6 +201,22 @@ RSpec.describe 'Admin general settings', type: :request do
     expect(other_settings.reload.default_table_page_size).to eq(15)
     expect(settings.reload.default_table_page_size).to eq(10)
     expect(GeneralSettingAuditEvent.last.organization).to eq(other)
+  end
+
+  it 'does not permit an administrator from another organization to edit this one' do
+    other = create(:organization)
+    other_settings = create(:organization_setting, organization: other)
+    create(:organization_membership, user:, organization: other)
+    patch admin_select_organization_path(other)
+
+    get admin_general_settings_path
+    expect(response).to have_http_status(:forbidden)
+
+    patch admin_general_settings_path,
+          params: { organization_setting: { default_table_page_size: 50 },
+                    expected_settings_updated_at: other_settings.updated_at.utc.iso8601(6) }
+    expect(response).to have_http_status(:forbidden)
+    expect(other_settings.reload.default_table_page_size).to eq(10)
   end
 
   it 'rejects changes to organizations without membership' do

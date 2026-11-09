@@ -67,9 +67,10 @@ RSpec.describe 'General settings page', type: :feature, js: true do
       expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
     end
 
-    page.current_window.resize_to(1024, 900)
-    page.execute_script("document.documentElement.style.zoom = '200%'")
+    # A 512px CSS viewport checks reflow equivalent to 1024px at 200% browser zoom.
+    # CSS style.zoom is not browser zoom and can distort window.innerWidth in Chrome.
+    page.current_window.resize_to(512, 900)
+    visit admin_general_settings_path
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
-    page.execute_script("document.documentElement.style.zoom = ''")
   end
 end

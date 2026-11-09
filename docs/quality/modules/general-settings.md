@@ -178,3 +178,22 @@ Este seguimiento conserva los IDs de la auditoría. La presencia de cambios en G
 - **Secuencia:** solucionar 005 y 011; endurecer y probar 010; resolver 012; realizar el pulido 013/014 sin sacrificar accesibilidad; ejecutar pruebas de regresión y reevaluar **estos mismos IDs**.
 - **Puertas:** RSpec focalizado, navegador con teclado y zoom, RuboCop, Brakeman, I18n, migración y schema-load desde cero, **CI global verde sobre SHA final**, revisión independiente y evidencia visual antes/después.
 - **Estado:** REAUDITADO, NO CERRADO. No se realizaron adecuaciones funcionales en esta reauditoría, solo el seguimiento documental y el estándar de diseño.
+
+## 8. Adecuaciones posteriores a la reauditoría — 2026-11-08
+
+**Rama:** `feature/fixes`. **Estado:** cambios publicados, regresiones pendientes de aceptación final (no cerrado hasta CI y revisión independiente). Se mantienen los IDs originales, sin abrir tickets duplicados.
+
+| Hallazgo | Resolución implementada | Regresión de aceptación |
+|---|---|---|
+| GENERAL_SETTINGS-005 | Cuando no existe configuración previa, el propio módulo ofrece una recuperación explícita de moneda activa, zona horaria, método de pago y tamaño de página; no redirige al Onboarding completado, y respeta la organización seleccionada. Registros previamente archivados siguen dando 404. | Organización completada sin ajuste, campos inválidos, A/B y rol administrativo por organización |
+| GENERAL_SETTINGS-010 | La edición exige `expected_settings_updated_at` y comprueba la versión exacta dentro de `with_lock`; rechaza PATCH sin token y secuencias A→B→A mediante 409, sin guardar ni crear eventos. | Token omitido, conflicto tras cambio y vuelta al valor anterior, éxito con token válido |
+| GENERAL_SETTINGS-011 | Se verifica `db/schema.rb` regenerado mediante Rails; el CI focalizado ahora exige que coincida con las migraciones y recrea la BD desde `db:schema:load`, comprobando tabla, `deleted_at`, FK y checks. Se preserva el snapshot actualizado por el trabajo concurrente de la plataforma. | Migración completa y reconstrucción limpia desde esquema versionado |
+| GENERAL_SETTINGS-012 | Contraste de encabezados del ejemplo corregido de `text-slate-400` a `text-slate-600` (~7.6:1 sobre blanco); semántica de tabla de ejemplo y select accesible conservadas. | Inspección HTML y prueba visual/contraste en navegador cuando sea posible |
+| GENERAL_SETTINGS-013 | El botón Guardar permanece deshabilitado cuando no hay cambios (con JS), muestra estado de cambios pendientes y se activa al elegir otra opción. El servidor también trata como no-op el PATCH idéntico sin anunciar actualización ni crear auditoría. | Navegador: elegir, volver al valor previo; request: no-op sin flash ni auditoría |
+| GENERAL_SETTINGS-014 | Pulido visual sobrio: jerarquía de título, chip neutro de organización, panel informativo en gris, contraste y espaciado consistentes, vista previa descriptiva sin mascota decorativa, responsive sin overflow. | Reflujo en 320/390/512/768/1440; revisión visual manual pendiente |
+
+**Política de permisos (GENERAL_SETTINGS-008):** los cambios recientes en el módulo propietario de Roles establecen permisos por organización: para administrar la segunda organización se requiere otorgamiento explícito del rol allí. La regresión de General incluye tanto el acceso con rol en B como el rechazo sin ese rol; no se alteran las reglas de Roles.
+
+**Evidencia de iteración:** primera ejecución focalizada tras el cambio `74f99dbd`: YAML/I18n aprobado; RuboCop señaló ajustes menores y RSpec obtuvo 41 ejemplos, 3 fallos (fixtures de autorización organizacional y simulación artificial de zoom). Se corrigieron las ofensas de lint, se adecuaron los fixtures a la política vigente y se sustituyó CSS `style.zoom` por prueba de reflujo en viewport equivalente. **No adjudicar estado VERIFICADO a estas correcciones hasta su CI exitoso.**
+
+**Límites:** no se han medido con lector de pantalla ni capturado antes/después con navegador local del usuario. La aprobación del CI focalizado no sustituye el CI global ni la revisión independiente del expediente; no se fusionó ninguna rama.

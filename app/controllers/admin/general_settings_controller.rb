@@ -56,12 +56,16 @@ module Admin
         next unless @settings.save(context: :general_settings)
         next if previous_size == @settings.default_table_page_size
 
-        GeneralSettingAuditEvent.create!(
-          organization: current_organization, actor: current_user,
-          previous_page_size: previous_size, new_page_size: @settings.default_table_page_size
-        )
-        @updated = true
+        audit_preference_change(previous_size)
       end
+    end
+
+    def audit_preference_change(previous_size)
+      GeneralSettingAuditEvent.create!(
+        organization: current_organization, actor: current_user,
+        previous_page_size: previous_size, new_page_size: @settings.default_table_page_size
+      )
+      @updated = true
     end
 
     def recover_settings
