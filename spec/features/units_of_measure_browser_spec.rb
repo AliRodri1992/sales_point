@@ -41,7 +41,7 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
 
     click_button 'Create unit'
     expect(page).to have_css('#units_of_measure_list', text: 'Browser piece', wait: 10)
-    expect(page).to have_css('turbo-frame#unit_of_measure_modal.hidden', wait: 10)
+    expect(page).to have_css('turbo-frame#unit_of_measure_modal.hidden', visible: :all, wait: 10)
 
     unit = organization.units_of_measure.find_by!(code: 'BR_PCE')
     expect(unit.sat_unit_key_id).to eq(sat_key.id)
@@ -80,7 +80,7 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
       expect(bounds['centered']).to eq('center')
 
       find('#unit_of_measure_code').send_keys(:escape)
-      expect(page).to have_css('turbo-frame#unit_of_measure_modal.hidden', wait: 10)
+      expect(page).to have_css('turbo-frame#unit_of_measure_modal.hidden', visible: :all, wait: 10)
     end
   end
 end
