@@ -94,6 +94,29 @@ RSpec.describe 'Audited users listing', type: :request do
     expect(document.at_css('textarea#users-deactivation-reason[required]')).to be_nil
   end
 
+  it 'does not issue branch lookups per row when roles are displayed' do
+    branch = create(:branch, organization:, operational_state: 'active')
+    role = create(:system_role, :branch, code: 'bulk_list_branch_role')
+    8.times do |index|
+      target = create(:user, email: "bulk-role-#{index}@example.com")
+      create(:organization_membership, organization:, user: target)
+      create(:user_role, user: target, branch:, system_role: role)
+    end
+
+    queries = []
+    subscriber = ActiveSupport::Notifications.subscribe('sql.active_record') do |_name, _started, _finished, _id, data|
+      queries << data[:sql] if data[:sql].to_s.include?('FROM "branches"')
+    end
+    begin
+      get admin_users_path
+    ensure
+      ActiveSupport::Notifications.unsubscribe(subscriber)
+    end
+
+    expect(response).to have_http_status(:ok)
+    expect(queries.length).to be <= 6
+  end
+
   it 'shows status history on an authorized user detail' do
     target = create(:user, email: 'history-visible@example.com')
     create(:organization_membership, user: target, organization:)
