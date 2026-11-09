@@ -105,7 +105,8 @@ RSpec.describe 'Audited users listing', type: :request do
 
     queries = []
     subscriber = ActiveSupport::Notifications.subscribe('sql.active_record') do |_name, _started, _finished, _id, data|
-      queries << data[:sql] if data[:sql].to_s.include?('FROM "branches"')
+      first_table = data[:sql].to_s.match(/\bFROM\s+"([^"]+)"/)&.captures&.first
+      queries << data[:sql] if first_table == 'branches'
     end
     begin
       get admin_users_path
