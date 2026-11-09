@@ -1,6 +1,6 @@
 # Registro de calidad — General (`/admin/general_settings`)
 
-**Estado:** AUDITADO POR INSPECCIÓN ESTÁTICA Y LECTURA DE PANTALLA; NO VERIFICADO; NO CERRADO.  
+**Estado:** EN CORRECCIÓN; cambios y pruebas de regresión preparados; pendientes de GitHub Actions y pruebas browser; NO CERRADO.  
 **Fecha:** 2026-11-08 (America/Mexico_City). **Rama:** `feature/fixes`.  
 **SHA base de inspección:** `8974fee011f9422066985a0ab088ed2d771e1c8a`. **SHA revisado posteriormente:** `719ae720c3464bbab3478ef7cd91399b5c911b53` (comparación sin cambios en archivos de General).  
 **SHA de aceptación:** PENDIENTE. **Responsable propuesto:** equipo Delta POS. **Revisor independiente:** PENDIENTE.  
@@ -95,3 +95,24 @@
 - **Criterio de mantenimiento:** conservar estos IDs en toda reauditoría; agregar evidencias y cambiar estados individualmente, sin reiniciar el conteo.
 
 Marco: [estándar modular](../module-quality-standard.md) · [plantilla](../module-audit-template.md).
+
+## 5. Adecuaciones propuestas para el commit de implementación (2026-11-08)
+
+Este seguimiento conserva los IDs de la auditoría. La presencia de cambios en Git no equivale a verificación ni cierre: cada ID queda **implementado, pendiente de prueba** hasta CI y revisión independiente.
+
+| ID | Estado | Adecuación |
+|---|---|---|
+| GENERAL_SETTINGS-001 | Implementado por verificar | Breadcrumb traducido en es/en/ko |
+| GENERAL_SETTINGS-002 | Implementado por verificar | Asterisco rojo, validación del modelo por campo y vínculos ARIA en el dropdown |
+| GENERAL_SETTINGS-003 | Implementado por verificar | Contexto de validación del campo editable sin revalidar opciones de Onboarding |
+| GENERAL_SETTINGS-004 | Implementado por verificar | Stimulus actualiza el resumen de vista previa y aclara que solo hay tres filas ilustrativas |
+| GENERAL_SETTINGS-005 | Implementado por verificar | Ausencia de configuración inicial redirige a Onboarding; archivo intencional conserva 404 |
+| GENERAL_SETTINGS-006 | Implementado por verificar | Preferencias archivadas excluidas al leer y guardar, sin revivir registros retirados |
+| GENERAL_SETTINGS-007 | Implementado por verificar | Historial inmutable con organización, autor, valor anterior y nuevo |
+| GENERAL_SETTINGS-008 | Política existente por verificar | El rol administrativo del sistema es global, las organizaciones accesibles exigen membresía activa; regresión multi-tenant |
+| GENERAL_SETTINGS-009 | Implementado por verificar | Request specs, modelo, traducción, navegador móvil y escritorio |
+| GENERAL_SETTINGS-010 | Implementado por verificar | Conflicto 409 con mensaje en el campo cuando cambió el valor desde otro formulario |
+
+**Pruebas focalizadas a ejecutar:** `bundle exec rspec spec/requests/admin/general_settings_spec.rb spec/requests/admin/table_page_preferences_spec.rb spec/models/organization_setting_spec.rb spec/models/general_setting_audit_event_spec.rb spec/features/general_settings_browser_spec.rb`.
+
+**Cierre bloqueado** hasta ejecutar RSpec completo, RuboCop, seguridad, I18n, migraciones limpias y verificación browser y obtener CI verde del SHA definitivo. No se fusionó ninguna rama.

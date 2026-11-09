@@ -10,7 +10,7 @@ module TablePageSizing
     return explicit.to_i if TablePagePreference::OPTIONS.map(&:to_s).include?(explicit)
 
     saved = if current_user && current_organization
-              current_user.table_page_preferences.find_by(
+              current_user.table_page_preferences.active_records.find_by(
                 organization: current_organization, table_key: table_key
               )&.per_page
             end

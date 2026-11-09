@@ -14,10 +14,12 @@ module Admin
       load_settings
       return if performed?
 
-      if @settings.update(settings_params)
+      update_preference
+
+      if @settings.errors.empty?
         redirect_to admin_general_settings_path, flash: { swal_message: t('admin.general_settings.saved') }
       else
-        render :show, status: :unprocessable_content
+        render :show, status: @stale_preference ? :conflict : :unprocessable_content
       end
     end
 
@@ -28,8 +30,38 @@ module Admin
     end
 
     def load_settings
-      @settings = current_organization.organization_settings.active_records.first
-      head :not_found unless @settings
+      scope = current_organization.organization_settings
+      @settings = scope.active_records.first
+      return if @settings
+
+      return head :not_found if scope.exists?
+
+      redirect_to admin_onboarding_path, alert: t('admin.general_settings.missing_configuration')
+    end
+
+    def update_preference
+      @settings.with_lock do
+        if stale_preference?
+          @stale_preference = true
+          @settings.errors.add(:default_table_page_size, t('admin.general_settings.stale_message'))
+          next
+        end
+
+        previous_size = @settings.default_table_page_size
+        @settings.assign_attributes(settings_params)
+        next unless @settings.save(context: :general_settings)
+        next if previous_size == @settings.default_table_page_size
+
+        GeneralSettingAuditEvent.create!(
+          organization: current_organization, actor: current_user,
+          previous_page_size: previous_size, new_page_size: @settings.default_table_page_size
+        )
+      end
+    end
+
+    def stale_preference?
+      expected = params[:expected_default_table_page_size].presence
+      expected && expected.to_s != @settings.default_table_page_size.to_s
     end
 
     def settings_params

@@ -27,7 +27,7 @@ class OrganizationSetting < ApplicationRecord
             on: %i[create update]
   validates :default_table_page_size,
             inclusion: { in: TablePagePreference::OPTIONS },
-            on: %i[create update]
+            on: %i[create update general_settings]
 
   validates :payment_method,
             presence: true,

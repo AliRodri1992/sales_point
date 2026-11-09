@@ -9,6 +9,8 @@ class TablePagePreference < ApplicationRecord
     purchase_orders purchase_requests purchase_quotations price_lists promotions product_price_history
   ].freeze
 
+  scope :active_records, -> { where(deleted_at: nil) }
+
   belongs_to :user
   belongs_to :organization
 

@@ -18,6 +18,17 @@ RSpec.describe OrganizationSetting, type: :model do
         .in_array(%w[UTC America/Mexico_City America/Monterrey America/Tijuana])
     end
 
+    it 'validates the chosen default even when only general settings are being edited' do
+      subject.default_table_page_size = 99
+      expect(subject).not_to be_valid(:general_settings)
+      expect(subject.errors[:default_table_page_size]).to be_present
+    end
+
+    it 'does not validate unrelated onboarding currency when only the page size changes' do
+      subject.base_currency.active = false
+      expect(subject).to be_valid(:general_settings)
+    end
+
     it { is_expected.to validate_presence_of(:payment_method) }
     it 'exposes the supported payment methods' do
       expect(described_class.payment_methods.keys).to contain_exactly('cash', 'card', 'qr')

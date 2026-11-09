@@ -67,6 +67,29 @@ RSpec.describe 'Admin table page preferences', type: :request do
     expect(preference.organization).to eq(organization)
   end
 
+  it 'ignores archived personal preferences when using the organization default' do
+    create(:table_page_preference, user:, organization:, table_key: 'suppliers',
+                                   per_page: 5, deleted_at: 1.day.ago)
+    create_list(:supplier, 28, organization:)
+
+    get admin_suppliers_path
+
+    expect(Nokogiri::HTML(response.body).css('tbody tr').size).to eq(25)
+  end
+
+  it 'creates an active preference rather than reviving an archived override' do
+    archived = create(:table_page_preference, user:, organization:, table_key: 'suppliers',
+                                              per_page: 5, deleted_at: 1.day.ago)
+
+    patch admin_table_page_preference_path('suppliers'), params: { per_page: 15 }
+
+    expect(response).to have_http_status(:no_content)
+    expect(archived.reload.deleted_at).to be_present
+    active = user.table_page_preferences.active_records.find_by!(organization:, table_key: 'suppliers')
+    expect(active.per_page).to eq(15)
+    expect(active.id).not_to eq(archived.id)
+  end
+
   it 'requires authentication' do
     sign_out user
     patch admin_table_page_preference_path('suppliers'), params: { per_page: 25 }

@@ -119,6 +119,9 @@ application.register("supplier-page-size", SupplierPageSizeController)
 import TablePageSizeController from "./table_page_size_controller"
 application.register("table-page-size", TablePageSizeController)
 
+import GeneralSettingsPreviewController from "./general_settings_preview_controller"
+application.register("general-settings-preview", GeneralSettingsPreviewController)
+
 import SupplierDropdownController from "./supplier_dropdown_controller"
 application.register("supplier-dropdown", SupplierDropdownController)
 

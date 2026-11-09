@@ -2,6 +2,7 @@ en:
   admin:
     breadcrumbs:
       controllers:
+        general_settings: "General settings"
         inventories: "Inventories"
         inventory_lots: "Inventory lots"
         organization_contacts: "Organization contacts"

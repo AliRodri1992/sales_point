@@ -14,7 +14,7 @@ module Admin
         return head :unprocessable_content
       end
 
-      preference = current_user.table_page_preferences.find_or_initialize_by(
+      preference = current_user.table_page_preferences.active_records.find_or_initialize_by(
         organization: current_organization, table_key: key
       )
       preference.update!(per_page: size.to_i)
