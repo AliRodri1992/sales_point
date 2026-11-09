@@ -87,7 +87,9 @@ RSpec.describe User, type: :model do
     let(:role) { create(:system_role, :branch, code: 'sales') }
 
     it 'recognizes a matching role' do
-      create(:user_role, user:, system_role: role, branch: create(:branch))
+      branch = create(:branch)
+      create(:organization_membership, user:, organization: branch.organization)
+      create(:user_role, user:, system_role: role, branch:)
 
       expect(user.role?('sales')).to be(true)
     end
