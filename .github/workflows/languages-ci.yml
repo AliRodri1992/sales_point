@@ -1,0 +1,152 @@
+name: Languages CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/fixes
+    paths:
+      - '.github/workflows/languages-ci.yml'
+      - 'docs/quality/modules/languages.md'
+      - 'app/controllers/admin/languages_controller.rb'
+      - 'app/controllers/languages_controller.rb'
+      - 'app/controllers/concerns/admin/languages_listing.rb'
+      - 'app/models/language.rb'
+      - 'app/models/translate.rb'
+      - 'app/policies/language_policy.rb'
+      - 'app/views/admin/languages/**'
+      - 'app/views/admin/shared/_language_selector*'
+      - 'app/components/authentication/language_selector_component.*'
+      - 'app/javascript/controllers/language_selector_controller.js'
+      - 'config/initializers/i18n_database_backend.rb'
+      - 'config/locales/*.yml'
+      - 'lib/tasks/translations.rake'
+      - 'db/seeds.rb'
+      - 'db/schema.rb'
+      - 'spec/models/language_spec.rb'
+      - 'spec/models/translate_spec.rb'
+      - 'spec/requests/admin/languages*'
+      - 'spec/requests/language_switch_spec.rb'
+      - 'spec/requests/application_locale_spec.rb'
+      - 'spec/requests/test_language_content_spec.rb'
+      - 'spec/features/languages_quality_browser_spec.rb'
+
+permissions:
+  contents: read
+
+env:
+  RAILS_ENV: test
+  POSTGRES_DB_TEST: sale_point_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
+  REDIS_URL: redis://localhost:6379/0
+
+jobs:
+  languages_lint:
+    name: Languages module RuboCop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - name: Lint language modules and regression specs
+        run: |
+          bin/rubocop -f simple \
+            app/controllers/admin/languages_controller.rb \
+            app/controllers/languages_controller.rb \
+            app/controllers/concerns/admin/languages_listing.rb \
+            app/models/language.rb app/models/translate.rb \
+            app/policies/language_policy.rb lib/tasks/translations.rake \
+            spec/models/language_spec.rb spec/models/translate_spec.rb \
+            spec/requests/admin/languages_spec.rb \
+            spec/requests/admin/languages_diagnostic_spec.rb \
+            spec/requests/language_switch_spec.rb \
+            spec/requests/application_locale_spec.rb \
+            spec/requests/test_language_content_spec.rb \
+            spec/features/languages_quality_browser_spec.rb
+
+  languages_locales:
+    name: Languages locale integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check PyYAML
+      - name: Audit translation parity
+        run: I18N_STRICT_PARITY=1 python script/audit_i18n.py
+      - name: Validate module quality register
+        run: ruby script/audit_module_quality.rb
+
+  languages_specs:
+    name: Languages requests, models and browser
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sale_point_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d sale_point_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips
+      - name: Install matching Chrome and ChromeDriver
+        id: browser
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+          install-chromedriver: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Build assets
+        run: |
+          yarn build:js
+          yarn build:css
+      - name: Prepare test database
+        run: bin/rails db:drop db:create db:migrate
+      - name: Run language models, routes and browser regressions
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec \
+            spec/models/language_spec.rb spec/models/translate_spec.rb \
+            spec/requests/admin/languages_spec.rb \
+            spec/requests/admin/languages_diagnostic_spec.rb \
+            spec/requests/language_switch_spec.rb \
+            spec/requests/application_locale_spec.rb \
+            spec/requests/test_language_content_spec.rb \
+            spec/features/languages_quality_browser_spec.rb
