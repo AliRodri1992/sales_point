@@ -91,7 +91,7 @@ RSpec.describe 'Admin general settings', type: :request do
   end
 
   it 'routes an organization without initial settings to setup without restoring archived records' do
-    settings.destroy!
+    settings.really_destroy!
 
     get admin_general_settings_path
     expect(response).to redirect_to(admin_onboarding_path)
