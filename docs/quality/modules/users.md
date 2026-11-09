@@ -1,51 +1,111 @@
-# Registro de calidad — Usuarios e invitaciones
+# Registro único de calidad — Usuarios e invitaciones
 
-**Estado:** INVENTARIADO, NO VERIFICADO, NO CERRADO.  
-**Rutas propias:** `/admin/users · /admin/users/:id/status · /admin/users/:id/invitation · /admin/user_restorations · /invitations/accept`  
-**Código de entrada confirmado/por comprobar al auditar:** `app/controllers/admin/users_controller.rb; app/controllers/admin/user_statuses_controller.rb; app/controllers/admin/user_invitations_controller.rb; app/controllers/admin/user_restorations_controller.rb`  
-**SHA de aceptación:** PENDIENTE · **Responsable/revisor:** por asignar · **Inicio de registro:** 2026-11-08
+> Registro actualizado conforme a [Estándar de calidad modular](../module-quality-standard.md) y [plantilla](../module-audit-template.md). **No confundir auditoría estática con prueba ejecutada ni CI especializado con cierre del módulo.**
 
-> Este documento establece el alcance y las puertas de aceptación; **no certifica que se haya realizado la auditoría**, que los archivos de pruebas existan o que CI esté verde. El registro se completa y versiona durante la auditoría del módulo.
+- **Módulo:** Usuarios — directorio `/admin/users` y acciones propias de estados, invitaciones y restauración.
+- **Rama:** `feature/fixes`.
+- **SHA de partida de código:** `fe9f7aeb06f1c77026f6c81ba870d840b5095705` (2026-11-08).
+- **SHA de último Users CI verde inspeccionado:** `97a8c4882da7450449cb520c61005a2bf4599092`.
+- **SHA de aceptación:** PENDIENTE. **Estado:** AUDITADO, NO CERRADO; hallazgos P1 y verificaciones pendientes.
+- **Responsable de corrección:** módulo Usuarios; **revisión independiente:** pendiente de asignación.
+- **Método:** AI Dev Suite — Impeccable (pantallas), UI UX Pro Max (UX/a11y) y Ponytail (lógica/seguridad), mediante inspección GitHub y logs de Actions. No se ejecutaron las CLIs originales.
+- **Trazabilidad:** archivo preexistente de inventario actualizado. Los IDs siguientes se mantienen en rondas futuras; no generar copias o renumerarlos.
 
-## Alcance propio
+## 1. Frontera: rutas y pantallas propias
 
-Listado y filtros, alta/edición, roles y sucursal asignada, invitaciones, restauración, bloqueo, cambios de estado, capacidad de organización, notificaciones y permisos.
+| Ruta / acción | Controlador, vista y componentes | Autorización y servicios | Cobertura existente |
+|---|---|---|---|
+| `GET /admin/users` | `Admin::UsersController#index`; `users/index`, `_list`, `_active_filters`, `_row_actions`, `_role_badges`; `users_filters_controller.js`; paginación global | `UserPolicy`, `UsersQuery`, `OrganizationMembership`, roles | `users_spec`, `users_listing_audit_spec`, `users_query_spec`, `admin_users_experience_spec` |
+| `GET /admin/users/new` y `POST /admin/users` | `users/new`, `_form`; `user_access_controller.js` | `AdminAccountWriter`, `AdminAccountFormValidations`, `UserAdminAccessValidations`, `InvitationDispatcher`, capacidad | `users_spec`, `users_module_audit_spec`, `admin_account_writer_invitation_spec`, pruebas feature |
+| `GET /admin/users/:id`, `GET /admin/users/:id/edit`, `PATCH /admin/users/:id` | `users/show`, `edit`, `_form`, roles y acciones | `UserPolicy`, `AdminAccountTenantGuard`, `BranchRoleAssignments` | `users_boundaries_spec`, `users_branch_roles_spec`, `users_module_audit_spec` |
+| `GET/PATCH /admin/users/:id/status` | `Admin::UserStatusesController`, `user_statuses/edit` | `StatusTransition`, `StatusIncidentManager`, `StatusAdminSafety`, `UserStatusEvent` | `user_statuses_spec`, `status_transition_spec`, `status_transition_audit_spec` |
+| `POST /admin/users/:id/invitation` | `Admin::UserInvitationsController`, acción del detalle | `InvitationEligibility`, `UserInvitation`, `InvitationDispatcher` | `user_invitations_spec`, `user_invitation_spec`, `invitation_delivery_job_spec` |
+| `GET /admin/user_restorations`, `POST /admin/users/:id/restoration` | `Admin::UserRestorationsController`, `user_restorations/index` | `AccountRestoration`, capacidad, invitación condicionada | `user_restorations_spec`, `account_restoration_spec` |
+| `GET/PATCH /invitations/accept` | `UserInvitationsController`, `user_invitations/show`, `invalid` | `UserInvitation#accept!/#accept_existing!`; token de un uso | `requests/user_invitations_spec`, `user_invitation_concurrency_spec` |
+| Cambio de empresa desde selector superior (frontera de Usuarios) | `Admin::OrganizationSelectionsController`, selector compartido | Membresía accesible y contexto `CurrentOrganizationAccess` | `organization_selections_spec`, `users_cross_organization_permissions_spec` |
 
-Revisar únicamente las rutas y acciones declaradas y sus modelos, vistas, permisos, servicios, JS/CSS, locales es/en/ko y pruebas **directamente utilizados**. Inventariar métodos y rutas reales antes de probar; no presumir que cada operación CRUD existe.
+**Excluidos:** auditoría completa de Registro/Sign in, Onboarding, Sucursales, Inventario, Terminales, Proveedores y motor/editor de Plantillas de correo. Se verifican únicamente sus contratos cuando afectan directamente a las acciones de Usuarios.
 
-## Límite de integración
+## 2. Resultados positivos verificados por código o CI
 
-Autenticación y correo: validar recepción y permisos de invitaciones; no auditar internamente el módulo de Plantillas ni el de Sucursales.
+- Las rutas administrativas utilizan Pundit y la lista limita usuarios a membresías de la organización seleccionada. Hay regresiones para acceso cruzado y selección de empresa.
+- La creación administrativa persiste la cuenta pendiente y exige roles para empleados; las validaciones principales residen en modelo/servicio y la vista presenta mensajes por campo y asteriscos rojos sin usar `required` HTML5.
+- El flujo de invitación usa token aleatorio, hash SHA-256 almacenado, vencimiento de 72 horas, aceptación de un solo uso, revalidación bajo bloqueo y confirmación de titular para una segunda empresa.
+- Restauración y cambios de estado tienen bloqueo transaccional, políticas, razones, eventos e incidentes; el flujo de restauración simple impide enviar invitación a empleado sin rol.
+- El listado presenta tabla de escritorio, tarjetas en móvil, filtros, paginación y estados vacíos; hay pruebas automatizadas de navegador a anchura de 390 px, **sin que eso equivalga a auditoría visual manual**.
+- Comparación estática de ocho familias de traducciones de Usuarios entre `es/en/ko`: igual número de claves y mismos interpoladores en las familias inspeccionadas. La auditoría YAML general pasó en el SHA inspeccionado.
 
-**Regla de propiedad:** si el error está dentro de otro módulo, registrarlo como EXTERNO en su expediente. Aquí se prueba solo la entrada, salida, restricción y retroalimentación del contrato visible; no se reimplementa el módulo vecino.
+## 3. Registro único de hallazgos
 
-## Casos obligatorios al auditar
+**Leyenda:** `confirmado por código` describe una condición verificable en la implementación; **no** equivale a falla reproducida por navegador. `Hipótesis` significa que faltan prueba o decisión de producto. Ningún hallazgo de esta tabla está cerrado.
 
-| Dimensión | Criterio de aceptación | Evidencia |
-|---|---|---|
-| Funcionalidad | Recorridos principales de las rutas propias, casos negativos, acciones no disponibles y retorno tras errores | PENDIENTE |
-| Formularios y servidor | Validaciones del modelo, asteriscos rojos en obligatorios, mensajes individuales debajo de cada campo, sin duplicación/HTML5 required como sustituto | PENDIENTE |
-| Autorización y datos | Pundit, aislamiento de organización/rol, soft delete y estados de negocio, cuando apliquen | PENDIENTE |
-| UX y UI | Delta POS, vacío/carga/error/422, responsive escritorio/móvil, teclado, foco, zoom 200 % y accesibilidad | PENDIENTE |
-| Internacionalización | Textos y mensajes es/en/ko, etiquetas traducidas y persistencia de valores ante 422 | PENDIENTE |
-| Calidad | Tests focalizados, regresiones, RuboCop, seguridad, I18n y CI global del SHA final | PENDIENTE |
-
-## Registro de hallazgos
-
-No se han trasladado ni inventado hallazgos en esta apertura. **Esto no significa cero errores.** Al auditar, registrar IDs permanentes `USERS-001` en adelante, prioridad P0–P3, clase PROPIO/INTEGRACIÓN/EXTERNO, evidencia (archivo/línea o reproducción), causa raíz, corrección, spec, SHA y estado; conservar los IDs en revisiones posteriores.
-
-| ID | Prioridad | Clase | Evidencia/causa raíz | Prueba | Estado |
+| ID | Prioridad / clase | Evidencia y condición de reproducción | Causa raíz y adecuación propuesta | Regresión requerida | Estado / responsable |
 |---|---|---|---|---|---|
-| — | — | — | Registro inicial; pendiente de auditoría | NO EJECUTADA | PENDIENTE |
+| **USERS-001** | **P1 PROPIO** | **Confirmado por código:** los cambios de roles globales y por sucursal se escriben en `app/services/users/admin_account_writer.rb` y `branch_role_assignments.rb` sobre `UserRole`, que no tiene `has_paper_trail` ni evento estructurado con actor. `UserStatusEvent` cubre estados, no cambios de roles. | Incorporar auditoría durable y consultable de concesión/revocación de roles y cambios sensibles, reutilizando PaperTrail o el mecanismo existente; asociar actor, organización, antes/después y fecha. No duplicar notificaciones con auditoría. | Crear/revocar rol general y de sucursal, comprobar historia de ambos y aislamiento de empresa; cubrir concurrencia y rollback. | **ABIERTO** · Usuarios/seguridad |
+| **USERS-002** | **P1 PROPIO — contrato por decidir** | **Comportamiento confirmado; defecto sujeto a regla de negocio:** `User#admin?` y `UserEffectiveRoles#effective_role_assignments` admiten roles globales (`branch_id: nil`) en cualquier organización accesible. La prueba de aislamiento existente cubre rol de sucursal extranjero, no un rol global administrativo de cuenta compartida. | Acordar explícitamente si un rol administrativo global debe tener efectos en **todas** las empresas a las que se une el mismo usuario. Si no, introducir concesiones por empresa y no asumir equivalencia entre membresía y autoridad. | Usuario con dos membresías, administrador en empresa A y sin concesión B; verificar permisos reales en ambas y negar escalado según decisión formal. | **ABIERTO / HIPÓTESIS DE SEGURIDAD** · Usuarios/arquitectura |
+| **USERS-003** | **P1 PROPIO** | **Confirmado por código:** en `AccountRestoration#restore_account!`, una cuenta compartida globalmente activa pasa de membresía eliminada a **activa**; `reset_local_access!` revoca sus roles de sucursal sin comprobar que el empleado conserve otros roles válidos. El alta por invitación sí exige roles. | Resolver la asimetría de reglas de reactivación: para empleados, exigir roles operativos válidos o restaurar como pendiente de asignación antes de habilitar la membresía local, preservando acceso legítimo a otras empresas. | Caso compartido con único rol local: restaurar, comprobar estado de acceso y posibilidad de invitar/activar tras asignar rol; conservar otra membresía. | **ABIERTO** · Usuarios |
+| **USERS-004** | **P2 PROPIO** | **Confirmado por código, condición de permisos revocados:** `UserPolicy#resend_invitation?` hereda la exención de administrador de `CatalogPolicy`, por lo que el botón puede mostrarse; `Admin::UserInvitationsController#validate_access!` exige además permiso explícito `users.resend_invitation` y responde 403. | Centralizar la misma comprobación de permiso para política, vista y controlador; mostrar estado no disponible con explicación cuando corresponda. | Administrador con el permiso removido: botón ausente y POST 403; administrador con permiso: botón y POST válidos. | **ABIERTO** · Usuarios |
+| **USERS-005** | **P2 PROPIO** | **Riesgo confirmado por ruta ORM, rendimiento no medido:** `_role_badges.html.erb` y `users/show.html.erb` llaman `branch.operationally_active?`, que consulta `branch.organization` en `BranchLifecycle`; `UsersController` precarga `:branch` pero no `branch: :organization`. | Precargar organización de cada sucursal en listado y detalle o calcular el estado sin consultas adicionales; revisar cantidad de SQL para 10/50 filas. | Spec con contador de consultas para N usuarios, roles y sucursales, asegurando crecimiento acotado y ausencia de N+1. | **ABIERTO, MEDICIÓN PENDIENTE** · Usuarios |
+| **USERS-006** | **P2 PROPIO** | **Confirmado por código:** campos `reason`/`resolution` de `user_statuses/edit` y `reason` de `user_restorations/index` muestran asterisco rojo, pero no expresan `aria-required`/texto accesible como sí ocurre en el alta de Usuarios; validación de servidor sí existe. | Añadir obligatoriedad semántica sin activar HTML5 `required`; mantener error individual con `aria-describedby` y foco tras 422. | Solicitudes inválidas con Nokogiri; navegación con teclado y lector de pantalla en formulario de estado y restauración. | **ABIERTO** · Usuarios/UX |
+| **USERS-007** | **P2 PROPIO** | **Confirmado por código:** tabla de `users/_list.html.erb` presenta columnas ordenables mediante `sort_link`, pero el `th` no expone `aria-sort` ni la dirección activa en su nombre accesible. | Añadir estado/dirección de orden a encabezado e interacción accesible sin romper URLs y filtros. | Orden asc/desc con inspección HTML `aria-sort`, navegación por teclado y lector de pantalla. | **ABIERTO** · Usuarios/UX |
+| **USERS-008** | **P2 PROPIO — caso histórico** | **Hipótesis reproducible con fixture:** los KPI de `UsersController#index` cuentan membresías por `account_status`, mientras el listado cruza `policy_scope(User).not_deleted`. Con miembro local activo pero usuario globalmente archivado, podría contarse sin aparecer en resultados. | Alinear el universo de los contadores con `scoped_users` o etiquetar los KPI como membresías, indicando estados inconsistentes. | Fixture cuenta globalmente archivada + membresía local activa: contador igual al alcance visible; 0 ocultamientos. | **ABIERTO / HIPÓTESIS** · Usuarios |
+| **USERS-009** | **P2 PROPIO — datos históricos** | **Hipótesis:** `StatusTransition.allowed_targets` para `blocked` depende de un `UserStatusEvent` previo. Si el estado bloqueado procede de datos heredados sin evento, solo ofrece eliminación; `StatusIncidentManager` también exige incidente abierto para desbloquear. | Diseñar recuperación administrativa auditada de bloqueos históricos sin evento/incidente, sin suprimir la obligación de justificar desbloqueo. | Fixture bloqueado sin evento o sin incidente: respuesta controlada, recuperación autorizada o mensaje de soporte, nunca fallo inesperado. | **ABIERTO / HIPÓTESIS** · Usuarios/seguridad |
+| **USERS-010** | **P2 PROPIO — UI por verificar** | **No comprobado en navegador:** tras 422 en alta/edición, hay mensajes por campo pero falta evidencia real de foco en primer error, contraste, teclado, zoom 200 %, contenido largo y lector de pantalla. El controlador Stimulus actual actualiza el resumen, no enfoca errores explícitamente. | Ejecutar auditoría manual y adaptar foco/anuncios accesibles solo ante reproducción; conservar validaciones de modelo sin resumen duplicado. | Capturas y recorrido real desktop/móvil, zoom 200 %, tabulación, lector y 422; asociar evidencia al SHA final. | **PENDIENTE DE VERIFICACIÓN** · Usuarios/UX |
+| **USERS-011** | **P3 PROPIO — diseño por evaluar** | **Hipótesis de densidad:** `users/index.html.erb` ocupa cinco tarjetas KPI antes de filtros y tabla. El estándar de Delta POS no exige KPI por módulo; la necesidad de esos cinco indicadores no está justificada con evidencia de usuarios. | Evaluar simplificar a resumen compacto si reduce desplazamiento y mejora flujo de administración sin perder estados útiles. | Prueba visual móvil/escritorio, tarea de búsqueda/edición y comparación de altura/scroll. | **PENDIENTE DE VALIDACIÓN UX** · Usuarios/diseño |
+| **USERS-012** | **P0 de proceso — EXTERNO** | **CI general no verde:** en [CI del SHA `fe9f7aeb`](https://github.com/AliRodri1992/sales_point/actions/runs/42550692900) RuboCop indicó **50 ofensas** principalmente en Sucursales, Inventarios, Onboarding y Compras; también halló error de sintaxis en una spec FEFO externa. Seguridad e I18n pasaron; RSpec general fue cancelado. | Transferir a los expedientes de esos módulos, sin modificar su lógica desde esta auditoría de Usuarios. Aun siendo externo, impide cerrar el módulo en un SHA de aceptación no verde. | CI global completo y verde en el SHA de aceptación. | **ABIERTO / BLOQUEO EXTERNO** · dueños de módulos vecinos |
 
-## Verificaciones y dictamen
+## 4. Matriz de aceptación por pantalla
 
-- **RSpec focalizado / completo:** NO EJECUTADO en este registro.
-- **RuboCop / seguridad / I18n:** NO EJECUTADO en este registro.
-- **Navegador real móvil y escritorio:** NO EJECUTADO en este registro.
-- **GitHub Actions / SHA de aceptación:** NO CONFIRMADO.
-- **P0/P1 conocidos y resueltos:** NO DETERMINADO.
-- **Revisión independiente:** PENDIENTE.
-- **Dictamen:** NO CERRADO. Al auditar, agregar comandos, fecha, resultados reales y enlaces de ejecución.
+| Pantalla / flujo | Servidor, autorización y datos | UX y errores | Evidencia aún exigida |
+|---|---|---|---|
+| Listado / filtros | Aislamiento, filtro por estado local, búsqueda, rol/sucursal y paginación tienen specs | Vacío y tarjetas móviles codificados; ordenar con `aria-sort` pendiente | Desktop, móvil, filtros cruzados, foco/teclado, 401/403, 0/50 registros y N+1 |
+| Nuevo usuario | Validaciones modelo, rol mínimo empleado, cuenta pendiente, invitación y límite de empresa | Mensajes por campo, `novalidate`, asteriscos y selector Delta | 422 completo, caracteres largos, JS deshabilitado, empleado sin rol, fallo de cola y duplicado concurrente |
+| Editar usuario | Tenant guard, roles de sistema/sucursal, protección último admin, revocación de sesión | Resumen en vivo y controles de roles | Multiempresa con administrador y cambios concurrentes de roles; foco tras 422 |
+| Detalle | Estados locales, invitación, historial de estatus/incidentes y permisos | Acciones iconográficas con etiquetas accesibles | Acciones con permisos revocados, estados vencidos, permisos sólo lectura |
+| Estado y bloqueo | `StatusTransition`, razones, incidentes y reversión protegida | Error individual y advertencia de sesiones compartidas | Bloqueo legado sin incidente, semántica de requerido, confirmación, éxito y 422 |
+| Restauración | Se exige razón y se revocan permisos históricos | Formulario con error por campo | Empleado compartido, recuperación con rol nuevo, teclado/foco y paginación |
+| Aceptación invitación | Token de un uso, expiración, titular de cuenta compartida, validaciones | Mensajes de enlace inválido y contraseña | Usos duplicados concurrentes, navegación de regreso e interacción real con proveedor de correo |
 
-Política: [Estándar modular](../module-quality-standard.md) · [Plantilla ampliada](../module-audit-template.md).
+## 5. Historial de verificación (no equiparar código con ejecución)
+
+| Fecha | SHA | Verificación / fuente | Resultado comprobado | Limitaciones |
+|---|---|---|---|---|
+| 2026-11-08 | `97a8c488` | [Users CI](https://github.com/AliRodri1992/sales_point/actions/runs/42549788993): RuboCop y RSpec con browser feature specs | **PASÓ: 293 ejemplos, 0 fallos; RuboCop específico PASÓ** | SHA previo al estándar documental; no equivale a prueba manual integral ni CI global |
+| 2026-11-08 | `fe9f7aeb` | [CI general](https://github.com/AliRodri1992/sales_point/actions/runs/42550692900) | **FALLÓ** RuboCop: 50 ofensas; **PASÓ** seguridad e I18n; RSpec completo y migraciones cancelados | Problemas propios de módulos vecinos; cierre global bloqueado |
+| 2026-11-08 | `fe9f7aeb` | Inspección GitHub de rutas, controladores, modelos, servicios, vistas, JS, esquema y tests propios | **REVISADO POR CÓDIGO**; hallazgos USERS-001–011 | No es test ejecutado ni demuestra incidencia visible |
+| 2026-11-08 | `fe9f7aeb` | Comparación estática de claves e interpolaciones de ocho familias `users*` / `user_*` de `es/en/ko` | **PASÓ inspección de paridad** en familias revisadas | No certifica cada texto renderizado dinámicamente |
+| 2026-11-08 | — | Navegador real local, lector de pantalla, zoom 200 % y pruebas manuales de extremo a extremo | **NO EJECUTADO** | La lectura de `localhost` no estaba disponible en esta sesión |
+| 2026-11-08 | — | Docker/Overcommit local, CI global verde sobre SHA de aceptación y revisión independiente | **NO EJECUTADO / NO CONFIRMADO** | Pendientes |
+
+## 6. Contratos de integración y traspasos
+
+| Contrato de Usuarios | Qué se valida desde Usuarios | Propietario externo | Fuera de alcance |
+|---|---|---|---|
+| Selección de empresa / sucursal | La organización actual es accesible y ningún rol de sucursal extranjera autoriza acciones propias | Organización / Sucursales | Auditoría integral del CRUD de Sucursales |
+| Plantilla y cola de invitaciones | Encolar, informar fallos, token cifrado en el job y enlace de activación con vigencia | Plantillas de correo / Entrega | Motor completo de rendering, SMTP/DNS, branding y Gmail/Outlook |
+| Login y sesiones | Reactivación, revocación y vinculación de cuenta compartida devuelven acceso conforme a membresía | Autenticación | Rediseño completo de login/signup/recuperación |
+| Plan de membresía / capacidad | Prohibir alta/recuperación cuando no hay asientos, mostrar error claro | Membresías | Cálculo completo de facturación del plan |
+| CI general | Debe estar verde para SHA de aceptación | Dueños de módulos con ofensas | Reparar FEFO, Inventarios, Sucursales u Onboarding en este expediente |
+
+## 7. Checklist de cierre
+
+- [x] Alcance delimitado desde rutas propias y contratos externos identificados.
+- [x] Inventario de archivos, acciones, vistas, pruebas y flujos propios inspeccionado.
+- [x] Reglas principales de formularios, Pundit, modelos, membresías y soft delete revisadas estáticamente.
+- [x] RSpec especializado y RuboCop verde en SHA anterior identificable: `97a8c488`.
+- [x] Comparación estática de claves e interpoladores de ocho familias es/en/ko; auditoría I18n general verde en SHA inspeccionado.
+- [ ] Evidencia de ausencia/corrección de P1 (`USERS-001`, `USERS-002`, `USERS-003`).
+- [ ] P2 corregidos o aceptados por propietario con motivo y pruebas.
+- [ ] Estados de red/401/403/404/422 y éxito/reintentos navegados en todas las pantallas.
+- [ ] Accesibilidad real: móvil/escritorio, foco, teclado, 200 %, contraste, lector y reduced motion.
+- [ ] Medición de consultas N+1 y registro persistente de auditoría de privilegios.
+- [ ] CI global **completo y verde** en el SHA de aceptación, con jobs de RSpec, RuboCop, seguridad, YAML e inicialización de BD.
+- [ ] Revisión independiente del mismo expediente y mismo SHA después de los arreglos.
+
+## 8. Dictamen y regla de reapertura
+
+**AUDITADO, NO CERRADO.** Hay tres hallazgos P1: uno de auditoría durable, uno de decisión arquitectónica multiempresa y uno de restauración compartida. Ninguno debe etiquetarse “reproducido en navegador” sin ejecución; `USERS-002` exige confirmar la regla de negocio. El CI especializado previo tiene 293 pruebas verdes, pero CI general del SHA inspeccionado falla por módulos externos y no existe evidencia visual manual.
+
+**Próximo paso técnico:** corregir o decidir P1; crear pruebas de regresión; después P2, mediciones, UI real, CI especializado y general del SHA final y reauditoría independiente sobre estos **mismos IDs**. No fusionar con CI requerido fallido o pendiente.
+
+Referencia: [calidad modular](../module-quality-standard.md) · [plantilla](../module-audit-template.md).
