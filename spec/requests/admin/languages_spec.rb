@@ -8,6 +8,7 @@ RSpec.describe 'Admin::Languages', type: :request do
   let!(:user) { create(:user, status: 'active') }
 
   before do
+    create(:organization_membership, user:)
     role = create(:system_role, :system)
     create(:user_role, user:, system_role: role)
     GranularPermissionCatalog.sync!

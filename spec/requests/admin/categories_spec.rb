@@ -10,6 +10,7 @@ RSpec.describe 'Admin::Categories', type: :request do
   let!(:categories_permission) { create(:permission, code: 'categories.access') }
 
   before do
+    create(:organization_membership, user:)
     create(:user_role, user:, system_role: role)
     create(:system_role_permission, system_role: role, permission: categories_permission)
     GranularPermissionCatalog.sync!
