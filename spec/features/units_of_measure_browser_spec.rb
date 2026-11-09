@@ -23,7 +23,7 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
 
   scenario 'validates fields, selects an SAT key, creates, views and edits in modals' do
     visit admin_units_of_measure_path
-    click_link 'New unit'
+    within('header') { click_link 'New unit' }
     expect(page).to have_css('turbo-frame#unit_of_measure_modal [role="dialog"]', wait: 10)
     expect(page).to have_css('turbo-frame#unit_of_measure_modal.flex')
 
@@ -63,7 +63,7 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
     [320, 390, 768, 1440].each do |width|
       page.driver.browser.manage.window.resize_to(width, 900)
       visit admin_units_of_measure_path
-      click_link 'New unit'
+      within('header') { click_link 'New unit' }
       expect(page).to have_css('turbo-frame#unit_of_measure_modal.flex [role="dialog"]', wait: 10)
 
       bounds = page.evaluate_script(<<~JS)
