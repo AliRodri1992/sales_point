@@ -1,6 +1,6 @@
 # Registro de calidad — General (`/admin/general_settings`)
 
-**Estado actual:** REAUDITADO POR CÓDIGO; 35 PRUEBAS FOCALES PASARON EN EL SHA 9e438205; NUEVAS ADECUACIONES Y CI GLOBAL PENDIENTES; NO CERRADO.  
+**Estado actual:** ADECUACIONES 005/010/011/012/013/014 IMPLEMENTADAS; VERIFICACIÓN FOCALIZADA VERDE (42 ejemplos, 0 fallos); CI GLOBAL EN ROJO POR RUBOCOP DE OTROS MÓDULOS; REVISIÓN INDEPENDIENTE PENDIENTE; NO CERRADO.  
 **Fecha:** 2026-11-08 (America/Mexico_City). **Rama:** `feature/fixes`.  
 **SHA base de inspección:** `8974fee011f9422066985a0ab088ed2d771e1c8a`. **SHA revisado posteriormente:** `719ae720c3464bbab3478ef7cd91399b5c911b53` (comparación sin cambios en archivos de General).  
 **SHA de aceptación:** PENDIENTE. **Responsable propuesto:** equipo Delta POS. **Revisor independiente:** PENDIENTE.  
@@ -197,3 +197,23 @@ Este seguimiento conserva los IDs de la auditoría. La presencia de cambios en G
 **Evidencia de iteración:** primera ejecución focalizada tras el cambio `74f99dbd`: YAML/I18n aprobado; RuboCop señaló ajustes menores y RSpec obtuvo 41 ejemplos, 3 fallos (fixtures de autorización organizacional y simulación artificial de zoom). Se corrigieron las ofensas de lint, se adecuaron los fixtures a la política vigente y se sustituyó CSS `style.zoom` por prueba de reflujo en viewport equivalente. **No adjudicar estado VERIFICADO a estas correcciones hasta su CI exitoso.**
 
 **Límites:** no se han medido con lector de pantalla ni capturado antes/después con navegador local del usuario. La aprobación del CI focalizado no sustituye el CI global ni la revisión independiente del expediente; no se fusionó ninguna rama.
+
+## 9. Verificación focalizada de todos los hallazgos recientes — 2026-11-08
+
+**SHA funcional verificado:** `ce8dba740936d1e3b9207b5ef1fa807b11a0ad6b`.  
+**General Settings CI:** https://github.com/AliRodri1992/sales_point/actions/runs/42566053882 — **SUCCESS**, tres jobs terminados satisfactoriamente.
+
+| Control real | Resultado | Pruebas |
+|---|---|---|
+| RSpec del módulo y navegador Chrome | **42 ejemplos, 0 fallos** | Abarca recuperaciones, tenant, faltantes, formulario, conflictos A→B→A, cambios pendientes, reflujo 320/390/512/768/1440, contrato de paginación |
+| RuboCop focalizado | **SUCCESS** | Solo archivos del módulo y su contrato |
+| YAML y paridad i18n | **SUCCESS** | Configuración es/en/ko |
+| Migraciones en BD nueva | **SUCCESS** | `bin/rails db:create db:migrate` |
+| Schema versionado | **SUCCESS** | Compara la tabla y claves foráneas del audit de General con el dump de migraciones reales |
+| Carga directa del schema | **SUCCESS** | `db:drop db:create db:schema:load` y comprobación de tabla, columna `deleted_at`, 2 FK y 2 check constraints |
+
+**CI global de referencia:** https://github.com/AliRodri1992/sales_point/actions/runs/42566053707. La auditoría i18n, escaneo de seguridad y migraciones/semillas **PASARON**; RuboCop global **FALLÓ** con ofensas de Inventario, Onboarding, modelos compartidos, script y specs de módulos externos. El lint focal de General **no reporta ofensas**. RSpec global pendiente de conclusión en el momento de esta anotación. No trasladar esas ofensas internas externas al expediente de General: asignar seguimiento al propietario y mantener la puerta de cierre global bloqueada conforme al estándar.
+
+**Revisión de calidad:** IDs GENERAL_SETTINGS-005, 010, 011, 012, 013 y 014 = **implementados y cubiertos por pruebas focalizadas**. El caso GENERAL_SETTINGS-008 de permisos se probó con roles por organización: segundo tenant con rol explícito permitido; segundo tenant sin rol administrativo rechazado. Los controles 001–004, 006 y 007 se mantuvieron. **PENDIENTE** evidencia manual de contraste visual con screenshots, lector de pantalla y revisión independiente formal. **No declarar cerrado** hasta CI completo verde y aprobación del expediente.
+
+**Commits:** `74f99dbd` (funcionalidad/diseño), `0c3df3f7` (fixtures multi-organización, workflow y seguimiento), `a2a5cec0` (schema-load en job con Postgres), `ce8dba74` (comparación acotada al schema propio). Sin merge.
