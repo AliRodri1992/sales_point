@@ -44,8 +44,7 @@ class SystemRolePolicy < ApplicationPolicy
   end
 
   def authorized_administrative_role?(codes)
-    return false unless user&.active? && user.deleted_at.nil?
-    return false if CurrentOrganizationAccess.enforce_tenant && CurrentOrganizationAccess.organization.nil?
+    return false unless active_actor_with_tenant?
 
     memberships = user.organization_memberships.accessible.select(:organization_id)
     assignments = user.user_roles.active.where(branch_id: nil, organization_id: memberships)
@@ -53,6 +52,12 @@ class SystemRolePolicy < ApplicationPolicy
     organization = CurrentOrganizationAccess.organization
     assignments = assignments.where(organization:) if organization
     assignments.exists?
+  end
+
+  def active_actor_with_tenant?
+    return false unless user&.active? && user.deleted_at.nil?
+
+    !CurrentOrganizationAccess.enforce_tenant || CurrentOrganizationAccess.organization.present?
   end
 
   # Role definitions and their permissions are shared across organizations.
