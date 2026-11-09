@@ -172,6 +172,29 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page).to have_css('p[data-server-field-error]', text: /Email/i)
     expect(page).to have_css('#users-identity-title')
   end
+  scenario 'deactivates a user in an accessible modal without opening another page' do
+    permission = Permission.find_or_create_by!(code: 'users.destroy') do |item|
+      item.name = 'Deactivate users'
+      item.module_name = 'Usuarios'
+      item.status = :active
+    end
+    SystemRolePermission.find_or_create_by!(system_role: admin.system_roles.first, permission:)
+    target = create(:user, email: 'deactivate-modal@example.com')
+    create(:organization_membership, organization:, user: target)
+
+    visit admin_users_path
+    find("button[data-deactivation-account='#{target.email}']").click
+    expect(page).to have_css('dialog#users-deactivation-modal', visible: true)
+    expect(page).to have_css('textarea[aria-required="true"]')
+    click_button 'Confirm deactivation'
+    expect(page).to have_css('#users-deactivation-errors', text: /Reason/i)
+    fill_in 'Reason for change (required)', with: 'User access ended'
+    click_button 'Confirm deactivation'
+
+    expect(page).to have_current_path(admin_users_path)
+    expect(target.organization_memberships.find_by!(organization:).account_status).to eq('deleted')
+  end
+
   scenario 'presents accessible status actions on narrow screens' do
     role = admin.system_roles.first
     permission = Permission.find_or_create_by!(code: 'users.suspend') do |item|

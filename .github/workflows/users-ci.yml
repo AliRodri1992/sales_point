@@ -27,6 +27,7 @@ on:
       - 'app/views/admin/shared/_organization_selector.html.erb'
       - 'app/views/admin/user_statuses/**'
       - 'app/views/admin/user_restorations/**'
+      - 'app/javascript/controllers/user_deactivation_controller.js'
       - 'app/javascript/controllers/user_access_controller.js'
       - 'app/javascript/controllers/users_filters_controller.js'
       - 'app/javascript/controllers/index.js'

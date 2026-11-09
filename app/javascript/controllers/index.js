@@ -59,6 +59,9 @@ application.register("users-pagination", UsersPaginationController)
 import UsersFiltersController from "./users_filters_controller"
 application.register("users-filters", UsersFiltersController)
 
+import UserDeactivationController from "./user_deactivation_controller"
+application.register("user-deactivation", UserDeactivationController)
+
 import EmailTemplateFiltersController from "./email_template_filters_controller"
 application.register("email-template-filters", EmailTemplateFiltersController)
 
