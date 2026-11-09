@@ -61,6 +61,7 @@ RSpec.describe 'Role permission privilege boundaries', type: :request do
 
   it 'prevents tenant administrators from changing shared global roles' do
     administrator = create(:user, :english)
+    create(:organization_membership, user: administrator)
     create(:user_role, user: administrator, system_role: create(:system_role, :system, code: 'administrator'))
     sign_in administrator
 
