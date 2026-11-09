@@ -49,6 +49,7 @@ on:
       - 'spec/**/email_branding*'
       - 'spec/**/email_setting*'
       - 'spec/services/email_templates/**'
+      - 'spec/models/email_templates/**'
       - 'spec/jobs/email_templates/**'
 
 permissions:

@@ -22,9 +22,14 @@ module EmailTemplates
       ([node] + node.ancestors).none? { |ancestor| hidden?(ancestor) }
     end
 
+    def self.zero_sized_image?(image)
+      %w[width height].any? { |attribute| image[attribute].to_s.match?(/\A0(?:px|%)?\z/i) }
+    end
+
     def self.hidden?(node)
       return false unless node.element?
       return true if node.attribute('hidden') || node['aria-hidden'].to_s.casecmp?('true')
+      return true if node.name == 'img' && zero_sized_image?(node)
 
       node['style'].to_s.split(';').any? do |declaration|
         property, value = declaration.split(':', 2)

@@ -17,7 +17,9 @@ RSpec.describe EmailTemplates::SecurityLinkVisibility do
       '<span hidden>Hidden</span>',
       '<span aria-hidden="true">Hidden</span>',
       '<span style="display: none !important">Hidden</span>',
-      '<img alt="Reset" style="display:none" src="https://delta.test/icon.png">'
+      '<img alt="Reset" style="display:none" src="https://delta.test/icon.png">',
+      '<img alt="Reset" width="0" src="https://delta.test/icon.png">',
+      '<img alt="Reset" height="0" src="https://delta.test/icon.png">'
     ].each do |content|
       expect(visible_link?(%(<a href="https://delta.test/reset">#{content}</a>))).to be(false)
     end
