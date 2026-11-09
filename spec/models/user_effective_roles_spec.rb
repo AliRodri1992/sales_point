@@ -17,6 +17,7 @@ RSpec.describe User, type: :model do
 
   it 'does not grant permissions from a branch still in preparation' do
     branch = create(:branch, operational_state: 'preparing')
+    create(:organization_membership, user:, organization: branch.organization)
     create(:user_role, user:, branch:, system_role: branch_role)
 
     expect(user.role?('effective_branch_access', branch:)).to be(false)
