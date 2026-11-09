@@ -82,7 +82,7 @@ module Users
       if shared && globally_active
         reset_local_access!
       else
-        reset_global_account!(preserve_foreign_branch_roles: shared)
+        reset_global_account!
       end
     end
 
@@ -91,8 +91,7 @@ module Users
     end
 
     def reset_local_access!
-      branch_ids = @organization.branches.with_deleted.select(:id)
-      @user.user_roles.where(branch_id: branch_ids).find_each do |role|
+      @user.user_roles.where(organization: @organization, deleted_at: nil).find_each do |role|
         role.update!(deleted_at: Time.current)
         audit_revocation!(role)
       end
@@ -104,12 +103,8 @@ module Users
       )
     end
 
-    def reset_global_account!(preserve_foreign_branch_roles: false)
-      assignments = @user.user_roles.where(deleted_at: nil)
-      if preserve_foreign_branch_roles
-        local_branches = @organization.branches.with_deleted.select(:id)
-        assignments = assignments.where(branch_id: nil).or(assignments.where(branch_id: local_branches))
-      end
+    def reset_global_account!
+      assignments = @user.user_roles.where(deleted_at: nil, organization: @organization)
       assignments.find_each do |role|
         role.update!(deleted_at: Time.current)
         audit_revocation!(role)
