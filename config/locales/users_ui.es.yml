@@ -2,7 +2,7 @@ es:
   admin:
     users:
       ui:
-        shared_global_roles_warning: "Los roles generales de esta cuenta se comparten entre sus empresas. Revisa los permisos antes de habilitar una membresía nueva."
+        shared_global_roles_warning: "Los roles de sistema se administran por empresa. Los cambios aquí no modifican los permisos de las otras empresas de esta cuenta."
         role_audit_title: "Historial de permisos"
         role_audit_granted: "Asignado"
         role_audit_revoked: "Revocado"
@@ -85,8 +85,8 @@ es:
         no_roles_available: "No hay roles globales disponibles para asignar."
         branch_roles_title: "Roles por sucursal"
         branch_roles_hint: "Estas asignaciones se conservan al editar los roles globales."
-        roles_detail_hint: "Consulta los permisos globales y los asociados a sucursales de esta organización."
-        global_roles_title: "Roles globales"
+        roles_detail_hint: "Consulta los roles de sistema de esta empresa y los asignados a sus sucursales."
+        global_roles_title: "Roles de esta empresa"
         no_branch_roles: "Sin roles de sucursal asignados."
         branch_access_title: "Acceso por sucursal"
         branch_access_hint: "Expande cada sucursal y marca los roles autorizados para esta persona."
