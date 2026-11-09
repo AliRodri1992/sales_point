@@ -13,3 +13,4 @@ class CreateSystemRolePermissionAuditEvents < ActiveRecord::Migration[8.1]
       t.index %i[system_role_id created_at], name: 'idx_role_permission_audits_role_history'
     end
   end
+end
