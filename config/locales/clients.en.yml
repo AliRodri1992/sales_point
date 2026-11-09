@@ -89,6 +89,7 @@ en:
         total: "Registered customers"
         active: "Active customers"
         credit: "With a credit line"
+        advanced_filters: "Advanced filters"
         filters_title: "Search and filters"
         filters_description: "Find customers without leaving the directory"
         search: "Search customers"

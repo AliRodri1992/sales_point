@@ -4,6 +4,7 @@ RSpec.describe 'Admin clients', type: :request do
   let(:user) { create(:user) }
 
   before do
+    create(:organization_membership, user:)
     role = create(:system_role, :system)
     create(:user_role, user:, system_role: role)
     GranularPermissionCatalog.sync!
@@ -88,6 +89,63 @@ RSpec.describe 'Admin clients', type: :request do
 
       expect(rows.size).to eq(5)
       expect(response.body).to include('client-pagination-form')
+    end
+  end
+
+  describe 'Redesign and advanced filters' do
+    it 'displays overview, fiscal filter and the new form sections' do
+      get admin_clients_path
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t('admin.clients.workspace.filters_title'), 'clients-fiscal-regime')
+
+      get new_admin_client_path
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('client-identity-heading', 'client-contact-heading',
+                                       'client-fiscal-heading', 'client-commercial-heading')
+    end
+
+    it 'filters by credit, tax identifier and fiscal regime together' do
+      regime = create(:sat_fiscal_regime)
+      create(:client, name: 'Matched Buyer', credit_limit: 120, sat_fiscal_regime: regime,
+                      rfc: 'XAXX010101001')
+      create(:client, name: 'No Credit Buyer', credit_limit: 0, sat_fiscal_regime: regime,
+                      rfc: 'XAXX010101002')
+      get admin_clients_path, params: {
+        credit: 'yes', rfc: 'yes', sat_fiscal_regime_id: regime.id
+      }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Matched Buyer')
+      expect(response.body).not_to include('No Credit Buyer')
+    end
+
+    it 'treats wildcard search as literal and does not accept arbitrary statuses' do
+      create(:client, name: 'Ordinary Buyer')
+      get admin_clients_path, params: { search: '%' }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t('admin.clients.workspace.no_results'))
+
+      get admin_clients_path, params: { status: "invalid' OR 1=1--" }
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Ordinary Buyer')
+    end
+
+    it 'renders model errors beneath their inputs without HTML5 required fields' do
+      post admin_clients_path, params: { client: { code: 'MYCODE', name: '' } }
+      expect(response).to have_http_status(:unprocessable_content)
+      doc = Nokogiri::HTML(response.body)
+      expect(doc.at_css('#client_name_error')).to be_present
+      expect(doc.at_css('#client_name')['aria-invalid']).to eq('true')
+      expect(doc.at_css('#client_code')['value']).to eq('MYCODE')
+      expect(doc.at_css('#client_name')['required']).to be_nil
+    end
+
+    it 'preserves an archived fiscal regime on an existing customer edit' do
+      regime = create(:sat_fiscal_regime, valid_to: Date.yesterday)
+      client = create(:client, sat_fiscal_regime: nil)
+      client.update_column(:sat_fiscal_regime_id, regime.id)
+      get edit_admin_client_path(client)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(regime.code)
     end
   end
 

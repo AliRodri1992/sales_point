@@ -89,6 +89,7 @@ es:
         total: "Clientes registrados"
         active: "Clientes activos"
         credit: "Con línea de crédito"
+        advanced_filters: "Filtros avanzados"
         filters_title: "Buscar y filtrar"
         filters_description: "Encuentra clientes sin salir del directorio"
         search: "Buscar cliente"

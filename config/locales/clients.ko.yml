@@ -90,6 +90,7 @@ ko:
         total: "등록된 고객"
         active: "활성 고객"
         credit: "신용 한도 보유"
+        advanced_filters: "고급 필터"
         filters_title: "검색 및 필터"
         filters_description: "목록에서 바로 고객을 찾으세요"
         search: "고객 검색"
