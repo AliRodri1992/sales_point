@@ -17,6 +17,7 @@ on:
       - 'app/controllers/admin/organization_selections_controller.rb'
       - 'app/views/admin/shared/_topbar.html.erb'
       - 'app/models/current_organization_access.rb'
+      - 'app/policies/user_policy.rb'
       - 'app/mailers/user_invitation_mailer.rb'
       - 'app/models/user.rb'
       - 'app/models/user_*'
@@ -88,6 +89,7 @@ jobs:
             app/models/user.rb app/models/user_role.rb app/models/user_invitation.rb \
             app/models/users_query.rb app/models/current_organization_access.rb \
             app/mailers/user_invitation_mailer.rb \
+            app/policies/user_policy.rb \
             app/controllers/application_controller.rb app/controllers/admin/organization_selections_controller.rb \
             app/models/concerns/user_admin_access_validations.rb \
             app/models/concerns/user_effective_roles.rb \

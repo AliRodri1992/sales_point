@@ -12,7 +12,9 @@ class UserPolicy < CatalogPolicy
   end
 
   def destroy?(account = record)
-    permitted_action?(:destroy) && user.permission?('users.destroy') && manageable_status_target?(account) && account != user
+    return false unless permitted_action?(:destroy) && user.permission?('users.destroy')
+
+    manageable_status_target?(account) && account != user
   end
 
   def manage_status?
