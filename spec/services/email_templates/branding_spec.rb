@@ -61,6 +61,49 @@ RSpec.describe EmailTemplates::Branding do
     expect(svg.read).not_to include('NEXO')
   end
 
+  it 'requires only the contact variables used by a production email and honors configured overrides' do
+    template = EmailTemplate.create!(
+      organization:, key: 'help_links', name: 'Help links', category: 'security', locale: 'es',
+      status: 'draft', subject: 'Help', html_body: '<p>Help</p>', text_body: 'Help'
+    )
+    source = template.new_draft!(actor: nil)
+    source.update!(
+      html_body: '<p>{{support_email}} {{support_url}} {{privacy_url}}</p>',
+      text_body: '{{support_email}} {{support_url}} {{privacy_url}}',
+      allowed_variables: %w[support_email support_url privacy_url]
+    )
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    %w[DELTA_POS_SUPPORT_EMAIL DELTA_POS_SUPPORT_URL DELTA_POS_PRIVACY_URL].zip(
+      ['support@example.org', 'https://example.org/support', 'https://example.org/privacy']
+    ).each do |key, value|
+      allow(ENV).to receive(:fetch).with(key, anything).and_return(value)
+    end
+
+    missing = EmailTemplates::DeliveryReadiness.missing_contacts(source:, organization:)
+    expect(missing).to match_array(%w[support_email support_url privacy_url])
+
+    EmailBrandingSetting.create!(
+      display_name: 'Platform', support_email: 'help@delta-pos.mx', support_url: 'https://delta-pos.mx/help'
+    )
+    EmailBrandingSetting.create!(
+      organization:, display_name: 'Shop', privacy_url: 'https://delta-pos.mx/privacy'
+    )
+    expect(EmailTemplates::DeliveryReadiness.missing_contacts(source:, organization:)).to be_empty
+
+    source.update!(html_body: '<p>Plain message</p>', text_body: 'Plain message', allowed_variables: [])
+    expect(EmailTemplates::DeliveryReadiness.missing_contacts(source:, organization:)).to be_empty
+  end
+
+  it 'rejects credential-bearing contact URLs even when provided as an environment fallback' do
+    source = EmailTemplateVersion.new(subject: 'Privacy', html_body: '{{privacy_url}}', text_body: 'Privacy')
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    allow(ENV).to receive(:fetch).with('DELTA_POS_PRIVACY_URL', 'https://example.org/privacy')
+                       .and_return('https://user:password@delta-pos.mx/privacy')
+
+    expect(EmailTemplates::DeliveryReadiness.missing_contacts(source:, organization: nil))
+      .to eq(['privacy_url'])
+  end
+
   it 'uses the local HTTP asset host while editing email previews in development' do
     allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
     allow(Rails.application.config.action_mailer).to receive(:asset_host).and_return('http://localhost:3000')
