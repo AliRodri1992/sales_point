@@ -218,3 +218,17 @@ En `ecd15e869ea33f5f798053d70d03c8b1f6618f8e`, **128/129 pruebas pasaron**. El t
 PaperTrail 17.0.0 almacenó los diffs de baja como YAML con marcas `!ruby/object:ActiveSupport::TimeWithZone`. El test constató que `object_changes` contiene `deleted_at` mientras `version.changeset` devolvía `{}`, de modo que `Admin::BranchAudits` descartaba cambios de Phone y Note. La corrección incorpora un fallback **YAML.safe_load** con una lista restringida de clases temporales y control de excepciones, limitado a los eventos que el lector actual no pudo decodificar; no usa `unsafe_load` ni modifica versiones almacenadas.
 
 Se ajustan las expectativas de RSpec para verificar el diff crudo y el historial visible de teléfonos/notas retirados. **Estado: implementación pendiente de nueva verificación CI.**
+
+
+### Revisión de cierre automatizado y ajuste de accesibilidad — 2026-11-08
+
+**Evidencia verificada sobre SHA `d7d232239de28132d758b85ca11cd648e9ce7101`:** `Branches CI` [42562001041](https://github.com/AliRodri1992/sales_point/actions/runs/42562001041) **PASÓ**, con `Branches module RuboCop` **PASÓ** y `Branches models, requests and real browser flows` **129 ejemplos, 0 fallos** (seed 60103). También aprobaron en CI global para ese SHA seguridad, I18n/YAML y migraciones/semillas. Esto sustituye las notas de «no ejecutado» para el alcance de la suite focalizada, sin alterar sus datos históricos.
+
+- **BR-001:** regresiones reales de Chrome para filtros AJAX, foco retenido, error/reintento, paginación, filtros dependientes y móvil. La mejora de esta ronda añade `role="status" aria-live="polite" aria-atomic="true"` al encabezado de recuento para informar el cambio a tecnologías de asistencia; nueva prueba Chrome pendiente de CI.
+- **BR-002:** regresiones reales para alta/edición, código autogenerado, reglas por país, 422, red de errores por campo y persistencia; **VERIFICADO AUTOMÁTICAMENTE** para escenarios representados por specs, no toda la matriz exploratoria.
+- **BR-003:** ancla de Estado operativo, espacio móvil y transiciones verificadas mediante request y Chrome; **VERIFICADO AUTOMÁTICAMENTE** para los escenarios representados, sin auditoría manual de zoom 200 % ni lector de pantalla.
+- **BR-004:** historial de bajas Phone/Note, confirmaciones y contratos de permisos/transiciones probados en la suite focalizada; **VERIFICADO AUTOMÁTICAMENTE** para dichos escenarios.
+- **BR-006, BR-007, BR-008:** RuboCop focalizado, lógica de bloqueos y navegación incluidos en la suite de 129 ejemplos; **VERIFICADOS AUTOMÁTICAMENTE** para los casos ensayados.
+- **BR-005 (aceptación):** sigue **ABIERTO** porque la ejecución global `CI` no fue verde; la rama sigue recibiendo cambios paralelos. No reinterpretar fallas de otros módulos como Sucursales; sí detienen el cierre integral conforme al estándar.
+
+**Dictamen:** corregido y probado en la superficie cubierta por Branches CI; verificación manual exploratoria de 200 % de zoom, lector de pantalla y escenarios no automatizados sigue pendiente. No marcar cierre independiente ni fusionar.

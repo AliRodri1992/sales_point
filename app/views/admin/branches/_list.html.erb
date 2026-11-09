@@ -1,4 +1,4 @@
-<div class="branch-results-heading"><h2 id="branches-result-title" tabindex="-1"><%= t('admin.branch_workspace.results', count: total_count) %></h2><span class="branch-muted"><%= t('admin.branch_workspace.page', current: current_page, total: total_pages) %></span></div>
+<div class="branch-results-heading"><h2 id="branches-result-title" tabindex="-1" role="status" aria-live="polite" aria-atomic="true"><%= t('admin.branch_workspace.results', count: total_count) %></h2><span class="branch-muted"><%= t('admin.branch_workspace.page', current: current_page, total: total_pages) %></span></div>
 <% if branches.any? %>
   <div class="branch-table-wrap"><table class="branch-table"><thead><tr>
     <th><%= sort_link('branches.name', t('admin.branches.index.columns.branch'), frame: 'branches_list') %></th>

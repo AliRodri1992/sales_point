@@ -59,6 +59,24 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
     expect(page).to have_no_css('#branch-filter-badges [data-filter-key]')
   end
 
+  scenario 'announces updated result counts to assistive technology after filtering' do
+    visit admin_branches_path
+
+    results_heading = find('#branches-result-title')
+    expect(results_heading['role']).to eq('status')
+    expect(results_heading['aria-live']).to eq('polite')
+    expect(results_heading['aria-atomic']).to eq('true')
+
+    fill_in 'branch-search', with: 'North'
+    within('#branches_list') do
+      expect(page).to have_link(north.name, exact: true)
+      expect(page).to have_no_link(central.name, exact: true)
+    end
+    expect(page).to have_css('#branches-result-title[role="status"][aria-live="polite"][aria-atomic="true"]')
+    expect(find('#branches-result-title').text).to include('1')
+    expect(page).to have_css('#branch-search:focus')
+  end
+
   scenario 'keeps search and pagination context when navigating into a branch and returning' do
     9.times { |n| create(:branch, organization:, name: "Office #{n}") }
     visit admin_branches_path(search: 'Office', per_page: 5)
