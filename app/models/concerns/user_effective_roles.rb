@@ -29,8 +29,6 @@ module UserEffectiveRoles
     return scope.none unless valid_role_context?(organization)
 
     scope = scope.where(organization:) if organization
-    # Without a tenant, only a true global super administrator can act.
-    scope = scope.where(organization_id: nil, branch_id: nil) if organization.nil? && CurrentOrganizationAccess.enforce_tenant
     active_branches = Branch.not_deleted.where(operational_status: 'active')
     active_branches = active_branches.where(organization:) if organization
     scope.where(branch_id: nil).or(scope.where(branch_id: active_branches.select(:id)))
@@ -38,14 +36,10 @@ module UserEffectiveRoles
 
   def valid_role_context?(organization)
     return organization_memberships.accessible.exists?(organization:) if organization
-    return unscoped_super_admin? if CurrentOrganizationAccess.enforce_tenant
+    return false if CurrentOrganizationAccess.enforce_tenant
     return true unless organization_memberships.with_deleted.exists?
 
     organization_memberships.accessible.exists?
   end
 
-  def unscoped_super_admin?
-    user_roles.active.where(organization_id: nil, branch_id: nil)
-              .exists?(system_roles: { code: 'super_admin', role_type: 'system' })
-  end
 end
