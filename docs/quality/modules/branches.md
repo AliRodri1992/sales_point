@@ -182,3 +182,13 @@ Ver las [reglas de cierre](../module-quality-standard.md) y la [plantilla](../mo
 En el SHA `1123a0e9e4c762a02d8f044396c94bc59dc4da20` el job de RuboCop global registró **40 ofensas** (frente a 55 de la revisión previa). Persistían siete señalamientos en Sucursales: longitud y complejidad del controlador, `before_action` de concern, complejidad del formateo de auditoría y uso de `map` en un spec. Esta pasada separa `Admin::BranchDetail`, usa un predicado explícito para cargar la sucursal y simplifica el formateo de eventos. **Pendiente de comprobar en el próximo CI**.
 
 Los errores de otros módulos continúan identificados como EXTERNOS. Los IDs `BR-006`, `BR-007` y `BR-008` conservan su estado **implementado sin verificar**, no cerrado.
+
+
+## Adecuaciones pendientes BR-001 / BR-002 / BR-003 / BR-004 / BR-005 — ronda de regresión focalizada
+
+- **BR-001:** actualizados los specs de filtros de estado operativo de `inactive` a `suspended`; las comprobaciones de navegación, error/reintento, paginación, filtros dependientes y viewport móvil quedan incluidas en `spec/features/branch_workspace_browser_spec.rb`.
+- **BR-002:** corregidas expectativas obsoletas de código manual/estado inicial de nueva sucursal. Un rechazo de unicidad de base de datos con datos válidos ahora se presenta como error junto al nombre, no como error `base` invisible. Pruebas de 422 y conservación de valores actualizadas.
+- **BR-003:** la prueba de navegador mantiene revisión de detalle móvil y verifica la navegación a Estado operativo. Las transiciones se someten a specs de request con bloqueos reales.
+- **BR-004:** corregidos specs de desactivación para que usen la ruta autorizada `transition_status`, prueben restricciones de personal/terminal y mantengan el estado del registro; la manipulación de estado vía `PATCH /admin/branches/:id` se verifica como ignorada.
+- **BR-005:** creado `.github/workflows/branches-ci.yml` para RuboCop focalizado y RSpec de modelo, servicios, requests y navegador Chrome, independiente del CI global. **No se declara PASÓ hasta revisar los jobs del SHA exacto.**
+- **Estado:** IMPLEMENTADO, PENDIENTE DE VERIFICACIÓN POR ACTIONS. Sin merge; fallos de dominios ajenos se conservan como EXTERNOS.

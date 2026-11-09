@@ -1,0 +1,127 @@
+name: Branches CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/fixes
+    paths:
+      - '.github/workflows/branches-ci.yml'
+      - 'app/controllers/admin/branches_controller.rb'
+      - 'app/controllers/concerns/admin/branch_*'
+      - 'app/models/branch.rb'
+      - 'app/models/concerns/branch_lifecycle.rb'
+      - 'app/services/branches/**'
+      - 'app/policies/branch_policy.rb'
+      - 'app/helpers/branches_helper.rb'
+      - 'app/views/admin/branches/**'
+      - 'app/assets/stylesheets/components/branch_workspace.css'
+      - 'app/javascript/controllers/branch_*'
+      - 'config/locales/branch_*'
+      - 'spec/requests/admin/branch*'
+      - 'spec/models/branch_spec.rb'
+      - 'spec/services/branches/**'
+      - 'spec/features/branch_workspace_browser_spec.rb'
+      - 'docs/quality/modules/branches.md'
+
+permissions:
+  contents: read
+
+env:
+  RAILS_ENV: test
+  POSTGRES_DB_TEST: sale_point_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
+  REDIS_URL: redis://localhost:6379/0
+
+jobs:
+  branches_lint:
+    name: Branches module RuboCop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: .ruby-version
+          bundler-cache: true
+      - name: Lint branch module code and regression specs
+        run: |
+          bin/rubocop -f simple \
+            app/controllers/admin/branches_controller.rb \
+            app/controllers/concerns/admin/branch_*.rb \
+            app/models/branch.rb app/models/concerns/branch_lifecycle.rb \
+            app/services/branches app/policies/branch_policy.rb app/helpers/branches_helper.rb \
+            spec/models/branch_spec.rb spec/services/branches \
+            spec/requests/admin/branches_spec.rb spec/requests/admin/branch_workspace_spec.rb \
+            spec/requests/admin/branch_terminals_spec.rb \
+            spec/requests/admin/branch_selector_access_spec.rb \
+            spec/features/branch_workspace_browser_spec.rb
+
+  branches_specs:
+    name: Branches models, requests and real browser flows
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sale_point_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d sale_point_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips
+      - name: Install matching Chrome and ChromeDriver
+        id: browser
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+          install-chromedriver: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: .ruby-version
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Build assets
+        run: |
+          yarn build:js
+          yarn build:css
+      - name: Prepare test database
+        run: bin/rails db:create db:migrate
+      - name: Run branch module regressions and browser flows
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec \
+            spec/models/branch_spec.rb \
+            spec/services/branches \
+            spec/requests/admin/branches_spec.rb \
+            spec/requests/admin/branch_workspace_spec.rb \
+            spec/requests/admin/branch_terminals_spec.rb \
+            spec/requests/admin/branch_selector_access_spec.rb \
+            spec/features/branch_workspace_browser_spec.rb

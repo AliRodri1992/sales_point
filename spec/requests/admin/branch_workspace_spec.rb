@@ -41,7 +41,7 @@ RSpec.describe 'Branch directory and workspace', type: :request do
 
   it 'combines filters and provides links that remove only the requested filter' do
     north.address.update!(city: 'Monterrey', state: 'Nuevo León')
-    get admin_branches_path(status: 'inactive', country_id: north.address.country_id, state: 'Nuevo León',
+    get admin_branches_path(status: 'suspended', country_id: north.address.country_id, state: 'Nuevo León',
                             city: 'Monterrey')
     expect(result_text).to include(north.name)
     expect(result_text).not_to include(central.name)
@@ -158,8 +158,11 @@ RSpec.describe 'Branch directory and workspace', type: :request do
     } }
     expect(response).to have_http_status(:redirect), -> { Nokogiri::HTML(response.body).css('[role="alert"]').text }
     record = organization.branches.find_by!(name: 'New office')
-    expect(record).to have_attributes(code: 'NEW-01', contact_email: 'office@example.com',
-                                      notes: 'Deliveries after 09:00', status: true)
+    expect(record).to have_attributes(contact_email: 'office@example.com',
+                                      notes: 'Deliveries after 09:00', status: false,
+                                      operational_status: 'preparing')
+    expect(record.code).to match(/\ABR-[0-9A-F]{12}\z/)
+    expect(record.code).not_to eq('NEW-01')
     expect(record.address.reference_notes).to eq('Side entrance')
   end
 
@@ -167,11 +170,20 @@ RSpec.describe 'Branch directory and workspace', type: :request do
     post admin_branches_path,
          params: { branch: { name: 'Retained branch', code: 'BAD CODE', contact_email: 'not-an-email' } }
     expect(response).to have_http_status(:unprocessable_content)
-    expect(response.body).to include('Retained branch', 'BAD CODE', 'not-an-email')
+    expect(response.body).to include('Retained branch', 'not-an-email')
+    expect(response.body).not_to include('BAD CODE')
     allow_any_instance_of(Branch).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
-    post admin_branches_path, params: { branch: { name: 'Concurrent', code: 'CONCURRENT' } }
+    post admin_branches_path, params: { branch: {
+      name: 'Concurrent', address_attributes: {
+        street: 'Reforma', exterior_number: '10', neighborhood: 'Centro',
+        city: 'Cuautitlán', state: 'Estado de México',
+        country_id: central.address.country_id, postal_code: '54800'
+      }
+    } }
     expect(response).to have_http_status(:unprocessable_content)
-    expect(response.body).to include(I18n.t('admin.branch_workspace.identifier_conflict'))
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('#branch_name_error').text)
+      .to include(I18n.t('admin.branch_workspace.identifier_conflict'))
   end
 
   it 'removes a registered mobile number through the branch form without deleting its history' do
@@ -250,30 +262,40 @@ RSpec.describe 'Branch directory and workspace', type: :request do
       '#branch-detail-operations'
     )
   end
-  it 'requires reassignment before deactivating a branch and displays the status error' do
-    role = create(:system_role, :branch)
+  it 'ignores legacy status tampering through the generic edit form' do
+    previous_changes = central.branch_status_transitions.count
+    patch admin_branch_path(central),
+          params: { branch: { status: false, operational_status: 'closed', code: 'TAMPERED' } }
+
+    expect(response).to have_http_status(:redirect)
+    expect(central.reload).to be_active
+    expect(central.branch_status_transitions.count).to eq(previous_changes)
+    expect(central.code).to eq('CENTRAL')
+  end
+
+  it 'requires reassignment before suspension through the authorized transition endpoint' do
     person = create(:user)
     create(:organization_membership, user: person, organization:)
-    create(:user_role, user: person, branch: central, system_role: role)
+    create(:user_role, user: person, branch: central, system_role: create(:system_role, :branch))
 
-    patch admin_branch_path(central), params: { branch: { status: false } }
+    patch transition_status_admin_branch_path(central),
+          params: { to_status: 'closed', reason: 'Closing operations' }
 
     expect(response).to have_http_status(:unprocessable_content)
-    expect(central.reload.status).to be(true)
-    page = Nokogiri::HTML(response.body)
-    expect(page.at_css('#branch_status_error')).to be_present
+    expect(central.reload).to be_active
+    expect(response.body).to include(I18n.t('admin.branch_lifecycle.blockers.assigned_team'))
   end
-  it 'shows a field-level error when operational work blocks branch deactivation' do
-    create(:branch, organization:, name: 'Fallback')
-    Terminal.create!(branch: central, name: 'Front register', code: 'FRONT-1', status: 'active')
 
-    patch admin_branch_path(central), params: { branch: { status: false } }
+  it 'shows blocked operational transitions without changing a terminal status' do
+    create(:branch, organization:, name: 'Fallback')
+    terminal = Terminal.create!(branch: central, name: 'Front register', code: 'FRONT-1', status: 'active')
+
+    patch transition_status_admin_branch_path(central),
+          params: { to_status: 'suspended', reason: 'Maintenance' }
 
     expect(response).to have_http_status(:unprocessable_content)
-    expect(central.reload.status).to be(true)
-    document = Nokogiri::HTML(response.body)
-    expect(document.at_css('#branch_status_error')).to be_present
-    expect(document.at_css('#branch_status_error').text)
-      .to include(I18n.t('admin.branch_workspace.active_operations_block'))
+    expect(central.reload).to be_active
+    expect(terminal.reload).to be_active
+    expect(response.body).to include(I18n.t('admin.branch_lifecycle.errors.active_terminals'))
   end
 end

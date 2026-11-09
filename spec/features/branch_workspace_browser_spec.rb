@@ -43,7 +43,7 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
       expect(page).to have_no_link(north.name, exact: true)
     end
     expect(page).to have_css('#branch-search:focus')
-    choose_branch_filter('branch-filter-status', 'Inactive')
+    choose_branch_filter('branch-filter-status', 'Suspended')
     within('#branches_list') do
       expect(page).to have_link(inactive.name, exact: true)
       expect(page).to have_no_link(central.name, exact: true), -> { branch_browser_state }
@@ -108,11 +108,11 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
       expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
     end
     visit edit_admin_branch_path(central)
-    fill_in 'branch_code', with: 'BAD CODE'
-    page.execute_script('document.querySelector("form[action*=branches]").noValidate = true')
+    expect(find('#branch_code')['readonly']).to be_present
+    fill_in 'branch_contact_email', with: 'not-an-email'
     click_button I18n.t('admin.branches.form.buttons.update', locale: :en)
     expect(page).to have_css('[role="alert"]')
-    expect(page).to have_field('branch_code', with: 'BAD CODE')
+    expect(page).to have_field('branch_contact_email', with: 'not-an-email')
     page.current_window.resize_to(1440, 1000)
     visit new_admin_branch_path
   end
@@ -120,7 +120,7 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
   scenario 'creates a branch with operational contact details and country-specific required fields' do
     visit new_admin_branch_path
     fill_in 'branch_name', with: 'Airport office'
-    fill_in 'branch_code', with: 'AIRPORT-01'
+    expect(find('#branch_code')['readonly']).to be_present
     fill_in 'branch_contact_email', with: 'airport@example.com'
     fill_in 'branch_notes', with: 'Deliveries at gate two.'
     within('[data-country-flags]') { find('button[aria-haspopup="listbox"]').click }
@@ -138,8 +138,10 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
     fill_in 'branch_address_attributes_postal_code', with: '01000'
     click_button I18n.t('admin.branches.form.buttons.create', locale: :en)
     expect(page).to have_current_path(admin_branches_path, ignore_query: true)
-    record = organization.branches.find_by!(code: 'AIRPORT-01')
-    expect(record).to have_attributes(contact_email: 'airport@example.com', notes: 'Deliveries at gate two.')
+    record = organization.branches.find_by!(name: 'Airport office')
+    expect(record.code).to match(/\ABR-[0-9A-F]{12}\z/)
+    expect(record).to have_attributes(contact_email: 'airport@example.com', notes: 'Deliveries at gate two.',
+                                      operational_status: 'preparing')
   end
 
   scenario 'resets dependent location filters when removing a country badge' do
@@ -168,6 +170,7 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
     visit admin_branch_path(central, search: 'Central', per_page: 5)
 
     expect(page).to have_css('.branch-detail-header h1', text: central.name)
+    expect(page).to have_css('.branch-detail-nav a[href="#branch-detail-lifecycle"]')
     expect(page).to have_css('.branch-detail-nav a[href="#branch-detail-location"]')
     expect(page).to have_css('#branch-detail-location .branch-detail-address-summary')
     expect(page).to have_css('#branch-detail-operations')

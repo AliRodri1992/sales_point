@@ -22,7 +22,7 @@ module Admin
       raise error unless @branch && %w[create update].include?(action_name)
 
       @branch.valid?
-      @branch.errors.add(:base, t('admin.branch_workspace.identifier_conflict')) if @branch.errors.empty?
+      @branch.errors.add(:name, t('admin.branch_workspace.identifier_conflict')) if @branch.errors.empty?
       @branch.build_address unless @branch.address
       render action_name == 'create' ? :new : :edit, status: :unprocessable_content
     end
