@@ -6,6 +6,7 @@ module Admin
     before_action :authenticate_user!
     include CatalogAuthorization
     include CatalogNavigation
+    include Admin::CategoryMutations
 
     before_action :require_organization
     before_action :set_category, only: %i[show edit update destroy]
@@ -28,73 +29,6 @@ module Admin
     end
 
     def edit; end
-
-    def create
-      @category = Category.new(category_params.merge(organization: current_organization))
-
-      if @category.save
-        load_categories
-        notify_category(current_user, @category, 'created')
-        return if redirect_without_catalog_listing(@category, :created)
-
-        broadcast_categories_update
-        respond_to do |format|
-          format.turbo_stream { @swal_message = t('admin.categories.created') }
-          format.html do
-            redirect_to admin_categories_path(request.query_parameters), notice: t('admin.categories.created')
-          end
-        end
-      else
-        render :new, status: :unprocessable_content
-      end
-    rescue ActiveRecord::RecordNotUnique
-      @category.errors.add(:code, :taken)
-      render :new, status: :unprocessable_content
-    end
-
-    def update
-      if @category.update(category_params)
-        load_categories
-        notify_category(current_user, @category, 'updated')
-        return if redirect_without_catalog_listing(@category, :updated)
-
-        broadcast_categories_update
-        respond_to do |format|
-          format.turbo_stream { @swal_message = t('admin.categories.updated') }
-          format.html do
-            redirect_to admin_categories_path(request.query_parameters), notice: t('admin.categories.updated')
-          end
-        end
-      else
-        render :edit, status: :unprocessable_content
-      end
-    rescue ActiveRecord::RecordNotUnique
-      @category.errors.add(:code, :taken)
-      render :edit, status: :unprocessable_content
-    end
-
-    def destroy
-      # Serialize concurrent removals and reject categories still in use.
-      removed = @category.with_lock do
-        next false if @category.in_use?
-
-        @category.update!(deleted_at: Time.current)
-        true
-      end
-      return category_in_use_response unless removed
-
-      load_categories
-      notify_category(current_user, @category, 'destroyed')
-      return if redirect_without_catalog_listing(@category, :destroyed)
-
-      broadcast_categories_update
-      respond_to do |format|
-        format.turbo_stream { @swal_message = t('admin.categories.destroyed') }
-        format.html do
-          redirect_to admin_categories_path(request.query_parameters), notice: t('admin.categories.destroyed')
-        end
-      end
-    end
 
     private
 
