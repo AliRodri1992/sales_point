@@ -6,9 +6,9 @@
 - **Contratos externos:** Productos y condiciones de Promociones referencian `category_id`; Noticed y Turbo notifican cambios; Pundit autoriza acciones; preferencias de paginación.
 - **SHA auditado:** `0481ca54046b633aa5b84667455fd134ba3139a4` (rama `feature/fixes`, 2026-11-09).
 - **SHA de aceptación:** PENDIENTE. **Responsable de las correcciones y revisor independiente:** POR ASIGNAR.
-- **Estado:** **AUDITADO POR INSPECCIÓN ESTÁTICA; NO VERIFICADO EN EJECUCIÓN; NO CERRADO**.
+- **Estado inicial de auditoría:** **AUDITADO POR INSPECCIÓN ESTÁTICA; NO VERIFICADO EN EJECUCIÓN; NO CERRADO**. **Estado actual:** implementado y verificado en CI focalizado; cierre global aún pendiente.
 - **Método:** AI Dev Suite — `impeccable-audit` + `ui-ux-pro-max` + `ponytail-engineering`; estándar `docs/quality/module-quality-standard.md`.
-- **Última revisión:** 2026-11-09. Se revisó código disponible en GitHub y estados de CI del SHA auditado. No se cambiaron controladores, modelos, migraciones, vistas, JS ni specs.
+- **Última revisión:** 2026-11-09. Se revisó código disponible en GitHub y estados de CI del SHA auditado. Esa fue la revisión inicial; las adecuaciones posteriores sí modificaron código y pruebas, como se documenta al final.
 
 ## Mapa de alcance y cobertura
 
@@ -173,3 +173,24 @@ IDs permanentes de esta primera auditoría. **Confirmado por código** significa
 - `CategoryPolicy::Scope`, la selección de categorías en Productos y las condiciones de Promociones se ajustaron al mismo contrato. Referencias cruzadas con organización distinta se rechazan en validaciones de modelos.
 - Migración gradual reversible **a nivel de transacción**; el `down` es deliberadamente irreversible porque los datos de dos organizaciones pueden divergir después de la copia. No se elimina ninguna categoría histórica; se marca como retirada después de reasignar las asociaciones.
 - **Bloqueo de aceptación:** revisar la ejecución real del backfill, tiempos y conteos antes/después, validación de constraints legados y pruebas de aislamiento multiorganización.
+
+## Verificación focalizada real — 2026-11-09
+
+**SHA de código verificado:** `e553a5f976e22724c03e365b62681ae63ae5cd00`.  
+**GitHub Actions:** [Categories CI #42622839776](https://github.com/AliRodri1992/sales_point/actions/runs/42622839776) — **SUCCESS**.
+
+| Comprobación | Resultado real | Evidencia |
+|---|---|---|
+| RuboCop focalizado | **PASÓ**: 13 archivos, 0 ofensas | Job `129179055065` |
+| `db:drop db:create db:migrate` sobre PostgreSQL 16 de pruebas | **PASÓ** | Job `129179055372`; base limpia |
+| RSpec focalizado de categorías, permisos, aislamiento y paginación | **PASÓ** | En conjunto, 93 ejemplos, 0 fallos |
+| Capybara/Chrome: modal, validaciones y descripción | **PASÓ** | `spec/features/categories_quality_browser_spec.rb` incluido en esos 93 ejemplos |
+
+### Dictamen actualizado
+
+- **Implementado y verificado en CI focalizado:** CATEGORIES-002 a CATEGORIES-008, CATEGORIES-011, CATEGORIES-012 y CATEGORIES-013 respecto de los escenarios automatizados correspondientes. Los cambios de Categorías quedaron comprobados en navegador Chrome del runner y no presentan fallos en los specs focalizados del SHA indicado.
+- **CATEGORIES-001 (aislamiento):** controles y regresiones de dos organizaciones verificadas en tests automatizados; la **conversión de datos históricos con organizaciones reales** todavía requiere prueba con un clon/respaldo de datos existentes. Esta evidencia no la proporciona una base de pruebas creada desde cero.
+- **CATEGORIES-009 (constraints):** comprobada instalación de esquema de prueba limpio; se mantienen constraints `NOT VALID` para no bloquear registros históricos sin auditar. Falta validación sobre datos de producción/de desarrollo existentes.
+- **CATEGORIES-010 (cobertura):** suite focalizada y escenario Chrome verificados. No se realizó inspección manual independiente de viewport 320/390/768/1440, zoom 200 %, todos los lectores de pantalla ni todos los estados 401/422 en navegador.
+- **Bloqueos de cierre:** no hay evidencia de **CI global verde del SHA de aceptación**, ni revisión independiente completa del UI; el run global del SHA `e553a5f` fue cancelado por nuevas publicaciones concurrentes en `feature/fixes`. Se mantiene **NO CERRADO**, sin fusionar ramas.
+- **Atención a commits posteriores:** cualquier cambio que modifique contratos o estilos debe revalidarse en el nuevo SHA. Actualizar aquí los resultados de la ejecución específica correspondiente.
