@@ -11,10 +11,12 @@
       </p>
     </div>
 
+    <% if policy(SystemRole).create? %>
     <%= link_to new_system_role_path,
                 class: 'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 motion-reduce:transition-none' do %>
       <%= delta_icon('plus', class: 'size-4') %>
       <%= t('admin.system_roles.index.new') %>
+    <% end %>
     <% end %>
   </div>
 

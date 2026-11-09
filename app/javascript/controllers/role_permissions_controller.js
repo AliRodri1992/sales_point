@@ -33,27 +33,44 @@ export default class extends Controller {
   selectGroup(event) {
     const group = event.target.closest("[data-role-permissions-target='group']")
     group.querySelectorAll("[data-role-permissions-target='permission']:not(:disabled)").forEach(input => {
-      input.checked = event.target.checked
+      if (!input.closest("[data-permission-row]").hidden) input.checked = event.target.checked
     })
     this.refresh()
   }
 
   refresh(event) {
-    const code = event?.target?.dataset?.permissionCode
+    const input = event?.target
+    const code = input?.dataset?.permissionCode
     const prefix = code?.split(".")[0]
-    if (event?.target?.checked && ["languages", "products", "customers", "users", "categories"].includes(prefix)) {
-      const access = this.permissionTargets.find(input => input.dataset.permissionCode === `${prefix}.access`)
-      if (access) access.checked = true
+    const dependent = ["languages", "products", "customers", "users", "categories"]
+
+    if (code?.endsWith(".access") && !input.checked && dependent.includes(prefix)) {
+      this.permissionTargets.forEach(permission => {
+        if (permission.dataset.permissionCode.startsWith(`${prefix}.`)) permission.checked = false
+      })
     }
-    this.totalTarget.textContent = String(this.permissionTargets.filter(input => input.checked).length)
+
+    // Required access is explicit in the editor's help text and checked automatically.
+    dependent.forEach(module => {
+      const access = this.permissionTargets.find(permission => permission.dataset.permissionCode === `${module}.access`)
+      if (!access) return
+      if (this.permissionTargets.some(permission => permission.checked &&
+          permission.dataset.permissionCode.startsWith(`${module}.`) && permission !== access)) {
+        access.checked = true
+      }
+    })
+
+    this.totalTarget.textContent = String(this.permissionTargets.filter(permission => permission.checked).length)
     this.groupTargets.forEach(group => {
       const inputs = Array.from(group.querySelectorAll("[data-role-permissions-target='permission']"))
-      const checked = inputs.filter(input => input.checked).length
+      const checked = inputs.filter(permission => permission.checked).length
       group.querySelector("[data-group-count]").textContent = String(checked)
+      const visibleInputs = inputs.filter(permission => !permission.closest("[data-permission-row]").hidden)
+      const visibleChecked = visibleInputs.filter(permission => permission.checked).length
       const select = group.querySelector("[data-select-group]")
       if (select) {
-        select.checked = inputs.length > 0 && checked === inputs.length
-        select.indeterminate = checked > 0 && checked < inputs.length
+        select.checked = visibleInputs.length > 0 && visibleChecked === visibleInputs.length
+        select.indeterminate = visibleChecked > 0 && visibleChecked < visibleInputs.length
       }
     })
   }

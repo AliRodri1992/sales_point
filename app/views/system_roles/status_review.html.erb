@@ -42,17 +42,24 @@
         </details>
       <% end %>
       <% unless blocked_archive || blocked_activation %>
-        <%= form_with url: status_system_role_path(@system_role), method: :patch, class: 'mt-6 space-y-5' do %>
+        <%= form_with url: status_system_role_path(@system_role), method: :patch, html: { novalidate: true }, class: 'mt-6 space-y-5' do %>
           <%= hidden_field_tag :target, @target %>
           <%= hidden_field_tag :review_token, @review_token %>
           <div>
-            <%= label_tag :reason, t('admin.system_roles.lifecycle.reason'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-            <%= text_area_tag :reason, params[:reason], required: true, maxlength: 1000, rows: 3, class: 'w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-emerald-700 focus:ring-emerald-100' %>
+            <%= label_tag :reason, class: 'mb-2 block text-sm font-semibold text-slate-700' do %>
+              <%= t('admin.system_roles.lifecycle.reason') %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span>
+            <% end %>
+            <%= text_area_tag :reason, params[:reason], maxlength: 1000, rows: 3,
+                  aria: { invalid: @reason_error.present?, describedby: @reason_error.present? ? 'role_reason_error' : nil },
+                  class: "w-full rounded-xl border p-3 text-sm focus:border-emerald-700 focus:ring-emerald-100 #{@reason_error ? 'border-rose-500 bg-rose-50' : 'border-slate-300'}" %>
+            <% if @reason_error.present? %><p id="role_reason_error" role="alert" class="mt-1 text-xs text-rose-600"><%= t('admin.system_roles.lifecycle.reason') %> <%= @reason_error %></p><% end %>
           </div>
           <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
-            <%= check_box_tag :confirmed, '1', false, required: true, class: 'mt-1 size-4 shrink-0 rounded border-amber-300 text-emerald-700 focus:ring-emerald-700' %>
-            <span><%= t('admin.system_roles.lifecycle.confirmation') %></span>
+            <%= check_box_tag :confirmed, '1', false, class: 'mt-1 size-4 shrink-0 rounded border-amber-300 text-emerald-700 focus:ring-emerald-700',
+                  aria: { invalid: @confirmation_error.present?, describedby: @confirmation_error.present? ? 'role_confirmation_error' : nil } %>
+            <span><%= t('admin.system_roles.lifecycle.confirmation') %><span class="ml-1 font-bold text-rose-600" aria-hidden="true">*</span></span>
           </label>
+          <% if @confirmation_error.present? %><p id="role_confirmation_error" role="alert" class="mt-1 text-xs text-rose-600"><%= t('admin.system_roles.lifecycle.confirmation_label') %> <%= @confirmation_error %></p><% end %>
           <div class="flex flex-wrap justify-end gap-3 sm:pr-28">
             <%= link_to t('admin.system_roles.new.cancel'), system_role_path(@system_role), class: 'inline-flex min-h-11 items-center rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
             <%= submit_tag t('admin.system_roles.lifecycle.confirm'), class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700', data: { turbo_submits_with: t('admin.system_roles.catalog.saving') } %>

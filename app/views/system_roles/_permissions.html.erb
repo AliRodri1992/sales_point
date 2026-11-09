@@ -4,6 +4,8 @@
       <div>
         <h2 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.system_roles.new.permissions_title') %></h2>
         <p class="mt-1 max-w-2xl text-sm text-slate-600"><%= t('admin.system_roles.catalog.help') %></p>
+        <p class="mt-1 text-xs text-slate-600"><%= t('admin.system_roles.catalog.access_hint') %></p>
+        <%= error_message_for(@system_role, :permission_ids, label: t('admin.system_roles.new.permissions_title')) %>
       </div>
       <p class="rounded-xl bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800" aria-live="polite" aria-atomic="true">
         <span data-role-permissions-target="total"><%= @assigned_permission_ids.size %></span> / <%= @permissions.size %>
