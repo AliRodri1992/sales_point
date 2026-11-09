@@ -62,10 +62,14 @@ class UserPolicy < CatalogPolicy
     account.user_roles.any? do |assignment|
       role = assignment.system_role
       role && assignment.deleted_at.nil? && role.deleted_at.nil? && role.active? &&
-        (CurrentOrganizationAccess.organization.nil? ||
-         assignment.organization_id == CurrentOrganizationAccess.organization.id) &&
+        local_administrative_grant?(assignment) &&
         SystemRole::ADMINISTRATIVE_CODES.include?(role.code)
     end
+  end
+
+  def local_administrative_grant?(assignment)
+    organization = CurrentOrganizationAccess.organization
+    organization.nil? || assignment.organization_id == organization.id
   end
 
   def single_organization?(account)
