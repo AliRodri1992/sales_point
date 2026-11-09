@@ -89,6 +89,24 @@ RSpec.describe User, type: :model do
     expect(user.role?('effective_company_admin', organization: first_org)).to be(true)
   end
 
+  it 'shows only the selected organization role name' do
+    first_org = create(:organization)
+    second_org = create(:organization)
+    create(:organization_membership, user:, organization: first_org)
+    create(:organization_membership, user:, organization: second_org)
+    first_role = create(:system_role, :system, code: 'tenant_role_alpha', name: 'Alpha Role')
+    second_role = create(:system_role, :system, code: 'tenant_role_beta', name: 'Beta Role')
+    create(:user_role, user:, system_role: first_role, organization: first_org)
+    create(:user_role, user:, system_role: second_role, organization: second_org)
+
+    CurrentOrganizationAccess.set(organization: first_org) do
+      expect(user.display_role_name).to eq('Alpha Role')
+    end
+    CurrentOrganizationAccess.set(organization: second_org) do
+      expect(user.display_role_name).to eq('Beta Role')
+    end
+  end
+
   it 'keeps a valid global role available independently of branch state' do
     system_role = create(:system_role, :system, code: 'effective_global_role')
     create(:user_role, user:, system_role:)
