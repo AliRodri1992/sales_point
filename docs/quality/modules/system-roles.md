@@ -1,13 +1,57 @@
 # Registro de calidad — Roles y permisos
 
 **Módulo y ruta principal:** Roles y permisos — `/system_roles`  
-**Estado:** IMPLEMENTADO PENDIENTE DE VERIFICACIÓN · NO CERRADO.  
+**Estado:** REAUDITADO · P1 ABIERTOS · SIN VERIFICACIÓN INTEGRAL · NO CERRADO.  
 **Fecha de auditoría:** 2026-11-08 (America/Mexico_City).  
 **Rama:** `feature/fixes`. **SHA de partida/auditado:** `8974fee011f9422066985a0ab088ed2d771e1c8a`.  
 **SHA de aceptación:** PENDIENTE. **Responsable/revisor independiente:** PENDIENTE.  
 **Método:** AI Dev Suite — Ponytail Engineering, Impeccable, UI UX Pro Max. Inspección real de código por GitHub; no se ejecutó el detector CLI de terceros.
 
 > Este registro es la fuente de verdad de hallazgos del módulo. Lo observado en el código se distingue de las hipótesis y de pruebas pendientes. Un commit documental no equivale a una corrección ni al cierre de la auditoría. Conserva los IDs entre siguientes iteraciones.
+
+## Reauditoría independiente — 2026-11-08 (AI Dev Suite)
+
+**Base:** `feature/fixes` SHA `d7d232239de28132d758b85ca11cd648e9ce7101` (consultado mediante GitHub). **Metodología:** procedimientos Ponytail Engineering, Impeccable y UI UX Pro Max del plugin AI Dev Suite; inspección real de rutas, controlador, política, modelo, servicios, Stimulus, vistas, specs y CI. **No se ejecutaron** los CLIs originales de terceros ni pruebas de navegador local. Esta sección actualiza y prevalece sobre estados anteriores, sin borrar los IDs.
+
+### Matriz de control de reincidencia (los mismos IDs)
+
+| ID | Prioridad | Resultado actual | Evidencia y acción pendiente |
+|---|---|---|---|
+| SYSTEM_ROLES-001 | P1 | **REABIERTO: regresión de integración confirmada en CI** | `SystemRolePolicy#global_manager?` exige `super_admin`, pero `spec/seeds/full_seed_repeatability_spec.rb:93-104` invoca `StatusTransition` con el usuario sembrado `administrador@delta.com`, y `spec/services/system_roles/status_transition_spec.rb` asigna únicamente `administrator` al actor. CI `42562001050`, job RSpec `128980328080` falló en el primero con `Pundit::NotAuthorizedError`; los specs del servicio son incompatibles por lectura, pero no se ejecutaron en ese job. **Acción:** adecuar fixtures/actor de pruebas a superadministrador autorizado, mantener denegación de administrador ordinario y validar el flujo de seeds sin rebajar la política. |
+| SYSTEM_ROLES-002 | P1 | **IMPLEMENTACIÓN PARCIAL** | `SystemRoles::PermissionUpdater` registra diffs del editor, pero `AdministratorPermissionProvisioner.call`/`.call_for_permission` crea `SystemRolePermission` por callbacks automáticos sin evento en `SystemRolePermissionAuditEvent` ni origen/actor técnico. **Acción:** definir y registrar eventos de provisionamiento automático identificados como `system`, sin atribuirlos falsamente a un usuario; probar creación y reactivación de permisos. |
+| SYSTEM_ROLES-003 | P1 | **IMPLEMENTACIÓN PARCIAL** | `SystemRoles::PermissionSelection#missing_base_access?` solo evalúa los códigos base recogidos de `Permission.available`. Cuando un `*.access` del catálogo está inactivo/ausente, la dependencia de una acción puede pasar sin comprobarse, aunque el consumidor requiera acceso. **Acción:** contrastar con todas las dependencias declaradas del consumidor y rechazar o resolver explícitamente bases indisponibles; prueba negativa sin JS. |
+| SYSTEM_ROLES-004 | P1 | **IMPLEMENTADO POR CÓDIGO, NO VERIFICADO EN NAVEGADOR** | `role_permissions_controller.js#selectGroup` filtra `row.hidden` y las traducciones aclaran «Seleccionar visibles». Probar búsqueda parcial, operación masiva, restablecimiento de filtros y dependencias de base ocultas en navegador real. |
+| SYSTEM_ROLES-005 | P2 | **IMPLEMENTADO POR CÓDIGO, NO VERIFICADO EN NAVEGADOR** | `_form.html.erb` muestra errores individuales y asteriscos; formulario `novalidate`, selector propio y `aria-describedby`. Falta prueba real en móvil/escritorio, teclado, invalidaciones de nombre/tipo y retorno 422. |
+| SYSTEM_ROLES-006 | P2 | **IMPLEMENTADO POR CÓDIGO, NO VERIFICADO EN NAVEGADOR** | `status_review.html.erb` distingue error en motivo y confirmación; pendiente comprobar expiración y preservación de datos, accesibilidad y mensajes con tres locales. |
+| SYSTEM_ROLES-007 | P2 | **IMPLEMENTADO, VERIFICACIÓN PARCIAL** | `SystemRole` normaliza/valida y migración `20261110010100` añade índice `LOWER(BTRIM(name))`. Migración limpia pasó en CI; **pendiente** revisar nombres duplicados preexistentes en actualización de BD real y variantes con espacios internos (no cubiertas por el índice de la misma forma que normaliza el modelo). |
+| SYSTEM_ROLES-008 | P2 | **IMPLEMENTACIÓN PARCIAL** | `StatusImpact#effective_other_user_ids` filtra sucursales operativas, pero acepta un rol alternativo sin permisos y no evalúa el alcance de la organización del usuario; puede disminuir indebidamente «Usuarios sin otro rol efectivo». **Acción:** definir KPI exacto, restringir a asignaciones realmente efectivas dentro del ámbito medido y probar tenants cruzados. |
+
+### Hallazgo nuevo de esta iteración
+
+**SYSTEM_ROLES-009 — P1 · CONFIRMADO POR CÓDIGO · Pérdida silenciosa de asociación de permisos inactivos al actualizar solo metadatos.**
+
+- **Archivo/flujo:** `app/controllers/system_roles_controller.rb#update` sustituye `permission_ids` ausentes por `@system_role.permissions.available.ids`; `#save_permissions` invoca `SystemRoles::PermissionUpdater#persist_assignments!`, que borra toda asociación cuyo ID no figure en la selección.
+- **Secuencia reproducible requerida:** (1) mantener un rol con un permiso asignado y después inactivar ese permiso; (2) editar solo el nombre o descripción del rol mediante `PATCH /system_roles/:id` sin `permission_ids`; (3) comprobar que desaparece la asociación con el permiso inactivo. Esto puede impedir que vuelva a concederse ese permiso tras su reactivación, aunque no se editó su selección.
+- **Esperado:** una operación solo de metadatos no debe cambiar asociaciones de permisos. Separar cambio de metadatos y actualización expresa de permisos, o conservar sin pérdida las asociaciones no seleccionables.
+- **Regresión obligatoria:** request de metadatos con permiso inactivo, reactivación posterior y diff de auditoría; comparar antes/después.
+- **Propietario:** Roles y Permisos. **Estado:** ABIERTO, sin ejecución de escenario.
+
+### Evidencias objetivas del SHA auditado
+
+| Control | Resultado comprobado | Referencia |
+|---|---|---|
+| Migraciones desde BD limpia y seeds | **PASS** | https://github.com/AliRodri1992/sales_point/actions/runs/42562001050 |
+| Rails I18n / YAML | **PASS** | mismo run, `Rails I18n and YAML audit` |
+| Security scans | **PASS** | mismo run, `Security scans` |
+| RSpec global | **FAIL**, 5 ejemplos / 1 fallo al validar repetibilidad de seeds; el resto de suites no llegó a ejecutarse | job `128980328080`, `spec/seeds/full_seed_repeatability_spec.rb:87`, error Pundit producido por la nueva política del módulo |
+| RuboCop global | **FAIL**, 32 ofensas en archivos de otros módulos y scripts, incluidas 2 fallas de sintaxis en specs de Inventario/Compras | job `128980328039`; no reportó ofensas en archivos de Roles y Permisos |
+| Pruebas de UI/UX en navegador real | **NO EJECUTADO** | El navegador conectado solo exponía pestañas de ChatGPT, sin la aplicación Delta POS local ni sesión de prueba |
+
+**Conclusión técnica:** el módulo **NO está cerrado**. Reabrir SYSTEM_ROLES-001; mantener 002, 003 y 008 como incompletos; añadir 009. Las implementaciones 004-007 se conservan **pendientes de evidencia de ejecución**. No cambiar las políticas para hacer pasar fixtures obsoletos. Las ofensas globales de Inventario/Compras/Onboarding permanecen **EXTERNAS** y bloquean cierre global, no constituyen nuevos defectos de `/system_roles`.
+
+**Siguiente puerta obligatoria:** corregir P1 y el contrato de seeds, ejecutar specs focalizados de roles, seed repeatability, accesos multiempresa, navegador y luego CI completo verde en un **único SHA**. No fusionar mientras falle o esté pendiente.
+
+---
 
 ## Alcance y rutas propias
 
