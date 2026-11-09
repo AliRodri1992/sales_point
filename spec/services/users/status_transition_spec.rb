@@ -114,13 +114,17 @@ RSpec.describe Users::StatusTransition do
     expect(UserSecurityIncident.find_by!(user:).resolution).to eq('Identity verified')
   end
 
-  it 'requires an existing incident before unblocking' do
+  it 'reconstructs an audited incident when a historical block has no incident' do
     transition(target: 'blocked')
     UserSecurityIncident.where(user:).delete_all
+
     expect do
       transition(target: 'active', details: { resolution: 'Reviewed' })
-    end.to raise_error(ArgumentError, 'Security incident not found')
-    expect(membership.reload).to be_account_blocked
+    end.to change(UserSecurityIncident, :count).by(1)
+
+    expect(membership.reload).to be_account_active
+    expect(UserSecurityIncident.last.resolution).to eq('Reviewed')
+    expect(UserSecurityIncident.last.resolved_at).to be_present
   end
 
   it 'archives an account and revokes outstanding invitations' do

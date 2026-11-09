@@ -22,7 +22,7 @@ export default class extends Controller {
   }
 
   closed() {
-    this.returnFocus?.focus()
+    this.returnFocus?.isConnected && this.returnFocus.focus()
   }
 
   backdrop(event) {

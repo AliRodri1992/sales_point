@@ -22,9 +22,7 @@ module Admin
       authorize User
       load_users
       @can_manage_users = policy(User).create?
-      @user_status_counts = current_organization.organization_memberships.active
-                                                .where(deleted_at: nil, user_id: scoped_users.select(:id))
-                                                .group(:account_status).count
+      load_status_counts
       @filter_roles = SystemRole.active.not_deleted.order(:role_type, :name)
       @filter_branches = current_organization.branches.not_deleted.where(operational_status: 'active').order(:name)
     end
@@ -101,6 +99,12 @@ module Admin
                                            .where(deleted_at: nil)
                                            .where.not(account_status: 'deleted').select(:user_id)
       policy_scope(User).where(id: active_members)
+    end
+
+    def load_status_counts
+      @user_status_counts = current_organization.organization_memberships.active
+                                                .where(deleted_at: nil, user_id: scoped_users.select(:id))
+                                                .group(:account_status).count
     end
 
     def load_users

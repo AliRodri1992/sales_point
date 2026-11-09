@@ -93,7 +93,7 @@ RSpec.describe 'Admin user organization and role boundaries', type: :request do
 
     delete admin_user_path(target)
 
-    expect(response).to have_http_status(:method_not_allowed)
+    expect(response).to have_http_status(:forbidden)
     expect(target.reload.deleted_at).to be_nil
   end
 

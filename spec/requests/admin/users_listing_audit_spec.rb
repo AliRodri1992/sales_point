@@ -47,8 +47,11 @@ RSpec.describe 'Audited users listing', type: :request do
 
     expect(response).to have_http_status(:ok)
     doc = Nokogiri::HTML(response.body)
-    active_metric = doc.at_css('section[aria-label]')&.text
-    expect(active_metric).not_to include('Active\\n2')
+    metric_label = I18n.t('admin.users.ui.metrics.active')
+    cards = doc.css('section[aria-label] > div')
+    active_card = cards.find { |card| card.text.include?(metric_label) }
+    expect(active_card).to be_present
+    expect(active_card.css('p').last.text.strip).to eq('1')
     expect(response.body).not_to include(hidden.email)
   end
 

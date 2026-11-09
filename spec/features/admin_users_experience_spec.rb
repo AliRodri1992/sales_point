@@ -191,8 +191,9 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     fill_in 'Reason for change (required)', with: 'User access ended'
     click_button 'Confirm deactivation'
 
+    expect(page).to have_no_css('dialog#users-deactivation-modal[open]', visible: :all)
     expect(page).to have_current_path(admin_users_path)
-    expect(target.organization_memberships.find_by!(organization:).account_status).to eq('deleted')
+    expect(target.reload.organization_memberships.find_by!(organization:).account_status).to eq('deleted')
   end
 
   scenario 'presents accessible status actions on narrow screens' do
