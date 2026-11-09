@@ -14,7 +14,7 @@ export default class extends Controller {
     this.summarize()
     this.updateReview()
     // Model errors are authoritative; move both focus and the viewport to the first invalid field.
-    const invalidField = this.element.querySelector('[aria-invalid="true"]')
+    const invalidField = this.element.querySelector('[aria-invalid="true"], [data-user-access-error-group]')
     if (invalidField) {
       invalidField.closest("details")?.setAttribute("open", "")
       invalidField.focus()
