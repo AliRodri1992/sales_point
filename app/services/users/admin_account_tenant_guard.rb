@@ -5,7 +5,7 @@ module Users
   module AdminAccountTenantGuard
     private
 
-    def tenant_safe_update?(role_ids)
+    def tenant_safe_update?
       return true if @user.new_record?
       return true unless @user.organization_memberships.active.where.not(organization: @organization).exists?
 
