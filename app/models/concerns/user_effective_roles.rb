@@ -41,5 +41,4 @@ module UserEffectiveRoles
 
     organization_memberships.accessible.exists?
   end
-
 end
