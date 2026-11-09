@@ -37,7 +37,11 @@ export default class extends Controller {
 
     if (event.detail.fetchResponse?.statusCode === 422) {
       const reasonError = this.errorsTarget.querySelector("[data-deactivation-reason-error]")
-      this.reasonTarget.toggleAttribute("aria-invalid", Boolean(reasonError))
+      if (reasonError) {
+        this.reasonTarget.setAttribute("aria-invalid", "true")
+      } else {
+        this.reasonTarget.removeAttribute("aria-invalid")
+      }
       if (reasonError) {
         this.reasonTarget.focus()
       } else {
