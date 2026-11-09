@@ -366,3 +366,13 @@ En Branches CI [42565321011](https://github.com/AliRodri1992/sales_point/actions
 - **Global SHA d414ec7d:** [CI 42609077039](https://github.com/AliRodri1992/sales_point/actions/runs/42609077039): migraciones/semillas, seguridad e i18n **PASARON**; RuboCop global **32 ofensas**; RSpec **CANCELADO**. Fallas externas no son defectos de Sucursales, pero bloquean cierre del módulo conforme al estándar.
 - **Sin evidencia manual:** revisión visual a 200 % de zoom, lector de pantalla real, contraste y teclado en entorno local. Los anteriores tests de navegador son evidencia real automatizada, no auditoría perceptiva manual.
 - **Dictamen:** **AUDITADO / NO CERRADO**. Hallazgos abiertos propios BR-009 (P1) y BR-010 (P2); BR-005 continúa abierto por falta de CI global verde y aceptación independiente. **No se modificó código funcional** en esta reauditoría. Sin merge.
+
+
+## Adecuaciones BR-009 y BR-010 — 2026-11-09
+
+**Rama:** `feature/fixes`. **Estado inicial:** IMPLEMENTADO, PENDIENTE VERIFICACIÓN EN CI; preservar el resultado histórico de las auditorías anteriores.
+
+- **BR-009 (P1):** `Terminal.not_deleted` centraliza el estado vigente sin imponer `default_scope`, por lo que `with_deleted` conserva intacto el historial. `Admin::BranchDetail` cuenta solo terminales vigentes; `_terminal_management` muestra únicamente esas terminales con una sola consulta, incluidos los botones de estado. `Admin::BranchTerminals#update_branch_terminal!` busca la terminal vigente **dentro del bloqueo de la sucursal**, de modo que un ID retirado genera 404 y no alcanza `update!`. Contratos de cierre y auditoría sin cambios.
+- **BR-010 (P2):** el siguiente código `POS-%03d` se determina con una agregación `MAX(SUBSTRING(code FROM 5)::numeric)` en PostgreSQL restringida a códigos `POS-` numéricos de la misma sucursal e incluyendo las terminales retiradas. El algoritmo pasa de N+1 consultas por consecutivo ocupado a **una consulta agregada**; conserva el bloqueo de sucursal que serializa altas concurrentes y no reutiliza un código retirado.
+- **Regresiones nuevas:** requests verifican contador/listado, rechazo 404 de IDs retirados, unicidad histórica con 20 consecutivos y códigos de otra sucursal, además de presupuesto de consultas. Model spec comprueba vigencia/consulta histórica. Chrome comprueba ocultación visual y disponibilidad de acciones vigentes. Branches CI incorpora `Terminal` y su spec a los disparadores, RuboCop y RSpec.
+- **No se alteraron** permisos, estados permitidos, esquema PostgreSQL, migraciones o registros reales. Sin merge. Para cierre técnico, Branches CI debe ser verde en el commit de implementación; BR-005 global y auditoría manual de accesibilidad son controles separados.

@@ -190,6 +190,20 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
     within('#branches_list') { expect(page).to have_link(office.name, exact: true) }
   end
 
+  scenario 'hides retired terminals and retains the live register actions' do
+    active_register = create(:terminal, branch: central, name: 'Active register', status: 'inactive')
+    retired_register = create(:terminal, branch: central, name: 'Retired register', status: 'inactive')
+    retired_register.update_column(:deleted_at, Time.current)
+
+    visit admin_branch_path(central)
+
+    within('#branch-detail-operations') do
+      expect(page).to have_text(active_register.name)
+      expect(page).to have_no_text(retired_register.name)
+      expect(page).to have_button(I18n.t('admin.branch_lifecycle.terminal_actions.active', locale: :en))
+    end
+  end
+
   scenario 'supports long operational reasons on a narrow detail screen' do
     page.current_window.resize_to(390, 844)
     visit admin_branch_path(central)

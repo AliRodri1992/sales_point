@@ -21,6 +21,14 @@ RSpec.describe Terminal, type: :model do
     end
   end
 
+  it 'separates current terminals from soft-deleted terminal history' do
+    terminal = create(:terminal, status: 'inactive')
+    terminal.update_column(:deleted_at, Time.current)
+
+    expect(described_class.not_deleted).not_to include(terminal)
+    expect(described_class.with_deleted).to include(terminal)
+  end
+
   it 'is valid with valid attributes' do
     expect(subject).to be_valid
   end

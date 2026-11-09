@@ -18,10 +18,9 @@ module Admin
 
     def change_terminal
       authorize @branch, :manage?
-      terminal = @branch.terminals.find(params[:terminal_id])
       target_status = params[:terminal_status].to_s
       ensure_terminal_status_allowed!(target_status)
-      update_branch_terminal!(terminal, target_status)
+      update_branch_terminal!(params[:terminal_id], target_status)
       redirect_to admin_branch_path(@branch, anchor: 'branch-detail-operations'),
                   flash: { swal_message: t('admin.branch_lifecycle.terminal_updated') }, status: :see_other
     rescue ActiveRecord::RecordInvalid, Branches::TransitionStatus::InvalidTransition => e
@@ -56,9 +55,9 @@ module Admin
       end
     end
 
-    def update_branch_terminal!(terminal, status)
+    def update_branch_terminal!(terminal_id, status)
       @branch.with_lock do
-        terminal.reload
+        terminal = @branch.terminals.not_deleted.find(terminal_id)
         terminal.update!(status:)
       end
     end
@@ -73,9 +72,12 @@ module Admin
     end
 
     def next_branch_terminal_code
-      number = 1
-      number += 1 while @branch.terminals.with_deleted.exists?(code: format('POS-%03d', number))
-      format('POS-%03d', number)
+      highest = @branch.terminals.with_deleted.where('code ~ ?', '^POS-[0-9]+
+  end
+end
+)
+                       .pick(Arel.sql('MAX(SUBSTRING(code FROM 5)::numeric)'))
+      format('POS-%03d', highest.to_i + 1)
     end
   end
 end

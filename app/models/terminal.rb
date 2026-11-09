@@ -30,7 +30,8 @@ class Terminal < ApplicationRecord
 
   validates :name, presence: true, length: { in: 2..80 }, on: :onboardingstep3
 
-  scope :active_records, -> { where(deleted_at: nil, status: :active) }
+  scope :not_deleted, -> { where(deleted_at: nil) }
+  scope :active_records, -> { not_deleted.where(status: :active) }
 
   private
 

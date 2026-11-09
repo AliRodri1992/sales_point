@@ -14,7 +14,7 @@ module Admin
       return unless can_manage
 
       @branch_operation_counts = { products: @branch.inventories.distinct.count(:product_id),
-                                   terminals: @branch.terminals.count }
+                                   terminals: @branch.terminals.not_deleted.count }
       load_branch_change_events
     end
 

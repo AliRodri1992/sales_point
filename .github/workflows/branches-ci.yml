@@ -10,6 +10,7 @@ on:
       - 'app/controllers/admin/branches_controller.rb'
       - 'app/controllers/concerns/admin/branch_*'
       - 'app/models/branch.rb'
+      - 'app/models/terminal.rb'
       - 'app/models/phone.rb'
       - 'app/models/note.rb'
       - 'app/models/concerns/branch_lifecycle.rb'
@@ -22,6 +23,7 @@ on:
       - 'config/locales/branch_*'
       - 'spec/requests/admin/branch*'
       - 'spec/models/branch_spec.rb'
+      - 'spec/models/terminal_spec.rb'
       - 'spec/services/branches/**'
       - 'spec/features/branch_workspace_browser_spec.rb'
       - 'docs/quality/modules/branches.md'
@@ -55,10 +57,10 @@ jobs:
           bin/rubocop -f simple \
             app/controllers/admin/branches_controller.rb \
             app/controllers/concerns/admin/branch_*.rb \
-            app/models/branch.rb app/models/phone.rb app/models/note.rb \
+            app/models/branch.rb app/models/phone.rb app/models/note.rb app/models/terminal.rb \
             app/models/concerns/branch_lifecycle.rb \
             app/services/branches app/policies/branch_policy.rb app/helpers/branches_helper.rb \
-            spec/models/branch_spec.rb spec/services/branches \
+            spec/models/branch_spec.rb spec/models/terminal_spec.rb spec/services/branches \
             spec/requests/admin/branches_spec.rb spec/requests/admin/branch_workspace_spec.rb \
             spec/requests/admin/branch_terminals_spec.rb \
             spec/requests/admin/branch_selector_access_spec.rb \
@@ -122,7 +124,7 @@ jobs:
           CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
         run: |
           bundle exec rspec \
-            spec/models/branch_spec.rb \
+            spec/models/branch_spec.rb spec/models/terminal_spec.rb \
             spec/services/branches \
             spec/requests/admin/branches_spec.rb \
             spec/requests/admin/branch_workspace_spec.rb \
