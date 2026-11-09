@@ -46,6 +46,7 @@ class UsersQuery
     assignments = UserRole.active.where(system_role_id: @params[:role])
     if @organization
       branch_ids = @organization.branches.not_deleted.where(operational_status: 'active').select(:id)
+      assignments = assignments.where(organization: @organization)
       assignments = assignments.where(branch_id: nil).or(assignments.where(branch_id: branch_ids))
     end
     scope.where(id: assignments.select(:user_id))
@@ -64,7 +65,7 @@ class UsersQuery
   end
 
   def branch_assignment_scope
-    assignments = UserRole.active.where(branch_id: @params[:branch])
+    assignments = UserRole.active.where(branch_id: @params[:branch], organization: @organization)
     return assignments unless @params[:role].present? && SystemRole.branch.exists?(id: @params[:role])
 
     assignments.where(system_role_id: @params[:role])
