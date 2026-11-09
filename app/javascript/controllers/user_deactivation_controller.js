@@ -35,7 +35,14 @@ export default class extends Controller {
       return
     }
 
-    this.reasonTarget.setAttribute("aria-invalid", "true")
-    this.reasonTarget.focus()
+    if (event.detail.fetchResponse?.statusCode === 422) {
+      this.reasonTarget.setAttribute("aria-invalid", "true")
+      this.reasonTarget.focus()
+      return
+    }
+
+    this.reasonTarget.removeAttribute("aria-invalid")
+    this.errorsTarget.textContent = this.errorsTarget.dataset.requestErrorMessage
+    this.errorsTarget.focus()
   }
 }
