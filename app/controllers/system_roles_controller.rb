@@ -125,8 +125,10 @@ class SystemRolesController < ApplicationController
   end
 
   def load_permission_history
-    @permission_audit_events = @system_role.permission_audit_events.includes(:actor)
-                                           .order(created_at: :desc, id: :desc).limit(20)
+    scope = @system_role.permission_audit_events.includes(:actor).order(created_at: :desc, id: :desc)
+    @permission_history_pages = [(scope.count / 20.0).ceil, 1].max
+    @permission_history_page = params[:permission_history_page].to_i.clamp(1, @permission_history_pages)
+    @permission_audit_events = scope.limit(20).offset((@permission_history_page - 1) * 20)
   end
 
   def notify_system_role(user, system_role, action)

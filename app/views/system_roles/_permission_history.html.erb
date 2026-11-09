@@ -14,6 +14,17 @@
         </li>
       <% end %>
     </ol>
+    <% if @permission_history_pages > 1 %>
+      <nav class="mt-4 flex flex-wrap items-center gap-3 text-sm" aria-label="<%= t('admin.system_roles.permission_history.title') %>">
+        <% if @permission_history_page > 1 %>
+          <%= link_to t('admin.system_roles.lifecycle.previous'), system_role_path(@system_role, permission_history_page: @permission_history_page - 1, anchor: 'permission-history'), class: 'rounded-lg border border-slate-200 px-3 py-2 text-emerald-700' %>
+        <% end %>
+        <span><%= @permission_history_page %> / <%= @permission_history_pages %></span>
+        <% if @permission_history_page < @permission_history_pages %>
+          <%= link_to t('admin.system_roles.lifecycle.next'), system_role_path(@system_role, permission_history_page: @permission_history_page + 1, anchor: 'permission-history'), class: 'rounded-lg border border-slate-200 px-3 py-2 text-emerald-700' %>
+        <% end %>
+      </nav>
+    <% end %>
   <% else %>
     <p class="mt-3 text-sm text-slate-500"><%= t('admin.system_roles.permission_history.empty') %></p>
   <% end %>

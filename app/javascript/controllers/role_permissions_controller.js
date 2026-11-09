@@ -35,7 +35,7 @@ export default class extends Controller {
     group.querySelectorAll("[data-role-permissions-target='permission']:not(:disabled)").forEach(input => {
       if (!input.closest("[data-permission-row]").hidden) input.checked = event.target.checked
     })
-    this.refresh()
+    this.refresh(event)
   }
 
   refresh(event) {
@@ -50,15 +50,21 @@ export default class extends Controller {
       })
     }
 
-    // Required access is explicit in the editor's help text and checked automatically.
-    dependent.forEach(module => {
-      const access = this.permissionTargets.find(permission => permission.dataset.permissionCode === `${module}.access`)
-      if (!access) return
-      if (this.permissionTargets.some(permission => permission.checked &&
-          permission.dataset.permissionCode.startsWith(`${module}.`) && permission !== access)) {
-        access.checked = true
-      }
-    })
+    // Only reconcile actions just selected by the user, never alter saved roles on page load.
+    const changedInputs = input?.hasAttribute("data-select-group") ?
+      Array.from(input.closest("[data-role-permissions-target='group']")
+        .querySelectorAll("[data-role-permissions-target='permission']"))
+        .filter(permission => !permission.closest("[data-permission-row]").hidden && permission.checked) :
+      [input].filter(Boolean)
+
+    if (input?.checked) {
+      changedInputs.forEach(permission => {
+        const [module, action] = permission.dataset.permissionCode?.split(".") || []
+        if (!dependent.includes(module) || !action || action === "access") return
+        const access = this.permissionTargets.find(item => item.dataset.permissionCode === `${module}.access`)
+        if (access && !access.disabled) access.checked = true
+      })
+    }
 
     this.totalTarget.textContent = String(this.permissionTargets.filter(permission => permission.checked).length)
     this.groupTargets.forEach(group => {
