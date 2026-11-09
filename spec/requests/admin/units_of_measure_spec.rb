@@ -170,4 +170,25 @@ RSpec.describe 'Admin::UnitsOfMeasure', type: :request do
     expect(response.body).to include('unit-measure-modal-title')
     expect(response.body).to include(I18n.t('admin.units_of_measure.sat.invalid_hint'))
   end
+
+  it 'retains list query parameters when returning Turbo Stream updates' do
+    create(:unit_of_measure, organization:, sat_unit_key: sat, code: 'ACTIVE', status: 'active')
+    target = create(:unit_of_measure, organization:, sat_unit_key: sat,
+                                      code: 'INACTIVE', status: 'inactive')
+    headers = { 'Accept' => 'text/vnd.turbo-stream.html' }
+    query = { status: 'inactive', sort: 'code', direction: 'desc', per_page: 10 }
+
+    patch admin_unit_of_measure_path(target, query), params: {
+      unit_of_measure: { name: 'Renamed inactive unit' }
+    }, headers:
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Renamed inactive unit', 'status=inactive', 'sort=code')
+    expect(response.body).not_to include('ACTIVE</code>')
+
+    delete admin_unit_of_measure_path(target, query), headers:
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('status=inactive', 'sort=code')
+    expect(response.body).to include(I18n.t('admin.units_of_measure.index.no_results'))
+  end
+
 end

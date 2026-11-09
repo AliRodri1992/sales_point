@@ -2,7 +2,9 @@
               url: unit.persisted? ? admin_unit_of_measure_path(unit) : admin_units_of_measure_path,
               method: unit.persisted? ? :patch : :post,
               html: { novalidate: true },
-              data: { turbo_frame: local_assigns[:standalone] ? '_top' : 'unit_of_measure_modal' },
+              data: { turbo_frame: local_assigns[:standalone] ? '_top' : 'unit_of_measure_modal',
+                      controller: 'units-of-measure-context',
+                      action: 'submit->units-of-measure-context#preserve' },
               class: 'space-y-5' do |form| %>
   <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
     <div>

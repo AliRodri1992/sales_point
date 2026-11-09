@@ -92,7 +92,9 @@ module Admin
       respond_to do |format|
         format.turbo_stream { @swal_message = t("admin.units_of_measure.messages.#{action}") }
         format.html do
-          redirect_to admin_units_of_measure_path, notice: t("admin.units_of_measure.messages.#{action}"),
+          redirect_to admin_units_of_measure_path(request.query_parameters.slice(
+                        *%w[search status fractional sat_unit_key_id sat_health sort direction page per_page]
+                      )), notice: t("admin.units_of_measure.messages.#{action}"),
                                                    status: :see_other
         end
       end

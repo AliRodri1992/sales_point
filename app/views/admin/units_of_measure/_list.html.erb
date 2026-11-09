@@ -1,4 +1,7 @@
-<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+<% listing_query = request.query_parameters.slice(*%w[search status fractional sat_unit_key_id sat_health sort direction page per_page])
+                                    .merge('page' => @current_page) %>
+<div data-list-query="<%= listing_query.to_query %>"
+     class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
   <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
     <div>
       <h2 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.units_of_measure.index.catalog_title') %></h2>
@@ -63,7 +66,7 @@
                     <% end %>
                   <% end %>
                   <% if policy(UnitOfMeasure).destroy? %>
-                    <%= button_to admin_unit_of_measure_path(unit), method: :delete,
+                    <%= button_to admin_unit_of_measure_path(unit, listing_query), method: :delete,
                                   data: { controller: 'swal-confirm', turbo_confirm: t('admin.units_of_measure.actions.confirm_delete'),
                                           swal_cancel_text: t('admin.units_of_measure.actions.cancel'),
                                           confirm_record: unit.name, turbo_frame: 'units_of_measure_list' },

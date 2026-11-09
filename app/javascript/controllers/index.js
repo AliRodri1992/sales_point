@@ -137,6 +137,9 @@ application.register("supplier-bulk-select", SupplierBulkSelectController)
 import DeltaSelectController from "./delta_select_controller"
 application.register("delta-select", DeltaSelectController)
 
+import UnitsOfMeasureContextController from "./units_of_measure_context_controller"
+application.register("units-of-measure-context", UnitsOfMeasureContextController)
+
 import SupplierNestedController from "./supplier_nested_controller"
 application.register("supplier-nested", SupplierNestedController)
 

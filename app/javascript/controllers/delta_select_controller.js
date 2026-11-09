@@ -82,7 +82,9 @@ export default class extends Controller {
       if (!this.element.contains(event.target)) this.close()
     }
     this.onKeyDown = (event) => {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && !this.menu.hidden) {
+        event.preventDefault()
+        event.stopPropagation()
         this.close()
         this.button.focus()
       } else if (["ArrowDown", "ArrowUp"].includes(event.key) && event.target === this.button) {

@@ -168,4 +168,85 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
     expect(unit.reload.deleted_at).to be_present
     expect(unit).to be_inactive
   end
+
+  scenario 'keeps the current status filter when creating and editing through Turbo modals' do
+    active = create(:unit_of_measure, organization:, sat_unit_key: sat_key, code: 'VISIBLE_ACTIVE',
+                                      name: 'Active reference', status: 'active')
+    visit admin_units_of_measure_path(status: 'inactive', sort: 'code', direction: 'desc')
+    expect(page).to have_css('#units_of_measure_list [data-list-query*="status=inactive"]')
+    expect(page).to have_no_css('#units_of_measure_list', text: active.name)
+
+    within('main > header') { click_link 'New unit' }
+    fill_in 'unit_of_measure_code', with: 'FILTERED'
+    fill_in 'unit_of_measure_name', with: 'Filtered new unit'
+    fill_in 'unit_of_measure_abbreviation', with: 'flt'
+
+    sat_dropdown = find('#unit_of_measure_sat_unit_key_id', visible: :all).find(:xpath, '..')
+    sat_dropdown.find('button[aria-haspopup="listbox"]').click
+    sat_dropdown.find('[role="option"]', text: /H87.*Piece/).click
+
+    status_dropdown = find('#unit_of_measure_status', visible: :all).find(:xpath, '..')
+    status_dropdown.find('button[aria-haspopup="listbox"]').click
+    status_dropdown.find('[role="option"]', text: 'Inactive').click
+
+    click_button 'Create unit'
+    expect(page).to have_css('#units_of_measure_list', text: 'Filtered new unit', wait: 10)
+    expect(page).to have_css('#units_of_measure_list [data-list-query*="status=inactive"]')
+    expect(page).to have_css('#units_of_measure_list [data-list-query*="sort=code"]')
+    expect(page).to have_css('#units-status option[value="inactive"]:checked', visible: :all)
+    expect(page).to have_no_css('#units_of_measure_list', text: active.name)
+
+    within('turbo-frame#units_of_measure_list tr', text: 'Filtered new unit') do
+      find('a[aria-label="Edit"]').click
+    end
+    fill_in 'unit_of_measure_name', with: 'Filtered renamed unit'
+    click_button 'Save changes'
+    expect(page).to have_css('#units_of_measure_list', text: 'Filtered renamed unit', wait: 10)
+    expect(page).to have_css('#units_of_measure_list [data-list-query*="status=inactive"]')
+    expect(page).to have_no_css('#units_of_measure_list', text: active.name)
+  end
+
+  scenario 'keeps filters and clamps the last page after a logical deletion' do
+    11.times do |index|
+      create(:unit_of_measure, organization:, sat_unit_key: sat_key,
+                               code: format('INACT_%02d', index), name: format('Inactive %02d', index),
+                               status: 'inactive')
+    end
+    create(:unit_of_measure, organization:, sat_unit_key: sat_key,
+                             code: 'ACTIVE', name: 'Active not matching', status: 'active')
+
+    visit admin_units_of_measure_path(status: 'inactive', sort: 'code', direction: 'asc',
+                                      page: 2, per_page: 10)
+    expect(page).to have_css('#units_of_measure_list', text: '2 / 2', wait: 10)
+    within('turbo-frame#units_of_measure_list tr', text: 'Inactive 10') do
+      find('button[aria-label="Remove unit"]').click
+    end
+    expect(page).to have_css('.swal2-popup', text: 'Remove this record?', wait: 10)
+    find('.delta-confirm-accept').click
+
+    expect(page).to have_css('#units_of_measure_list', text: '1 / 1', wait: 10)
+    expect(page).to have_css('#units_of_measure_list [data-list-query*="status=inactive"]')
+    expect(page).to have_css('#units_of_measure_list [data-list-query*="page=1"]')
+    expect(page).to have_css('#units-status option[value="inactive"]:checked', visible: :all)
+    expect(page).to have_no_css('#units_of_measure_list', text: 'Active not matching')
+  end
+
+  scenario 'closes only the open SAT dropdown on the first Escape, preserving modal edits' do
+    visit admin_units_of_measure_path
+    within('main > header') { click_link 'New unit' }
+    fill_in 'unit_of_measure_code', with: 'STAY_OPEN'
+
+    sat_dropdown = find('#unit_of_measure_sat_unit_key_id', visible: :all).find(:xpath, '..')
+    sat_dropdown.find('button[aria-haspopup="listbox"]').click
+    expect(sat_dropdown).to have_css('[role="listbox"]:not([hidden])')
+    sat_dropdown.find('input[type="search"]').send_keys(:escape)
+
+    expect(page).to have_css('turbo-frame#unit_of_measure_modal.flex [role="dialog"]')
+    expect(page).to have_field('unit_of_measure_code', with: 'STAY_OPEN')
+    expect(sat_dropdown).to have_css('[role="listbox"][hidden]', visible: :all)
+
+    find('#unit_of_measure_code').send_keys(:escape)
+    expect(page).to have_css('turbo-frame#unit_of_measure_modal.hidden', visible: :all, wait: 10)
+  end
+
 end

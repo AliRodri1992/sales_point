@@ -81,7 +81,7 @@
   <span class="sr-only" role="status" aria-live="polite" hidden data-skeleton-loading-target="status"><%= t('admin.action_loader.processing') %></span>
   <div class="delta-skeleton-region__progress" data-skeleton-loading-target="indicator" hidden aria-hidden="true"><span></span></div>
   <div data-skeleton-loading-target="content">
-    <%= turbo_frame_tag 'units_of_measure_list' do %>
+    <%= turbo_frame_tag 'units_of_measure_list', data: { turbo_action: 'advance' } do %>
       <%= render 'list' %>
     <% end %>
   </div>
