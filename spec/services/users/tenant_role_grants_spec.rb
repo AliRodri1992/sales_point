@@ -17,6 +17,7 @@ RSpec.describe 'Organization-specific system role updates' do
       user: target, organization: second_org, attributes: { system_role_ids: [second_role.id] }
     )
     expect(writer.save).to be(true)
+    expect(target.user_roles.active.where(organization_id: nil)).to be_empty
     expect(target.user_roles.active.where(organization: first_org).pluck(:system_role_id)).to eq([first_role.id])
     expect(target.user_roles.active.where(organization: second_org).pluck(:system_role_id)).to eq([second_role.id])
 
