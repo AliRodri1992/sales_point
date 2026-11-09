@@ -1,5 +1,6 @@
 <% roles = user.user_roles.select do |assignment|
-     assignment.deleted_at.nil? && assignment.system_role && assignment.system_role.deleted_at.nil? &&
+     assignment.deleted_at.nil? && assignment.organization_id == current_organization&.id &&
+       assignment.system_role && assignment.system_role.deleted_at.nil? &&
        (assignment.branch_id.nil? || (assignment.branch&.organization_id == current_organization&.id &&
                                      assignment.branch.deleted_at.nil?))
    end.sort_by do |assignment|
