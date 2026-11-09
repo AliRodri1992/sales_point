@@ -322,3 +322,47 @@ En Branches CI [42565321011](https://github.com/AliRodri1992/sales_point/actions
 - **BR-003:** motivo de transición multilineal, ajustable en móvil, con máximo de 2,000 caracteres, 422 y error por campo. Pruebas de requests y Chrome **VERIFICADAS AUTOMÁTICAMENTE** en el SHA indicado. La corrección de la prueba de `textarea` retira el salto de línea inicial añadido por ActionView al renderizar HTML, sin modificar la entrada del usuario.
 - **BR-005:** bloqueo por migración con fecha futura corregido mediante renombrado mínimo; base efímera del runner recreada correctamente en CI. **La aceptación integral continúa ABIERTA**: el job `CI` general del mismo SHA se canceló por commits paralelos, no constituye éxito global. La documentación y las pruebas no sustituyen revisión manual del lector de pantalla, zoom 200 % y aceptación independiente.
 - **Alcance:** ningún dato de bases persistentes eliminado, ninguna fusión realizada. Los IDs históricos se conservan; no duplicar hallazgos en auditorías posteriores.
+
+
+## Reauditoría AI Dev Suite — Sucursales — 2026-11-09 (SHA d414ec7d)
+
+**Alcance:** rutas y acciones propias de `/admin/branches` (listado, filtros, alta/edición, detalle, estado operativo, terminales embebidas, historial, selección de sucursal y permisos). Contratos externos revisados solo desde Sucursales: `Terminal`, `UserRole`, membresías y controles de inventario/compras como bloqueos de transición. **Método:** procedimientos AI Dev Suite `impeccable-audit`, `ui-ux-pro-max` y `ponytail-engineering`; inspección del código de GitHub, comparación de cambios y resultados de Actions. **No** se ejecutó el CLI externo de los proyectos citados por las habilidades ni hubo sesión de navegador local o pruebas manuales con lector de pantalla.
+
+**SHA base de auditoría:** `d414ec7d6380dd75675836c05b501391c010365f`. Las correcciones funcionales anteriores siguen en el código de este SHA. Desde `7c34a82370c51d80b99daaf031ade51e82e767fc` (último Branches CI verde) hasta el SHA de revisión no hubo cambios en archivos propios de Sucursales; sí hubo cambios en el esquema, migraciones y pruebas de otros módulos.
+
+### Resultado por hallazgo histórico
+
+| ID | Revisión en esta ronda | Estado |
+|---|---|---|
+| **BR-001** | `h2#branches-result-title` conserva rol de encabezado; región `#branch-results-announcement[role=status][aria-live=polite]` permanece fuera del Turbo Frame y se actualiza por Stream; reintento y foco de filtros cubiertos por Chrome anterior. | **VERIFICADO AUTOMÁTICAMENTE EN SHA ANTERIOR**; pendiente comprobación perceptiva con lector de pantalla. No reabrir por el problema corregido. |
+| **BR-002** | `BranchForm`, `Branch`, `_form`, validaciones Rails por campo, asteriscos, `novalidate`, código autogenerado, dirección por país, errores 422 y permisos. Sin defecto nuevo demostrado por esta revisión estática. | Regresiones previas verdes; exploración manual pendiente. |
+| **BR-003** | Estado operativo separado, selector/bloqueos, `textarea` de 4 filas para motivo con máximo de 2,000 y error por campo, historial de transiciones. | Regresiones previas verdes; zoom 200 %, voz y revisión visual manual pendientes. |
+| **BR-004** | Historial de baja de teléfonos/notas, consulta protegida por `manage?` y restricciones de soft delete. | Regresiones previas verdes; no detectada regresión nueva de este contrato. |
+| **BR-005** | [Branches CI 42565873539](https://github.com/AliRodri1992/sales_point/actions/runs/42565873539) aprobó **132 ejemplos / 0 fallos** y RuboCop focalizado para `7c34a82`. En el SHA de auditoría, el job global `Fresh migrations and seed data`, `Rails I18n and YAML audit` y `Security scans` aprobaron; `RuboCop` global **falló con 32 ofensas**, sin ofensas listadas de archivos propios de Sucursales, y `RSpec` fue cancelado por nuevos commits mientras corría. | **ABIERTO**, falta CI global verde para un SHA de aceptación y revisión independiente. |
+| **BR-006** | RuboCop focalizado aprobado en último Branches CI y sin ofensas detectadas en archivos propios del módulo en el log global consultado. | Verificado focalmente, no sustituye BR-005. |
+| **BR-007** | `Admin::BranchDetail` reutiliza requisitos por estado y conserva regresiones anteriores. Sin perfil SQL de la vista bajo carga representativa. | Implementado y probado anteriormente; medición de carga pendiente. |
+| **BR-008** | Ancla de Estado operativo y navegación de secciones siguen presentes con `data-turbo=false`; Chrome anterior verificó navegación y viewport móvil. | Verificado focalmente; revisión manual de zoom/teclado pendiente. |
+
+### Nuevos hallazgos de la ronda
+
+**BR-009 · P1 · Confirmado por inspección de código · Integridad de terminales embebidas · ABIERTO.**
+
+- **Evidencia:** `app/views/admin/branches/_terminal_management.html.erb` usa `@branch.terminals.exists?` y `@branch.terminals.order(:id).each`; `Admin::BranchDetail#load_branch_detail` emplea `@branch.terminals.count`; `Admin::BranchTerminals#change_terminal` obtiene el registro con `@branch.terminals.find(params[:terminal_id])`, todos **sin `where(deleted_at: nil)`**. `app/models/terminal.rb` dispone de `deleted_at` y `active_records`, pero **no aplica default_scope de vigencia**.
+- **Riesgo reproducible:** una terminal retirada mediante soft delete sigue incluida en listado y contador; un administrador puede enviar su ID a la ruta de cambio de estado y alcanzar `update!(status:)`. Se detecta por el código, **no se ha ejecutado una petición de regresión específica ni probado su comportamiento de extremo a extremo**.
+- **Esperado:** únicamente terminales vigentes en listado y recuentos y ninguna mutación de terminal retirada; la consulta de auditoría/historial sí conserva retiradas.
+- **Causa raíz:** falta una relación de terminales vigentes aplicada de forma uniforme en superficie y endpoint.
+- **Responsable:** Sucursales, terminales **embebidas**. **Prueba exigida:** crear una terminal, marcar `deleted_at`, comprobar que no aparece en detalle ni contador, probar `PATCH change_terminal` con ID retirado y verificar rechazo, sin modificar registro ni historial; incluir un control positivo para terminal vigente.
+
+**BR-010 · P2 (riesgo de escalabilidad; impacto real por medir) · Patrón de consultas confirmado por código · ABIERTO.**
+
+- **Evidencia:** `Admin::BranchTerminals#next_branch_terminal_code` inicia en 1 y realiza `@branch.terminals.with_deleted.exists?(code: format('POS-%03d', number))` por cada código ocupado hasta encontrar uno disponible. En el caso de los primeros N códigos ocupados, requiere **N+1 comprobaciones SQL** en lugar de una operación de consulta acotada.
+- **Impacto:** posibles tiempos crecientes para agregar terminales en sucursales con muchos códigos históricos. La complejidad está confirmada en fuente; **no se midió una degradación real de latencia**.
+- **Esperado:** generación de códigos que respete la unicidad histórica sin una consulta por número y conserve la seguridad ante concurrencia bajo bloqueo de sucursal.
+- **Prueba exigida:** crear suficientes terminales con códigos consecutivos (incluidas retiradas), contar consultas al alta y exigir un presupuesto constante o acotado, además de asegurar código único y sin reutilización histórica.
+
+### Puertas de calidad y limitaciones
+
+- **Evidencia exitosa verificable:** [Branches CI 42565873539](https://github.com/AliRodri1992/sales_point/actions/runs/42565873539), SHA `7c34a82`: RuboCop focalizado **PASÓ**, `Prepare test database` **PASÓ**, RSpec + Chrome **132 pruebas, 0 fallos**. No afirmar que las nuevas pruebas BR-009/BR-010 ya corrieron.
+- **Global SHA d414ec7d:** [CI 42609077039](https://github.com/AliRodri1992/sales_point/actions/runs/42609077039): migraciones/semillas, seguridad e i18n **PASARON**; RuboCop global **32 ofensas**; RSpec **CANCELADO**. Fallas externas no son defectos de Sucursales, pero bloquean cierre del módulo conforme al estándar.
+- **Sin evidencia manual:** revisión visual a 200 % de zoom, lector de pantalla real, contraste y teclado en entorno local. Los anteriores tests de navegador son evidencia real automatizada, no auditoría perceptiva manual.
+- **Dictamen:** **AUDITADO / NO CERRADO**. Hallazgos abiertos propios BR-009 (P1) y BR-010 (P2); BR-005 continúa abierto por falta de CI global verde y aceptación independiente. **No se modificó código funcional** en esta reauditoría. Sin merge.
