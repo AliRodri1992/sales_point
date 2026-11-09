@@ -116,3 +116,23 @@ Este seguimiento conserva los IDs de la auditoría. La presencia de cambios en G
 **Pruebas focalizadas a ejecutar:** `bundle exec rspec spec/requests/admin/general_settings_spec.rb spec/requests/admin/table_page_preferences_spec.rb spec/models/organization_setting_spec.rb spec/models/general_setting_audit_event_spec.rb spec/features/general_settings_browser_spec.rb`.
 
 **Cierre bloqueado** hasta ejecutar RSpec completo, RuboCop, seguridad, I18n, migraciones limpias y verificación browser y obtener CI verde del SHA definitivo. No se fusionó ninguna rama.
+
+## 6. Evidencia focalizada de implementación verificada — 2026-11-08
+
+**SHA verificado:** `9e438205e94dca7e44afd021b3cb32d8bde886d7`.  
+**Workflow completo:** https://github.com/AliRodri1992/sales_point/actions/runs/42560618778
+
+| Puerta | Resultado real | Evidencia |
+|---|---|---|
+| General module RuboCop | **PASÓ** | Job de lint focalizado del workflow anterior |
+| General translations and YAML integrity | **PASÓ** | Auditoría estricta de claves, sintaxis y paridad es/en/ko |
+| General model request and browser regressions | **PASÓ: 35 ejemplos, 0 fallos** | RSpec focalizado con Chrome en Actions, mismo SHA |
+| Migraciones de test | **PASÓ** | Paso `bin/rails db:create db:migrate` del job de regresiones |
+| Global CI (toda la plataforma) | **PENDIENTE** | https://github.com/AliRodri1992/sales_point/actions/runs/42560618784 |
+| Revisión independiente del expediente | **PENDIENTE** | Aun sin aprobación de revisor |
+
+**Correcciones de regresión:** `5e691892` añadió migración de recuperación para bases creadas a partir de un `schema.rb` más reciente que la migración del audit; `9e438205` añadió `deleted_at` (obligatorio por `ApplicationRecord.acts_as_paranoid`) a migraciones iniciales y de reparación, y corrigió los escenarios de test de organizaciones sin registro.
+
+**Decisiones conscientes:** El rol administrativo del sistema sigue siendo global; la organización activa solo se selecciona entre membresías accesibles. No se trasladó una remodelación de roles/organizaciones al alcance de General.
+
+**Dictamen actualizado:** implementación **verificada focalmente en GitHub Actions** sobre `9e438205`; el módulo permanece **NO CERRADO** de acuerdo con el estándar modular hasta disponer de CI global verde para el SHA de aceptación, verificación final y revisión independiente. Mantener todos los IDs originales sin reiniciar la auditoría.
