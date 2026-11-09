@@ -21,8 +21,10 @@ class SystemRolesController < ApplicationController
     authorize @system_role
     load_permissions
     @assigned_permission_ids = @system_role.permissions.available.ids
-    load_status_history
-    load_permission_history
+    if policy(@system_role).audit_history?
+      load_status_history
+      load_permission_history
+    end
   end
 
   def new

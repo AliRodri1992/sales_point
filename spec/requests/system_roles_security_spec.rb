@@ -68,6 +68,7 @@ RSpec.describe 'Role permission privilege boundaries', type: :request do
     expect(response.body).not_to include('href="/system_roles/new"')
     get system_role_path(role)
     expect(response).to have_http_status(:ok)
+    expect(response.body).not_to include('Permission change history', 'Status history')
     post system_roles_path, params: { system_role: { name: 'Unauthorized', role_type: 'system' } }
     expect(response).to have_http_status(:forbidden)
     patch permissions_system_role_path(role), params: { permission_ids: [access.id] }

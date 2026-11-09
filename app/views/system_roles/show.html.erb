@@ -16,6 +16,8 @@
 </div>
 <%= render 'system_roles/lifecycle' %>
 <%= render 'system_roles/form' %>
-<%= render 'system_roles/status_history' %>
-<%= render 'system_roles/permission_history' %>
+<% if policy(@system_role).audit_history? %>
+  <%= render 'system_roles/status_history' %>
+  <%= render 'system_roles/permission_history' %>
+<% end %>
 </div>

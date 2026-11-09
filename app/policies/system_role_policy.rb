@@ -25,6 +25,10 @@ class SystemRolePolicy < ApplicationPolicy
     update?
   end
 
+  def audit_history?
+    global_manager?
+  end
+
   def change_status?
     global_manager? && !protected_role?
   end
