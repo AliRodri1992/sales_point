@@ -57,7 +57,8 @@ RSpec.describe 'Navbar branch selector authorization', type: :request do
     deleted.update!(deleted_at: Time.current)
     foreign = create(:branch, organization: create(:organization), name: 'Sucursal Externa')
     # Soft-deleted branches cannot accept assignments, so do not create an invalid role.
-    [allowed, inactive, foreign].each { |branch| assign_branch(branch) }
+    [allowed, inactive].each { |branch| assign_branch(branch) }
+    expect(build(:user_role, user:, system_role: branch_role, branch: foreign)).not_to be_valid
     expect(deleted.deleted_at).to be_present
 
     get admin_dashboard_path
