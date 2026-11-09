@@ -97,6 +97,10 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
     within('turbo-frame#units_of_measure_list tr', text: 'HIST') do
       find('a[aria-label="Edit"]').click
     end
+    unless page.has_css?('turbo-frame#unit_of_measure_modal [role="dialog"]', wait: 5)
+      frame = page.evaluate_script("document.querySelector('#unit_of_measure_modal')?.outerHTML")
+      Rails.logger.error("UOM edit modal did not open; browser_url=#{current_url} frame=#{frame.to_s[0, 1200]}")
+    end
     expect(page).to have_css('turbo-frame#unit_of_measure_modal [role="dialog"]', wait: 10)
     expect(page).to have_text('reactivation requires a current SAT code')
 
