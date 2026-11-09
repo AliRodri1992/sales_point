@@ -5,7 +5,7 @@ en:
     clients:
       created: "The customer was registered and is now available in the customer catalog."
       updated: "The customer details were saved. Open the customer record to review the changes."
-      destroyed: "Customer deleted successfully"
+      destroyed: "Customer deactivated. Its historical information remains available."
       errors:
         duplicate: "The customer code or tax ID is already registered."
       confirm:
@@ -19,8 +19,8 @@ en:
         new: "New customer"
         show: "View customer"
         edit: "Edit"
-        delete: "Delete"
-        confirm_delete: "Are you sure you want to delete this customer?"
+        delete: "Deactivate"
+        confirm_delete: "Remove this record? The customer will no longer appear in the active directory."
         card_title: "Registered customers"
         total_count: "%{count} customers registered"
         search_placeholder: "Search by code, name, email, phone or tax ID..."

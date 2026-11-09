@@ -41,8 +41,8 @@ module Admin
         load_fiscal_regimes
         render :new, status: :unprocessable_content
       end
-    rescue ActiveRecord::RecordNotUnique
-      render_duplicate_error
+    rescue ActiveRecord::RecordNotUnique => e
+      render_duplicate_error(:new, e)
     end
 
     def update
@@ -57,8 +57,8 @@ module Admin
         load_fiscal_regimes
         render :edit, status: :unprocessable_content
       end
-    rescue ActiveRecord::RecordNotUnique
-      render_duplicate_error(:edit)
+    rescue ActiveRecord::RecordNotUnique => e
+      render_duplicate_error(:edit, e)
     end
 
     def destroy
@@ -67,9 +67,13 @@ module Admin
       return if redirect_without_catalog_listing(@client, :destroyed)
 
       respond_to do |format|
-        format.turbo_stream { @swal_message = t('admin.clients.destroyed') }
+        format.turbo_stream do
+          load_clients
+          @swal_message = t('admin.clients.destroyed')
+        end
         format.html do
           redirect_to admin_clients_path,
+                      status: :see_other,
                       flash: { swal_message: t('admin.clients.destroyed') }
         end
       end
@@ -129,8 +133,9 @@ module Admin
       table_page_size_for('clients')
     end
 
-    def render_duplicate_error(template = :new)
-      @client.errors.add(:code, t('admin.clients.errors.duplicate'))
+    def render_duplicate_error(template = :new, error = nil)
+      attribute = error&.message.to_s.include?('index_clients_on_rfc') ? :rfc : :code
+      @client.errors.add(attribute, t('admin.clients.errors.duplicate'))
       load_fiscal_regimes
       render template, status: :unprocessable_content
     end

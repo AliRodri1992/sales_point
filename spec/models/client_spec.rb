@@ -125,6 +125,21 @@ RSpec.describe Client, type: :model do
     end
   end
 
+  describe 'SAT fiscal regime validity' do
+    it 'rejects expired regimes on new customer records' do
+      expired = create(:sat_fiscal_regime, valid_from: 2.years.ago, valid_to: 1.year.ago)
+      expect(build(:client, sat_fiscal_regime: expired)).not_to be_valid
+    end
+
+    it 'retains a historical expired regime when other fields are edited' do
+      regime = create(:sat_fiscal_regime, valid_from: 2.years.ago, valid_to: 1.year.from_now)
+      saved = create(:client, sat_fiscal_regime: regime)
+      regime.update!(valid_to: 1.day.ago)
+      saved.name = 'Updated customer'
+      expect(saved).to be_valid
+    end
+  end
+
   describe 'associations' do
     it 'allows the fiscal regime to be optional' do
       expect(client.sat_fiscal_regime).to be_nil

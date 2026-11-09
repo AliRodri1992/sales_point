@@ -13,6 +13,7 @@ on:
       - 'app/services/client_filter.rb'
       - 'app/views/admin/clients/**'
       - 'config/locales/clients.*.yml'
+      - 'config/routes.rb'
       - 'spec/models/client_spec.rb'
       - 'spec/requests/admin/clients_spec.rb'
       - 'spec/features/clients_browser_spec.rb'
@@ -31,7 +32,7 @@ env:
   REDIS_URL: redis://localhost:6379/0
 
 jobs:
-  lint:
+  clients_lint:
     name: Clients RuboCop
     runs-on: ubuntu-latest
     steps:
@@ -44,19 +45,19 @@ jobs:
           bundler-cache: true
       - name: Validate module registry
         run: ruby script/audit_module_quality.rb
-      - name: Lint client-owned Ruby and specs
+      - name: Lint catalog-owned Ruby and specs
         run: |
           bin/rubocop -f simple \
             app/controllers/admin/clients_controller.rb \
             app/models/client.rb \
-            app/policies/client_policy.rb \
             app/services/client_filter.rb \
+            app/policies/client_policy.rb \
             spec/models/client_spec.rb \
             spec/requests/admin/clients_spec.rb \
             spec/features/clients_browser_spec.rb
 
-  specs:
-    name: Clients model, requests and browser
+  clients_specs:
+    name: Clients model and request regressions
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -101,13 +102,13 @@ jobs:
           cache: yarn
       - name: Install JavaScript dependencies
         run: yarn install --frozen-lockfile
-      - name: Build assets
+      - name: Build application assets
         run: |
           yarn build:js
           yarn build:css
-      - name: Prepare clean database
+      - name: Prepare fresh database
         run: bin/rails db:drop db:create db:migrate
-      - name: Run customer regression scenarios
+      - name: Run model, filtered directory, HTTP requests and browser regressions
         env:
           CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
           CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}

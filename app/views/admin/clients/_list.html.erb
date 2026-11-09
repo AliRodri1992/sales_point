@@ -64,7 +64,7 @@
                     <% end %>
                   <% end %>
                   <% if policy(Client).destroy? %>
-                    <%= button_to admin_client_path(client), method: :delete,
+                    <%= button_to admin_client_path(client, request.query_parameters), method: :delete,
                                   data: { controller: 'swal-confirm', turbo_frame: 'clients_list',
                                           turbo_confirm: t('admin.clients.index.confirm_delete'),
                                           swal_cancel_text: t('admin.clients.confirm.cancel'),

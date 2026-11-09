@@ -1,0 +1,7 @@
+<%= turbo_stream.replace 'clients_stats' do %>
+  <%= render 'stats' %>
+<% end %>
+<%= turbo_stream.update 'clients_list' do %>
+  <%= render 'list', clients: @clients %>
+<% end %>
+<turbo-stream action="swal" target="swal"><template><%= @swal_message %></template></turbo-stream>

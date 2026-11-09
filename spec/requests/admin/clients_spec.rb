@@ -139,6 +139,38 @@ RSpec.describe 'Admin clients', type: :request do
       expect(doc.at_css('#client_name')['required']).to be_nil
     end
 
+    it 'keeps search and status filters grouped in SQL' do
+      create(:client, name: 'Matched Active', status: :active)
+      create(:client, name: 'Matched Inactive', status: :inactive)
+      get admin_clients_path, params: { search: 'Matched', status: 'active' }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Matched Active')
+      expect(response.body).not_to include('Matched Inactive')
+    end
+
+    it 'persists customer notes and shows them in the record details' do
+      post admin_clients_path, params: {
+        client: { code: 'NOTED-CLI', name: 'Noted Customer',
+                  credit_limit: 0, notes: 'Contact on Fridays' }
+      }
+      expect(response).to redirect_to(admin_clients_path)
+      client = Client.find_by!(code: 'NOTED-CLI')
+      expect(client.notes).to eq('Contact on Fridays')
+
+      get admin_client_path(client)
+      expect(response.body).to include('Contact on Fridays')
+    end
+
+    it 'renders compact filters and field errors within the new design' do
+      get admin_clients_path
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('clients-search', 'clients-credit', 'clients-rfc', 'bg-emerald-700')
+      post admin_clients_path, params: { client: { name: '', code: '' } }
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('client_code_error', 'client_name_error')
+    end
+
     it 'preserves an archived fiscal regime on an existing customer edit' do
       regime = create(:sat_fiscal_regime, valid_from: 30.days.ago, valid_to: Date.yesterday)
       client = create(:client, sat_fiscal_regime: nil)
