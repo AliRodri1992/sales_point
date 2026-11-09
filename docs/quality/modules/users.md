@@ -71,6 +71,14 @@
 - **USERS-011:** se conservan los KPI existentes; no se dispone de pruebas de usabilidad que justifiquen eliminarlos.
 - Las pruebas automatizadas de geometría no sustituyen una revisión manual con zoom real 200 %, lector de pantalla ni comprobación visual de contraste. El SHA de aceptación permanece pendiente.
 
+### Ronda de adecuaciones — foco de errores y decisión multiempresa (2026-11-08)
+
+- **USERS-010:** corrección adicional implementada en el formulario y Stimulus: un error de `branch_role_assignments` permite enfocar el grupo con nombre y descripción de error, incluso sin control individual `aria-invalid`. Se agregó una prueba de navegador para selección inválida y foco. **Estado: implementado en código; Users CI del nuevo SHA pendiente de comprobar.**
+- **USERS-013:** el centrado del diálogo y la prueba de viewport reducido permanecen implementados. La última ejecución especializada de `5c33d451` **aprobó** RSpec de Usuarios y RuboCop específico; no equivale a revisión manual de zoom ni lector de pantalla.
+- **USERS-002:** confirmado por `UserRole`, `UserEffectiveRoles` y `AdminAccountWriter`: los roles de tipo `system` son asignaciones globales sin `organization_id`. **Decisión de arquitectura pendiente:** el aislamiento estricto requiere una asignación por organización, migración de datos y cambio consistente de autorización en todos los servicios consumidores; no introducir un filtro aislado que deje administradores legítimos sin acceso ni asegurar falsamente que está corregido.
+- **USERS-011:** se mantienen los cinco KPI existentes hasta obtener evidencia de una mejora medible.
+- **CI general de referencia** en `79a3d008`: migraciones, seguridad e I18n aprobaron; RuboCop global detectó **33 infracciones** en archivos externos a Usuarios, incluidas dos specs con errores de sintaxis; RSpec global seguía en curso al consultarse. El CI global del SHA final debe aprobar antes del cierre.
+
 ## 4. Matriz de aceptación por pantalla
 
 | Pantalla / flujo | Servidor, autorización y datos | UX y errores | Evidencia aún exigida |
