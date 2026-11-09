@@ -14,7 +14,7 @@ module Users
     def self.roles_ready?(user:, organization:)
       return true unless user.employee?
 
-      assignments = user.user_roles.active
+      assignments = user.user_roles.active.where(organization:)
       return true if assignments.exists?(branch_id: nil)
 
       branches = organization.branches.not_deleted.where(operational_status: 'active').select(:id)
