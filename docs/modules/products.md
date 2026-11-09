@@ -1,267 +1,47 @@
-# Productos
+# Productos — Delta POS
 
-Gestión del catálogo de productos en NEXO POS.
+## Alcance operativo
 
----
-
-## 📦 Modelo Product
+El catálogo se administra en `/admin/products`, con acciones de listado, búsqueda, alta, detalle, edición y baja lógica. El módulo conserva organización, permisos granulares y registros comerciales e históricos.
 
-**Ubicación:** `app/models/product.rb`
+## Modelo y relaciones
 
-### Atributos
+- **Identificación:** código obligatorio (máximo 50 caracteres, único por organización ignorando mayúsculas/minúsculas), nombre obligatorio (máximo 100), SKU opcional (máximo 50), código de barras principal opcional (máximo 100, caracteres imprimibles Code 128), descripción (máximo 500).
+- **Precios:** precio base por unidad obligatorio y no negativo; costo de adquisición opcional. El precio base se registra inicialmente y sus cambios posteriores requieren motivo y, para usuarios no administradores, autorización.
+- **Clasificación y fiscal:** categoría, unidad SAT y impuesto SAT son referencias opcionales; se validan en el servidor.
+- **Opciones comerciales:** variantes (`ProductVariant`), presentaciones con conversiones a unidades base (`ProductPresentation`) y códigos de barras adicionales (`ProductBarcode`). Las variantes pueden distinguir talla, color y modelo. Los códigos adicionales persistidos se retiran mediante baja lógica; el principal se gestiona desde el campo del producto.
+- **Disponibilidad:** estado activo/inactivo, destacado, posición, slug y `deleted_at` de baja lógica.
+- **Imágenes:** Active Storage y Uppy local, exclusivamente JPEG/PNG/WebP hasta 5 MB con verificación en servidor, firma por usuario y organización y vencimiento temporal.
+- **Rastreo de existencias:** `tracking_mode` con valores `none`, `lot` y `serial`. No se permite cambiar el modo una vez que existan existencias o historial de lotes/movimientos.
 
-| Campo | Tipo | Requerido | Descripción |
-|-------|------|-----------|-------------|
-| `code` | string | ✅ | Código único del producto |
-| `name` | string | ✅ | Nombre del producto |
-| `description` | text | ❌ | Descripción del producto |
-| `price` | decimal | ✅ | Precio de venta |
-| `cost` | decimal | ❌ | Costo de compra |
-| `stock` | decimal | ✅ | Existencias actuales |
-| `min_stock` | decimal | ❌ | Stock mínimo para alertas |
-| `max_stock` | decimal | ❌ | Stock máximo permitido |
-| `sku` | string | ❌ | SKU del producto |
-| `barcode` | string | ❌ | Código de barras |
-| `category_id` | bigint | ❌ | Categoría asociada |
-| `sat_tax_id` | bigint | ❌ | Impuesto SAT aplicado |
-| `sat_unit_key_id` | bigint | ❌ | Unidad SAT del producto |
-| `status` | string | ✅ | Estado: active/inactive |
-| `featured` | boolean | ✅ | ¿Producto destacado? |
-| `position` | integer | ✅ | Posición en catálogo |
-| `slug` | string | ❌ | URL amigable |
-| `view_count` | integer | ✅ | Contador de vistas |
-| `image_url` | string | ❌ | URL de imagen |
-| `deleted_at` | datetime | ❌ | Soft delete |
+**Existencias, mínimo y máximo** no están en `Product`: pertenecen a `Inventory` por sucursal. `InventoryLot`, `InventorySerial` e `InventoryMovement` son propiedad del módulo Inventario. El listado de Productos presenta el total de existencias y solo consulta su contrato de lectura.
 
----
+## Listado y filtros
 
-## 🛠️ Validaciones
+Se busca por nombre, código, SKU, código principal, códigos secundarios y variantes. Los filtros incluyen estado, categoría, destacado, tipo de seguimiento, precio mínimo/máximo y existencias: con existencias, agotados y bajo mínimo en alguna sucursal.
 
-```ruby
-# Código
-validates :code, presence: true,
-                 uniqueness: { case_sensitive: false },
-                 length: { maximum: 50 },
-                 format: { with: /\A[A-Za-z0-9\-_]+\z/ }
+El formulario ofrece búsqueda y estado siempre visibles, y el resto dentro de **Filtros avanzados** desplegables. El botón **Aplicar filtros** es compacto y conserva paginación/ordenamiento. Los valores numéricos inválidos de consulta se ignoran de manera segura. La paginación usa las preferencias del sistema.
 
-# Nombre
-validates :name, presence: true, length: { maximum: 100 }
+## Precios, historial y cotizaciones
 
-# Precio
-validates :price, presence: true,
-                  numericality: { greater_than_or_equal_to: 0 }
+- `Products::SaveCatalogEntry` crea/edita productos y registra el precio inicial o la solicitud de cambio.
+- `PriceChangeEvent` conserva histórico y autorización, protegido contra revisiones obsoletas.
+- `Products::Quote` calcula importes decimales, conversiones y promoción aplicable, sin consumir redenciones.
+- La vista ofrece únicamente listas vigentes; muestra el segmento de cada lista y explica un rechazo por segmento o moneda. El servidor vuelve a validar todas las opciones seleccionadas.
+- Los importes del catálogo muestran el código de moneda base organizacional para evitar ambigüedad entre MXN y otras divisas.
 
-# Stock
-validates :stock, presence: true,
-                  numericality: { greater_than_or_equal_to: 0 }
-```
+## Seguridad y restricciones
 
----
+`ProductPolicy` y `accessible_products` impiden ver o modificar productos de otras organizaciones. Los adjuntos firmados incluyen organización y usuario. `acts_as_paranoid` preserva registros retirados; el historial operativo impide retiradas incompatibles. La base de datos incorpora índices únicos parciales por organización para códigos de productos, SKU y códigos de barras sin distinguir mayúsculas/minúsculas.
 
-## 🔗 Asociaciones
+Para evitar conflictos entre SKU base y SKU de variante también existen validaciones de modelo en ambos sentidos. **Pendiente:** certificar mediante pruebas concurrentes su garantía transaccional conjunta entre tablas.
 
-```ruby
-belongs_to :category, optional: true
-belongs_to :sat_unit_key, optional: true
-belongs_to :sat_tax, optional: true
-has_one_attached :image
-```
+## Pruebas y seguimiento
 
----
+- `spec/requests/admin/products_spec.rb`: rutas, permisos, filtros avanzados y errores.
+- `spec/requests/admin/product_tenant_access_spec.rb`: aislamiento organizacional.
+- `spec/models/product_spec.rb`: atributos, integridad de identificadores y seguimiento.
+- `spec/services/products/*`: precios, promociones, cotizaciones, carga de imágenes y concurrencia comercial.
+- `spec/features/catalog_redesign_browser_spec.rb` y `spec/features/global_branded_selects_spec.rb`: interfaz y dropdowns.
 
-## 🔍 Scopes
-
-| Scope | Descripción | Ejemplo |
-|-------|-------------|---------|
-| `not_deleted` | Solo productos no eliminados | `Product.not_deleted` |
-| `available` | Solo productos activos | `Product.available` |
-| `with_category` | Incluir categoría | `Product.with_category` |
-| `featured` | Solo productos destacados | `Product.featured` |
-| `by_slug(slug)` | Buscar por slug | `Product.by_slug('producto-1')` |
-| `sorted_by_position` | Ordenar por posición | `Product.sorted_by_position` |
-
----
-
-## 📊 Métodos Útiles
-
-### `low_stock?`
-
-Verifica si el producto está por debajo del stock mínimo.
-
-```ruby
-def low_stock?
-  return false if min_stock.nil? || min_stock.zero?
-  stock <= min_stock
-end
-```
-
-### `increment_view_count!`
-
-Incrementa el contador de vistas (salta validaciones).
-
-```ruby
-def increment_view_count!
-  increment!(:view_count)
-end
-```
-
-### `to_param`
-
-Devuelve el slug para URLs amigables.
-
-```ruby
-def to_param
-  slug.presence
-end
-```
-
----
-
-## 🔄 Flow de Creación/Edición
-
-### Crear Producto
-
-1. Acceder a `/admin/products/new`
-2. Completar formulario con código, nombre y precio
-3. Guardar producto
-4. Recibir notificación SweetAlert2
-5. Catálogo se actualiza en tiempo real vía Turbo Streams
-
-### Editar Producto
-
-1. Acceder a `/admin/products/:id/edit`
-2. Modificar campos necesarios
-3. Guardar cambios
-4. Notificación y actualización en tiempo real
-
-### Eliminar Producto
-
-1. Acceder a `/admin/products/:id`
-2. Hacer clic en "Eliminar"
-3. Confirmar eliminación (SweetAlert2)
-4. Soft delete (deleted_at se establece)
-5. Producto desaparece de la lista
-
----
-
-## 🎯 Búsqueda y Filtrado
-
-### Parámetros de Búsqueda
-
-```ruby
-# Búsqueda por texto
-GET /admin/products?search=coca
-
-# Filtro por estado
-GET /admin/products?status=active
-GET /admin/products?status=inactive
-
-# Filtro por destacado
-GET /admin/products?featured=true
-GET /admin/products?featured=false
-
-# Ordenar por columna
-GET /admin/products?sort=price&direction=asc
-GET /admin/products?sort=price&direction=desc
-
-# Paginación
-GET /admin/products?page=2&per_page=20
-```
-
-### Implementación del Filtro
-
-```ruby
-# app/controllers/admin/products_controller.rb
-def filter_scope(scope)
-  scope = apply_search_filter(scope)
-  scope = apply_featured_filter(scope)
-  apply_status_filter(scope)
-end
-
-def apply_search_filter(scope)
-  return scope if params[:search].blank?
-
-  scope.where(
-    'name ILIKE :q OR code ILIKE :q OR sku ILIKE :q OR barcode ILIKE :q',
-    q: "%#{params[:search]}%"
-  )
-end
-```
-
----
-
-## 🔴 Low Stock Alerts
-
-Los productos con stock por debajo del mínimo se marcan para alertas.
-
-```ruby
-# Uso en vistas
-<% if product.low_stock? %>
-  <span class="text-rose-600">Bajo stock</span>
-<% end %>
-```
-
----
-
-## 📈 Calculos Deuda
-
-```ruby
-# Utilidad bruta
-def gross_margin
-  return 0 if price.zero?
-  ((price - cost) / price * 100).round(2)
-end
-
-# Valor total en inventario
-def total_value
-  price * stock
-end
-```
-
----
-
-## 🔄 Broadcast Updates
-
-Los cambios en productos actualizan la lista en tiempo real:
-
-```ruby
-def broadcast_products_update
-  html = render_to_string(
-    partial: 'admin/products/list',
-    formats: [:html],
-    locals: { products: @products, total_count: @total_count, total_pages: @total_pages }
-  )
-  Turbo::StreamsChannel.broadcast_update_to(
-    'products_catalog',
-    target: 'admin_products_list',
-    html: html
-  )
-end
-```
-
----
-
-## 🧪 Tests
-
-```ruby
-# spec/models/product_spec.rb
-describe Product do
-  describe 'validations' do
-    it { should validate_presence_of(:code) }
-    it { should validate_presence_of(:name) }
-    it { should validate_numericality_of(:price).is_greater_than_or_equal_to(0) }
-  end
-
-  describe '#low_stock?' do
-    it 'returns false without min_stock' do
-      product = build(:product, min_stock: nil)
-      expect(product.low_stock?).to be false
-    end
-
-    it 'returns true when stock is low' do
-      product = build(:product, stock: 5, min_stock: 10)
-      expect(product.low_stock?).to be true
-    end
-  end
-end
-```
+El expediente de calidad con IDs estables está en [`docs/quality/modules/products.md`](../quality/modules/products.md). **No considerar el módulo verificado sin RSpec focalizado, navegador y GitHub Actions en el SHA final.**
