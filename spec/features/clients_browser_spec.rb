@@ -44,7 +44,7 @@ RSpec.describe 'Clients directory UX', type: :feature, js: true do
 
   scenario 'keeps filters accessible and the directory in a scroll container on mobile' do
     page.driver.browser.manage.window.resize_to(390, 844)
-    create(:client, name: 'Mobile client')
+    create(:client, organization:, name: 'Mobile client')
     visit admin_clients_path
     expect(page).to have_css('main h1', text: 'Customers')
     expect(page).to have_css('#clients-search')

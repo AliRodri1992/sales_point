@@ -2,9 +2,10 @@ require 'rails_helper'
 
 RSpec.describe 'Admin clients', type: :request do
   let(:user) { create(:user) }
+  let(:organization) { create(:organization) }
 
   before do
-    create(:organization_membership, user:)
+    create(:organization_membership, user:, organization:)
     role = create(:system_role, :system)
     create(:user_role, user:, system_role: role)
     GranularPermissionCatalog.sync!
@@ -27,7 +28,7 @@ RSpec.describe 'Admin clients', type: :request do
 
   describe 'GET /admin/clients' do
     it 'fetches phones once rather than once for each client', :n_plus_one do
-      create_list(:client, 11)
+      create_list(:client, 11, organization:)
       statements = recorded_sql_queries { get admin_clients_path }
 
       expect(response).to have_http_status(:ok)
@@ -35,8 +36,8 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'lists non-deleted clients' do
-      create(:client, name: 'Visible Client')
-      create(:client, :deleted, name: 'Deleted Client')
+      create(:client, organization:, name: 'Visible Client')
+      create(:client, organization:, :deleted, organization:, name: 'Deleted Client')
 
       get admin_clients_path
 
@@ -46,8 +47,8 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'filters clients by search term' do
-      matching = create(:client, name: 'Acme Retail')
-      create(:client, name: 'Other Business')
+      matching = create(:client, organization:, name: 'Acme Retail')
+      create(:client, organization:, name: 'Other Business')
 
       get admin_clients_path, params: { search: 'Acme' }
 
@@ -57,8 +58,8 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'filters clients by status' do
-      create(:client, name: 'Active Client', status: :active)
-      create(:client, name: 'Inactive Client', status: :inactive)
+      create(:client, organization:, name: 'Active Client', status: :active)
+      create(:client, organization:, name: 'Inactive Client', status: :inactive)
 
       get admin_clients_path, params: { status: 'inactive' }
 
@@ -68,8 +69,8 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'sorts clients by name' do
-      create(:client, name: 'Zulu Client')
-      create(:client, name: 'Alpha Client')
+      create(:client, organization:, name: 'Zulu Client')
+      create(:client, organization:, name: 'Alpha Client')
 
       get admin_clients_path, params: { sort: 'name', direction: 'asc' }
 
@@ -81,7 +82,7 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'paginates clients' do
-      create_list(:client, 11)
+      create_list(:client, 11, organization:)
 
       get admin_clients_path, params: { per_page: 5 }
 
@@ -106,9 +107,9 @@ RSpec.describe 'Admin clients', type: :request do
 
     it 'filters by credit, tax identifier and fiscal regime together' do
       regime = create(:sat_fiscal_regime)
-      create(:client, name: 'Matched Buyer', credit_limit: 120, sat_fiscal_regime: regime,
+      create(:client, organization:, name: 'Matched Buyer', credit_limit: 120, sat_fiscal_regime: regime,
                       rfc: 'XAXX010101001')
-      create(:client, name: 'No Credit Buyer', credit_limit: 0, sat_fiscal_regime: regime,
+      create(:client, organization:, name: 'No Credit Buyer', credit_limit: 0, sat_fiscal_regime: regime,
                       rfc: 'XAXX010101002')
       get admin_clients_path, params: {
         credit: 'yes', rfc: 'yes', sat_fiscal_regime_id: regime.id
@@ -119,7 +120,7 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'treats wildcard search as literal and does not accept arbitrary statuses' do
-      create(:client, name: 'Ordinary Buyer')
+      create(:client, organization:, name: 'Ordinary Buyer')
       get admin_clients_path, params: { search: '%' }
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(I18n.t('admin.clients.workspace.no_results'))
@@ -140,8 +141,8 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'keeps search and status filters grouped in SQL' do
-      create(:client, name: 'Matched Active', status: :active)
-      create(:client, name: 'Matched Inactive', status: :inactive)
+      create(:client, organization:, name: 'Matched Active', status: :active)
+      create(:client, organization:, name: 'Matched Inactive', status: :inactive)
       get admin_clients_path, params: { search: 'Matched', status: 'active' }
 
       expect(response).to have_http_status(:ok)
@@ -173,7 +174,7 @@ RSpec.describe 'Admin clients', type: :request do
 
     it 'preserves an archived fiscal regime on an existing customer edit' do
       regime = create(:sat_fiscal_regime, valid_from: 30.days.ago, valid_to: Date.tomorrow)
-      client = create(:client, sat_fiscal_regime: regime)
+      client = create(:client, organization:, sat_fiscal_regime: regime)
       regime.update!(valid_to: Date.yesterday)
       get edit_admin_client_path(client)
       expect(response).to have_http_status(:ok)
@@ -183,7 +184,7 @@ RSpec.describe 'Admin clients', type: :request do
 
   describe 'GET /admin/clients/:id' do
     it 'shows a client' do
-      client = create(:client, name: 'Customer Details')
+      client = create(:client, organization:, name: 'Customer Details')
 
       get admin_client_path(client)
 
@@ -193,7 +194,7 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'does not show deleted clients' do
-      client = create(:client, :deleted)
+      client = create(:client, organization:, :deleted)
 
       get admin_client_path(client)
 
@@ -241,7 +242,7 @@ RSpec.describe 'Admin clients', type: :request do
 
   describe 'PATCH /admin/clients/:id' do
     it 'updates a client' do
-      client = create(:client, name: 'Before Update')
+      client = create(:client, organization:, name: 'Before Update')
 
       patch admin_client_path(client), params: { client: { name: 'After Update' } }
 
@@ -283,7 +284,7 @@ RSpec.describe 'Admin clients', type: :request do
 
   describe 'UI elements' do
     it 'shows back button with arrow icon in show view' do
-      client = create(:client, name: 'Test Customer')
+      client = create(:client, organization:, name: 'Test Customer')
 
       get admin_client_path(client)
 

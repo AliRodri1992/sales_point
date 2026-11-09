@@ -20,6 +20,7 @@ class Organization < ApplicationRecord
   has_many :promotions, dependent: :restrict_with_exception
   has_many :price_change_events, dependent: :restrict_with_exception
   has_many :categories, dependent: :restrict_with_exception
+  has_many :clients, dependent: :restrict_with_exception
   has_many :units_of_measure, class_name: 'UnitOfMeasure', dependent: :restrict_with_exception
   has_many :products, dependent: :restrict_with_exception
   has_many :suppliers, dependent: :restrict_with_exception

@@ -7,6 +7,7 @@ module Admin
     include CatalogAuthorization
     include CatalogNavigation
 
+    before_action :require_organization
     before_action :set_client, only: %i[show edit update destroy]
 
     PER_PAGE = 10
@@ -20,7 +21,7 @@ module Admin
     def show; end
 
     def new
-      @client = Client.new
+      @client = current_organization.clients.new
       load_fiscal_regimes
     end
 
@@ -29,7 +30,7 @@ module Admin
     end
 
     def create
-      @client = Client.new(client_params)
+      @client = current_organization.clients.new(client_params)
       assign_phone_organization(@client)
 
       if @client.save
@@ -81,8 +82,16 @@ module Admin
 
     private
 
+    def require_organization
+      head :forbidden unless current_organization
+    end
+
+    def scoped_clients
+      current_organization.clients.not_deleted
+    end
+
     def set_client
-      @client = Client.not_deleted.includes(:sat_fiscal_regime, :phones).find(params[:id])
+      @client = scoped_clients.includes(:sat_fiscal_regime, :phones).find(params[:id])
     end
 
     def load_fiscal_regimes
@@ -108,7 +117,7 @@ module Admin
     end
 
     def load_clients
-      base = Client.not_deleted
+      base = scoped_clients
       @unfiltered_count = base.count
       @active_count = base.where(status: :active).count
       @credit_count = base.where('credit_limit > 0').count

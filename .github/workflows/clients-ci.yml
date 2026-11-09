@@ -16,6 +16,10 @@ on:
       - 'config/routes.rb'
       - 'spec/models/client_spec.rb'
       - 'spec/requests/admin/clients_spec.rb'
+      - 'spec/requests/admin/clients_tenant_spec.rb'
+      - 'lib/tasks/clients_ownership.rake'
+      - 'db/migrate/*scope_clients_to_organizations.rb'
+      - 'db/schema.rb'
       - 'spec/features/clients_browser_spec.rb'
       - 'docs/quality/modules/clients.md'
 
@@ -54,6 +58,8 @@ jobs:
             app/policies/client_policy.rb \
             spec/models/client_spec.rb \
             spec/requests/admin/clients_spec.rb \
+            spec/requests/admin/clients_tenant_spec.rb \
+            spec/requests/admin/clients_tenant_spec.rb \
             spec/features/clients_browser_spec.rb
 
   clients_specs:

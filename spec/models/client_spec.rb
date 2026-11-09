@@ -42,12 +42,12 @@ RSpec.describe Client, type: :model do
 
     it 'validates code uniqueness among non-deleted clients' do
       # Create an active client
-      create(:client, code: 'CLI-TEST-001')
+      create(:client, organization: client.organization, code: 'CLI-TEST-001')
 
       # Any new client with same code (active or soft-deleted) should fail
       # because validation checks against active clients only
-      expect(build(:client, code: 'CLI-TEST-001')).not_to be_valid
-      expect(build(:client, code: 'CLI-TEST-001', deleted_at: Time.current)).not_to be_valid
+      expect(build(:client, organization: client.organization, code: 'CLI-TEST-001')).not_to be_valid
+      expect(build(:client, organization: client.organization, code: 'CLI-TEST-001', deleted_at: Time.current)).not_to be_valid
     end
 
     it 'allows reusing code after client is soft-deleted' do
@@ -56,15 +56,28 @@ RSpec.describe Client, type: :model do
       client.update!(deleted_at: Time.current)
 
       # Now we can create a new client with same code
-      new_client = build(:client, code: 'CLI-TEST-002')
+      new_client = build(:client, organization: client.organization, code: 'CLI-TEST-002')
       expect(new_client).to be_valid
     end
 
     it 'validates RFC uniqueness among non-deleted clients' do
-      create(:client, rfc: 'XAXX010101001')
+      create(:client, organization: client.organization, rfc: 'XAXX010101001')
 
-      duplicate = build(:client, rfc: 'XAXX010101001')
+      duplicate = build(:client, organization: client.organization, rfc: 'XAXX010101001')
       expect(duplicate).not_to be_valid
+    end
+  end
+
+  describe 'tenant ownership' do
+    it 'requires an organization for new client records' do
+      expect(build(:client, organization: nil)).not_to be_valid
+    end
+
+    it 'allows the same code and RFC across distinct organizations' do
+      existing = create(:client, code: 'CLI-TENANT', rfc: 'XAXX010101995')
+      other = build(:client, code: 'CLI-TENANT', rfc: 'XAXX010101995')
+      expect(other.organization).not_to eq(existing.organization)
+      expect(other).to be_valid
     end
   end
 
@@ -74,7 +87,7 @@ RSpec.describe Client, type: :model do
       client.name = '  Cliente Demo  '
       client.email = '  CLIENTE@EXAMPLE.COM  '
       mobile = client.phones.build(number: ' 5555555555 ', kind: 'mobile', primary: true,
-                                   organization: create(:organization))
+                                   organization: client.organization)
       client.rfc = ' xaxx010101001 '
       client.postal_code = ' 06000 '
       client.notes = '  Nota  '

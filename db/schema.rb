@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_130100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_130200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -162,14 +162,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_130100) do
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "organization_id"
     t.index ["code"], name: "idx_clients_code_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
-    t.index ["code"], name: "index_clients_on_code", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["code"], name: "idx_clients_unassigned_code", unique: true, where: "((deleted_at IS NULL) AND (organization_id IS NULL))"
+    t.index ["organization_id", "code"], name: "idx_clients_org_code_active", unique: true, where: "((deleted_at IS NULL) AND (organization_id IS NOT NULL))"
+    t.index ["organization_id", "created_at"], name: "idx_clients_org_created_at"
+    t.index ["organization_id", "rfc"], name: "idx_clients_org_rfc_active", unique: true, where: "((deleted_at IS NULL) AND (organization_id IS NOT NULL) AND (rfc IS NOT NULL) AND ((rfc)::text <> ''::text))"
+    t.index ["organization_id", "status", "deleted_at"], name: "idx_clients_org_status"
+    t.index ["rfc"], name: "idx_clients_unassigned_rfc", unique: true, where: "((deleted_at IS NULL) AND (organization_id IS NULL) AND (rfc IS NOT NULL) AND ((rfc)::text <> ''::text))"
     t.index ["deleted_at"], name: "index_clients_on_deleted_at"
     t.index ["email"], name: "idx_clients_email_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["email"], name: "index_clients_on_email"
     t.index ["name"], name: "idx_clients_name_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
     t.index ["rfc"], name: "idx_clients_rfc_trgm", opclass: :gin_trgm_ops, where: "(deleted_at IS NULL)", using: :gin
-    t.index ["rfc"], name: "index_clients_on_rfc", unique: true, where: "((rfc IS NOT NULL) AND ((rfc)::text <> ''::text) AND (deleted_at IS NULL))"
     t.index ["sat_fiscal_regime_id"], name: "index_clients_on_sat_fiscal_regime_id"
     t.index ["status"], name: "index_clients_on_status"
     t.check_constraint "code::text = btrim(code::text) AND code::text <> ''::text AND code::text ~ '^[A-Za-z0-9_-]+$'::text", name: "chk_clients_code_format"
@@ -2496,6 +2501,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_130100) do
   add_foreign_key "branch_status_transitions", "branches"
   add_foreign_key "branch_status_transitions", "users", column: "changed_by_id"
   add_foreign_key "branches", "organizations"
+  add_foreign_key "clients", "organizations"
   add_foreign_key "clients", "sat_fiscal_regimes"
   add_foreign_key "conversation_participants", "conversations"
   add_foreign_key "conversation_participants", "users"

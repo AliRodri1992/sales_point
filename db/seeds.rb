@@ -649,12 +649,13 @@ end
 
 # Deterministic examples avoid Faker collisions and invalid phone/address data.
 SeedConsole.track('Clientes', Client) do
+  organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
   30.times do |index|
     number = index + 1
     code = format('CLI%04d', number)
-    next if Client.unscoped.exists?(code:)
+    next if organization.clients.exists?(code:)
 
-    Client.create!(
+    organization.clients.create!(
       code:,
       name: "Cliente de ejemplo #{number}",
       email: "cliente#{number}@example.com",
@@ -664,7 +665,7 @@ SeedConsole.track('Clientes', Client) do
           country_code: 'MX',
           kind: 'mobile',
           primary: true,
-          organization: Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+          organization:
         }
       ],
       rfc: format('CDE260101%03d', number),

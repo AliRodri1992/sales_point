@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :client do
+    association :organization
     sequence(:code) { |n| format('CLI-%04d', n) }
     sequence(:name) { |n| "Cliente #{n}" }
     sequence(:email) { |n| "cliente#{n}@example.com" }
