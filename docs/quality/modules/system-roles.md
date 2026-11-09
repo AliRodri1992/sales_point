@@ -1,13 +1,47 @@
 # Registro de calidad — Roles y permisos
 
 **Módulo y ruta principal:** Roles y permisos — `/system_roles`  
-**Estado:** ADECUACIONES IMPLEMENTADAS Y CI DEL MÓDULO VERDE · PENDIENTE CI GLOBAL Y REVISIÓN INDEPENDIENTE · NO CERRADO.  
+**Estado:** REAUDITADO 2026-11-09 · CI FOCALIZADO VERDE · 001 REABIERTO · 011–013 NUEVOS · NO CERRADO.  
 **Fecha de auditoría:** 2026-11-08 (America/Mexico_City).  
 **Rama:** `feature/fixes`. **SHA de partida/auditado:** `8974fee011f9422066985a0ab088ed2d771e1c8a`.  
 **SHA de aceptación:** PENDIENTE. **Responsable/revisor independiente:** PENDIENTE.  
 **Método:** AI Dev Suite — Ponytail Engineering, Impeccable, UI UX Pro Max. Inspección real de código por GitHub; no se ejecutó el detector CLI de terceros.
 
 > Este registro es la fuente de verdad de hallazgos del módulo. Lo observado en el código se distingue de las hipótesis y de pruebas pendientes. Un commit documental no equivale a una corrección ni al cierre de la auditoría. Conserva los IDs entre siguientes iteraciones.
+
+## Reauditoría de Roles y Permisos — 2026-11-09 · AI Dev Suite
+
+**Línea base:** `feature/fixes` SHA `d414ec7d6380dd75675836c05b501391c010365f` (código consultado en GitHub). **Método:** guía AI Dev Suite (Ponytail Engineering, Impeccable y UI UX Pro Max), comparación con el último expediente, examen de políticas, resolutores de permisos, rutas reales, servicios de transición, auditoría, componentes Stimulus/ERB y CI. **Alcance delimitado:** `/system_roles`, `SystemRoleStatusesController` y dependencias imprescindibles de acceso de Usuarios/organizaciones y catálogos. No se usó ningún CLI independiente de terceros ni un navegador conectado a localhost. **Esta sección prevalece sobre la declaración histórica de implementación anterior sin borrar sus evidencias.**
+
+### Baseline de CI de esta nueva iteración
+
+- **System Roles CI — verde en SHA `d414ec7`:** [ejecución 42609077100](https://github.com/AliRodri1992/sales_point/actions/runs/42609077100). RuboCop específico aprobado; base de datos desde migraciones aprobada; 115 ejemplos de roles/políticas/requests/servicios/navegador, 0 fallos; 3 ejemplos de repetibilidad de semillas, 0 fallos. **118 pruebas focalizadas aprobadas.**
+- **CI general — sin cierre:** [ejecución 42609077039](https://github.com/AliRodri1992/sales_point/actions/runs/42609077039). Migraciones y semillas, análisis de seguridad y traducciones aprobaron; RuboCop global falló con 32 ofensas en archivos no propios de Roles (Inventario, Onboarding, routes y scripts entre otros); job RSpec cancelado por avance concurrente de rama. No afirmar CI global verde.
+- **Comparativa desde la anterior auditoría (`3c562ae`) hasta `d414ec7`:** solo se modificaron `db/schema.rb` y la migración de nombre `20261110010100`, aparte de retirar un archivo `.bak` de esquema; no hay cambios de lógica del módulo. Las verificaciones previas sobre 001–010 permanecen válidas **para los escenarios que cubren**, pero la cobertura no garantiza ausencia de defectos diferentes.
+
+### Hallazgos abiertos y nueva evidencia
+
+| ID | Prioridad y estatus | Evidencia y riesgo | Prueba/adecuación que debe exigirse |
+|---|---|---|---|
+| **SYSTEM_ROLES-001** (reabierto, **no duplicado**) | **P1 · FRONTERA MULTIEMPRESA NO RESUELTA** | La política exige `super_admin` válido en la organización seleccionada, pero `SystemRolesController#set_system_role` obtiene un `SystemRole` global sin organización; las asociaciones `SystemRolePermission` también son globales y `UserEffectiveRoles` consume ese mismo rol en cualquier organización con asignación. **Por arquitectura**, un superadministrador habilitado solo en organización A puede editar permisos de un rol compartido y alterar el acceso de usuarios de organización B. Queda pendiente aclarar si `super_admin` representa administrador de plataforma o solo de una empresa. | Prueba de integración multiempresa: A/B, mismo rol compartido, superadmin exclusivamente en A, operación PATCH desde A, verificar acceso de B antes/después. Si la gestión de roles es de plataforma, exigir identidad/privilegio de plataforma explícito; si es por empresa, aislar definiciones/asignaciones o permisos por organización. **No debilitar las políticas actuales.** |
+| **SYSTEM_ROLES-011** (nuevo) | **P1 · HIPÓTESIS DE AUTORIZACIÓN SIN TENANT, PENDIENTE DE REPRODUCCIÓN** | `User#admin?` cuando `CurrentOrganizationAccess.organization` es `nil` consulta `user_roles.active` sin filtro de membresía; `UserEffectiveRoles#effective_role_assignments(organization: nil)` también omite comprobar membresías accesibles. `ApplicationController#enforce_active_account` comprueba estado de cuenta/sesión, no `organization_accessible?`; `CatalogPolicy` autoriza catálogos por `user.admin?` o permisos. Algunos controladores como `Admin::LanguagesController` y `Admin::CategoriesController` no tienen guardia propia que exija organización. **No se ha probado que Devise/Warden permita realmente la sesión bajo esta precondición**, por lo que no se afirma explotación. | Request con sesión existente, cuenta activa y rol previo, después suspensión/revocación de la última membresía, intentar `GET`/`POST` de catálogos y consultar `User#permission?` sin tenant. Denegar permisos ante ausencia de organización accesible o imponer identidad de plataforma diseñada expresamente; añadir cobertura de revocación de sesión. |
+| **SYSTEM_ROLES-012** (nuevo) | **P2 · CONFIRMADO EN LÓGICA POR INSPECCIÓN, FALTA PRUEBA DINÁMICA** | `SystemRoles::StatusReview` firma `StatusImpact#fingerprint`, pero ese fingerprint incluye asignaciones de otros roles y estados de sucursales, **no incluye permisos activos de roles alternativos ni el estado de membresías**. Cambiar permisos de otro rol o suspender su membresía puede variar `without_other_roles` sin invalidar el token previamente emitido. El cambio de estado puede confirmarse con una revisión de impacto desactualizada aunque se recalcule al guardar. | Crear token para desactivar rol A con alternativa efectiva B, retirar el permiso de B (o suspender membresía), verificar que el token anterior sea rechazado y se exija revisar el nuevo impacto. Incluir datos que afectan el impacto en fingerprint o usar versión/epoch de autorizaciones. |
+| **SYSTEM_ROLES-013** (nuevo) | **P2 · UX OBSERVADA EN CÓDIGO, PENDIENTE DE NAVEGADOR** | `role_permissions_controller.js#selectGroup` modifica solo filas visibles, pero `#refresh` marca `*.access` como dependencia incluso si su fila está oculta por la búsqueda. Así el rótulo **«Seleccionar visibles»** puede ocultar cambios automáticos en otros permisos; las pruebas con `suppliers.contacts.*` no ejercitan dependencias `languages/products/customers/users/categories`. La autoselección es necesaria para consistencia, pero requiere transparencia. | Prueba JS/browser: filtrar `languages.update` mientras `languages.access` queda oculto; seleccionar visibles; verificar autoasignación, contador, aviso accesible sobre dependencias añadidas, y persistencia; no permitir guardar un estado inválido o silencioso. |
+
+### Conservados de la última auditoría
+
+**SYSTEM_ROLES-002 a 010:** implementaciones existentes sin regresión demostrada en los 118 tests de la línea base. No se reabren por simple sospecha. **SYSTEM_ROLES-005/006** conservan pendiente revisión manual (teclado, lector de pantalla, zoom 200%, responsive e idiomas); **SYSTEM_ROLES-007** conserva pendiente validación de duplicados reales e índice de nombres sobre **BD histórica**. La nueva consulta sobre roles compartidos **reabre 001** porque su remedio previo limitó al actor pero no determinó inequívocamente el ámbito multiempresa.
+
+### Puerta de salida y prohibiciones
+
+1. Resolver diseño de privilegio global frente a organización, con aceptación explícita de negocio antes de modificar alcance de roles; probar multiempresa.
+2. Añadir regresiones negativas de sesión sin tenant y token de revisión obsoleto; aplicar corrección mínima tras reproducir. Refinar UX de la selección filtrada y ejecutar navegador real.
+3. Revalidar todos los 118 tests focalizados, migraciones, I18n, auditoría de seguridad y CI general en el mismo SHA. Respetar archivos de otros módulos y pushes simultáneos.
+4. **NO CERRAR**, **NO FUSIONAR** hasta CI global verde, revisión manual de accesibilidad y aceptación independiente.
+
+**Esta reauditoría es diagnóstica:** no se cambió código aplicativo ni se ejecutó una base de datos productiva. El expediente documenta la diferencia entre evidencia comprobada por lectura, hipótesis que requieren prueba y validaciones CI verdaderamente realizadas.
+
+---
 
 ## Adecuaciones y validación focalizada — 2026-11-08 (AI Dev Suite)
 
