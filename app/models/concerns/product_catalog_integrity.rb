@@ -20,7 +20,7 @@ module ProductCatalogIntegrity
   end
 
   def sku_available_among_variants
-    persisted = ProductVariant.where(organization_id:).where('lower(sku) = lower(?)', sku).exists?
+    persisted = ProductVariant.where(organization_id:).exists?(['lower(sku) = lower(?)', sku])
     nested = product_variants.any? do |variant|
       !variant.marked_for_destruction? && variant.sku.present? && variant.sku.casecmp?(sku)
     end
@@ -30,9 +30,8 @@ module ProductCatalogIntegrity
   def preserve_tracking_history
     inventory_scope = Inventory.with_deleted.where(organization_id:, product_id: id)
     used = inventory_scope.where.not(stock: 0).exists?
-    used ||= InventoryMovement.with_deleted.where(inventory_id: inventory_scope.select(:id)).exists?
-    used ||= InventoryLot.with_deleted.where(inventory_id: inventory_scope.select(:id)).exists?
+    used ||= InventoryMovement.with_deleted.exists?(inventory_id: inventory_scope.select(:id))
+    used ||= InventoryLot.with_deleted.exists?(inventory_id: inventory_scope.select(:id))
     errors.add(:tracking_mode, I18n.t('admin.catalog_design.tracking_mode_locked')) if used
   end
-
 end

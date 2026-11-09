@@ -34,9 +34,7 @@ module Admin
       scope = apply_featured_filter(scope)
       scope = apply_status_filter(scope)
       scope = scope.where(category_id: params[:category_id]) if params[:category_id].to_s.match?(/\A[1-9]\d*\z/)
-      if Product.tracking_modes.key?(params[:tracking_mode])
-        scope = scope.where(tracking_mode: params[:tracking_mode])
-      end
+      scope = scope.where(tracking_mode: params[:tracking_mode]) if Product.tracking_modes.key?(params[:tracking_mode])
       apply_stock_filter(apply_price_filter(scope))
     end
 
@@ -65,8 +63,8 @@ module Admin
     def apply_price_filter(scope)
       min_price = filter_price(params[:min_price])
       max_price = filter_price(params[:max_price])
-      scope = scope.where('products.price >= ?', min_price) if min_price
-      scope = scope.where('products.price <= ?', max_price) if max_price
+      scope = scope.where(products: { price: min_price.. }) if min_price
+      scope = scope.where(products: { price: ..max_price }) if max_price
       scope
     end
 
