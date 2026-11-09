@@ -86,7 +86,7 @@ jobs:
             app/controllers/admin/user_invitations_controller.rb \
             app/controllers/concerns/admin/user_form_setup.rb \
             app/controllers/concerns/admin/user_listing_sorting.rb \
-            app/models/user.rb app/models/user_role.rb app/models/user_invitation.rb \
+            app/models/user.rb app/models/user_role.rb app/models/organization_membership.rb app/models/user_invitation.rb \
             app/models/users_query.rb app/models/current_organization_access.rb \
             app/mailers/user_invitation_mailer.rb \
             app/policies/user_policy.rb \
@@ -94,7 +94,7 @@ jobs:
             app/models/concerns/user_admin_access_validations.rb \
             app/models/concerns/user_effective_roles.rb \
             app/services/users spec/services/users \
-            spec/models/user_spec.rb spec/models/user_*spec.rb spec/models/users_query_spec.rb \
+            spec/models/user_spec.rb spec/models/user_*spec.rb spec/models/organization_membership_spec.rb spec/models/users_query_spec.rb \
             spec/requests/admin/users*spec.rb spec/requests/admin/user_*spec.rb \
             spec/requests/admin/organization_selections_spec.rb \
             spec/requests/admin/granular_catalog_permissions_spec.rb \
