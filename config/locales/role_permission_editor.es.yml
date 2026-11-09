@@ -11,6 +11,8 @@ es:
         results: permisos encontrados
         no_results: No hay permisos que coincidan con tu búsqueda.
         empty: No hay permisos activos disponibles.
+        access_hint: 'Las acciones que requieren acceso al módulo seleccionan automáticamente el permiso Acceder.'
+        select_visible: 'Seleccionar visibles: %{module}'
         select_module: 'Seleccionar todo: %{module}'
         save_hint: Los cambios se aplican al guardar.
         saving: Guardando…
@@ -84,8 +86,16 @@ es:
           email_settings: Configuración de correo
           email_template_audits: Auditoría de correo
       form:
+        required_field: 'Campo obligatorio'
+        code_label: 'Código'
+        access_required: 'Las acciones elegidas requieren el permiso Acceder del mismo módulo.'
         invalid_permissions: La selección contiene permisos no disponibles. Revisa
           los permisos e intenta de nuevo.
+      permission_history:
+        title: 'Historial de cambios de permisos'
+        empty: 'Todavía no hay cambios de permisos registrados.'
+        added: 'Añadidos'
+        removed: 'Retirados'
       new:
         title: Nuevo rol
       permissions:

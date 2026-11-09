@@ -10,6 +10,8 @@ ko:
         results: 개 권한 검색됨
         no_results: 검색과 일치하는 권한이 없습니다.
         empty: 사용 가능한 활성 권한이 없습니다.
+        access_hint: '모듈 접근이 필요한 작업을 선택하면 접근 권한이 자동으로 선택됩니다.'
+        select_visible: '보이는 항목 선택: %{module}'
         select_module: '전체 선택: %{module}'
         save_hint: 저장하면 변경 사항이 적용됩니다.
         saving: 저장 중…
@@ -82,7 +84,15 @@ ko:
           email_settings: 이메일 설정
           email_template_audits: 이메일 감사
       form:
+        required_field: '필수 항목'
+        code_label: '코드'
+        access_required: '선택한 작업에는 같은 모듈의 접근 권한이 필요합니다.'
         invalid_permissions: 선택 항목에 사용할 수 없는 권한이 있습니다. 권한을 확인한 후 다시 시도하세요.
+      permission_history:
+        title: '권한 변경 이력'
+        empty: '아직 권한 변경 사항이 없습니다.'
+        added: '추가됨'
+        removed: '제거됨'
       new:
         title: 새 역할
       permissions:

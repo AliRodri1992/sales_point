@@ -17,6 +17,7 @@ ko:
         review: 변경 검토
         review_title: 상태 변경 검토
         reason: 변경 사유
+        confirmation_label: '확인'
         confirmation: 영향을 검토했으며 이 역할의 상태 변경을 확인합니다.
         confirm: 상태 변경 확인
         success: 역할 상태가 변경되었으며 변경 이력이 기록되었습니다.
@@ -47,7 +48,7 @@ ko:
         counts:
           users: 할당된 사용자
           branches: 직접 할당된 지점
-          without_other_roles: 다른 활성 역할이 없는 사용자
+          without_other_roles: 다른 유효한 역할이 없는 사용자
           permissions: 현재 권한
         errors:
           review_required: 상태 및 사용 가능 여부에서 영향을 검토하고 사유를 기록한 후 상태를 변경하세요.

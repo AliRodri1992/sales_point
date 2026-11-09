@@ -17,6 +17,7 @@ en:
         review: Review change
         review_title: Review status change
         reason: Reason for the change
+        confirmation_label: 'Confirmation'
         confirmation: I reviewed the impact and confirm this role status change.
         confirm: Confirm status change
         success: The role status was updated and the change was recorded in its history.
@@ -47,7 +48,7 @@ en:
         counts:
           users: Assigned users
           branches: Branches with direct assignments
-          without_other_roles: Users without another active role
+          without_other_roles: Users without another effective role
           permissions: Current permissions
         errors:
           review_required: Use Status and availability to review the impact and record a reason before changing status.

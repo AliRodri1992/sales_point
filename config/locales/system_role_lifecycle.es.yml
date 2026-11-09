@@ -17,6 +17,7 @@ es:
         review: Revisar cambio
         review_title: Revisar cambio de estado
         reason: Motivo del cambio
+        confirmation_label: 'Confirmación'
         confirmation: He revisado el impacto y confirmo el cambio de estado de este rol.
         confirm: Confirmar cambio de estado
         success: El estado del rol se actualizó y el cambio quedó registrado en el historial.
@@ -47,7 +48,7 @@ es:
         counts:
           users: Usuarios asignados
           branches: Sucursales con asignación directa
-          without_other_roles: Usuarios sin otro rol activo
+          without_other_roles: Usuarios sin otro rol efectivo
           permissions: Permisos vigentes
         errors:
           review_required: Cambia el estado desde Estado y disponibilidad para revisar el impacto y registrar un motivo.
