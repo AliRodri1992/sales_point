@@ -203,6 +203,13 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:unprocessable_content)
     document = Nokogiri::HTML(response.body)
     expect(document.at_css('#email_template_name_error')).to be_present
+    %w[name key].each do |attribute|
+      input = document.at_css("#email_template_#{attribute}")
+      expect(input['aria-invalid']).to eq('true')
+      expect(input['aria-describedby'].split).to include("email_template_#{attribute}_error")
+      expect(document.at_css("#email_template_#{attribute}_error")['role']).to eq('alert')
+    end
+    expect(document.at_css('#email_template_name')['aria-describedby'].split).to include('email-template-name-hint')
     expect(document.at_css('#email-template-errors-title')).to be_nil
   end
 
@@ -404,6 +411,19 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(template.audits.where(action: 'test_queued')).not_to exist
   end
 
+  it 'exposes recipient validation through the form control' do
+    template = create_template(organization:)
+    template.new_draft!(actor: administrator).publish!(actor: administrator)
+    post send_test_admin_email_template_path(template), params: { email: 'bad email' }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    field = document.at_css('input[name="email"]')
+    expect(field['aria-invalid']).to eq('true')
+    expect(field['aria-describedby'].split).to include('email_templates_test_recipient_email_error')
+    expect(document.at_css('#email_templates_test_recipient_email_error')).to be_present
+  end
+
   it 'shows version history and reuses the current editable draft' do
     template = create_template(organization:)
     get admin_email_template_path(template)
@@ -441,6 +461,26 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(response).to have_http_status(:conflict)
     expect(draft.reload.subject).to eq('Newer editor content')
     expect(Nokogiri::HTML(response.body).at_css('#email_template_version_subject_error')).to be_present
+  end
+
+  it 'links multiple model errors for a draft subject to the input' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+    patch draft_admin_email_template_path(template, version_id: draft.id), params: {
+      email_template_version: { subject: "Invalid\n" + ('a' * 260) }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    messages = document.css('[data-server-field-error][data-validation-attribute="subject"]')
+    expect(messages.size).to eq(2)
+    expect(messages.map { |node| node['id'] }).to eq(
+      %w[email_template_version_subject_error email_template_version_subject_error_2]
+    )
+    subject = document.at_css('#email_template_version_subject')
+    expect(subject['aria-invalid']).to eq('true')
+    expect(subject['aria-describedby'].split).to include(*messages.map { |node| node['id'] })
+    expect(draft.reload.subject).to eq('Order')
   end
 
   it 'keeps invalid draft changes out of storage' do

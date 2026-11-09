@@ -31,7 +31,7 @@
             <%= f.label :display_name, required_field_label(t('admin.email_templates.settings_fields.display_name')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
             <%= f.text_field :display_name, maxlength: 150, autocomplete: 'organization',
                              data: { email_branding_target: 'name', action: 'input->email-branding#updatePreview' },
-                             aria: { invalid: @branding.errors[:display_name].any? },
+                             aria: { invalid: @branding.errors[:display_name].any?, describedby: validation_describedby(@branding, :display_name) },
                              class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
             <%= error_message_for(@branding, :display_name, label: t('admin.email_templates.settings_fields.display_name')) %>
           </div>
@@ -61,7 +61,7 @@
                 <p class="mb-2 text-xs leading-5 text-slate-600"><%= t('admin.email_templates.branding_optional_logo_hint') %></p>
                 <%= f.file_field :logo, accept: 'image/png,image/jpeg,image/webp',
                                  data: { email_branding_target: 'logo', action: 'change->email-branding#logoChanged' },
-                                 aria: { describedby: 'branding-logo-guidance', invalid: @branding.errors[:logo].any? },
+                                 aria: { invalid: @branding.errors[:logo].any?, describedby: validation_describedby(@branding, :logo, 'branding-logo-guidance') },
                                  class: 'block w-full max-w-md cursor-pointer rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-emerald-50 file:px-3 file:py-1.5 file:font-semibold file:text-emerald-800' %>
                 <p id="branding-logo-guidance" class="mt-2 text-xs text-slate-500"><%= t('admin.email_templates.logo_hint') %></p>
                 <p class="mt-1 break-words text-xs text-slate-700" data-email-branding-target="logoName" aria-live="polite"></p>
@@ -92,13 +92,14 @@
               <%= f.label field, required_field_label(t("admin.email_templates.settings_fields.#{field}")), class: 'mb-1.5 block text-xs font-semibold text-slate-700' %>
               <div class="flex min-w-0 items-center gap-2">
                 <%= tag.input type: 'color', id: "branding-picker-#{field}", value: value.match?(/\A#[0-9a-fA-F]{6}\z/) ? value : '#047857',
-                              aria: { label: t('admin.email_templates.branding_pick_color', name: t("admin.email_templates.settings_fields.#{field}")) },
+                              aria: { label: t('admin.email_templates.branding_pick_color', name: t("admin.email_templates.settings_fields.#{field}")),
+                                       invalid: @branding.errors[field].any?, describedby: validation_describedby(@branding, field) },
                               data: { email_branding_target: 'picker', brand_color: field, action: 'input->email-branding#pickerChanged' },
                               class: 'size-11 shrink-0 cursor-pointer rounded-lg border border-slate-300 bg-white p-1' %>
                 <%= f.text_field field, maxlength: 7, placeholder: '#047857', spellcheck: false,
                                  pattern: '#[0-9a-fA-F]{6}', autocomplete: 'off',
                                  data: { email_branding_target: 'colorInput', brand_color: field, action: 'input->email-branding#colorChanged' },
-                                 aria: { invalid: @branding.errors[field].any? },
+                                 aria: { invalid: @branding.errors[field].any?, describedby: validation_describedby(@branding, field) },
                                  class: 'min-h-11 min-w-0 w-full rounded-xl border border-slate-300 px-2 font-mono text-xs uppercase text-slate-800 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
               </div>
               <%= error_message_for(@branding, field, label: t("admin.email_templates.settings_fields.#{field}")) %>
@@ -118,7 +119,7 @@
             <%= f.label :support_email, t('admin.email_templates.settings_fields.support_email'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
             <%= f.email_field :support_email, maxlength: 254, autocomplete: 'email',
                               data: { email_branding_target: 'supportEmail', action: 'input->email-branding#updatePreview' },
-                              aria: { invalid: @branding.errors[:support_email].any? },
+                              aria: { invalid: @branding.errors[:support_email].any?, describedby: validation_describedby(@branding, :support_email) },
                               class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
             <%= error_message_for(@branding, :support_email, label: t('admin.email_templates.settings_fields.support_email')) %>
           </div>
@@ -126,7 +127,7 @@
             <div class="min-w-0 <%= 'sm:col-span-2' if field == :privacy_url %>">
               <%= f.label field, t("admin.email_templates.settings_fields.#{field}"), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
               <%= f.url_field field, maxlength: 2048, inputmode: 'url', placeholder: 'https://',
-                              aria: { invalid: @branding.errors[field].any? },
+                              aria: { invalid: @branding.errors[field].any?, describedby: validation_describedby(@branding, field) },
                               class: 'min-h-11 w-full rounded-xl border border-slate-300 px-4 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
               <%= error_message_for(@branding, field, label: t("admin.email_templates.settings_fields.#{field}")) %>
             </div>
@@ -136,7 +137,7 @@
             <%= f.label :footer_text, t('admin.email_templates.settings_fields.footer_text'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
             <%= f.text_area :footer_text, rows: 3, maxlength: 2000,
                             data: { email_branding_target: 'footer', action: 'input->email-branding#updatePreview' },
-                            aria: { invalid: @branding.errors[:footer_text].any? },
+                            aria: { invalid: @branding.errors[:footer_text].any?, describedby: validation_describedby(@branding, :footer_text) },
                             class: 'min-h-28 w-full resize-y rounded-xl border border-slate-300 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
             <%= error_message_for(@branding, :footer_text, label: t('admin.email_templates.settings_fields.footer_text')) %>
           </div>

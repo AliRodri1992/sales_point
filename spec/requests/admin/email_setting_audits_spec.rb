@@ -260,6 +260,12 @@ RSpec.describe 'Email settings audit history', type: :request do
     end.not_to(change { administrator.notifications.count })
 
     expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    %w[button_color support_email support_url].each do |attribute|
+      field = document.at_css("#email_branding_setting_#{attribute}")
+      expect(field['aria-invalid']).to eq('true')
+      expect(field['aria-describedby'].split).to include("email_branding_setting_#{attribute}_error")
+    end
     expect(EmailSettingAudit.where(organization:, setting_type: 'branding')).to be_empty
     expect(EmailBrandingSetting.find_by(organization:)).to be_nil
   end
@@ -353,6 +359,9 @@ RSpec.describe 'Email settings audit history', type: :request do
     document = Nokogiri::HTML(response.body)
     %w[display_name from_address reply_to default_locale].each do |field|
       expect(document.at_css("#email_sender_setting_#{field}_error")).to be_present
+      input = document.at_css("#email_sender_setting_#{field}")
+      expect(input['aria-invalid']).to eq('true')
+      expect(input['aria-describedby'].split).to include("email_sender_setting_#{field}_error")
     end
     expect(EmailSenderSetting.find_by(organization:)).to be_nil
     expect(EmailSettingAudit.where(organization:, setting_type: 'sender')).to be_empty

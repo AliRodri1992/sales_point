@@ -106,7 +106,25 @@ RSpec.describe 'Email template creation workflow', type: :feature, js: true do
 
     expect(page).to have_css('#email_template_version_subject_error', text: /blank|empty/i)
     expect(page).to have_css('#email_template_version_subject[aria-invalid="true"]')
+    expect(page).to have_css('#email_template_version_subject[aria-describedby~="email_template_version_subject_error"]')
     expect(page).to have_no_css('[data-email-preview-field-error]')
+
+    find('#email_template_version_subject').set('Corrected without saving')
+    expect(page).to have_no_css('#email_template_version_subject_error')
+    expect(page).to have_css('#email_template_version_subject[aria-invalid="false"]')
+    expect(find('#email_template_version_subject')['aria-describedby'].to_s).not_to include('subject_error')
+    expect(template.versions.where(status: 'draft').first.reload.subject).to eq('Notice')
+
+    find('#email_template_version_subject').set('{{not_approved}}')
+    expect(page).to have_css('#email_template_version_allowed_variables_error[data-email-preview-field-error]', count: 1)
+    expect(page).to have_css('#email_template_version_allowed_variables_csv[aria-invalid="true"]')
+    expect(page).to have_css(
+      '#email_template_version_allowed_variables_csv[aria-describedby~="email_template_version_allowed_variables_error"]'
+    )
+    find('#email_template_version_subject').set('Corrected again')
+    expect(page).to have_no_css('#email_template_version_allowed_variables_error')
+    expect(page).to have_css('#email_template_version_allowed_variables_csv[aria-invalid="false"]')
+    expect(template.versions.where(status: 'draft').first.reload.subject).to eq('Notice')
   end
 
   scenario 'inserts an allowed placeholder into the draft HTML at the cursor' do

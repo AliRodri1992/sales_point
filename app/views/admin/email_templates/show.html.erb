@@ -263,7 +263,7 @@
               <div class="min-w-0">
                 <%= f.label :email, required_field_label(t('admin.email_templates.test_recipient')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
                 <%= f.email_field :email, maxlength: 254, autocomplete: 'email',
-                                  value: @test_recipient.email, aria: { invalid: @test_recipient.errors[:email].any? },
+                                  value: @test_recipient.email, aria: { invalid: @test_recipient.errors[:email].any?, describedby: validation_describedby(@test_recipient, :email) },
                                   readonly: !current_user.role?('super_admin'), placeholder: t('admin.email_templates.recipient_placeholder'),
                                   class: 'min-h-11 w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
                  <%= error_message_for(@test_recipient, :email, label: t('admin.email_templates.test_recipient')) %>

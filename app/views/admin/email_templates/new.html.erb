@@ -57,7 +57,7 @@
             <%= f.text_field :name, maxlength: 150, autocomplete: 'off',
                              placeholder: t('admin.email_templates.name_example'),
                              data: { email_template_identity_target: 'name', action: 'input->email-template-identity#nameChanged' },
-                             aria: { invalid: @template.errors[:name].any?, describedby: 'email-template-name-hint' },
+                             aria: { invalid: @template.errors[:name].any?, describedby: validation_describedby(@template, :name, 'email-template-name-hint') },
                              class: "min-h-12 w-full rounded-xl border px-4 py-2.5 text-sm text-slate-900 outline-none transition focus:ring-4 #{ @template.errors[:name].any? ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 bg-white focus:border-emerald-500 focus:ring-emerald-100' }" %>
             <p id="email-template-name-hint" class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.name_hint') %></p>
             <%= error_message_for(@template, :name, label: t('admin.email_templates.columns.name')) %>
@@ -71,7 +71,7 @@
                              title: t('admin.email_templates.key_hint'),
                              placeholder: t('admin.email_templates.key_example'),
                              data: { email_template_identity_target: 'key', action: 'input->email-template-identity#keyChanged' },
-                             aria: { invalid: @template.errors[:key].any?, describedby: 'email-template-key-hint' },
+                             aria: { invalid: @template.errors[:key].any?, describedby: validation_describedby(@template, :key, 'email-template-key-hint') },
                              class: "min-h-12 w-full rounded-xl border px-4 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:ring-4 #{ @template.errors[:key].any? ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500 focus:ring-rose-100' : 'border-slate-300 bg-white focus:border-emerald-500 focus:ring-emerald-100' }" %>
             <p id="email-template-key-hint" class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.key_hint') %></p>
             <%= error_message_for(@template, :key, label: t('admin.email_templates.columns.key')) %>
@@ -98,7 +98,7 @@
             <div data-controller="delta-select" data-searchable="false">
               <%= f.select :category, @categories.map { |category| [t("admin.email_templates.categories.#{category}", default: category.humanize), category] },
                            {}, data: { email_template_identity_target: 'category', action: 'change->email-template-identity#updateSummary' },
-                           aria: { invalid: @template.errors[:category].any?, describedby: 'email-template-category-hint' },
+                           aria: { invalid: @template.errors[:category].any?, describedby: validation_describedby(@template, :category, 'email-template-category-hint') },
                            class: 'min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
             </div>
             <p id="email-template-category-hint" class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.category_hint') %></p>
@@ -109,7 +109,7 @@
             <div data-controller="delta-select" data-searchable="false">
               <%= f.select :locale, %w[es en ko].map { |code| [t("admin.email_templates.languages.#{code}"), code] },
                            {}, data: { email_template_identity_target: 'locale', action: 'change->email-template-identity#updateSummary' },
-                           aria: { invalid: @template.errors[:locale].any? },
+                           aria: { invalid: @template.errors[:locale].any?, describedby: validation_describedby(@template, :locale, 'email-template-locale-hint') },
                            class: 'min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
             </div>
             <p id="email-template-locale-hint" class="mt-1.5 text-xs leading-5 text-slate-500"><%= t('admin.email_templates.automatic_locale_hint') %></p>

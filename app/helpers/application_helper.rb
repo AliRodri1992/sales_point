@@ -91,9 +91,9 @@ module ApplicationHelper
 
     safe_join(messages.each_with_index.map do |message, index|
       content_tag(:p, "#{name} #{message}",
-                  id: index.zero? ? "#{model}_#{attribute}_error" : nil,
-                  class: 'mt-1 text-xs text-rose-600',
-                  data: { server_field_error: true })
+                  id: index.zero? ? "#{model}_#{attribute}_error" : "#{model}_#{attribute}_error_#{index + 1}",
+                  role: 'alert', class: 'mt-1 text-xs text-rose-600',
+                  data: { server_field_error: true, validation_attribute: attribute })
     end)
   end
 

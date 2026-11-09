@@ -55,11 +55,9 @@ export default class extends Controller {
     this.request = request
     this.statusTarget.textContent = this.loadingValue
     this.statusTarget.classList.remove("text-rose-700")
-    this.clearErrors()
-
     try {
       const dataToPreview = new FormData(this.element)
-      // The editor saves with PATCH; the preview endpoint explicitly requires POST.
+      // Saving uses PATCH; preview is a POST and never persists the draft.
       dataToPreview.delete("_method")
       const response = await fetch(this.urlValue, {
         method: "POST",
@@ -71,12 +69,13 @@ export default class extends Controller {
         signal: request.signal
       })
       const data = await response.json().catch(() => ({}))
+      if (this.request !== request) return
       if (!response.ok || typeof data.html !== "string") {
-        if (this.request === request) this.showErrors(data.errors)
+        // Reconcile only when the server actually returned model validation errors.
+        if (data.errors) this.syncErrors(data.errors)
         throw new Error(data.error || this.errorValue)
       }
-      if (this.request !== request) return
-
+      this.syncErrors({})
       this.desktopTarget.srcdoc = data.html
       this.mobileTarget.srcdoc = data.html
       this.subjectTarget.textContent = data.subject || ""
@@ -84,7 +83,6 @@ export default class extends Controller {
       this.statusTarget.textContent = ""
     } catch (error) {
       if (error.name === "AbortError" || this.request !== request) return
-
       this.desktopTarget.srcdoc = ""
       this.mobileTarget.srcdoc = ""
       this.subjectTarget.textContent = ""
@@ -94,51 +92,63 @@ export default class extends Controller {
     }
   }
 
-  clearErrors() {
+  // Keep the original 422 feedback while the request is pending. Reuse matching
+  // server messages, replace changed ones, and clear stale errors on valid preview.
+  syncErrors(errors) {
     this.element.querySelectorAll("[data-email-preview-field-error]").forEach(node => node.remove())
-    this.element.querySelectorAll("[data-email-preview-invalid]").forEach(field => {
-      field.removeAttribute("data-email-preview-invalid")
-      field.setAttribute("aria-invalid", String(this.hasServerError(field)))
-      field.classList.remove("ring-1", "ring-rose-400")
-      if (field.dataset.emailPreviewOriginalDescribedby !== undefined) {
-        const original = field.dataset.emailPreviewOriginalDescribedby
-        if (original) field.setAttribute("aria-describedby", original)
-        else field.removeAttribute("aria-describedby")
-        delete field.dataset.emailPreviewOriginalDescribedby
+    this.element.querySelectorAll('[name^="email_template_version["]').forEach(field => {
+      const inputName = field.name.match(/^email_template_version\[([^\]]+)\]$/)?.[1]
+      if (!inputName || inputName === "lock_version") return
+      const attribute = inputName === "allowed_variables_csv" ? "allowed_variables" : inputName
+      const messages = Array.isArray(errors?.[attribute]) ? [...new Set(errors[attribute])] : []
+      const label = this.element.querySelector('label[for="' + field.id + '"]')
+      const title = (label?.textContent || attribute).replace("*", "").trim()
+      const existing = [...this.element.querySelectorAll("[data-server-field-error]")]
+        .filter(node => node.dataset.validationAttribute === attribute)
+      const expected = messages.map(message => (title + " " + message).trim())
+      const keepServer = existing.length > 0 && existing.length === expected.length &&
+        existing.every((node, index) => node.textContent.trim() === expected[index])
+      if (!keepServer) existing.forEach(node => node.remove())
+      // Retain hint descriptions, excluding IDs of removed errors.
+      const ids = new Set((field.getAttribute("aria-describedby") || "").split(/\s+/)
+        .filter(id => id && document.getElementById(id)))
+      if (messages.length) {
+        if (!keepServer) {
+          const prefix = field.id.replace(/_allowed_variables_csv$/, "_allowed_variables") + "_error"
+          let last = field
+          messages.forEach((message, index) => {
+            const node = document.createElement("p")
+            node.dataset.emailPreviewFieldError = "true"
+            node.id = index === 0 ? prefix : prefix + "_" + (index + 1)
+            node.setAttribute("role", "alert")
+            node.className = "mt-1 text-xs text-rose-700"
+            node.textContent = (title + " " + message).trim()
+            last.insertAdjacentElement("afterend", node)
+            last = node
+            ids.add(node.id)
+          })
+        }
+        field.setAttribute("aria-invalid", "true")
+        this.markInvalid(field)
+      } else {
+        field.setAttribute("aria-invalid", "false")
+        this.restoreValidStyle(field)
       }
+      if (ids.size) field.setAttribute("aria-describedby", [...ids].join(" "))
+      else field.removeAttribute("aria-describedby")
     })
   }
 
-  hasServerError(field) {
-    const id = field.id.replace("allowed_variables_csv", "allowed_variables")
-    return Boolean(this.element.querySelector(`#${id}_error[data-server-field-error]`))
+  markInvalid(field) {
+    field.classList.remove("border-slate-300", "border-slate-700", "focus:border-emerald-500", "focus:ring-emerald-100")
+    field.classList.add("border-rose-400", "focus:border-rose-500", "focus:ring-rose-100")
   }
 
-  showErrors(errors) {
-    if (!errors || typeof errors !== "object") return
-    Object.entries(errors).forEach(([attribute, messages]) => {
-      const name = attribute === "allowed_variables" ? "allowed_variables_csv" : attribute
-      const field = this.element.querySelector(`[name="email_template_version[${name}]"]`)
-      if (!field || !Array.isArray(messages) || !messages.length || this.hasServerError(field)) return
-
-      const unique = [...new Set(messages)]
-      const label = this.element.querySelector(`label[for="${field.id}"]`)
-      const title = (label?.textContent || name).replace("*", "").trim()
-      const descriptionIds = unique.map((message, index) => {
-        const node = document.createElement("p")
-        node.dataset.emailPreviewFieldError = "true"
-        node.id = `email-preview-error-${name}-${index}`
-        node.setAttribute("role", "alert")
-        node.className = "mt-1 text-xs text-rose-700"
-        node.textContent = `${title} ${message}`
-        field.insertAdjacentElement("afterend", node)
-        return node.id
-      })
-      field.dataset.emailPreviewOriginalDescribedby = field.getAttribute("aria-describedby") || ""
-      field.setAttribute("aria-describedby", [field.getAttribute("aria-describedby"), ...descriptionIds].filter(Boolean).join(" "))
-      field.setAttribute("aria-invalid", "true")
-      field.classList.add("ring-1", "ring-rose-400")
-      field.dataset.emailPreviewInvalid = "true"
-    })
+  restoreValidStyle(field) {
+    field.classList.remove("ring-1", "ring-rose-400", "border-rose-400", "bg-rose-50/40",
+      "focus:border-rose-500", "focus:ring-rose-100", "focus:ring-rose-200")
+    field.classList.add(field.id.endsWith("_html_body") ? "border-slate-700" : "border-slate-300",
+      "focus:border-emerald-500", "focus:ring-emerald-100")
+    if (field.id.endsWith("_text_body")) field.classList.add("bg-slate-50/60")
   }
 }
