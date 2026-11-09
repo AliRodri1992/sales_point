@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Translate < ApplicationRecord
-  CACHE_KEY = 'delta_pos:i18n:translations:revision'.freeze
+  CACHE_KEY = 'delta_pos:i18n:translations:revision'
 
   belongs_to :language, optional: true
 
@@ -115,14 +115,18 @@ class Translate < ApplicationRecord
   end
 
   def validate_uniqueness
-    if self.class.column_exists?(:language_id)
-      duplicates = Translate.where(key: key, language_id: language_id, deleted_at: nil)
-      duplicates = duplicates.where.not(id: id) if persisted?
-      errors.add(:key, 'already exists for this language') if duplicates.exists?
-    else
-      duplicates = Translate.where(key: key, locale: self[:locale])
-      duplicates = duplicates.where.not(id: id) if persisted?
-      errors.add(:key, 'already exists for this locale') if duplicates.exists?
-    end
+    return unless translation_duplicates.exists?
+
+    kind = self.class.column_exists?(:language_id) ? 'language' : 'locale'
+    errors.add(:key, "already exists for this #{kind}")
+  end
+
+  def translation_duplicates
+    relation = if self.class.column_exists?(:language_id)
+                 Translate.where(key: key, language_id: language_id, deleted_at: nil)
+               else
+                 Translate.where(key: key, locale: self[:locale])
+               end
+    persisted? ? relation.where.not(id: id) : relation
   end
 end

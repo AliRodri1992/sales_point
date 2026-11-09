@@ -24,8 +24,6 @@ class Language < ApplicationRecord
   validate :code_is_immutable, on: :update
   validate :protect_default_locale
 
-  after_commit :invalidate_translation_cache
-
   validates :flag_iso,
             presence: true,
             length: { is: 2 },
@@ -40,6 +38,7 @@ class Language < ApplicationRecord
 
   # New languages are active by default; only configured locales can be active.
   after_initialize :set_default_status, if: :new_record?
+  after_commit :invalidate_translation_cache
 
   scope :available, lambda {
     where(status: :active, deleted_at: nil)
