@@ -188,5 +188,34 @@
       "kind": "public",
       "record": "docs/quality/modules/public-pages.md"
     }
-  ]
+  ],
+  "admin_resource_owners": {
+    "email_templates": "email-templates",
+    "email_branding_settings": "email-templates",
+    "email_sender_settings": "email-templates",
+    "general_settings": "general-settings",
+    "languages": "languages",
+    "categories": "categories",
+    "product_images": "products",
+    "price_lists": "price-lists",
+    "promotions": "promotions",
+    "price_change_events": "price-lists",
+    "products": "products",
+    "clients": "clients",
+    "demo_requests": "demo-requests",
+    "branches": "branches",
+    "users": "users",
+    "profile": "profile",
+    "organization": "organization-contacts",
+    "purchase_requests": "purchases",
+    "purchase_quotations": "purchases",
+    "purchase_orders": "purchases",
+    "goods_receipts": "purchases",
+    "purchase_returns": "purchases",
+    "account_payables": "accounts-payable",
+    "supplier_invoices": "supplier-invoices",
+    "supplier_payments": "supplier-payments",
+    "supplier_credit_notes": "supplier-credit-notes",
+    "suppliers": "suppliers"
+  }
 }
