@@ -26,16 +26,19 @@ RSpec.describe 'Audited users access boundaries', type: :request do
     expect(administrator.reload).to be_admin
   end
 
-  it 'rejects global role changes for an account shared by two organizations' do
+  it 'updates local roles for a shared account without changing foreign organization grants' do
     target = add_member(create(:user, email: 'shared-global@example.com'))
-    add_member(target, organization: create(:organization))
-    role = create(:system_role, :system, code: 'shared_global_role')
+    foreign = create(:organization)
+    add_member(target, organization: foreign)
+    foreign_role = create(:system_role, :system, code: 'foreign_shared_role')
+    create(:user_role, user: target, system_role: foreign_role, organization: foreign)
+    local_role = create(:system_role, :system, code: 'shared_local_role')
 
-    patch admin_user_path(target), params: { user: { system_role_ids: ['', role.id.to_s] } }
+    patch admin_user_path(target), params: { user: { system_role_ids: ['', local_role.id.to_s] } }
 
-    expect(response).to have_http_status(:unprocessable_content)
-    expect(Nokogiri::HTML(response.body).at_css('#user_system_role_ids_error')).to be_present
-    expect(target.user_roles.active).to be_empty
+    expect(response).to redirect_to(admin_user_path(target))
+    expect(target.user_roles.active.where(organization: organization).pluck(:system_role_id)).to eq([local_role.id])
+    expect(target.user_roles.active.where(organization: foreign).pluck(:system_role_id)).to eq([foreign_role.id])
   end
 
   it 'rejects a global identity change for shared accounts' do
