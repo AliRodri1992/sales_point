@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Admin::Languages Diagnostic', type: :request do
   include Devise::Test::IntegrationHelpers
 
-  let!(:user) { create(:user, status: 'inactive') }
+  let!(:user) { create(:user, status: 'active') }
 
   before do
     permission_role = create(:system_role, :system)
