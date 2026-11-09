@@ -193,7 +193,7 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
   scenario 'hides retired terminals and retains the live register actions' do
     active_register = create(:terminal, branch: central, name: 'Active register', status: 'inactive')
     retired_register = create(:terminal, branch: central, name: 'Retired register', status: 'inactive')
-    retired_register.update_column(:deleted_at, Time.current)
+    retired_register.update!(deleted_at: Time.current)
 
     visit admin_branch_path(central)
 
