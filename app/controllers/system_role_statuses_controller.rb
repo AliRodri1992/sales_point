@@ -17,7 +17,7 @@ class SystemRoleStatusesController < ApplicationController
     ).call!
     redirect_to system_role_path(@system_role), flash: { swal_message: t('admin.system_roles.lifecycle.success') }
   rescue SystemRoles::StatusTransition::InvalidTransition, ActiveRecord::RecordInvalid => e
-    set_status_error(e)
+    assign_status_error(e)
     @system_role.reload
     prepare_review
     render 'system_roles/status_review', status: :unprocessable_content
@@ -25,7 +25,7 @@ class SystemRoleStatusesController < ApplicationController
 
   private
 
-  def set_status_error(error)
+  def assign_status_error(error)
     case error.respond_to?(:key) ? error.key : nil
     when :reason_required then @reason_error = error.message
     when :confirmation_required then @confirmation_error = error.message
