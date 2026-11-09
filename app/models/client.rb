@@ -33,6 +33,7 @@ class Client < ApplicationRecord
             allow_blank: true
 
   validates :credit_limit, numericality: { greater_than_or_equal_to: 0 }
+  validate :fiscal_regime_is_current, if: -> { sat_fiscal_regime_id.present? && (new_record? || will_save_change_to_sat_fiscal_regime_id?) }
   validates :notes, length: { maximum: 1000 }, allow_blank: true
 
   enum :status, { active: 'active', inactive: 'inactive' }, validate: true, default: :active
@@ -43,6 +44,12 @@ class Client < ApplicationRecord
   before_validation :normalize_fields
 
   private
+
+  def fiscal_regime_is_current
+    return if SatFiscalRegime.current.exists?(id: sat_fiscal_regime_id)
+
+    errors.add(:sat_fiscal_regime_id, :invalid)
+  end
 
   def normalize_fields
     normalize_contact_info

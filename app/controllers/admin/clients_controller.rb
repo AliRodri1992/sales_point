@@ -82,7 +82,9 @@ module Admin
     end
 
     def load_fiscal_regimes
-      @fiscal_regimes = SatFiscalRegime.current.order(:code)
+      @fiscal_regimes = SatFiscalRegime.current.order(:code).to_a
+      selected = @client&.sat_fiscal_regime
+      @fiscal_regimes.unshift(selected) if selected && @fiscal_regimes.exclude?(selected)
     end
 
     def client_params

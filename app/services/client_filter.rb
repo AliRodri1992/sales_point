@@ -35,11 +35,13 @@ class ClientFilter
 
     wildcard = "%#{Client.sanitize_sql_like(term)}%"
     scope.where(<<~SQL.squish, q: wildcard)
-      clients.code ILIKE :q OR clients.name ILIKE :q OR clients.email ILIKE :q
-      OR clients.rfc ILIKE :q OR EXISTS (
-        SELECT 1 FROM phones
-        WHERE phones.phoneable_type = 'Client' AND phones.phoneable_id = clients.id
-          AND phones.deleted_at IS NULL AND phones.number ILIKE :q
+      (
+        clients.code ILIKE :q OR clients.name ILIKE :q OR clients.email ILIKE :q
+        OR clients.rfc ILIKE :q OR EXISTS (
+          SELECT 1 FROM phones
+          WHERE phones.phoneable_type = 'Client' AND phones.phoneable_id = clients.id
+            AND phones.deleted_at IS NULL AND phones.number ILIKE :q
+        )
       )
     SQL
   end
