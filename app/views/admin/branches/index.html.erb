@@ -22,6 +22,7 @@
       <%= t('admin.branch_workspace.request_error') %>
       <button type="button" class="ml-2 font-semibold underline" data-action="branch-directory#retry"><%= t('admin.skeleton_loading.retry') %></button>
     </div>
+    <div id="branch-results-announcement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="branch-loading-line" aria-hidden="true"></div>
     <div class="branch-loading-skeleton" data-branch-directory-target="loading"
          role="status" aria-live="polite" hidden>

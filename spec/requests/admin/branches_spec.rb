@@ -451,7 +451,11 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(forms.size).to eq(1)
       expect(forms.first['data-controller']).to include('branch-transition')
       expect(forms.first.at_css('select[name="to_status"]')).to be_present
-      expect(forms.first.css('input[name="reason"]').size).to eq(1)
+      reason = forms.first.at_css('textarea[name="reason"]')
+      expect(reason).to be_present
+      expect(reason['maxlength']).to eq('2000')
+      expect(reason['rows']).to eq('4')
+      expect(forms.first.at_css('input[name="reason"]')).to be_nil
       expect(forms.first.at_css('select[name="to_status"]')['aria-describedby'])
         .to include('branch-transition-availability')
     end
@@ -597,6 +601,23 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response.body).to include(I18n.t('admin.branch_lifecycle.errors.reason_required'))
       expect(office.reload).to be_active
       expect(office.branch_status_transitions.count).to eq(1)
+    end
+
+    it 'retains an overlong reason and shows its model error directly under the textarea' do
+      office = create(:branch, organization:, name: 'Operational Branch')
+      attempted_reason = 'A' * 2001
+
+      patch transition_status_admin_branch_path(office),
+            params: { to_status: 'suspended', reason: attempted_reason }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      textarea = document.at_css('textarea[name="reason"]')
+      expect(textarea.text).to eq(attempted_reason)
+      expect(textarea['aria-invalid']).to eq('true')
+      expect(textarea['aria-describedby']).to include('branch-transition-reason-error')
+      expect(document.at_css('#branch-transition-reason-error')).to be_present
+      expect(office.reload).to be_active
     end
 
     it 'suspends a branch and records the actor and reason' do

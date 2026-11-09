@@ -134,7 +134,8 @@ RSpec.describe 'Branch directory and workspace', type: :request do
         headers: { 'Accept' => 'text/vnd.turbo-stream.html', 'X-Branch-Locations' => '1' }
     expect(response.media_type).to eq('text/vnd.turbo-stream.html')
     expect(response.body).to include('target="branches_list"', 'target="branch-filter-badges"',
-                                     'target="branch-filter-state"', 'target="branch-filter-city"')
+                                     'target="branch-filter-state"', 'target="branch-filter-city"',
+                                     'target="branch-results-announcement"')
   end
 
   it 'preserves directory context in view, edit, cancel and successful update links' do

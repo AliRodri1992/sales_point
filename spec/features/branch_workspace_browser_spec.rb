@@ -63,16 +63,23 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
     visit admin_branches_path
 
     results_heading = find('#branches-result-title')
-    expect(results_heading['role']).to eq('status')
-    expect(results_heading['aria-live']).to eq('polite')
-    expect(results_heading['aria-atomic']).to eq('true')
+    expect(results_heading.tag_name).to eq('h2')
+    expect(results_heading['role']).to be_nil
+
+    announcement = find('#branch-results-announcement', visible: :all)
+    expect(announcement['role']).to eq('status')
+    expect(announcement['aria-live']).to eq('polite')
+    expect(announcement['aria-atomic']).to eq('true')
+    expect(announcement.text(:all)).to be_empty
 
     fill_in 'branch-search', with: 'North'
     within('#branches_list') do
       expect(page).to have_link(north.name, exact: true)
       expect(page).to have_no_link(central.name, exact: true)
     end
-    expect(page).to have_css('#branches-result-title[role="status"][aria-live="polite"][aria-atomic="true"]')
+    expect(page).to have_css('#branch-results-announcement', text: '1', visible: :all)
+    expect(find('#branch-results-announcement', visible: :all).text(:all))
+      .to eq(find('#branches-result-title').text)
     expect(find('#branches-result-title').text).to include('1')
     expect(page).to have_css('#branch-search:focus')
   end
@@ -181,6 +188,19 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
     expect(page).to have_no_css('#branch-filter-badges [data-filter-key="state"]')
     expect(page).to have_no_css('#branch-filter-badges [data-filter-key="city"]')
     within('#branches_list') { expect(page).to have_link(office.name, exact: true) }
+  end
+
+  scenario 'supports long operational reasons on a narrow detail screen' do
+    page.current_window.resize_to(390, 844)
+    visit admin_branch_path(central)
+
+    reason = find('textarea[name="reason"]')
+    expect(reason['maxlength']).to eq('2000')
+    expect(reason['rows']).to eq('4')
+    explanation = 'Temporary closure for maintenance and safety checks. ' * 6
+    reason.set(explanation)
+    expect(reason.value).to eq(explanation)
+    expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
   end
 
   scenario 'shows branch details without mobile overflow and keeps section navigation usable' do

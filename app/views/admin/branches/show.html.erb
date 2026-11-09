@@ -148,12 +148,12 @@
             <%= transition_form.label :reason,
                                       branch_required_label(t('admin.branch_lifecycle.reason')),
                                       class: 'catalog-label' %>
-            <%= transition_form.text_field :reason, maxlength: 2000, autocomplete: 'off',
+            <%= transition_form.text_area :reason, maxlength: 2000, rows: 4, autocomplete: 'off',
                             value: @transition_reason,
                             aria: { invalid: %w[reason_required reason_too_long].include?(@transition_error_code),
                                     describedby: (%w[reason_required reason_too_long].include?(@transition_error_code) ?
                                                     'branch-transition-reason-error' : nil) },
-                            class: 'w-full rounded-xl border border-slate-200 px-3 py-2 text-sm' %>
+                            class: 'min-h-28 w-full resize-y rounded-xl border border-slate-200 px-3 py-2 text-sm leading-relaxed' %>
             <% if %w[reason_required reason_too_long].include?(@transition_error_code) %>
               <p id="branch-transition-reason-error" class="mt-1 text-xs text-rose-700" role="alert">
                 <%= t('admin.branch_lifecycle.reason') %> <%= @transition_error %>

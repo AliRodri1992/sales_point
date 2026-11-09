@@ -4,3 +4,5 @@
   <%= turbo_stream.update 'branch-filter-state' do %><%= options_for_select([[t('admin.branch_workspace.any_state'), ''], *@branch_states.map { |value| [value, value] }], @branch_filters['state']) %><% end %>
   <%= turbo_stream.update 'branch-filter-city' do %><%= options_for_select([[t('admin.branch_workspace.any_city'), ''], *@branch_cities.map { |value| [value, value] }], @branch_filters['city']) %><% end %>
 <% end %>
+
+<%= turbo_stream.update 'branch-results-announcement' do %><%= t('admin.branch_workspace.results', count: @total_count) %><% end %>
