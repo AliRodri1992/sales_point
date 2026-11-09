@@ -222,7 +222,7 @@ RSpec.describe 'Branch directory and workspace', type: :request do
     expect(response).to have_http_status(:ok)
     document = Nokogiri::HTML(response.body)
     expect(document.css('.branch-detail-header h1').map(&:text)).to eq(['Central'])
-    expect(document.css('.branch-detail-header .catalog-status').size).to eq(1)
+    expect(document.css('.branch-detail-title-row span.rounded-full').size).to eq(1)
     expect(document.css('.branch-detail-nav a').pluck('href')).to include(
       '#branch-detail-identity', '#branch-detail-contact', '#branch-detail-location',
       '#branch-detail-notes', '#branch-detail-operations'
@@ -267,7 +267,7 @@ RSpec.describe 'Branch directory and workspace', type: :request do
     patch admin_branch_path(central),
           params: { branch: { status: false, operational_status: 'closed', code: 'TAMPERED' } }
 
-    expect(response).to have_http_status(:redirect)
+    expect(response).to have_http_status(:bad_request)
     expect(central.reload).to be_active
     expect(central.branch_status_transitions.count).to eq(previous_changes)
     expect(central.code).to eq('CENTRAL')

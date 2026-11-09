@@ -31,8 +31,11 @@ module Branches
     end
 
     def call
-      branch.organization.with_lock do
-        branch.with_lock do
+      branch.with_lock do
+        # Inventory movements and branch role assignments also lock the branch first.
+        # Keep the organization lock for last-active-branch serialization, but
+        # acquire it second to prevent branch/organization lock inversion.
+        branch.organization.with_lock do
           check_permission!
           check_transition!
           check_readiness!

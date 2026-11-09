@@ -192,3 +192,12 @@ Los errores de otros módulos continúan identificados como EXTERNOS. Los IDs `B
 - **BR-004:** corregidos specs de desactivación para que usen la ruta autorizada `transition_status`, prueben restricciones de personal/terminal y mantengan el estado del registro; la manipulación de estado vía `PATCH /admin/branches/:id` se verifica como ignorada.
 - **BR-005:** creado `.github/workflows/branches-ci.yml` para RuboCop focalizado y RSpec de modelo, servicios, requests y navegador Chrome, independiente del CI global. **No se declara PASÓ hasta revisar los jobs del SHA exacto.**
 - **Estado:** IMPLEMENTADO, PENDIENTE DE VERIFICACIÓN POR ACTIONS. Sin merge; fallos de dominios ajenos se conservan como EXTERNOS.
+
+
+### Resultado de Branches CI y segunda corrección
+
+- **Commit de primera ejecución:** `bacf2da050a8821e2cb9925f7df3f97ff0898c1c` (https://github.com/AliRodri1992/sales_point/actions/runs/42559852438).
+- **Branches module RuboCop:** APROBADO.
+- **RSpec focalizado con navegador:** **129 ejemplos; 6 fallos**. Fallos localizados en `branch_workspace_spec` (badge y tampering), navegación de ancla del detalle (Chrome), bloqueo concurrente Branch/Organization (deadlock PostgreSQL), fixture de eliminación incompatible con transición obligatoria, y ausencia de retiro en historial de Phone/Note.
+- **Adecuaciones:** la prueba de badge se ajusta al diseño actual, las peticiones solo con atributos prohibidos se esperan como 400, los enlaces de secciones evitan interceptación Turbo, el orden de locks de `Branches::TransitionStatus` es Branch → Organization (conservando bloqueo global), el fixture realiza soft delete de sucursal `preparing` sin asignaciones inválidas. Para BR-004, las pruebas comprueban explícitamente que PaperTrail registre actualizaciones de Phone/Note, facilitando la identificación de la causa de historial.
+- **Estado:** FIX IMPLEMENTADO; segunda ejecución de Branches CI todavía **NO VERIFICADA**. No se considera cerrado ninguno de los IDs pendientes hasta revisión del SHA exacto. Fallos externos al módulo permanecen fuera de esta corrección.

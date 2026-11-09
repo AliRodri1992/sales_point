@@ -420,6 +420,9 @@ RSpec.describe 'Admin::Branches', type: :request do
       phone.update!(deleted_at: Time.current)
       note.update!(deleted_at: Time.current)
 
+      expect(PaperTrail::Version.where(item_type: 'Phone', item_id: phone.id).pluck(:event)).to include('update')
+      expect(PaperTrail::Version.where(item_type: 'Note', item_id: note.id).pluck(:event)).to include('update')
+
       get admin_branch_path(branch)
 
       expect(response).to have_http_status(:ok)

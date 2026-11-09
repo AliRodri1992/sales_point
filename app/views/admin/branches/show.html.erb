@@ -43,12 +43,12 @@
   </header>
 
   <nav class="catalog-nav branch-detail-nav" aria-label="<%= t('admin.catalog_design.sections') %>">
-    <%= link_to t('admin.branch_lifecycle.title'), '#branch-detail-lifecycle' %>
+    <%= link_to t('admin.branch_lifecycle.title'), '#branch-detail-lifecycle', data: { turbo: false } %>
     <% %w[identity contact location notes].each do |section| %>
-      <%= link_to t("admin.branch_workspace.#{section}"), "#branch-detail-#{section}" %>
+      <%= link_to t("admin.branch_workspace.#{section}"), "#branch-detail-#{section}", data: { turbo: false } %>
     <% end %>
     <% if @branch_operation_counts %>
-      <%= link_to t('admin.branch_workspace.operations'), '#branch-detail-operations' %>
+      <%= link_to t('admin.branch_workspace.operations'), '#branch-detail-operations', data: { turbo: false } %>
     <% end %>
   </nav>
 
