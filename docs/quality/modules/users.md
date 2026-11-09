@@ -96,6 +96,14 @@
 - **USERS-011:** cinco KPI conservados; sin evidencia de que deban eliminarse.
 - **CI general:** [run 42559988289](https://github.com/AliRodri1992/sales_point/actions/runs/42559988289) para `be216f79` estaba en cola al consultarse. No adjudicar resultados de commits anteriores a ese SHA ni cerrar antes del CI global verde.
 
+### Implementación de USERS-002 y USERS-014 — 2026-11-08
+
+- **USERS-014 · IMPLEMENTADO, VALIDACIÓN FINAL PENDIENTE:** `user_deactivation_controller.js` ahora distingue un `422` (motivo inválido) de errores de permisos, red o servidor. Estos últimos muestran un aviso de operación en un elemento con `role="alert"` y foco, sin marcar falsamente el textarea. Textos traducidos en `users_ui.{es,en,ko}.yml`; regresión de respuesta `403` añadida en `admin_users_experience_spec.rb`.
+- **USERS-002 · IMPLEMENTADO EN CÓDIGO, CI PENDIENTE:** nueva migración `20261110040000_scope_user_roles_by_organization.rb` agrega `organization_id`, actualiza las asignaciones de sucursal según su organización y replica las asignaciones de sistema existentes a las membresías históricas **al migrar**. Los roles de sistema nuevos quedan asociados exclusivamente a su empresa actual, sin propagarse a membresías añadidas después. Se actualizaron `UserRole`, `OrganizationMembership`, `UserEffectiveRoles`, `User#admin?`, `UserPolicy`, writer/validaciones/guardias, búsqueda, vistas de Roles, protecciones del último administrador y restauración. Se añadieron regresiones de aislamiento, concesión independiente y revocación local. **El cumplimiento integral depende de CI especializado y pruebas de migración**; no marcar cerrado aún.
+- **Datos existentes:** el backfill preserva el alcance efectivo anterior de las asignaciones en las empresas en que ya existía membresía. Requiere revisión de los administradores multiempresa existentes, ya que su permiso histórico se mantiene inicialmente en más de una empresa. No se ejecutó `db:drop` ni se alteró la base del equipo; no se requiere borrarla para ejecutar esta migración.
+- **Foco de esta entrega:** aislamiento dentro del módulo Usuarios y contratos directos. No certifica todas las consultas de roles de otros módulos ni las verificaciones manuales de contraste, zoom 200 % y lectores de pantalla.
+- **CI:** los primeros runs fallaron por timestamp futuro de migración, `NULL` SQL sin tipo en `branch_id` e infracciones RuboCop; se corrigieron. El run de aceptación debe evaluarse sobre la versión final, no los commits intermedios.
+
 ## 4. Matriz de aceptación por pantalla
 
 | Pantalla / flujo | Servidor, autorización y datos | UX y errores | Evidencia aún exigida |
