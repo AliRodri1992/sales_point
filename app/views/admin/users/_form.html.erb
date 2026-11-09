@@ -175,7 +175,10 @@
         </div>
       </section>
 
-      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-branches-title">
+      <section class="rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="users-branches-title"
+               <% if @user.errors[:branch_role_assignments].any? %>
+                 data-user-access-error-group tabindex="-1" aria-describedby="user_branch_role_assignments_error"
+               <% end %>>
         <header class="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6">
           <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700"><%= delta_icon('building-storefront', class: 'size-6') %></span>
           <div>
