@@ -166,7 +166,8 @@ RSpec.describe 'Admin::UnitsOfMeasure', type: :request do
 
     get edit_admin_unit_of_measure_path(unit), headers: { 'Turbo-Frame' => 'unit_of_measure_modal' }
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include('unit_of_measure_modal', 'unit-measure-modal-title',
-                                    I18n.t('admin.units_of_measure.sat.invalid_hint'))
+    expect(response.body).to include('unit_of_measure_modal')
+    expect(response.body).to include('unit-measure-modal-title')
+    expect(response.body).to include(I18n.t('admin.units_of_measure.sat.invalid_hint'))
   end
 end
