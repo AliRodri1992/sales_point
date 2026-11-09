@@ -70,11 +70,16 @@ class EmailTemplateVersion < ApplicationRecord
   end
 
   def declared_variables
+    fields = %i[subject preheader html_body text_body]
+    fields.each do |field|
+      errors.add(field, :invalid) if EmailTemplates::Renderer.malformed_variables?(public_send(field))
+    end
     return unless allowed_variables.is_a?(Array)
     return if errors[:allowed_variables].any?
 
-    content = [subject, preheader, html_body, text_body].join(' ')
-    used = content.scan(/\{\{([a-z][a-z0-9_]*)\}\}/).flatten.uniq
+    used = fields.flat_map do |field|
+      public_send(field).to_s.scan(EmailTemplates::Renderer::VARIABLE_PATTERN).flatten
+    end.uniq
     errors.add(:allowed_variables, :undeclared_placeholders) unless (used - allowed_variables).empty?
   end
 
@@ -88,8 +93,35 @@ class EmailTemplateVersion < ApplicationRecord
     message = I18n.t('admin.email_templates.required_customization_variable', variable:)
     declared = allowed_variables.is_a?(Array) && allowed_variables.include?(variable)
     errors.add(:allowed_variables, message) unless declared
-    errors.add(:html_body, message) unless html_body.to_s.include?(token)
+    errors.add(:html_body, message) unless actionable_security_link?(token)
     errors.add(:text_body, message) unless text_body.to_s.include?(token)
+  end
+
+  def actionable_security_link?(token)
+    markup = Nokogiri::HTML.fragment(html_body.to_s)
+    valid_source = markup.css('a[href]').any? do |link|
+      link['href'] == token && visible_security_link?(link)
+    end
+    return false unless valid_source
+
+    # Use the exact same HTML sanitization as the outgoing email. Never contact
+    # a provider or inspect real recipient-specific recovery/activation tokens.
+    sample_url = 'https://delta.test/security-link-validation'
+    sanitized = EmailTemplates::Renderer.sanitize_html(html_body.to_s.gsub(token, sample_url))
+    Nokogiri::HTML.fragment(sanitized).css('a[href]').any? do |link|
+      link['href'] == sample_url && visible_security_link?(link)
+    end
+  end
+
+  def visible_security_link?(link)
+    text_visible = link.text.strip.present? || link.css('img[alt]').any? { |image| image['alt'].present? }
+    return false unless text_visible
+
+    ([link] + link.ancestors.to_a).none? do |element|
+      style = element['style'].to_s
+      element.attribute('hidden') || element['aria-hidden'] == 'true' ||
+        style.match?(/(?:\A|;)\s*(?:display\s*:\s*none|visibility\s*:\s*hidden|opacity\s*:\s*0(?:\.0+)?)\b/i)
+    end
   end
 
   def protect_published_version

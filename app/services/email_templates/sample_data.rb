@@ -12,6 +12,7 @@ module EmailTemplates
     def self.call(template)
       sample = LOCALIZED.fetch(template.locale.to_s, LOCALIZED.fetch('es'))
       EmailTemplates::Branding.values(organization: template.organization).merge(
+        name: sample.fetch(:name),
         recipient_name: sample.fetch(:name),
         recipient_email: 'prueba@example.org',
         invited_name: sample.fetch(:name),

@@ -99,11 +99,47 @@ RSpec.describe 'Admin email templates', type: :request do
     draft = template.new_draft!(actor: administrator)
     draft.update!(subject: '{{name}}', html_body: '<p>{{name}}</p>',
                   text_body: '{{name}}', allowed_variables: ['name'])
+    allow(EmailTemplates::SampleData).to receive(:call).with(template).and_return({})
 
     get preview_admin_email_template_path(template, version_id: draft.id)
 
     expect(response).to redirect_to(admin_email_template_path(template))
     expect(flash[:swal_icon]).to eq('error')
+  end
+
+  it 'previews the accepted name variable in every supported email locale' do
+    %w[es en ko].each do |locale|
+      template = EmailTemplate.create!(
+        organization:, key: "sample_name_#{locale}", name: 'Sample name',
+        locale:, category: 'notifications', status: 'draft', enabled: false,
+        subject: 'Sample', html_body: '<p>Sample</p>', text_body: 'Sample'
+      )
+      draft = template.new_draft!(actor: administrator)
+      draft.update!(
+        subject: '{{name}}', html_body: '<p>{{name}}</p>',
+        text_body: '{{name}}', allowed_variables: ['name']
+      )
+
+      get preview_admin_email_template_path(template, version_id: draft.id)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(EmailTemplates::SampleData::LOCALIZED.fetch(locale).fetch(:name))
+    end
+  end
+
+  it 'rejects malformed placeholders in the live preview without persisting them' do
+    template = create_template(organization:)
+    draft = template.new_draft!(actor: administrator)
+
+    post preview_draft_admin_email_template_path(template, version_id: draft.id), params: {
+      email_template_version: {
+        subject: 'Hi {{ recipient_name }}', html_body: '<p>Hello</p>',
+        text_body: 'Hello', allowed_variables_csv: 'recipient_name'
+      }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.parsed_body.fetch('errors').fetch('subject')).to be_present
+    expect(draft.reload.subject).to eq('Order')
   end
 
   it 'previews unsaved draft content without persisting changes' do

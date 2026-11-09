@@ -13,6 +13,21 @@ module EmailTemplates
       primary_color secondary_color button_color footer_text
     ].freeze
 
+    def self.malformed_variables?(content)
+      remaining = content.to_s.gsub(VARIABLE_PATTERN, '')
+      remaining.include?('{{') || remaining.include?('}}')
+    end
+
+    # Shared whitelist for both delivery and critical-link validation at publish time.
+    def self.sanitize_html(content)
+      ActionController::Base.helpers.sanitize(
+        content,
+        tags: %w[html head body meta table tr td th p a img div span h1 h2 h3 strong b em ul ol li br hr],
+        attributes: %w[lang charset name content width height role cellpadding cellspacing
+                       style bgcolor href src alt align]
+      )
+    end
+
     def initialize(source:, values:, preview: false)
       @source = source
       @values = values.symbolize_keys
@@ -34,12 +49,7 @@ module EmailTemplates
 
     def render_html
       html = replace(enlarge_standard_logo(@source.html_body), :html)
-      sanitized = ActionController::Base.helpers.sanitize(
-        html,
-        tags: %w[html head body meta table tr td th p a img div span h1 h2 h3 strong b em ul ol li br hr],
-        attributes: %w[lang charset name content width height role cellpadding cellspacing
-                       style bgcolor href src alt align]
-      )
+      sanitized = self.class.sanitize_html(html)
       inject_preheader(sanitized)
     end
 
@@ -76,10 +86,11 @@ module EmailTemplates
     end
 
     def validate_variables!(allowed)
-      used = [@source.subject, (@source.preheader if @source.respond_to?(:preheader)),
-              @source.html_body, @source.text_body].flat_map do |body|
-        body.to_s.scan(VARIABLE_PATTERN).flatten
-      end.uniq
+      contents = [@source.subject, (@source.preheader if @source.respond_to?(:preheader)),
+                  @source.html_body, @source.text_body]
+      raise ArgumentError, 'Malformed email variable' if contents.any? { |body| self.class.malformed_variables?(body) }
+
+      used = contents.flat_map { |body| body.to_s.scan(VARIABLE_PATTERN).flatten }.uniq
       raise ArgumentError, 'Unapproved email variables' unless (used - allowed).empty?
     end
 

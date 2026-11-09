@@ -2,6 +2,8 @@ import { Controller } from "@hotwired/stimulus"
 
 // Live search keeps keyboard focus while Turbo updates the results frame.
 export default class extends Controller {
+  static targets = ["fullPageSubmit"]
+
   connect() {
     this.timer = null
   }
@@ -21,6 +23,10 @@ export default class extends Controller {
     if (event.target.name === "q") return
 
     window.clearTimeout(this.timer)
-    this.element.requestSubmit()
+    if (["updated_from", "updated_to"].includes(event.target.name)) {
+      this.element.requestSubmit(this.fullPageSubmitTarget)
+    } else {
+      this.element.requestSubmit()
+    }
   }
 }

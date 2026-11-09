@@ -120,6 +120,15 @@ RSpec.describe EmailTemplates::Renderer do
     end.to raise_error(ArgumentError, /Unapproved/)
   end
 
+  it 'rejects malformed placeholders even for legacy sources without model validation' do
+    ['{{ recipient_name }}', '{{recipient-name}}', '{{recipient_name', 'recipient_name}}'].each do |value|
+      source = template("<p>#{value}</p>")
+      expect do
+        described_class.new(source:, values: { recipient_name: 'Test' }).render
+      end.to raise_error(ArgumentError, /Malformed email variable/)
+    end
+  end
+
   it 'injects an escaped, variable-aware preheader into sent HTML' do
     source = template('<p>Body</p>')
     source.preheader = 'Hola {{recipient_name}} & gracias'

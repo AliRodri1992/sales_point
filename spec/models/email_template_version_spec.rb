@@ -79,6 +79,22 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(template.reload.published_version).to be_nil
   end
 
+  it 'rejects malformed or unfinished placeholders directly on their model fields' do
+    draft = template.new_draft!(actor: nil)
+
+    {
+      subject: 'Hi {{ recipient_name }}',
+      preheader: 'Preview {{recipient-name}}',
+      html_body: '<p>{{recipient_name</p>',
+      text_body: 'Hi recipient_name}}'
+    }.each do |field, invalid|
+      draft.public_send("#{field}=", invalid)
+      expect(draft).not_to be_valid
+      expect(draft.errors[field]).to be_present
+      draft.reload
+    end
+  end
+
   it 'protects a published version from deletion but permits removing drafts' do
     published = template.new_draft!(actor: nil)
     published.publish!(actor: nil)
@@ -108,6 +124,33 @@ RSpec.describe EmailTemplateVersion, type: :model do
     draft.publish!(actor: nil)
     expect(local.reload.published_version).to eq(draft)
     expect(global.reload.published_version).to eq(source)
+  end
+
+  it 'rejects security links that disappear or cannot be used after HTML sanitization' do
+    secure = EmailTemplate.create!(
+      key: 'password_recovery', name: 'Recovery test', category: 'security',
+      locale: 'es', subject: 'Recover', html_body: '<p>Reset</p>',
+      text_body: 'Reset', status: 'draft', enabled: false
+    )
+    draft = secure.new_draft!(actor: nil)
+    invalid_markup = [
+      '<!-- <a href="{{recovery_url}}">Reset</a> -->',
+      '<p>{{recovery_url}}</p>',
+      '<a href="{{recovery_url}}" style="display:none">Hidden</a>',
+      '<div style="visibility:hidden"><a href="{{recovery_url}}">Hidden</a></div>',
+      '<a href="{{recovery_url}}"></a>',
+      '<a href="javascript:alert(1)">{{recovery_url}}</a>'
+    ]
+    invalid_markup.each do |markup|
+      draft.update!(html_body: markup, text_body: '{{recovery_url}}', allowed_variables: ['recovery_url'])
+      expect { draft.publish!(actor: nil) }.to raise_error(ActiveRecord::RecordInvalid)
+      expect(draft.errors[:html_body]).to be_present
+      expect(draft.reload.status).to eq('draft')
+    end
+
+    draft.update!(html_body: '<a href="{{recovery_url}}">Restore access</a>')
+    draft.publish!(actor: nil)
+    expect(secure.reload.published_version).to eq(draft)
   end
 
   it 'protects essential security links in global published versions' do

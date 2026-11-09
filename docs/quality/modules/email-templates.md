@@ -133,3 +133,13 @@
 
 **Dictamen:** EM-011/012 verificados por CI especializado; EM-013/014/015/016 pendientes de adecuación y nueva prueba. **AUDITORÍA ACTUALIZADA; MÓDULO NO CERRADO.** Solo registrar hallazgos reproducidos o demostrables, evitar reabrir IDs históricos aprobados, y no confundir aprobación del CI especializado con el cierre del sistema.
 
+
+
+## Adecuaciones EM-013 a EM-016 — implementación
+
+- **EM-013 — IMPLEMENTADO; CI pendiente:** conjunto de datos de ejemplo ahora cubre `name` en es/en/ko; la prueba antes normalizaba el fallo de previsualización, se corrigió y se añadió regresión de tres idiomas.
+- **EM-014 — IMPLEMENTADO; CI pendiente:** el cambio de filtros de fecha y el botón Filtrar envían navegación `_top` para actualizar los errores del formulario; el texto de búsqueda conserva la actualización del Turbo Frame. Nueva regresión Capybara de rango invertido y corrección.
+- **EM-015 — IMPLEMENTADO; CI pendiente:** el modelo detecta marcadores `{{...}}` incompletos o mal formados por campo y el renderer los rechaza también si se usa una fuente anterior sin modelo. Nuevas pruebas de modelo, renderización y vista previa 422.
+- **EM-016 — IMPLEMENTADO; CI pendiente:** al publicar invitaciones y recuperaciones se exige un enlace con `href` real, texto accesible, no oculto y conservado tras la misma sanitización usada para enviar el correo. Se mantienen las comprobaciones de declaración y del cuerpo de texto plano. Nuevas pruebas de comentarios HTML, enlaces sin `href` efectivo, ocultos y enlaces correctos.
+
+Los estados **VERIFICADO** y **CERRADO** se reservan para ejecuciones CI aprobadas en el mismo SHA y para las verificaciones externas del estándar; no se han fusionado ramas.

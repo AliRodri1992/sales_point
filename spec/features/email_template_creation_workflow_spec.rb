@@ -75,6 +75,32 @@ RSpec.describe 'Email template creation workflow', type: :feature, js: true do
     JS
   end
 
+  scenario 'refreshes date validation feedback outside the list frame while keeping live search' do
+    visit admin_email_templates_path
+
+    expect(page).to have_css('form[data-email-template-filters-target]', count: 0)
+    expect(page).to have_css('input#updated_from')
+    page.execute_script(<<~JS)
+      document.querySelector('#updated_from').value = '2026-12-31'
+      const to = document.querySelector('#updated_to')
+      to.value = '2026-01-01'
+      to.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
+
+    expect(page).to have_css('#email-updated-to-error', text: /.+/)
+    expect(page).to have_css('#updated_to[aria-invalid="true"]')
+
+    page.execute_script(<<~JS)
+      const to = document.querySelector('#updated_to')
+      to.value = '2027-01-01'
+      to.dispatchEvent(new Event('change', { bubbles: true }))
+    JS
+
+    expect(page).to have_no_css('#email-updated-to-error')
+    expect(page).to have_css('#updated_to[aria-invalid="false"]')
+    expect(page).to have_css('form[data-turbo-frame="email_templates_list"]')
+  end
+
   scenario 'keeps unsaved changes when canceling the Delta POS navigation confirmation' do
     template = EmailTemplate.create!(
       organization:, key: 'unsaved_notification', name: 'Unsaved notice', locale: 'en',
