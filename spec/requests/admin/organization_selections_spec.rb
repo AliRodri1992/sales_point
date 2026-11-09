@@ -10,6 +10,7 @@ RSpec.describe 'Active organization selection', type: :request do
   before do
     create(:organization_membership, user: admin, organization: primary)
     create(:organization_membership, user: admin, organization: secondary)
+    create(:user_role, user: admin, system_role: admin.system_roles.first, organization: secondary)
     sign_in admin
   end
 
