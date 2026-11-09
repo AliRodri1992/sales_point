@@ -365,12 +365,12 @@ RSpec.describe 'Admin::Products', type: :request do
       category = create(:category, organization:)
       attrs = { category:, tracking_mode: :lot, featured: true, price: 80 }
       chosen = create(:product, organization:, **attrs, name: 'Matching catalog item')
-      create(:product, organization:, category:, tracking_mode: :none, featured: false,
-             price: 140, name: 'Not matching item')
+      unmatched = { organization:, category:, tracking_mode: :none, featured: false, price: 140 }
+      create(:product, **unmatched, name: 'Not matching item')
       foreign_organization = create(:organization)
       foreign_category = create(:category, organization: foreign_organization)
-      create(:product, organization: foreign_organization, category: foreign_category,
-             tracking_mode: :lot, featured: true, price: 80, name: 'Foreign catalog item')
+      foreign_attrs = { organization: foreign_organization, category: foreign_category, tracking_mode: :lot }
+      create(:product, **foreign_attrs, featured: true, price: 80, name: 'Foreign catalog item')
 
       filters = {
         category_id: category.id, tracking_mode: 'lot', featured: 'true',

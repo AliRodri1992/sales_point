@@ -274,11 +274,10 @@ RSpec.describe Product, type: :model do
       create(:product, organization:, code: 'CASE-DB-1')
       expect do
         # Explicitly verify the database constraint, independent of model validators.
-        # rubocop:disable Rails/SkipsModelValidations
+        # rubocop:disable-next-line Rails/SkipsModelValidations
         Product.insert_all!([{ organization_id: organization.id, code: 'case-db-1',
                                name: 'Duplicate code', price: 1, cost: 0,
                                created_at: Time.current, updated_at: Time.current }])
-        # rubocop:enable Rails/SkipsModelValidations
       end.to raise_error(ActiveRecord::RecordNotUnique)
     end
 
@@ -288,11 +287,10 @@ RSpec.describe Product, type: :model do
       other = create(:product, organization:)
       expect do
         # Explicitly verify the database constraint, independent of model validators.
-        # rubocop:disable Rails/SkipsModelValidations
+        # rubocop:disable-next-line Rails/SkipsModelValidations
         ProductBarcode.insert_all!([{ organization_id: organization.id, product_id: other.id,
                                       value: 'first-bar-2', symbology: 'code128',
                                       created_at: Time.current, updated_at: Time.current }])
-        # rubocop:enable Rails/SkipsModelValidations
       end.to raise_error(ActiveRecord::RecordNotUnique)
     end
   end
