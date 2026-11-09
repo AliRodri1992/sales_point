@@ -1,13 +1,48 @@
 # Registro de calidad — Roles y permisos
 
 **Módulo y ruta principal:** Roles y permisos — `/system_roles`  
-**Estado:** REAUDITADO · 001/002/003/008 ABIERTOS O PARCIALES · 009 NUEVO · 010 HIPÓTESIS P1 · NO CERRADO.  
+**Estado:** ADECUACIONES IMPLEMENTADAS Y CI DEL MÓDULO VERDE · PENDIENTE CI GLOBAL Y REVISIÓN INDEPENDIENTE · NO CERRADO.  
 **Fecha de auditoría:** 2026-11-08 (America/Mexico_City).  
 **Rama:** `feature/fixes`. **SHA de partida/auditado:** `8974fee011f9422066985a0ab088ed2d771e1c8a`.  
 **SHA de aceptación:** PENDIENTE. **Responsable/revisor independiente:** PENDIENTE.  
 **Método:** AI Dev Suite — Ponytail Engineering, Impeccable, UI UX Pro Max. Inspección real de código por GitHub; no se ejecutó el detector CLI de terceros.
 
 > Este registro es la fuente de verdad de hallazgos del módulo. Lo observado en el código se distingue de las hipótesis y de pruebas pendientes. Un commit documental no equivale a una corrección ni al cierre de la auditoría. Conserva los IDs entre siguientes iteraciones.
+
+## Adecuaciones y validación focalizada — 2026-11-08 (AI Dev Suite)
+
+**Estado posterior a la reauditoría:** los hallazgos reabiertos, incompletos y nuevos se corrigieron con cambios publicados en `feature/fixes`. **Evidencia de CI focalizado VERDE:** `adfba90cbb132f3171e8f1db1524fb118b9b39b5`, workflow [System Roles CI, ejecución 42566031210](https://github.com/AliRodri1992/sales_point/actions/runs/42566031210). Esta actualización **prevalece** sobre el estado histórico de cada ID documentado a continuación; no se eliminaron hallazgos ni se emitió cierre definitivo.
+
+| ID | Estado de implementación y verificación | Evidencia técnica |
+|---|---|---|
+| SYSTEM_ROLES-001 (P1) | **CORREGIDO · VERIFICADO EN CI FOCALIZADO** | `SystemRolePolicy` exige rol superadministrador asignado dentro de una membresía organizacional accesible. Se adaptaron actores de request, service y seed repeatability, sin degradar autorización. Los tests de transición y repetibilidad pasaron. |
+| SYSTEM_ROLES-002 (P1) | **CORREGIDO · VERIFICADO EN CI FOCALIZADO** | `AdministratorPermissionProvisioner` añade auditorías `source: system`, `actor_id: nil` dentro de la misma transacción de alta; migración `20261112010000` con check de coherencia actor/origen. `SystemRolePermissionAuditEvent` y vista de historial muestran «Sistema» en es/en/ko. Se probaron provisión, inmutabilidad del origen e idempotencia. |
+| SYSTEM_ROLES-003 (P1) | **CORREGIDO · VERIFICADO EN CI FOCALIZADO** | `PermissionSelection` rechaza acciones dependientes si falta su `*.access` incluso cuando el permiso base se desactivó o no está seleccionado. Requests 422 y transacción sin cambios cubiertos. |
+| SYSTEM_ROLES-004 (P1) | **IMPLEMENTADO · VERIFICADO EN NAVEGADOR AUTOMATIZADO** | Selección masiva limitada a filas visibles en Stimulus. Specs Selenium con búsqueda/filtro, selección y persistencia pasaron. |
+| SYSTEM_ROLES-005 (P2) | **IMPLEMENTADO · VERIFICACIÓN AUTOMATIZADA PARCIAL** | Validación de modelo con mensajes por campo, `novalidate` y selector Delta POS conservados; navegador automatizado pasó. Falta recorrido visual manual con lector de pantalla, zoom y dispositivos. |
+| SYSTEM_ROLES-006 (P2) | **IMPLEMENTADO · VERIFICACIÓN AUTOMATIZADA PARCIAL** | Motivo/confirmación por campo, 422 y token de revisión; requests y navegador automatizados pasaron. Falta revisión manual completa de accesibilidad. |
+| SYSTEM_ROLES-007 (P2) | **IMPLEMENTADO · VERIFICADO CON MIGRACIONES NUEVAS** | Normalización de nombre e índice de unicidad, con migración limpia en CI. Pendiente análisis de duplicados en una BD histórica real antes de migrarla. |
+| SYSTEM_ROLES-008 (P2) | **CORREGIDO · VERIFICADO EN CI FOCALIZADO** | `StatusImpact` cuenta alternativas solo cuando tienen permisos activos y organización correspondiente con membresía accesible; respeta sucursales operativas. Se prueban sin permisos, tenant cruzado, alternativa válida y sucursal en preparación. |
+| SYSTEM_ROLES-009 (P1) | **CORREGIDO · VERIFICADO EN CI FOCALIZADO** | `SystemRolesController#update` no sustituye permisos si solo se envían metadatos, y `PermissionUpdater` conserva asignaciones inactivas aun con edición explícita. Requests verifican asociaciones y diff de auditoría. |
+| SYSTEM_ROLES-010 (P1, hipótesis) | **ENDURECIDO · PRUEBA NEGATIVA APROBADA** | Sin membresía organizacional accesible, las rutas de Roles quedan inaccesibles; según el estado de sesión, la cuenta se redirige a inicio de sesión. Pruebas de política cubren además superadministrador de organización A intentando administrar desde B. La hipótesis de acceso residual no se reprodujo tras el endurecimiento. |
+
+### Pruebas ejecutadas realmente
+
+| Control | Estado | Evidencia |
+|---|---|---|
+| RuboCop **solo del módulo** | **PASS** | Workflow 42566031210, job «Roles module RuboCop» |
+| Migración desde base vacía | **PASS** | Workflow 42566031210, paso «Recreate test schema from migrations» |
+| Modelos, políticas, servicios, requests y navegador Chrome/Selenium | **PASS — 115 ejemplos, 0 fallos** | Workflow 42566031210, job «Roles requests, policies, services and real browser flows» |
+| Repetibilidad de semillas (seguridad y cambios manuales) | **PASS — 3 ejemplos, 0 fallos** | Mismo job, paso «Verify seed repeatability after superadmin policy change» |
+| **Total pruebas focalizadas** | **118 ejemplos, 0 fallos** | SHA `adfba90c` |
+| CI global del repositorio | **NO VERDE / NO ACEPTADO** | Sigue bloqueado por controles ajenos a Roles, incluidos RuboCop de módulos externos y ejecuciones canceladas por pushes concurrentes. No sustituir el CI global por este workflow. |
+| Accesibilidad manual (teclado, lector de pantalla, zoom 200 %) y aceptación independiente | **PENDIENTE** | No hay navegador local de Delta POS conectado ni revisor externo |
+
+**Historial de correcciones relevantes:** `a76a60a` (políticas, auditoría automática, persistencia, KPI y migración), `0e30fb2` (autorización de lectura en tenant), `5a83143` y `5af1206` (fixtures y regresiones), `41f8557`/ `cb371f1`/ `490b592` (schema sincronizado), `e20daba` (refactor sin ofensas propias), `7d2452a` (workflow dedicado), `ba2aaa0`/ `adfba90` (validaciones y sincronización de specs).
+
+**Límites y decisión de cierre:** no se alteraron las pantallas internas de Usuarios ni de Sucursales; solo se modificaron contratos directos y pruebas de integración. No se fusionaron ramas. Aunque **los arreglos del módulo están implementados y su CI focalizado está verde**, el expediente conserva el estado **NO CERRADO** mientras falte CI global verde, revisión manual de accesibilidad, validación sobre BD histórica e independencia de la aceptación.
+
+---
 
 ## Reauditoría independiente — 2026-11-08 (AI Dev Suite)
 
