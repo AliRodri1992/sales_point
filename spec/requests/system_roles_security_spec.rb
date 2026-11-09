@@ -10,6 +10,7 @@ RSpec.describe 'Role permission privilege boundaries', type: :request do
   let!(:action) { create(:permission, code: 'languages.update') }
 
   before do
+    create(:organization_membership, user: actor)
     create(:user_role, user: actor, system_role: super_role)
     sign_in actor
   end

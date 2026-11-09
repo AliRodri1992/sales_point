@@ -95,6 +95,7 @@ en:
         empty: 'No permission changes have been recorded yet.'
         added: 'Added'
         removed: 'Removed'
+        system_actor: 'System'
       new:
         title: New role
       permissions:

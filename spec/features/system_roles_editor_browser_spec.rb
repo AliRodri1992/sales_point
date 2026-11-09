@@ -12,6 +12,7 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
   let!(:other_permission) { create(:permission, code: 'sales.access', module_name: 'Ventas') }
 
   before do
+    create(:organization_membership, user: admin)
     create(:user_role, user: admin, system_role: create(:system_role, :system, code: 'super_admin'))
     Warden.test_mode!
     login_as(admin, scope: :user)

@@ -96,6 +96,7 @@ es:
         empty: 'Todavía no hay cambios de permisos registrados.'
         added: 'Añadidos'
         removed: 'Retirados'
+        system_actor: 'Sistema'
       new:
         title: Nuevo rol
       permissions:

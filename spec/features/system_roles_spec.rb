@@ -12,6 +12,7 @@ RSpec.feature 'SystemRoles', type: :feature do
 
   let!(:admin) do
     create(:user, :english).tap do |user|
+      create(:organization_membership, user:)
       create(:user_role, user:, system_role: admin_role)
     end
   end

@@ -86,6 +86,12 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
 
   it 'does not duplicate records or reset manual supplier and login changes on a second run' do
     Rails.application.load_seed
+    # Approval comes from a distinct authorized superadministrator, not the
+    # demo's ordinary administrator. Capture this manual account in the baseline.
+    platform_actor = create(:user)
+    organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+    create(:organization_membership, user: platform_actor, organization:)
+    create(:user_role, user: platform_actor, system_role: SystemRole.find_by!(code: 'super_admin'))
     counts = seeded_models.to_h { |model| [model.name, model.count] }
     identifiers = seeded_identifiers
     supplier = Supplier.find_by!(code: 'SUP-0001')
@@ -99,8 +105,8 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     bank_account = supplier.supplier_bank_accounts.first!
     bank_account.update!(holder_name: 'Titular editado manualmente')
     role = SystemRole.find_by!(code: 'cashier')
-    review_token = SystemRoles::StatusReview.new(role:, actor: admin, target: 'inactive').token
-    SystemRoles::StatusTransition.new(role:, actor: admin, target: 'inactive', reason: 'Manual suspension',
+    review_token = SystemRoles::StatusReview.new(role:, actor: platform_actor, target: 'inactive').token
+    SystemRoles::StatusTransition.new(role:, actor: platform_actor, target: 'inactive', reason: 'Manual suspension',
                                       review_token:, confirmed: true).call!
 
     Rails.application.load_seed

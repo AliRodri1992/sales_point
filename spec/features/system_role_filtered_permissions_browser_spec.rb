@@ -11,6 +11,7 @@ RSpec.describe 'Visible-only bulk permission selection', type: :feature, js: tru
   let!(:hidden_permission) { create(:permission, code: 'suppliers.contacts.view', module_name: 'Suppliers') }
 
   before do
+    create(:organization_membership, user: actor)
     create(:user_role, user: actor, system_role: create(:system_role, :system, code: 'super_admin'))
     Warden.test_mode!
     login_as(actor, scope: :user)

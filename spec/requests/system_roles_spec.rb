@@ -7,6 +7,7 @@ RSpec.describe 'SystemRoles', type: :request do
 
   let!(:admin_role) { create(:system_role, name: 'Administrator', code: 'super_admin', role_type: :system) }
   let!(:admin) { create(:user, :english) }
+  let!(:organization_membership) { create(:organization_membership, user: admin) }
   let!(:membership) { create(:user_role, user: admin, system_role: admin_role) }
 
   before { sign_in admin }
@@ -81,6 +82,7 @@ RSpec.describe 'SystemRoles', type: :request do
 
     it 'renders the roles trail in Spanish' do
       spanish_user = create(:user, :spanish)
+      create(:organization_membership, user: spanish_user)
       create(:user_role, user: spanish_user, system_role: admin_role)
       sign_in spanish_user
 

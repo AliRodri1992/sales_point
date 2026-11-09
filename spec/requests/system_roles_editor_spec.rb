@@ -9,6 +9,7 @@ RSpec.describe 'System role editor', type: :request do
   let!(:permission) { create(:permission, code: 'suppliers.contacts.create', module_name: 'Proveedores') }
 
   before do
+    create(:organization_membership, user: admin)
     create(:user_role, user: admin, system_role: admin_role)
     sign_in admin
   end

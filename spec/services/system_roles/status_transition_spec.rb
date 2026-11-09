@@ -10,7 +10,8 @@ RSpec.describe SystemRoles::StatusTransition do
   let!(:permission) { create(:permission, code: 'products.show') }
 
   before do
-    create(:user_role, user: actor, system_role: create(:system_role, :system, code: 'administrator'))
+    create(:organization_membership, user: actor)
+    create(:user_role, user: actor, system_role: create(:system_role, :system, code: 'super_admin'))
     create(:system_role_permission, system_role: role, permission:)
   end
 
