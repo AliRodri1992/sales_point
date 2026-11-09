@@ -33,7 +33,7 @@ class ScopeUserRolesByOrganization < ActiveRecord::Migration[8.1]
       INSERT INTO user_roles (user_id, system_role_id, branch_id, organization_id,
                               created_at, updated_at, deleted_at)
       SELECT DISTINCT source.user_id, source.system_role_id, NULL::bigint, memberships.organization_id,
-                      source.created_at, source.updated_at, NULL
+                      source.created_at, source.updated_at, NULL::timestamp
       FROM user_roles source
       JOIN organization_memberships memberships ON memberships.user_id = source.user_id
       WHERE source.branch_id IS NULL AND source.deleted_at IS NULL
