@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'timeout'
 
-RSpec.describe 'Concurrent email template publication', type: :model, concurrent_db: true do
-  it 'serializes overlapping transactions and persists only one publication audit' do
+RSpec.describe 'Concurrent email template publication', type: :model do
+  it 'serializes overlapping PostgreSQL locks and creates only one publication audit' do
     template = EmailTemplate.create!(
       key: 'overlapping_notice', name: 'Overlapping notice', category: 'security',
       locale: 'es', subject: 'Notice', html_body: '<p>Notice</p>',
@@ -11,13 +12,8 @@ RSpec.describe 'Concurrent email template publication', type: :model, concurrent
     )
     draft = template.new_draft!(actor: nil)
     locked = Queue.new
-    attempted = Queue.new
+    started = Queue.new
     release = Queue.new
-
-    allow_any_instance_of(EmailTemplate).to receive(:with_lock).and_wrap_original do |method, *args, &block|
-      attempted << true if Thread.current[:second_email_publisher]
-      method.call(*args, &block)
-    end
 
     first = Thread.new do
       ActiveRecord::Base.connection_pool.with_connection do
@@ -30,19 +26,33 @@ RSpec.describe 'Concurrent email template publication', type: :model, concurrent
         end
       end
     end
-    locked.pop
+    Timeout.timeout(10) { locked.pop }
 
     second = Thread.new do
-      ActiveRecord::Base.connection_pool.with_connection do
+      ActiveRecord::Base.connection_pool.with_connection do |connection|
+        connection.execute("SET application_name = 'email_template_publication_overlap'")
+        started << true
         version = EmailTemplateVersion.find(draft.id)
-        Thread.current[:second_email_publisher] = true
         version.publish!(actor: nil)
         :unexpected_publication
       rescue ActiveRecord::StaleObjectError
         :conflict
+      ensure
+        connection.execute('RESET application_name')
       end
     end
-    attempted.pop
+    Timeout.timeout(10) { started.pop }
+    Timeout.timeout(10) do
+      loop do
+        waiting = ActiveRecord::Base.connection.select_value(
+          "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE application_name = " \
+          "'email_template_publication_overlap' AND wait_event_type = 'Lock')"
+        )
+        break if ActiveModel::Type::Boolean.new.cast(waiting)
+
+        sleep 0.02
+      end
+    end
     release << true
 
     expect(first.value).to be_truthy
@@ -52,6 +62,9 @@ RSpec.describe 'Concurrent email template publication', type: :model, concurrent
     expect(template.audits.where(action: 'published').count).to eq(1)
   ensure
     release << true if release && first&.alive?
-    [first, second].compact.each(&:join)
+    [first, second].compact.each do |thread|
+      thread.join(2)
+      thread.kill if thread.alive?
+    end
   end
 end
