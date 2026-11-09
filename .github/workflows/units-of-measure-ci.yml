@@ -15,6 +15,7 @@ on:
       - 'config/initializers/inflections.rb'
       - 'db/migrate/*units_of_measure*'
       - 'db/migrate/*unit_of_measure*'
+      - 'db/schema.rb'
       - 'config/locales/units_of_measure.*.yml'
       - 'spec/models/unit_of_measure_spec.rb'
       - 'spec/requests/admin/units_of_measure_spec.rb'
@@ -44,6 +45,8 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+      - name: Validate module registry
+        run: ruby script/audit_module_quality.rb
       - name: Lint catalog-owned Ruby and specs
         run: |
           bin/rubocop -f simple \
