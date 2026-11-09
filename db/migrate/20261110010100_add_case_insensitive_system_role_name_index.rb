@@ -9,3 +9,4 @@ class AddCaseInsensitiveSystemRoleNameIndex < ActiveRecord::Migration[8.1]
   def down
     remove_index :system_roles, name: 'idx_system_roles_normalized_name_type'
   end
+end
