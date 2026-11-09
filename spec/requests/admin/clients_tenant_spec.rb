@@ -68,10 +68,9 @@ RSpec.describe 'Admin clients tenant isolation', type: :request do
   end
 
   it 'keeps ambiguous historic clients inaccessible until ownership is reconciled' do
-    Client.insert_all!([
-      { code: 'LEGACY-LOCKED', name: 'Unassigned Legacy', organization_id: nil,
-        status: 'active', credit_limit: 0, created_at: Time.current, updated_at: Time.current }
-    ])
+    legacy = create(:client, organization:, code: 'LEGACY-LOCKED', name: 'Unassigned Legacy')
+    # Simulate an existing pre-tenant row without changing application validation rules.
+    Client.connection.execute("UPDATE clients SET organization_id = NULL WHERE id = #{legacy.id}")
 
     get admin_clients_path
     expect(response.body).not_to include('Unassigned Legacy')

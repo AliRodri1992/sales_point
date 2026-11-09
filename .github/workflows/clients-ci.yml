@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/clients-ci.yml'
       - 'app/controllers/admin/clients_controller.rb'
+      - 'app/controllers/concerns/admin/clients_listing.rb'
       - 'app/models/client.rb'
       - 'app/policies/client_policy.rb'
       - 'app/services/client_filter.rb'
@@ -53,6 +54,7 @@ jobs:
         run: |
           bin/rubocop -f simple \
             app/controllers/admin/clients_controller.rb \
+            app/controllers/concerns/admin/clients_listing.rb \
             app/models/client.rb \
             app/services/client_filter.rb \
             app/policies/client_policy.rb \

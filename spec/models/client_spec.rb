@@ -47,7 +47,9 @@ RSpec.describe Client, type: :model do
       # Any new client with same code (active or soft-deleted) should fail
       # because validation checks against active clients only
       expect(build(:client, organization: client.organization, code: 'CLI-TEST-001')).not_to be_valid
-      expect(build(:client, organization: client.organization, code: 'CLI-TEST-001', deleted_at: Time.current)).not_to be_valid
+      deleted_duplicate = build(:client, organization: client.organization, code: 'CLI-TEST-001',
+                                         deleted_at: Time.current)
+      expect(deleted_duplicate).not_to be_valid
     end
 
     it 'allows reusing code after client is soft-deleted' do

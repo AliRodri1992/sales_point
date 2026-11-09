@@ -37,7 +37,7 @@ RSpec.describe 'Admin clients', type: :request do
 
     it 'lists non-deleted clients' do
       create(:client, organization:, name: 'Visible Client')
-      create(:client, organization:, :deleted, organization:, name: 'Deleted Client')
+      create(:client, :deleted, organization:, name: 'Deleted Client')
 
       get admin_clients_path
 
@@ -194,7 +194,7 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'does not show deleted clients' do
-      client = create(:client, organization:, :deleted)
+      client = create(:client, :deleted, organization:)
 
       get admin_client_path(client)
 
@@ -231,7 +231,7 @@ RSpec.describe 'Admin clients', type: :request do
 
   describe 'GET /admin/clients/:id/edit' do
     it 'renders the edit client form' do
-      client = create(:client)
+      client = create(:client, organization:)
 
       get edit_admin_client_path(client)
 
@@ -251,7 +251,7 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'renders validation errors' do
-      client = create(:client)
+      client = create(:client, organization:)
 
       patch admin_client_path(client), params: { client: { name: '' } }
 
@@ -261,7 +261,7 @@ RSpec.describe 'Admin clients', type: :request do
 
   describe 'DELETE /admin/clients/:id' do
     it 'updates the table and counters after a Turbo Stream soft deletion' do
-      customer = create(:client)
+      customer = create(:client, organization:)
       delete admin_client_path(customer), as: :turbo_stream
 
       expect(response).to have_http_status(:ok)
@@ -271,7 +271,7 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'soft deletes a client' do
-      client = create(:client)
+      client = create(:client, organization:)
 
       expect do
         delete admin_client_path(client)
@@ -302,7 +302,7 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'shows back button in edit form' do
-      client = create(:client)
+      client = create(:client, organization:)
 
       get edit_admin_client_path(client)
 
@@ -340,7 +340,7 @@ RSpec.describe 'Admin clients', type: :request do
     end
 
     it 'renders the edit form when the update hits a unique index' do
-      client = create(:client)
+      client = create(:client, organization:)
       allow_any_instance_of(Client).to receive(:save).and_raise(ActiveRecord::RecordNotUnique)
 
       patch admin_client_path(client), params: { client: { name: 'Conflicting Client' } }
