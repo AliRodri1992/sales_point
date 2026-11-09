@@ -48,7 +48,7 @@ class UserRole < ApplicationRecord
 
   def organization_required_for_membership
     return unless new_assignment? && organization_id.nil? && user&.persisted?
-    return unless user.organization_memberships.where(deleted_at: nil).exists?
+    return unless user.organization_memberships.exists?(deleted_at: nil)
 
     errors.add(:organization, :blank)
   end
