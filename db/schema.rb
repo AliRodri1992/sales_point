@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_041000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -997,6 +997,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_041000) do
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index "organization_id, lower((value)::text)", name: "idx_product_barcodes_org_value_ci", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id", "value"], name: "index_product_barcodes_on_organization_id_and_value", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_product_barcodes_on_organization_id"
     t.index ["product_id"], name: "idx_product_primary_barcode", unique: true, where: "((\"primary\" = true) AND (deleted_at IS NULL))"
@@ -1063,8 +1064,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_041000) do
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["deleted_at"], name: "index_products_on_deleted_at"
     t.index ["featured"], name: "index_products_on_featured"
+    t.index "organization_id, lower((code)::text)", name: "idx_products_org_code_ci", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id", "code"], name: "idx_products_org_code", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id", "id"], name: "index_products_on_organization_id_and_id", unique: true
+    t.index "organization_id, lower((sku)::text)", name: "idx_products_org_sku_ci", unique: true, where: "((deleted_at IS NULL) AND (sku IS NOT NULL))"
     t.index ["organization_id", "sku"], name: "idx_products_org_sku", unique: true, where: "((deleted_at IS NULL) AND (sku IS NOT NULL))"
     t.index ["organization_id", "slug"], name: "idx_products_org_slug", unique: true, where: "((deleted_at IS NULL) AND (slug IS NOT NULL))"
     t.index ["organization_id"], name: "index_products_on_organization_id"
