@@ -121,6 +121,7 @@ RSpec.describe 'Admin general settings', type: :request do
     patch admin_select_organization_path(foreign)
 
     expect(response).to have_http_status(:not_found)
+    sign_in user
     patch admin_general_settings_path,
           params: { organization_setting: { default_table_page_size: 50 }, organization_id: foreign.id }
 

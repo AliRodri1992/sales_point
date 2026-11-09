@@ -30,7 +30,7 @@ RSpec.describe 'General settings page', type: :feature, js: true do
 
     expect(page).to have_css('[data-general-settings-preview-target="summary"]',
                              text: 'Showing 25 records per page by default.')
-    expect(page).to have_css('input[name="expected_default_table_page_size"][value="10"]')
+    expect(page).to have_css('input[name="expected_default_table_page_size"][value="10"]', visible: :all)
 
     click_button 'Save preference'
 

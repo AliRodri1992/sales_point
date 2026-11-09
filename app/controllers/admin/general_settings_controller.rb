@@ -34,7 +34,7 @@ module Admin
       @settings = scope.active_records.first
       return if @settings
 
-      return head :not_found if scope.exists?
+      return head :not_found if scope.with_deleted.exists?
 
       redirect_to admin_onboarding_path, alert: t('admin.general_settings.missing_configuration')
     end
