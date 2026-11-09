@@ -119,7 +119,7 @@ module Users
 
     def active_assignment_pairs
       @user.user_roles.active.where(organization: @organization)
-         .pluck(:system_role_id, :branch_id).sort_by { |id, branch| [id, branch || 0] }
+                    .pluck(:system_role_id, :branch_id).sort_by { |id, branch| [id, branch || 0] }
     end
 
     def sync_system_roles!(role_ids)
