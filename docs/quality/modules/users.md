@@ -86,6 +86,16 @@
 - **Validación visual real:** no ejecutada en el navegador de macOS con zoom 200 % ni lector de pantalla; no atribuir cierre visual a tests Capybara.
 - **CI global:** no considerar aprobado mientras haya infracciones externas o ejecuciones canceladas.
 
+### Reauditoría AI Dev Suite — 2026-11-08 · HEAD `be216f79`
+
+- **Método:** Impeccable, UI UX Pro Max y Ponytail; inspección de código y verificación de GitHub Actions, sin ejecutar CLI originales ni navegador local interactivo.
+- **Regresión confirmada:** [Users CI 42559708993](https://github.com/AliRodri1992/sales_point/actions/runs/42559708993) sobre `85836e5b` pasó **310 ejemplos RSpec, 0 fallos** y RuboCop especializado. La prueba automatizada no demuestra inspección visual manual al 200 % de zoom.
+- **USERS-002 — ABIERTO, P1 (contrato de seguridad):** el guard de membresía accesible ya impide evaluar permisos para una empresa sin membresía activa, pero `UserRole` sigue guardando roles de sistema sin `organization_id`; `UserEffectiveRoles` los concede en todas las organizaciones donde esa misma cuenta sí tiene membresía accesible. El cierre requiere definir roles de sistema globales vs. por organización y migrar/validar asignaciones sin afectar privilegios legítimos.
+- **USERS-014 — NUEVO, P2 PROPIO (confirmado por código):** en `app/javascript/controllers/user_deactivation_controller.js#submissionFinished`, cualquier resultado `!event.detail.success` marca `reason` con `aria-invalid="true"` y enfoca ese campo. Las respuestas `403`, `404` o `500` no necesariamente significan motivo inválido. **Adecuación:** condicionar `aria-invalid` a validación `422`, tratar otros errores como fallo de operación con información adecuada sin atribuir falsamente error de campo y cubrir escenarios de respuesta `422` y falla de red/autorización. Pendiente de implementación/pruebas.
+- **USERS-010 / USERS-013:** campos inválidos con foco y modal centrada probados en navegador automatizado; pendiente accesibilidad manual con lector de pantalla, contraste y zoom 200 %.
+- **USERS-011:** cinco KPI conservados; sin evidencia de que deban eliminarse.
+- **CI general:** [run 42559988289](https://github.com/AliRodri1992/sales_point/actions/runs/42559988289) para `be216f79` estaba en cola al consultarse. No adjudicar resultados de commits anteriores a ese SHA ni cerrar antes del CI global verde.
+
 ## 4. Matriz de aceptación por pantalla
 
 | Pantalla / flujo | Servidor, autorización y datos | UX y errores | Evidencia aún exigida |
