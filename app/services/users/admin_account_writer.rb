@@ -69,7 +69,8 @@ module Users
       return true if @actor&.role?('super_admin')
 
       protected = SystemRole.system.where(code: SystemRole::ADMINISTRATIVE_CODES).pluck(:id)
-      current = @user.user_roles.where(deleted_at: nil, branch_id: nil, system_role_id: protected)
+      current = @user.user_roles.where(deleted_at: nil, branch_id: nil, organization: @organization,
+                                       system_role_id: protected)
                      .pluck(:system_role_id)
       (ids & protected).sort == current.sort
     end
@@ -117,11 +118,13 @@ module Users
     end
 
     def active_assignment_pairs
-      @user.user_roles.active.pluck(:system_role_id, :branch_id).sort_by { |id, branch| [id, branch || 0] }
+      @user.user_roles.active.where(organization: @organization)
+         .pluck(:system_role_id, :branch_id).sort_by { |id, branch| [id, branch || 0] }
     end
 
     def sync_system_roles!(role_ids)
-      assignments = @user.user_roles.joins(:system_role).where(branch_id: nil, deleted_at: nil)
+      assignments = @user.user_roles.joins(:system_role)
+                       .where(branch_id: nil, deleted_at: nil, organization: @organization)
                          .where(system_roles: { role_type: 'system' })
       current_ids = assignments.pluck(:system_role_id)
       assignments.where.not(system_role_id: role_ids).find_each do |assignment|
@@ -129,7 +132,7 @@ module Users
         record_role_change!(assignment, 'revoked')
       end
       (role_ids - current_ids).each do |id|
-        assignment = @user.user_roles.create!(system_role_id: id)
+        assignment = @user.user_roles.create!(system_role_id: id, organization: @organization)
         record_role_change!(assignment, 'granted')
       end
     end
