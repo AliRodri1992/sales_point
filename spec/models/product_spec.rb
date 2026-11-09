@@ -287,9 +287,11 @@ RSpec.describe Product, type: :model do
       duplicate = product.product_variants.create!(name: 'Other', sku: 'VARIANT-SKU-2')
 
       expect do
-        # Database integrity test: bypass model validation on purpose.
-        # rubocop:disable-next Rails/SkipsModelValidations
-        duplicate.update_columns(sku: first.sku.downcase)
+        ProductVariant.transaction(requires_new: true) do
+          # Database integrity test: bypass model validation on purpose.
+          # rubocop:disable-next Rails/SkipsModelValidations
+          duplicate.update_columns(sku: first.sku.downcase)
+        end
       end.to raise_error(ActiveRecord::RecordNotUnique)
       expect(duplicate.reload.sku).to eq('VARIANT-SKU-2')
     end
