@@ -72,10 +72,7 @@ module Admin
     end
 
     def next_branch_terminal_code
-      highest = @branch.terminals.with_deleted.where('code ~ ?', '^POS-[0-9]+
-  end
-end
-)
+      highest = @branch.terminals.with_deleted.where('code ~ ?', '^POS-[0-9]+$')
                        .pick(Arel.sql('MAX(SUBSTRING(code FROM 5)::numeric)'))
       format('POS-%03d', highest.to_i + 1)
     end
