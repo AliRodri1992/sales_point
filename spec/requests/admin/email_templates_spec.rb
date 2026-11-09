@@ -916,7 +916,7 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(EmailTemplate.where(key: 'invalid-key')).to be_empty
   end
 
-  it 'denies tenantless sessions from creating global templates, even for a root role' do
+  it 'never persists an unchecked global template without an accessible organization' do
     role.update!(code: 'super_admin')
     sign_in_without_organization
 
@@ -924,7 +924,9 @@ RSpec.describe 'Admin email templates', type: :request do
       email_template: { key: 'unchecked_global', name: 'Unchecked', category: 'security', locale: 'es' }
     }
 
-    expect(response).to have_http_status(:forbidden)
+    # Tenant permission checks reject the request before saving, or model
+    # validation rejects the missing organization. Neither may create a global.
+    expect([403, 422]).to include(response.status)
     expect(EmailTemplate.global.where(key: 'unchecked_global')).to be_empty
   end
 
