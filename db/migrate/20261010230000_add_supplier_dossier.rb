@@ -16,10 +16,10 @@ class AddSupplierDossier < ActiveRecord::Migration[8.1]
       t.timestamps
     end
     add_check_constraint :supplier_schedules, "kind IN ('visit', 'order', 'delivery')",
-    add_index :supplier_schedules, :deleted_at
                          name: 'chk_supplier_schedules_kind'
     add_check_constraint :supplier_schedules, 'weekday BETWEEN 0 AND 6',
                          name: 'chk_supplier_schedules_weekday'
+    add_index :supplier_schedules, :deleted_at
     add_index :supplier_schedules, %i[supplier_id branch_id kind weekday starts_at],
               unique: true, name: 'idx_supplier_schedules_unique_slot'
   end
