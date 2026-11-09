@@ -2,7 +2,7 @@ ko:
   admin:
     users:
       ui:
-        shared_global_roles_warning: "이 계정의 전체 역할은 소속된 모든 조직에 적용됩니다. 다른 조직의 멤버십을 활성화하기 전에 권한을 검토하세요."
+        shared_global_roles_warning: "시스템 역할은 조직별로 관리됩니다. 여기서 변경한 권한은 이 계정의 다른 조직에 영향을 주지 않습니다."
         role_audit_title: "역할 변경 기록"
         role_audit_granted: "부여됨"
         role_audit_revoked: "철회됨"
@@ -85,8 +85,8 @@ ko:
         no_roles_available: "할당할 수 있는 전체 역할이 없습니다."
         branch_roles_title: "지점별 역할"
         branch_roles_hint: "전체 역할을 변경해도 이 할당은 유지됩니다."
-        roles_detail_hint: "이 조직의 전체 권한과 지점별 역할을 확인합니다."
-        global_roles_title: "전체 역할"
+        roles_detail_hint: "이 조직의 시스템 역할과 지점별 역할을 확인합니다."
+        global_roles_title: "조직별 역할"
         no_branch_roles: "할당된 지점 역할이 없습니다."
         branch_access_title: "지점별 접근 권한"
         branch_access_hint: "각 지점을 열어 사용자에게 부여할 역할을 선택하세요."
