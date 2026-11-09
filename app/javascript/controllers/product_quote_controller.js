@@ -15,7 +15,11 @@ export default class extends Controller {
     Object.entries(options).forEach(([key, value]) => { if (value) url.searchParams.set(key, value) })
     try {
       const response = await fetch(url, { headers: { Accept: "application/json" }, signal: this.abort.signal })
-      if (!response.ok) throw new Error("quote")
+      if (!response.ok) {
+        const details = await response.json().catch(() => ({}))
+        this.resultTarget.textContent = details.error || this.resultTarget.dataset.error
+        return
+      }
       const result = await response.json()
       const amount = new Intl.NumberFormat(document.documentElement.lang, { style: "currency", currency: result.currency }).format(result.total)
       this.resultTarget.textContent = [amount, result.promotion].filter(Boolean).join(" · ")

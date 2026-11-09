@@ -181,7 +181,9 @@
         "stock_low": "재고 부족",
         "minimum_price": "최소 가격",
         "maximum_price": "최대 가격",
-        "tracking_mode_locked": "재고, 이동 내역 또는 로트 기록이 있으면 변경할 수 없습니다"
+        "tracking_mode_locked": "재고, 이동 내역 또는 로트 기록이 있으면 변경할 수 없습니다",
+        "invalid_price_list": "선택한 가격표가 유효 기간을 벗어났거나 고객 분류와 일치하지 않습니다.",
+        "price_currency_unavailable": "선택한 상품과 옵션에 해당하는 가격표 통화의 가격이 설정되지 않았습니다."
       },
       "breadcrumbs": {
         "controllers": {

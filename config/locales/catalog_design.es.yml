@@ -181,7 +181,9 @@
         "stock_low": "Stock bajo",
         "minimum_price": "Precio mínimo",
         "maximum_price": "Precio máximo",
-        "tracking_mode_locked": "no se puede cambiar cuando hay existencias o historial de movimientos o lotes"
+        "tracking_mode_locked": "no se puede cambiar cuando hay existencias o historial de movimientos o lotes",
+        "invalid_price_list": "La lista de precios no está vigente o no corresponde al segmento indicado.",
+        "price_currency_unavailable": "No existe un precio configurado en la moneda de esta lista para el producto y las opciones seleccionadas."
       },
       "breadcrumbs": {
         "controllers": {

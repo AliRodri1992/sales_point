@@ -181,7 +181,9 @@
         "stock_low": "Low stock",
         "minimum_price": "Minimum price",
         "maximum_price": "Maximum price",
-        "tracking_mode_locked": "cannot be changed while stock, movements or lot history exist"
+        "tracking_mode_locked": "cannot be changed while stock, movements or lot history exist",
+        "invalid_price_list": "The selected price list is not currently valid or does not match the customer segment.",
+        "price_currency_unavailable": "No price is configured in this list's currency for the selected product and options."
       },
       "breadcrumbs": {
         "controllers": {

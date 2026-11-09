@@ -8,8 +8,13 @@ module Admin
       result = product_quote
       render json: { unit_price: result.unit_price.to_s('F'), discount: result.discount.to_s('F'),
                      total: result.total.to_s('F'), currency: result.currency, promotion: result.promotion&.name }
-    rescue ArgumentError
-      render json: { error: t('admin.catalog_design.invalid_quote') }, status: :unprocessable_content
+    rescue ArgumentError => e
+      message_key = case e.message
+                    when 'Invalid price list' then 'admin.catalog_design.invalid_price_list'
+                    when 'No price in the selected currency' then 'admin.catalog_design.price_currency_unavailable'
+                    else 'admin.catalog_design.invalid_quote'
+                    end
+      render json: { error: t(message_key) }, status: :unprocessable_content
     end
 
     private
