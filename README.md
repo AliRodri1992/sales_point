@@ -2,6 +2,12 @@
 
 A modern **Point of Sale (POS)** system built with **Ruby on Rails 8**, designed for inventory management, sales tracking, and user administration for small to medium-sized businesses.
 
+## Estándar de calidad modular
+
+Para auditar o modificar cualquier módulo, seguir el [estándar de calidad modular](docs/quality/module-quality-standard.md), registrar los hallazgos con [la plantilla reutilizable](docs/quality/module-audit-template.md) y documentar las pruebas realmente ejecutadas. El primer expediente es [Sucursales (`/admin/branches`)](docs/quality/modules/branches.md).
+
+Las relaciones con otros módulos se verifican **solo como contratos de integración**. Una modificación publicada no se considera cerrada hasta verificar RSpec, RuboCop, los checks de CI y, cuando corresponde, los flujos visuales sobre el SHA final.
+
 ## Política de commits
 
 Los commits pueden incluir **uno o más archivos**, según lo requiera el cambio. No se impone un número mínimo ni una excepción exclusiva para `db/schema.rb`. Consulta [AGENTS.md](AGENTS.md) para las pautas de revisión y calidad.
