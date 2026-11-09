@@ -48,7 +48,7 @@ class UserRole < ApplicationRecord
 
   def organization_required_for_membership
     return unless new_assignment? && organization_id.nil? && user&.persisted?
-    return unless user.organization_memberships.exists?(deleted_at: nil)
+    return unless CurrentOrganizationAccess.enforce_tenant || user.organization_memberships.exists?(deleted_at: nil)
 
     errors.add(:organization, :blank)
   end
