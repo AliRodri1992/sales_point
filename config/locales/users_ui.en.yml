@@ -2,7 +2,7 @@ en:
   admin:
     users:
       ui:
-        shared_global_roles_warning: "This account's global roles apply across its organizations. Review access before enabling another membership."
+        shared_global_roles_warning: "System roles are managed per organization. Changes here do not affect this account's other organizations."
         role_audit_title: "Role change history"
         role_audit_granted: "Granted"
         role_audit_revoked: "Revoked"
@@ -85,8 +85,8 @@ en:
         no_roles_available: "No global roles are available for assignment."
         branch_roles_title: "Branch roles"
         branch_roles_hint: "These assignments remain unchanged when global roles are edited."
-        roles_detail_hint: "Review global permissions and roles for branches in this organization."
-        global_roles_title: "Global roles"
+        roles_detail_hint: "Review system roles for this organization and its branch-specific roles."
+        global_roles_title: "Organization roles"
         no_branch_roles: "No branch roles assigned."
         branch_access_title: "Branch access"
         branch_access_hint: "Expand each branch and select the roles this user should have there."
