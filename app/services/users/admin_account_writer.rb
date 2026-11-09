@@ -124,7 +124,7 @@ module Users
 
     def sync_system_roles!(role_ids)
       assignments = @user.user_roles.joins(:system_role)
-                       .where(branch_id: nil, deleted_at: nil, organization: @organization)
+                                  .where(branch_id: nil, deleted_at: nil, organization: @organization)
                          .where(system_roles: { role_type: 'system' })
       current_ids = assignments.pluck(:system_role_id)
       assignments.where.not(system_role_id: role_ids).find_each do |assignment|
