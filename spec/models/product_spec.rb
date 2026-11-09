@@ -281,6 +281,19 @@ RSpec.describe Product, type: :model do
       end.to raise_error(ActiveRecord::RecordNotUnique)
     end
 
+    it 'enforces case-insensitive SKU uniqueness for active variants at the database level' do
+      product = create(:product, organization:)
+      first = product.product_variants.create!(name: 'Original', sku: 'VARIANT-SKU-1')
+      duplicate = product.product_variants.create!(name: 'Other', sku: 'VARIANT-SKU-2')
+
+      expect do
+        # Database integrity test: bypass model validation on purpose.
+        # rubocop:disable-next Rails/SkipsModelValidations
+        duplicate.update_columns(sku: first.sku.downcase)
+      end.to raise_error(ActiveRecord::RecordNotUnique)
+      expect(duplicate.reload.sku).to eq('VARIANT-SKU-2')
+    end
+
     it 'enforces case-insensitive canonical barcodes at the database level' do
       first = create(:product, organization:, barcode: 'FIRST-BAR-1')
       first.update!(barcode: 'FIRST-BAR-2')
