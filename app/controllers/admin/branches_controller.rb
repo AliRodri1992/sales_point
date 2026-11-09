@@ -9,11 +9,12 @@ module Admin
     include Admin::BranchSupport
     include Admin::BranchTerminals
     include Admin::BranchAudits
+    include Admin::BranchDetail
 
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action :set_paper_trail_whodunnit
-    before_action :set_branch, except: %i[index new create select postal_suggestions]
+    before_action :set_branch, if: :branch_record_action?
 
     rescue_from Pundit::NotAuthorizedError, with: :forbidden
     rescue_from ActiveRecord::RecordNotUnique, with: :branch_identifier_taken
@@ -111,30 +112,8 @@ module Admin
 
     private
 
-    def load_branch_detail
-      @branch_team_count = Branch.team_assignments(current_organization)
-                                 .where(branch_id: @branch.id).distinct.count(:user_id)
-      requirements = Branches::LifecycleRequirements.new(branch: @branch, actor: current_user)
-      if @branch.preparing? || @branch.suspended?
-        @branch_activation_requirements = requirements.activation
-      end
-      return unless policy(@branch).manage?
-
-      @branch_transition_blockers = branch_transition_blockers_for_view(requirements)
-      @branch_operation_counts = { products: @branch.inventories.distinct.count(:product_id),
-                                   terminals: @branch.terminals.count }
-      load_branch_change_events
-    end
-
-    def branch_transition_blockers_for_view(requirements)
-      allowed = Branches::TransitionStatus::ALLOWED.fetch(@branch.operational_status, [])
-      allowed.index_with do |target|
-        if target == 'active' && @branch_activation_requirements
-          @branch_activation_requirements.reject { |_key, ready| ready }.keys
-        else
-          requirements.blockers_for(target)
-        end
-      end
+    def branch_record_action?
+      %w[show edit update destroy transition_status add_terminal change_terminal].include?(action_name)
     end
 
     def set_branch

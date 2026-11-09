@@ -175,3 +175,10 @@ Ver las [reglas de cierre](../module-quality-standard.md) y la [plantilla](../mo
 - **BR-005:** requiere CI global verde para el SHA final. Hallazgos internos de otros módulos son EXTERNOS y no justifican ampliar esta modificación.
 
 **Los cambios no incluyen merge ni certifican cierre técnico.**
+
+
+### Segunda pasada RuboCop — 2026-11-08
+
+En el SHA `1123a0e9e4c762a02d8f044396c94bc59dc4da20` el job de RuboCop global registró **40 ofensas** (frente a 55 de la revisión previa). Persistían siete señalamientos en Sucursales: longitud y complejidad del controlador, `before_action` de concern, complejidad del formateo de auditoría y uso de `map` en un spec. Esta pasada separa `Admin::BranchDetail`, usa un predicado explícito para cargar la sucursal y simplifica el formateo de eventos. **Pendiente de comprobar en el próximo CI**.
+
+Los errores de otros módulos continúan identificados como EXTERNOS. Los IDs `BR-006`, `BR-007` y `BR-008` conservan su estado **implementado sin verificar**, no cerrado.

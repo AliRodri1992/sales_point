@@ -266,7 +266,7 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(response).to have_http_status(:ok)
       expect(Branches::LifecycleRequirements).to have_received(:new).once
       document = Nokogiri::HTML(response.body)
-      expect(document.css('#branch-transition-target option').map { |option| option['value'] })
+      expect(document.css('#branch-transition-target option').pluck('value'))
         .to contain_exactly('active', 'closed')
       expect(document.at_css('#branch-detail-lifecycle')).to be_present
     end

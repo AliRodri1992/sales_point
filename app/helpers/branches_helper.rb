@@ -67,11 +67,20 @@ module BranchesHelper
   end
 
   def branch_audit_value(attribute, value, countries: {})
-    return t("admin.branch_lifecycle.audit_#{value.present? ? 'removed' : 'present'}") if attribute == 'deleted_at'
-    return countries[value.to_i]&.localized_name || value.to_s if attribute == 'country_id'
-    return t("admin.branch_lifecycle.audit_#{value ? 'yes' : 'no'}") if %w[primary whatsapp_enabled].include?(attribute)
+    case attribute
+    when 'deleted_at' then t("admin.branch_lifecycle.audit_#{branch_audit_deletion(value)}")
+    when 'country_id' then branch_audit_country(value, countries)
+    when 'primary', 'whatsapp_enabled' then t("admin.branch_lifecycle.audit_#{value ? 'yes' : 'no'}")
+    else value.to_s.presence&.truncate(160) || '—'
+    end
+  end
 
-    value.to_s.presence&.truncate(160) || '—'
+  def branch_audit_deletion(value)
+    value.present? ? 'removed' : 'present'
+  end
+
+  def branch_audit_country(value, countries)
+    countries[value.to_i]&.localized_name || value.to_s
   end
 
   def branch_mobile(branch)
