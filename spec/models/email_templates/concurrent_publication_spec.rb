@@ -45,7 +45,7 @@ RSpec.describe 'Concurrent email template publication', type: :model do
     Timeout.timeout(10) do
       loop do
         waiting = ActiveRecord::Base.connection.select_value(
-          "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE application_name = " \
+          'SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE application_name = ' \
           "'email_template_publication_overlap' AND wait_event_type = 'Lock')"
         )
         break if ActiveModel::Type::Boolean.new.cast(waiting)
