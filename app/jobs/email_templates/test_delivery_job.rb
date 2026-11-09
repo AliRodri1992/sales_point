@@ -34,8 +34,8 @@ module EmailTemplates
       template = EmailTemplate.find_by(id: arguments.first)
       actor = User.find_by(id: arguments.second)
       template&.audit!(action: 'test_failed', actor:, metadata: { error_class: error.class.name })
-    rescue ActiveRecord::ActiveRecordError => audit_error
-      Rails.logger.error("Test email failure audit failed: #{audit_error.class}")
+    rescue ActiveRecord::ActiveRecordError => e
+      Rails.logger.error("Test email failure audit failed: #{e.class}")
     end
   end
 end
