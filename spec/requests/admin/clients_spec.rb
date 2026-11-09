@@ -74,7 +74,7 @@ RSpec.describe 'Admin clients', type: :request do
       get admin_clients_path, params: { sort: 'name', direction: 'asc' }
 
       rows = Nokogiri::HTML(response.body).css('tbody tr')
-      names = rows.map { |row| row.css('td')[1].text.strip }
+      names = rows.map { |row| row.at_css('td:nth-child(2) .font-semibold').text.strip }
 
       expect(names.first).to eq('Alpha Client')
       expect(names.last).to eq('Zulu Client')
