@@ -9,7 +9,7 @@ module Admin
     include Admin::CategoryMutations
 
     before_action :require_organization
-    before_action :set_category, only: %i[show edit update destroy]
+    before_action :set_category, if: -> { %w[show edit update destroy].include?(action_name) }
 
     rescue_from Pundit::NotAuthorizedError, with: :forbidden
 
