@@ -17,6 +17,28 @@ RSpec.describe EmailTemplates::Branding do
                               privacy_url: 'https://delta.test/privacy')
   end
 
+  it 'rejects example hosts in production rather than sending broken asset links' do
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:[]).with('DELTA_POS_PUBLIC_HOST').and_return('www.example.org')
+
+    expect { described_class.configured_host }
+      .to raise_error(ArgumentError, /DELTA_POS_PUBLIC_HOST/)
+  end
+
+  it 'requires a configured production host and accepts a real domain' do
+    allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    allow(ENV).to receive(:[]).and_call_original
+    allow(Rails.application.config.action_mailer).to receive(:default_url_options).and_return({})
+    allow(ENV).to receive(:[]).with('DELTA_POS_PUBLIC_HOST').and_return(nil)
+
+    expect { described_class.configured_host }
+      .to raise_error(ArgumentError, /DELTA_POS_PUBLIC_HOST/)
+
+    allow(ENV).to receive(:[]).with('DELTA_POS_PUBLIC_HOST').and_return('mail.delta.test')
+    expect(described_class.configured_host).to eq('mail.delta.test')
+  end
+
   it 'uses platform defaults when no branding is configured' do
     values = described_class.values
     expect(values).to include(platform_name: 'Delta POS', organization_name: 'Delta POS')

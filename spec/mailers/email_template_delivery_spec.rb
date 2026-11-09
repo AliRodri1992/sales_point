@@ -84,6 +84,8 @@ RSpec.describe 'Published email template delivery', type: :mailer do
     EmailTemplates::InvitationContent.ensure_published!
     invitation = EmailTemplate.global.find_by!(key: 'user_invitation', locale: 'es')
     allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:[]).with('DELTA_POS_PUBLIC_HOST').and_return('mail.delta.test')
 
     message = EmailTemplateTestMailer.sample(invitation.id, 'preview@example.org').message
     document = Nokogiri::HTML(message.html_part.body.decoded)

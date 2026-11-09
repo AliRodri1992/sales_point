@@ -56,9 +56,18 @@ module EmailTemplates
     end
 
     def self.configured_host
-      ENV['DELTA_POS_PUBLIC_HOST'].presence ||
-        Rails.application.config.action_mailer.default_url_options&.dig(:host) ||
-        'www.example.com'
+      host = ENV['DELTA_POS_PUBLIC_HOST'].presence ||
+             Rails.application.config.action_mailer.default_url_options&.dig(:host)
+      host ||= 'www.example.com' unless Rails.env.production?
+      if Rails.env.production? && (host.blank? || placeholder_host?(host))
+        raise ArgumentError, 'DELTA_POS_PUBLIC_HOST must be a real public domain'
+      end
+
+      host
+    end
+
+    def self.placeholder_host?(host)
+      host.to_s.match?(/\A(?:[a-z0-9-]+\.)*example\.(?:com|org|net)\z/i)
     end
 
     def self.organization_name(local, organization)

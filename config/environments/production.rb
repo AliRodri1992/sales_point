@@ -61,8 +61,9 @@ Rails.application.configure do
   # Public URLs in emails must use the deployment's real HTTPS domain.
   # Fail at boot rather than silently sending unusable invitation links.
   public_host = ENV.fetch('DELTA_POS_PUBLIC_HOST')
-  raise 'DELTA_POS_PUBLIC_HOST must be a hostname, without a scheme or path' if
-    public_host.blank? || public_host.match?(/[^a-zA-Z0-9.-]/) || public_host == 'example.com'
+  placeholder_host = public_host.match?(/\A(?:[a-z0-9-]+\.)*example\.(?:com|org|net)\z/i)
+  raise 'DELTA_POS_PUBLIC_HOST must be a real hostname, without a scheme or path' if
+    public_host.blank? || public_host.match?(/[^a-zA-Z0-9.-]/) || placeholder_host
 
   config.action_mailer.default_url_options = { host: public_host, protocol: 'https' }
   config.action_mailer.raise_delivery_errors = true
