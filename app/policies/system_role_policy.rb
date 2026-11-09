@@ -36,15 +36,21 @@ class SystemRolePolicy < ApplicationPolicy
   private
 
   def global_manager?
+    authorized_administrative_role?('super_admin')
+  end
+
+  def admin?
+    authorized_administrative_role?(SystemRole::ADMINISTRATIVE_CODES)
+  end
+
+  def authorized_administrative_role?(codes)
     return false unless user&.active? && user.deleted_at.nil?
 
-    # A legacy role assignment must not grant platform-wide administration
-    # after all organization memberships have been revoked.
-    organizations = user.organization_memberships.accessible.select(:organization_id)
-    assignments = user.user_roles.active.where(branch_id: nil, organization_id: organizations)
-                      .joins(:system_role).where(system_roles: { code: 'super_admin' })
-    current = CurrentOrganizationAccess.organization
-    assignments = assignments.where(organization: current) if current
+    memberships = user.organization_memberships.accessible.select(:organization_id)
+    assignments = user.user_roles.active.where(branch_id: nil, organization_id: memberships)
+                      .joins(:system_role).where(system_roles: { code: codes })
+    organization = CurrentOrganizationAccess.organization
+    assignments = assignments.where(organization:) if organization
     assignments.exists?
   end
 
@@ -52,7 +58,4 @@ class SystemRolePolicy < ApplicationPolicy
     record.is_a?(SystemRole) && record.protected_permissions?
   end
 
-  def admin?
-    user&.admin?
-  end
 end
