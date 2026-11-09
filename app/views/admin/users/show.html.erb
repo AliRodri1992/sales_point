@@ -135,6 +135,9 @@
       <div>
         <h2 id="user-roles-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.users.show.roles') %></h2>
         <p class="mt-1 text-xs text-slate-500"><%= t('admin.users.ui.roles_detail_hint') %></p>
+        <% if @user.organization_memberships.active.where.not(organization: current_organization).exists? %>
+          <p class="mt-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900"><%= t('admin.users.ui.shared_global_roles_warning') %></p>
+        <% end %>
       </div>
     </div>
     <div class="grid gap-5 lg:grid-cols-2">

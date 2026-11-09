@@ -82,6 +82,15 @@ RSpec.describe 'Admin user invitation delivery', type: :request do
     expect(response).to have_http_status(:forbidden)
   end
 
+  it 'hides the resend action when its explicit permission is revoked' do
+    role.system_role_permissions.destroy_all
+    get admin_user_path(user)
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    expect(document.css("form[action='#{admin_user_invitation_path(user)}']")).to be_empty
+  end
+
   it 'requires explicit permission to resend' do
     role.system_role_permissions.destroy_all
     expect { resend }.not_to change(UserInvitation, :count)

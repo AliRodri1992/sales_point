@@ -2,6 +2,7 @@ ko:
   admin:
     users:
       ui:
+        shared_global_roles_warning: "이 계정의 전체 역할은 소속된 모든 조직에 적용됩니다. 다른 조직의 멤버십을 활성화하기 전에 권한을 검토하세요."
         role_audit_title: "역할 변경 기록"
         role_audit_granted: "부여됨"
         role_audit_revoked: "철회됨"

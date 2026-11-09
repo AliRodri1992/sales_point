@@ -2,6 +2,7 @@ es:
   admin:
     users:
       ui:
+        shared_global_roles_warning: "Los roles generales de esta cuenta se comparten entre sus empresas. Revisa los permisos antes de habilitar una membresía nueva."
         role_audit_title: "Historial de permisos"
         role_audit_granted: "Asignado"
         role_audit_revoked: "Revocado"

@@ -2,6 +2,7 @@ en:
   admin:
     users:
       ui:
+        shared_global_roles_warning: "This account's global roles apply across its organizations. Review access before enabling another membership."
         role_audit_title: "Role change history"
         role_audit_granted: "Granted"
         role_audit_revoked: "Revoked"

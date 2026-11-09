@@ -171,6 +171,7 @@ RSpec.describe 'Admin users redesigned screens', type: :feature, js: true do
     expect(page).to have_css('#user_email.input-field-error')
     expect(page).to have_css('p[data-server-field-error]', text: /Email/i)
     expect(page).to have_css('#users-identity-title')
+    expect(page.evaluate_script('document.activeElement.id')).to eq('user_email')
   end
   scenario 'deactivates a user in an accessible modal without opening another page' do
     permission = Permission.find_or_create_by!(code: 'users.destroy') do |item|

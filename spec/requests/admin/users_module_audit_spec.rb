@@ -49,6 +49,21 @@ RSpec.describe 'Audited users access boundaries', type: :request do
     expect(target.reload.username).not_to eq('Other Organization Edit')
   end
 
+  it 'shows the durable role-change history inside the selected organization' do
+    target = add_member(create(:user, email: 'role-audited@example.com'))
+    role = create(:system_role, :system, code: 'audited_finance_viewer')
+
+    patch admin_user_path(target), params: { user: { system_role_ids: ['', role.id.to_s] } }
+
+    expect(response).to redirect_to(admin_user_path(target))
+    expect(UserRoleAuditEvent.where(user: target, organization:).count).to eq(1)
+
+    get admin_user_path(target)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(I18n.t('admin.users.ui.role_audit_title'))
+    expect(response.body).to include(target.email)
+  end
+
   it 'marks the session revoked when changing an active role' do
     target = add_member(create(:user, email: 'access-change@example.com'))
     role = create(:system_role, :system, code: 'access_change_role')
