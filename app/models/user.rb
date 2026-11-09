@@ -99,7 +99,8 @@ class User < ApplicationRecord
 
   def display_role_name
     assignments = user_roles.active
-    assignments = assignments.where(organization: CurrentOrganizationAccess.organization) if CurrentOrganizationAccess.organization
+    organization = CurrentOrganizationAccess.organization
+    assignments = assignments.where(organization:) if organization
     assignments.joins(:system_role).order('system_roles.name').pick('system_roles.name')
   end
 
