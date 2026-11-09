@@ -424,7 +424,9 @@ RSpec.describe 'Admin::Branches', type: :request do
       note_versions = PaperTrail::Version.where(item_type: 'Note', item_id: note.id, event: 'update')
       expect(phone_versions).to exist
       expect(note_versions).to exist
-      expect(phone_versions.order(:id).last.changeset.keys.map(&:to_s)).to include('deleted_at')
+      phone_version = phone_versions.order(:id).last
+      expect(phone_version.changeset.keys.map(&:to_s)).to include('deleted_at'),
+                                                         "Phone version raw diff: #{phone_version.object_changes.inspect.first(650)}"
       expect(note_versions.order(:id).last.changeset.keys.map(&:to_s)).to include('deleted_at')
       expect(Phone.with_deleted.where(phoneable_type: 'Branch', phoneable_id: branch.id).pluck(:id))
         .to include(phone.id)
