@@ -26,7 +26,10 @@ module Users
     end
 
     def last_admin_role_safe?(role_ids)
-      return true if @user.new_record? || role_ids.nil? || !@user.admin?
+      return true if @user.new_record? || role_ids.nil?
+      local_admin = @user.user_roles.active.where(organization: @organization, branch_id: nil)
+                         .exists?(system_roles: { code: SystemRole::ADMINISTRATIVE_CODES })
+      return true unless local_admin
 
       return true if SystemRole.system.active.exists?(id: role_ids, code: SystemRole::ADMINISTRATIVE_CODES)
       return true if another_administrator_available?
