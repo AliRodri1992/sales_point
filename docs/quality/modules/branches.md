@@ -232,3 +232,10 @@ Se ajustan las expectativas de RSpec para verificar el diff crudo y el historial
 - **BR-005 (aceptación):** sigue **ABIERTO** porque la ejecución global `CI` no fue verde; la rama sigue recibiendo cambios paralelos. No reinterpretar fallas de otros módulos como Sucursales; sí detienen el cierre integral conforme al estándar.
 
 **Dictamen:** corregido y probado en la superficie cubierta por Branches CI; verificación manual exploratoria de 200 % de zoom, lector de pantalla y escenarios no automatizados sigue pendiente. No marcar cierre independiente ni fusionar.
+
+
+### Resultado real de la nueva regresión accesible — 2026-11-08
+
+Sobre el commit `7299330c52f4c831eb6c84d3aedeacb188a723a6`, Branches CI [42562487952](https://github.com/AliRodri1992/sales_point/actions/runs/42562487952) **APROBÓ** ambas tareas: RuboCop específico de Sucursales y RSpec de modelos, servicios, requests y Chrome, con **130 ejemplos y 0 fallos** (seed `7456`). La regresión `announces updated result counts to assistive technology after filtering` validó el `role=status`, `aria-live=polite`, `aria-atomic=true`, el recuento actualizado y la preservación del foco al filtrar.
+
+**BR-001:** mejora de accesibilidad IMPLEMENTADA Y VERIFICADA AUTOMÁTICAMENTE. **BR-002/BR-003/BR-004/BR-006/BR-007/BR-008:** escenarios incluidos en Branches CI, verificados automatizadamente en el SHA indicado, sin sustituir pruebas manuales de lector de pantalla, zoom real 200 % o una revisión independiente. **BR-005 permanece ABIERTO** porque el CI global no ha sido certificado verde en SHA de aceptación; las cancelaciones por trabajo concurrente y ofensas de módulos externos no se atribuyen a Sucursales. Ningún merge efectuado.
