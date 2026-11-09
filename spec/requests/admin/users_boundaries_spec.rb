@@ -35,7 +35,7 @@ RSpec.describe 'Admin user organization and role boundaries', type: :request do
     expect(response).to have_http_status(:not_found)
     delete admin_user_path(foreign)
     expect(response).to have_http_status(:not_found)
-    expect(foreign.reload.deleted_at).to be_nil
+    expect(User.with_deleted.find(foreign.id).deleted_at).to be_nil
   end
 
   it 'does not expose users with revoked organization membership' do
