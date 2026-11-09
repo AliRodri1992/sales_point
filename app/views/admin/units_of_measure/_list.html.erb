@@ -1,0 +1,103 @@
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
+    <div>
+      <h2 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.units_of_measure.index.catalog_title') %></h2>
+      <p class="mt-1 text-xs text-slate-500" aria-live="polite"><%= t('admin.units_of_measure.index.results', count: @total_count) %></p>
+    </div>
+    <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600"><%= t('admin.units_of_measure.index.sat_linked') %></span>
+  </div>
+  <% if @units.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[830px] text-sm">
+        <thead class="bg-slate-50/80 text-xs text-slate-500">
+          <tr>
+            <th class="px-5 py-3 text-left font-semibold sm:px-6"><%= sort_link('name', t('admin.units_of_measure.form.name'), frame: 'units_of_measure_list') %></th>
+            <th class="px-4 py-3 text-left font-semibold"><%= sort_link('code', t('admin.units_of_measure.form.code'), frame: 'units_of_measure_list') %></th>
+            <th class="px-4 py-3 text-left font-semibold"><%= t('admin.units_of_measure.form.sat') %></th>
+            <th class="px-4 py-3 text-center font-semibold"><%= sort_link('decimal_precision', t('admin.units_of_measure.form.precision'), frame: 'units_of_measure_list') %></th>
+            <th class="px-4 py-3 text-center font-semibold"><%= t('admin.units_of_measure.form.status') %></th>
+            <th class="px-5 py-3 text-right font-semibold sm:px-6"><%= t('admin.units_of_measure.actions.title') %></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% @units.each do |unit| %>
+            <tr class="transition hover:bg-slate-50">
+              <td class="px-5 py-4 sm:px-6">
+                <div class="font-semibold text-slate-900"><%= unit.name %></div>
+                <div class="mt-0.5 text-xs text-slate-500"><%= unit.abbreviation %></div>
+              </td>
+              <td class="px-4 py-4"><code class="rounded-lg bg-slate-100 px-2.5 py-1 font-semibold text-slate-700"><%= unit.code %></code></td>
+              <td class="px-4 py-4">
+                <span class="font-semibold text-emerald-800"><%= unit.sat_unit_key.code %></span>
+                <span class="ml-1 block max-w-52 truncate text-xs text-slate-500" title="<%= unit.sat_unit_key.description %>"><%= unit.sat_unit_key.description %></span>
+              </td>
+              <td class="px-4 py-4 text-center">
+                <span class="font-semibold tabular-nums text-slate-700"><%= unit.decimal_precision %></span>
+                <span class="ml-1 text-xs text-slate-400"><%= t('admin.units_of_measure.index.decimals') %></span>
+              </td>
+              <td class="px-4 py-4 text-center">
+                <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold <%= unit.active? ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' %>">
+                  <span class="size-1.5 rounded-full <%= unit.active? ? 'bg-emerald-500' : 'bg-slate-400' %>"></span>
+                  <%= t("admin.units_of_measure.statuses.#{unit.status}") %>
+                </span>
+              </td>
+              <td class="px-5 py-4 sm:px-6">
+                <div class="flex items-center justify-end gap-1">
+                  <% if policy(UnitOfMeasure).show? %>
+                    <%= link_to admin_unit_of_measure_path(unit), data: { turbo_frame: 'unit_of_measure_modal', tooltip: t('admin.units_of_measure.actions.show') },
+                                aria: { label: t('admin.units_of_measure.actions.show') }, class: 'inline-flex size-10 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800' do %>
+                      <%= delta_icon('eye', class: 'size-4') %>
+                    <% end %>
+                  <% end %>
+                  <% if policy(UnitOfMeasure).update? %>
+                    <%= link_to edit_admin_unit_of_measure_path(unit), data: { turbo_frame: 'unit_of_measure_modal', tooltip: t('admin.units_of_measure.actions.edit') },
+                                aria: { label: t('admin.units_of_measure.actions.edit') }, class: 'inline-flex size-10 items-center justify-center rounded-lg text-slate-500 hover:bg-emerald-50 hover:text-emerald-800' do %>
+                      <%= delta_icon('pencil-square', class: 'size-4') %>
+                    <% end %>
+                  <% end %>
+                  <% if policy(UnitOfMeasure).destroy? %>
+                    <%= button_to admin_unit_of_measure_path(unit), method: :delete,
+                                  data: { controller: 'swal-confirm', turbo_confirm: t('admin.units_of_measure.actions.confirm_delete'),
+                                          swal_cancel_text: t('admin.units_of_measure.actions.cancel'), turbo_frame: 'units_of_measure_list' },
+                                  aria: { label: t('admin.units_of_measure.actions.delete') },
+                                  class: 'inline-flex size-10 items-center justify-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-700' do %>
+                      <%= delta_icon('trash', class: 'size-4') %>
+                    <% end %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <footer class="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 px-5 py-4 sm:px-6">
+      <div class="flex items-center gap-2 text-xs font-medium text-slate-600">
+        <span><%= t('admin.units_of_measure.index.per_page') %></span>
+        <div class="relative w-20" data-controller="delta-select">
+          <%= select_tag :per_page, options_for_select(TablePagePreference::OPTIONS, @per_page),
+                         data: { controller: 'table-page-size', table_page_size_key_value: 'units_of_measure', action: 'change->table-page-size#apply' },
+                         class: 'min-h-10 w-full rounded-lg border border-slate-200 text-sm' %>
+        </div>
+        <span aria-live="polite"><%= @current_page %> / <%= @total_pages %></span>
+      </div>
+      <nav aria-label="<%= t('admin.units_of_measure.index.pagination') %>" class="flex items-center gap-1">
+        <%= pagination_links(@total_pages, frame: 'units_of_measure_list', window: 2) if @total_pages > 1 %>
+      </nav>
+    </footer>
+  <% else %>
+    <div class="flex flex-col items-center justify-center px-6 py-14 text-center">
+      <div class="mb-4 flex size-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700"><%= delta_icon('cog', class: 'size-7') %></div>
+      <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t(@unfiltered_count.positive? ? 'admin.units_of_measure.index.no_results' : 'admin.units_of_measure.index.empty_title') %></h3>
+      <p class="mt-2 max-w-md text-sm text-slate-500"><%= t(@unfiltered_count.positive? ? 'admin.units_of_measure.index.try_filters' : 'admin.units_of_measure.index.empty_subtitle') %></p>
+      <% if @unfiltered_count.positive? %>
+        <%= link_to t('admin.units_of_measure.filters.clear'), admin_units_of_measure_path,
+                    data: { turbo_frame: '_top' }, class: 'mt-4 text-sm font-semibold text-emerald-700 hover:underline' %>
+      <% elsif policy(UnitOfMeasure).create? %>
+        <%= link_to t('admin.units_of_measure.actions.new'), new_admin_unit_of_measure_path,
+                    data: { turbo_frame: 'unit_of_measure_modal' },
+                    class: 'mt-5 inline-flex min-h-11 items-center rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800' %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

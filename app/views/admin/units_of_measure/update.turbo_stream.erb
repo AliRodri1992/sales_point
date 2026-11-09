@@ -1,0 +1,8 @@
+<%= turbo_stream.update 'unit_of_measure_modal', '' %>
+<%= turbo_stream.replace 'units_of_measure_stats' do %>
+  <%= render 'stats' %>
+<% end %>
+<%= turbo_stream.update 'units_of_measure_list' do %>
+  <%= render 'list' %>
+<% end %>
+<turbo-stream action="swal" target="swal"><template><%= @swal_message %></template></turbo-stream>

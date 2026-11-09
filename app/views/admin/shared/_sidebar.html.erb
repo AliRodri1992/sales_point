@@ -152,14 +152,14 @@
       </div>
     </div>
 
-    <% if [Language, Product, Category].any? { |model| policy(model).index? } %>
+    <% if [Language, Product, Category, UnitOfMeasure].any? { |model| policy(model).index? } %>
     <div class="mb-6">
       <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
         <%= t('admin.shared.sidebar.section_catalogs') %>
       </p>
 
       <div class="space-y-1">
-        <details class="sidebar-catalog" data-section-active="<%= sidebar_section_open?('languages', 'categories', 'products') %>"<%= ' open' if sidebar_section_open?('languages', 'categories', 'products') %>>
+        <details class="sidebar-catalog" data-section-active="<%= sidebar_section_open?('languages', 'categories', 'products', 'units_of_measure') %>"<%= ' open' if sidebar_section_open?('languages', 'categories', 'products', 'units_of_measure') %>>
           <summary
             class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
             aria-label="<%= t('admin.shared.sidebar.catalogs') %>"
@@ -193,6 +193,17 @@
               <%= sidebar_navigation_icon(:products, class_name: 'size-4') %>
               <span class="sidebar-label"><%= t('admin.shared.sidebar.products') %></span>
             </a>
+            <% end %>
+
+            <% if policy(UnitOfMeasure).index? %>
+              <%= link_to admin_units_of_measure_path,
+                          data: { tooltip: t('admin.units_of_measure.index.title') },
+                          aria: { label: t('admin.units_of_measure.index.title'),
+                                  current: sidebar_item_active?('units_of_measure') ? 'page' : 'false' },
+                          class: sidebar_link_classes('units_of_measure', variant: :submenu) do %>
+                <%= delta_icon('cog', class: 'size-4') %>
+                <span class="sidebar-label"><%= t('admin.units_of_measure.index.title') %></span>
+              <% end %>
             <% end %>
 
             <% if policy(Category).index? %>

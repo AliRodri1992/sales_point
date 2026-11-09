@@ -1,0 +1,91 @@
+<%= form_with model: unit,
+              url: unit.persisted? ? admin_unit_of_measure_path(unit) : admin_units_of_measure_path,
+              method: unit.persisted? ? :patch : :post,
+              html: { novalidate: true },
+              data: { turbo_frame: local_assigns[:standalone] ? '_top' : 'unit_of_measure_modal' },
+              class: 'space-y-5' do |form| %>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div>
+      <%= form.label :code, required_field_label(t('admin.units_of_measure.form.code')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :code, maxlength: 20, autocomplete: 'off', data: { autofocus: true },
+                          placeholder: t('admin.units_of_measure.form.code_placeholder'),
+                          aria: { invalid: unit.errors[:code].any?, describedby: validation_describedby(unit, :code, 'unit-code-hint') },
+                          class: "min-h-11 w-full rounded-xl px-4 text-sm uppercase tracking-wide text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(unit, :code)}" %>
+      <p id="unit-code-hint" class="mt-1 text-xs text-slate-500"><%= t('admin.units_of_measure.form.code_hint') %></p>
+      <%= error_message_for(unit, :code, label: t('admin.units_of_measure.form.code')) %>
+    </div>
+    <div>
+      <%= form.label :abbreviation, required_field_label(t('admin.units_of_measure.form.abbreviation')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+      <%= form.text_field :abbreviation, maxlength: 12, placeholder: t('admin.units_of_measure.form.abbreviation_placeholder'),
+                          aria: { invalid: unit.errors[:abbreviation].any?, describedby: validation_describedby(unit, :abbreviation) },
+                          class: "min-h-11 w-full rounded-xl px-4 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(unit, :abbreviation)}" %>
+      <%= error_message_for(unit, :abbreviation, label: t('admin.units_of_measure.form.abbreviation')) %>
+    </div>
+  </div>
+  <div>
+    <%= form.label :name, required_field_label(t('admin.units_of_measure.form.name')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+    <%= form.text_field :name, maxlength: 100, placeholder: t('admin.units_of_measure.form.name_placeholder'),
+                        aria: { invalid: unit.errors[:name].any?, describedby: validation_describedby(unit, :name) },
+                        class: "min-h-11 w-full rounded-xl px-4 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(unit, :name)}" %>
+    <%= error_message_for(unit, :name, label: t('admin.units_of_measure.form.name')) %>
+  </div>
+  <div>
+    <%= form.label :description, t('admin.units_of_measure.form.description'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+    <%= form.text_area :description, rows: 2, maxlength: 500, placeholder: t('admin.units_of_measure.form.description_placeholder'),
+                       aria: { invalid: unit.errors[:description].any?, describedby: validation_describedby(unit, :description) },
+                       class: "w-full resize-y rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(unit, :description)}" %>
+    <%= error_message_for(unit, :description, label: t('admin.units_of_measure.form.description')) %>
+  </div>
+  <div class="rounded-xl border border-emerald-100 bg-emerald-50/50 p-4">
+    <div class="mb-3 flex items-center gap-2">
+      <div class="flex size-8 items-center justify-center rounded-lg bg-white text-emerald-700"><%= delta_icon('cog', class: 'size-4') %></div>
+      <div>
+        <p class="text-sm font-bold text-slate-800"><%= t('admin.units_of_measure.form.fiscal_title') %></p>
+        <p class="text-xs text-slate-500"><%= t('admin.units_of_measure.form.fiscal_hint') %></p>
+      </div>
+    </div>
+    <%= form.label :sat_unit_key_id, required_field_label(t('admin.units_of_measure.form.sat')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+    <div class="relative" data-controller="delta-select" data-searchable="true" data-search-placeholder="<%= t('admin.units_of_measure.filters.search_sat') %>">
+      <%= form.select :sat_unit_key_id,
+                      options_for_select([[t('admin.units_of_measure.form.choose_sat'), '']] + @sat_keys.map { |key| ["#{key.code} — #{key.description}", key.id] }, unit.sat_unit_key_id),
+                      {}, aria: { invalid: unit.errors[:sat_unit_key_id].any? || unit.errors[:sat_unit_key].any?,
+                                  describedby: validation_describedby(unit, :sat_unit_key_id, 'unit-sat-hint', validation_describedby(unit, :sat_unit_key)) },
+                      class: "min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm" %>
+    </div>
+    <p id="unit-sat-hint" class="mt-2 text-xs leading-relaxed text-slate-500"><%= t('admin.units_of_measure.form.sat_hint') %></p>
+    <%= error_message_for(unit, :sat_unit_key_id, label: t('admin.units_of_measure.form.sat')) %>
+    <%= error_message_for(unit, :sat_unit_key, label: t('admin.units_of_measure.form.sat')) %>
+  </div>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div>
+      <%= form.label :decimal_precision, required_field_label(t('admin.units_of_measure.form.precision')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+      <div class="relative" data-controller="delta-select">
+        <%= form.select :decimal_precision, options_for_select((0..6).map { |n| [t('admin.units_of_measure.form.decimal_count', count: n), n] }, unit.decimal_precision || 0), {},
+                        aria: { invalid: unit.errors[:decimal_precision].any?, describedby: validation_describedby(unit, :decimal_precision, 'unit-precision-hint') },
+                        class: 'min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm' %>
+      </div>
+      <p id="unit-precision-hint" class="mt-1 text-xs text-slate-500"><%= t('admin.units_of_measure.form.precision_hint') %></p>
+      <%= error_message_for(unit, :decimal_precision, label: t('admin.units_of_measure.form.precision')) %>
+    </div>
+    <div>
+      <%= form.label :status, required_field_label(t('admin.units_of_measure.form.status')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+      <div class="relative" data-controller="delta-select">
+        <%= form.select :status, options_for_select(UnitOfMeasure.statuses.keys.map { |status| [t("admin.units_of_measure.statuses.#{status}"), status] }, unit.status || 'active'), {},
+                        aria: { invalid: unit.errors[:status].any?, describedby: validation_describedby(unit, :status) },
+                        class: 'min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm' %>
+      </div>
+      <%= error_message_for(unit, :status, label: t('admin.units_of_measure.form.status')) %>
+    </div>
+  </div>
+  <div class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-5">
+    <% if local_assigns[:standalone] %>
+      <%= link_to t('admin.units_of_measure.actions.cancel'), admin_units_of_measure_path,
+                  class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50' %>
+    <% else %>
+      <button type="button" data-modal-dismiss data-action="modal#close"
+              class="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50"><%= t('admin.units_of_measure.actions.cancel') %></button>
+    <% end %>
+    <%= form.submit t(unit.persisted? ? 'admin.units_of_measure.actions.save' : 'admin.units_of_measure.actions.create'),
+                    class: 'inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl bg-emerald-700 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-emerald-600' %>
+  </div>
+<% end %>

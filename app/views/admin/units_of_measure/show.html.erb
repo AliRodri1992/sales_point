@@ -1,0 +1,7 @@
+<% if turbo_frame_request? %>
+  <%= turbo_frame_tag 'unit_of_measure_modal' do %>
+    <%= render 'show' %>
+  <% end %>
+<% else %>
+  <div class="mx-auto max-w-xl"><%= render 'show', standalone: true %></div>
+<% end %>

@@ -1,0 +1,93 @@
+es:
+  admin:
+    units_of_measure:
+      index:
+        eyebrow: "Catálogos comerciales"
+        title: "Unidades de medida"
+        subtitle: "Administra las unidades operativas y sus claves fiscales SAT, sin afectar los productos."
+        total: "Total de unidades"
+        active: "Unidades activas"
+        fractional: "Permiten fracciones"
+        catalog_title: "Directorio de unidades"
+        results:
+          one: "%{count} resultado"
+          other: "%{count} resultados"
+        sat_linked: "Vinculadas con SAT"
+        decimals: "dec."
+        per_page: "Filas por página"
+        pagination: "Paginación de unidades"
+        no_results: "No encontramos coincidencias"
+        try_filters: "Ajusta la búsqueda o limpia los filtros para ver más unidades."
+        empty_title: "Aún no hay unidades registradas"
+        empty_subtitle: "Crea la primera unidad para estandarizar tus operaciones."
+      filters:
+        search: "Buscar unidades"
+        placeholder: "Nombre, código, abreviatura o clave SAT…"
+        fractional: "Cantidades fraccionarias"
+        sat: "Clave SAT"
+        search_sat: "Buscar clave SAT…"
+        all: "Todos"
+        yes: "Sí"
+        no: "No"
+        apply: "Filtrar"
+        clear: "Limpiar"
+      new:
+        title: "Nueva unidad de medida"
+      edit:
+        title: "Editar unidad de medida"
+      form:
+        subtitle: "Define la identidad comercial y su correspondencia fiscal."
+        code: "Código interno"
+        code_placeholder: "Ej. PZA"
+        code_hint: "Único por empresa. Letras, números y guion bajo."
+        name: "Nombre"
+        name_placeholder: "Ej. Pieza"
+        abbreviation: "Abreviatura"
+        abbreviation_placeholder: "Ej. pza"
+        description: "Descripción"
+        description_placeholder: "Uso o notas de esta unidad (opcional)"
+        fiscal_title: "Referencia fiscal"
+        fiscal_hint: "Asocia esta unidad con el catálogo oficial del SAT."
+        sat: "Unidad SAT"
+        choose_sat: "Selecciona una clave fiscal"
+        sat_hint: "Solo se muestran claves vigentes. Esta selección no modifica productos."
+        precision: "Precisión decimal"
+        precision_hint: "0 = cantidades enteras; 1 a 6 = permite fracciones."
+        decimal_count:
+          one: "%{count} decimal"
+          other: "%{count} decimales"
+        status: "Estado"
+      statuses:
+        active: "Activo"
+        inactive: "Inactivo"
+      actions:
+        title: "Acciones"
+        new: "Nueva unidad"
+        create: "Crear unidad"
+        save: "Guardar cambios"
+        show: "Ver detalles"
+        edit: "Editar"
+        delete: "Dar de baja"
+        cancel: "Cancelar"
+        close: "Cerrar"
+        back: "Volver"
+        confirm_delete: "¿Quieres dar de baja esta unidad de medida? El registro conservará su historial."
+      validation:
+        sat_invalid: "debe estar vigente y activa"
+      messages:
+        created: "Unidad de medida creada correctamente."
+        updated: "Unidad de medida actualizada correctamente."
+        destroyed: "Unidad de medida dada de baja."
+  activerecord:
+    models:
+      unit_of_measure: "Unidad de medida"
+    attributes:
+      unit_of_measure:
+        code: "Código interno"
+        name: "Nombre"
+        abbreviation: "Abreviatura"
+        description: "Descripción"
+        sat_unit_key: "Unidad SAT"
+        sat_unit_key_id: "Unidad SAT"
+        decimal_precision: "Precisión decimal"
+        status: "Estado"

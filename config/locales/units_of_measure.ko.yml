@@ -1,0 +1,93 @@
+ko:
+  admin:
+    units_of_measure:
+      index:
+        eyebrow: "상업 카탈로그"
+        title: "측정 단위"
+        subtitle: "제품을 변경하지 않고 운영 단위와 SAT 세무 코드를 관리합니다."
+        total: "전체 단위"
+        active: "활성 단위"
+        fractional: "소수 허용 단위"
+        catalog_title: "단위 목록"
+        results:
+          one: "%{count}개 결과"
+          other: "%{count}개 결과"
+        sat_linked: "SAT 연결됨"
+        decimals: "자리"
+        per_page: "페이지당 행"
+        pagination: "단위 페이지 탐색"
+        no_results: "일치하는 단위가 없습니다"
+        try_filters: "검색 조건을 변경하거나 필터를 초기화하세요."
+        empty_title: "등록된 단위가 없습니다"
+        empty_subtitle: "첫 단위를 등록하여 운영을 표준화하세요."
+      filters:
+        search: "단위 검색"
+        placeholder: "이름, 코드, 약어 또는 SAT 코드…"
+        fractional: "소수 수량"
+        sat: "SAT 코드"
+        search_sat: "SAT 코드 검색…"
+        all: "전체"
+        yes: "예"
+        no: "아니요"
+        apply: "필터"
+        clear: "초기화"
+      new:
+        title: "새 측정 단위"
+      edit:
+        title: "측정 단위 수정"
+      form:
+        subtitle: "상업용 정보와 세무 참조를 설정합니다."
+        code: "내부 코드"
+        code_placeholder: "예: PZA"
+        code_hint: "회사별 고유 코드. 영문자, 숫자, 밑줄만 사용합니다."
+        name: "이름"
+        name_placeholder: "예: 개"
+        abbreviation: "약어"
+        abbreviation_placeholder: "예: pc"
+        description: "설명"
+        description_placeholder: "이 단위의 사용 목적 또는 메모 (선택)"
+        fiscal_title: "세무 참조"
+        fiscal_hint: "SAT 공식 카탈로그 항목을 연결합니다."
+        sat: "SAT 단위"
+        choose_sat: "세무 코드 선택"
+        sat_hint: "유효한 코드만 표시합니다. 제품에는 영향을 주지 않습니다."
+        precision: "소수 자릿수"
+        precision_hint: "0은 정수만, 1~6은 소수 허용입니다."
+        decimal_count:
+          one: "소수 %{count}자리"
+          other: "소수 %{count}자리"
+        status: "상태"
+      statuses:
+        active: "활성"
+        inactive: "비활성"
+      actions:
+        title: "작업"
+        new: "새 단위"
+        create: "단위 생성"
+        save: "변경 사항 저장"
+        show: "상세 보기"
+        edit: "수정"
+        delete: "비활성화"
+        cancel: "취소"
+        close: "닫기"
+        back: "뒤로"
+        confirm_delete: "이 측정 단위를 비활성화하시겠습니까? 기록은 유지됩니다."
+      validation:
+        sat_invalid: "유효하고 활성 상태여야 합니다"
+      messages:
+        created: "측정 단위가 생성되었습니다."
+        updated: "측정 단위가 업데이트되었습니다."
+        destroyed: "측정 단위가 비활성화되었습니다."
+  activerecord:
+    models:
+      unit_of_measure: "측정 단위"
+    attributes:
+      unit_of_measure:
+        code: "내부 코드"
+        name: "이름"
+        abbreviation: "약어"
+        description: "설명"
+        sat_unit_key: "SAT 단위"
+        sat_unit_key_id: "SAT 단위"
+        decimal_precision: "소수 자릿수"
+        status: "상태"

@@ -1,0 +1,93 @@
+en:
+  admin:
+    units_of_measure:
+      index:
+        eyebrow: "Commercial catalogs"
+        title: "Units of measure"
+        subtitle: "Manage operational units and their SAT fiscal codes without changing products."
+        total: "Total units"
+        active: "Active units"
+        fractional: "Allow fractions"
+        catalog_title: "Units directory"
+        results:
+          one: "%{count} result"
+          other: "%{count} results"
+        sat_linked: "Linked to SAT"
+        decimals: "dec."
+        per_page: "Rows per page"
+        pagination: "Units pagination"
+        no_results: "No matching units found"
+        try_filters: "Adjust the search or clear filters to see more units."
+        empty_title: "No units registered yet"
+        empty_subtitle: "Create your first unit to standardize operations."
+      filters:
+        search: "Find units"
+        placeholder: "Name, code, abbreviation or SAT code…"
+        fractional: "Fractional quantities"
+        sat: "SAT code"
+        search_sat: "Search SAT codes…"
+        all: "All"
+        yes: "Yes"
+        no: "No"
+        apply: "Filter"
+        clear: "Clear"
+      new:
+        title: "New unit of measure"
+      edit:
+        title: "Edit unit of measure"
+      form:
+        subtitle: "Define the business identity and fiscal reference."
+        code: "Internal code"
+        code_placeholder: "E.g. PCE"
+        code_hint: "Unique per organization. Letters, numbers and underscores."
+        name: "Name"
+        name_placeholder: "E.g. Piece"
+        abbreviation: "Abbreviation"
+        abbreviation_placeholder: "E.g. pc"
+        description: "Description"
+        description_placeholder: "Use or notes for this unit (optional)"
+        fiscal_title: "Fiscal reference"
+        fiscal_hint: "Associate this unit with an official SAT catalog entry."
+        sat: "SAT unit"
+        choose_sat: "Select a fiscal code"
+        sat_hint: "Only current codes are shown. This does not change products."
+        precision: "Decimal precision"
+        precision_hint: "0 = whole quantities; 1–6 = fractions allowed."
+        decimal_count:
+          one: "%{count} decimal"
+          other: "%{count} decimals"
+        status: "Status"
+      statuses:
+        active: "Active"
+        inactive: "Inactive"
+      actions:
+        title: "Actions"
+        new: "New unit"
+        create: "Create unit"
+        save: "Save changes"
+        show: "View details"
+        edit: "Edit"
+        delete: "Deactivate"
+        cancel: "Cancel"
+        close: "Close"
+        back: "Back"
+        confirm_delete: "Deactivate this unit of measure? Its history will be preserved."
+      validation:
+        sat_invalid: "must be active and current"
+      messages:
+        created: "Unit of measure created successfully."
+        updated: "Unit of measure updated successfully."
+        destroyed: "Unit of measure deactivated."
+  activerecord:
+    models:
+      unit_of_measure: "Unit of measure"
+    attributes:
+      unit_of_measure:
+        code: "Internal code"
+        name: "Name"
+        abbreviation: "Abbreviation"
+        description: "Description"
+        sat_unit_key: "SAT unit"
+        sat_unit_key_id: "SAT unit"
+        decimal_precision: "Decimal precision"
+        status: "Status"

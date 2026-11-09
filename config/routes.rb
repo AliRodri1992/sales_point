@@ -50,6 +50,7 @@ Rails.application.routes.draw do
     get 'languages/content', to: 'languages#content'
     resources :languages
     resources :categories
+    resources :units_of_measure
     resources :product_images, only: :create
     resources :price_lists
     resources :promotions

@@ -3,7 +3,8 @@
 class GranularPermissionCatalog
   MODULES = {
     'languages' => 'Idiomas', 'products' => 'Productos', 'customers' => 'Clientes',
-    'users' => 'Usuarios', 'categories' => 'Categorías'
+    'users' => 'Usuarios', 'categories' => 'Categorías',
+    'units_of_measure' => 'Unidades de medida'
   }.freeze
   ACTIONS = %w[access index show create update destroy].freeze
 

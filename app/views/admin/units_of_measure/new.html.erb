@@ -1,0 +1,15 @@
+<% if turbo_frame_request? %>
+  <%= turbo_frame_tag 'unit_of_measure_modal' do %>
+    <%= render 'panel' %>
+  <% end %>
+<% else %>
+  <div class="mx-auto max-w-2xl space-y-5">
+    <header>
+      <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.units_of_measure.new.title') %></h1>
+      <p class="mt-1 text-sm text-slate-500"><%= t('admin.units_of_measure.form.subtitle') %></p>
+    </header>
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+      <%= render 'form', unit: @unit, standalone: true %>
+    </div>
+  </div>
+<% end %>
