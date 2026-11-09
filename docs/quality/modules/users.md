@@ -79,6 +79,13 @@
 - **USERS-011:** se mantienen los cinco KPI existentes hasta obtener evidencia de una mejora medible.
 - **CI general de referencia** en `79a3d008`: migraciones, seguridad e I18n aprobaron; RuboCop global detectó **33 infracciones** en archivos externos a Usuarios, incluidas dos specs con errores de sintaxis; RSpec global seguía en curso al consultarse. El CI global del SHA final debe aprobar antes del cierre.
 
+### Adecuaciones verificables de esta ronda — 2026-11-08
+
+- **USERS-002 · mitigación de acceso entre empresas:** `UserEffectiveRoles#effective_role_assignments` exige una membresía `accessible` en la organización cuando el llamador especifica `organization:`; antes una asignación de sistema podía evaluarse para una organización sin membresía accesible. Se añadieron pruebas para organización ajena y membresía suspendida. Commits: `cb4dae48`, `c02aa50f`. **No se considera cerrado USERS-002:** los roles de sistema todavía se comparten entre organizaciones en las que el usuario sí tiene membresía accesible. Se requiere contrato de producto y migración de concesiones por organización para cambiar esa semántica.
+- **CI especializado, bloqueo puntual:** en el run `42559189815` RuboCop aprobó, pero las pruebas de Usuarios no llegaron a ejecutarse porque `20261110010000_create_system_role_permission_audit_events.rb` carecía de `end` al cerrar la clase. Corregido en `c9949257`. Los últimos runs requieren comprobación posterior.
+- **Validación visual real:** no ejecutada en el navegador de macOS con zoom 200 % ni lector de pantalla; no atribuir cierre visual a tests Capybara.
+- **CI global:** no considerar aprobado mientras haya infracciones externas o ejecuciones canceladas.
+
 ## 4. Matriz de aceptación por pantalla
 
 | Pantalla / flujo | Servidor, autorización y datos | UX y errores | Evidencia aún exigida |
