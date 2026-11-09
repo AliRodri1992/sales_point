@@ -103,19 +103,24 @@ RSpec.describe 'Audited users listing', type: :request do
       create(:user_role, user: target, branch:, system_role: role)
     end
 
-    queries = []
-    subscriber = ActiveSupport::Notifications.subscribe('sql.active_record') do |_name, _started, _finished, _id, data|
-      first_table = data[:sql].to_s.match(/\bFROM\s+"([^"]+)"/)&.captures&.first
-      queries << data[:sql] if first_table == 'branches'
-    end
-    begin
-      get admin_users_path
-    ensure
-      ActiveSupport::Notifications.unsubscribe(subscriber)
+    count_branch_queries = lambda do |filters|
+      queries = []
+      subscriber = ActiveSupport::Notifications.subscribe('sql.active_record') do |_name, _start, _finish, _id, data|
+        first_table = data[:sql].to_s.match(/\bFROM\s+"([^"]+)"/)&.captures&.first
+        queries << data[:sql] if first_table == 'branches'
+      end
+      begin
+        get admin_users_path, params: filters
+      ensure
+        ActiveSupport::Notifications.unsubscribe(subscriber)
+      end
+      expect(response).to have_http_status(:ok)
+      queries.length
     end
 
-    expect(response).to have_http_status(:ok)
-    expect(queries.length).to be <= 6
+    single = count_branch_queries.call(q: 'bulk-role-0@example.com')
+    multiple = count_branch_queries.call({})
+    expect(multiple - single).to be <= 2
   end
 
   it 'shows status history on an authorized user detail' do
