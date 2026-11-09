@@ -20,6 +20,7 @@ on:
       - 'app/mailers/user_invitation_mailer.rb'
       - 'app/models/user.rb'
       - 'app/models/user_*'
+      - 'db/migrate/20261109060000_create_user_role_audit_events.rb'
       - 'app/models/concerns/user_*'
       - 'app/services/users/**'
       - 'app/views/admin/users/**'

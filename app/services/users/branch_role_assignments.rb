@@ -11,10 +11,11 @@ module Users
       scope.where(operational_status: 'active', deleted_at: nil).or(scope.where(id: retained_ids)).order(:name)
     end
 
-    def initialize(user:, organization:, tokens:)
+    def initialize(user:, organization:, tokens:, actor: nil)
       @user = user
       @organization = organization
       @tokens = tokens
+      @actor = actor
     end
 
     def valid?
@@ -66,14 +67,22 @@ module Users
         next if desired.include?([assignment.branch_id, assignment.system_role_id])
 
         assignment.update!(deleted_at: Time.current)
+        audit_assignment!(assignment, 'revoked')
       end
     end
 
     def create_missing!(existing, desired)
       active_pairs = existing.map { |assignment| [assignment.branch_id, assignment.system_role_id] }
       (desired - active_pairs).each do |branch_id, role_id|
-        @user.user_roles.create!(branch_id:, system_role_id: role_id)
+        assignment = @user.user_roles.create!(branch_id:, system_role_id: role_id)
+        audit_assignment!(assignment, 'granted')
       end
+    end
+
+    def audit_assignment!(assignment, action)
+      UserRoleAuditEvent.record!(
+        user: @user, organization: @organization, actor: @actor, assignment:, action:
+      )
     end
 
     def parse_tokens

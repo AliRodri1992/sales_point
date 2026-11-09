@@ -94,7 +94,14 @@ module Users
       branch_ids = @organization.branches.with_deleted.select(:id)
       @user.user_roles.where(branch_id: branch_ids).find_each do |role|
         role.update!(deleted_at: Time.current)
+        audit_revocation!(role)
       end
+    end
+
+    def audit_revocation!(assignment)
+      UserRoleAuditEvent.record!(
+        user: @user, organization: @organization, actor: @actor, assignment:, action: 'revoked'
+      )
     end
 
     def reset_global_account!(preserve_foreign_branch_roles: false)
@@ -103,7 +110,10 @@ module Users
         local_branches = @organization.branches.with_deleted.select(:id)
         assignments = assignments.where(branch_id: nil).or(assignments.where(branch_id: local_branches))
       end
-      assignments.find_each { |role| role.update!(deleted_at: Time.current) }
+      assignments.find_each do |role|
+        role.update!(deleted_at: Time.current)
+        audit_revocation!(role)
+      end
       UserInvitation.revoke_for!(@user)
       @user.update!(
         status: :pending, deleted_at: nil, session_revoked_at: Time.current,

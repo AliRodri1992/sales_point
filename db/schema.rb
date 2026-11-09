@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_09_040000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_060000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -2276,6 +2276,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_040000) do
     t.check_constraint "delivery_status::text = ANY (ARRAY['pending'::character varying::text, 'queued'::character varying::text, 'sent'::character varying::text, 'failed'::character varying::text])", name: "chk_user_invitations_delivery_status"
   end
 
+  create_table "user_role_audit_events", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "organization_id", null: false
+    t.bigint "actor_id", null: false
+    t.bigint "system_role_id", null: false
+    t.bigint "branch_id"
+    t.string "action", limit: 16, null: false
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_user_role_audit_events_on_actor_id"
+    t.index ["branch_id"], name: "index_user_role_audit_events_on_branch_id"
+    t.index ["organization_id", "user_id", "created_at"], name: "idx_user_role_audits_tenant_history"
+    t.index ["organization_id"], name: "index_user_role_audit_events_on_organization_id"
+    t.index ["system_role_id"], name: "index_user_role_audit_events_on_system_role_id"
+    t.index ["user_id", "action", "created_at"], name: "idx_user_role_audits_action_history"
+    t.index ["user_id"], name: "index_user_role_audit_events_on_user_id"
+    t.check_constraint "action::text = ANY (ARRAY['granted'::character varying::text, 'revoked'::character varying::text])", name: "chk_user_role_audits_action"
+  end
+
   create_table "user_roles", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "system_role_id", null: false
@@ -2610,6 +2630,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_040000) do
   add_foreign_key "translates", "languages"
   add_foreign_key "user_invitations", "organizations"
   add_foreign_key "user_invitations", "users"
+  add_foreign_key "user_role_audit_events", "branches"
+  add_foreign_key "user_role_audit_events", "organizations"
+  add_foreign_key "user_role_audit_events", "system_roles"
+  add_foreign_key "user_role_audit_events", "users"
+  add_foreign_key "user_role_audit_events", "users", column: "actor_id"
   add_foreign_key "user_roles", "branches"
   add_foreign_key "user_roles", "system_roles"
   add_foreign_key "user_roles", "users"

@@ -76,7 +76,7 @@ module Users
 
     def branch_role_editor
       Users::BranchRoleAssignments.new(
-        user: @user, organization: @organization, tokens: @attributes[:branch_role_assignments]
+        user: @user, organization: @organization, actor: @actor, tokens: @attributes[:branch_role_assignments]
       )
     end
 
@@ -126,8 +126,18 @@ module Users
       current_ids = assignments.pluck(:system_role_id)
       assignments.where.not(system_role_id: role_ids).find_each do |assignment|
         assignment.update!(deleted_at: Time.current)
+        record_role_change!(assignment, 'revoked')
       end
-      (role_ids - current_ids).each { |id| @user.user_roles.create!(system_role_id: id) }
+      (role_ids - current_ids).each do |id|
+        assignment = @user.user_roles.create!(system_role_id: id)
+        record_role_change!(assignment, 'granted')
+      end
+    end
+
+    def record_role_change!(assignment, action)
+      UserRoleAuditEvent.record!(
+        user: @user, organization: @organization, actor: @actor, assignment:, action:
+      )
     end
   end
 end

@@ -2,6 +2,9 @@ en:
   admin:
     users:
       ui:
+        role_audit_title: "Role change history"
+        role_audit_granted: "Granted"
+        role_audit_revoked: "Revoked"
         legacy_incident_recovered: "Audited recovery of a historical block without a previous incident."
         deactivation_title: "Deactivate user"
         deactivation_hint: "This will remove the user's access to this organization and may sign out active sessions. Record a reason for the audit history."

@@ -2,6 +2,9 @@ es:
   admin:
     users:
       ui:
+        role_audit_title: "Historial de permisos"
+        role_audit_granted: "Asignado"
+        role_audit_revoked: "Revocado"
         legacy_incident_recovered: "Recuperación documentada de un bloqueo histórico sin incidente previo."
         deactivation_title: "Dar de baja al usuario"
         deactivation_hint: "Esta acción retirará al usuario de esta empresa y puede cerrar sus sesiones abiertas. Registra el motivo para conservar evidencia del cambio."
