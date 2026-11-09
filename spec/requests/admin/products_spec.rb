@@ -517,7 +517,7 @@ RSpec.describe 'Admin::Products', type: :request do
     it 'reports main barcode format failures directly below the barcode field' do
       post admin_products_path,
            params: { product: { name: 'Bad barcode', code: 'BAD-BAR-01', price: 20,
-                                barcode: "bad\\nbarcode" } }
+                                barcode: "bad\nbarcode" } }
 
       expect(response).to have_http_status(:unprocessable_content)
       document = Nokogiri::HTML(response.body)

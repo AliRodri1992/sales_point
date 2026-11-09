@@ -238,7 +238,7 @@ RSpec.describe Product, type: :model do
     let(:organization) { create(:organization) }
 
     it 'validates a printable primary barcode with at most 100 characters' do
-      product = build(:product, organization:, barcode: "bad\\nbarcode")
+      product = build(:product, organization:, barcode: "bad\nbarcode")
       expect(product).not_to be_valid
       expect(product.errors[:barcode]).to be_present
       product.barcode = 'B' * 101
