@@ -31,7 +31,7 @@ class OrganizationMembership < ApplicationRecord
   # A role explicitly preassigned before an account joins any organization
   # becomes local to its first membership. Later memberships never inherit it.
   def activate_preassigned_roles_for_first_membership
-    return unless user.organization_memberships.where(deleted_at: nil).one?
+    return unless user.organization_memberships.with_deleted.one?
 
     user.user_roles.where(branch_id: nil, organization_id: nil, deleted_at: nil).find_each do |assignment|
       assignment.update!(organization:)
