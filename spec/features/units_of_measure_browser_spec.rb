@@ -85,4 +85,54 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
       expect(page).to have_css('turbo-frame#unit_of_measure_modal.hidden', visible: :all, wait: 10)
     end
   end
+  scenario 'shows SAT fiscal issues and rejects reactivation with a retired key' do
+    unit = create(:unit_of_measure, organization:, sat_unit_key: sat_key, status: 'inactive', code: 'HIST')
+    sat_key.update!(valid_to: Date.yesterday)
+
+    visit admin_units_of_measure_path
+    expect(page).to have_css('#units_of_measure_list', text: 'SAT not current', wait: 10)
+    click_link 'Units with SAT issues'
+    expect(page).to have_css('#units_of_measure_list', text: 'HIST', wait: 10)
+
+    within('turbo-frame#units_of_measure_list tr', text: 'HIST') do
+      find('a[aria-label="Edit"]').click
+    end
+    expect(page).to have_css('turbo-frame#unit_of_measure_modal [role="dialog"]', wait: 10)
+    expect(page).to have_text('reactivation requires a current SAT code')
+
+    status_dropdown = find('#unit_of_measure_status', visible: :all).find(:xpath, '..')
+    status_dropdown.find('button[aria-haspopup="listbox"]').click
+    status_dropdown.find('[role="option"]', text: 'Active').click
+    click_button 'Save changes'
+
+    expect(page).to have_css('#unit_of_measure_sat_unit_key_error', wait: 10)
+    expect(unit.reload).to be_inactive
+    expect(unit.deleted_at).to be_nil
+
+    sat_key.update!(valid_to: Date.tomorrow)
+    click_button 'Save changes'
+    expect(page).to have_css('turbo-frame#unit_of_measure_modal.hidden', visible: :all, wait: 10)
+    expect(unit.reload).to be_active
+  end
+
+  scenario 'searches a large official SAT catalog without duplicating options in the modal' do
+    now = Time.current
+    SatUnitKey.insert_all!((1..350).map do |number|
+      { code: format('Z%04d', number), description: "Bulk key #{number}",
+        created_at: now, updated_at: now }
+    end)
+
+    started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    visit admin_units_of_measure_path
+    within('main > header') { click_link 'New unit' }
+    expect(page).to have_css('turbo-frame#unit_of_measure_modal.flex [role="dialog"]', wait: 10)
+
+    select_control = find('#unit_of_measure_sat_unit_key_id', visible: :all).find(:xpath, '..')
+    expect(page.evaluate_script("document.querySelector('#unit_of_measure_sat_unit_key_id').options.length")).to be >= 351
+    select_control.find('button[aria-haspopup="listbox"]').click
+    select_control.find('input[type="search"]').set('Z0350')
+    expect(select_control).to have_css('[role="option"]:not([hidden])', text: 'Z0350', wait: 10)
+    elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - started
+    Rails.logger.info("Units of measure SAT dropdown benchmark: 350 additional keys in #{(elapsed * 1000).round}ms")
+  end
 end

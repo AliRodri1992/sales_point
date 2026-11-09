@@ -126,4 +126,38 @@ RSpec.describe 'Admin::UnitsOfMeasure', type: :request do
     expect(unit.reload.versions.last.whodunnit).to eq(user.id.to_s)
     expect(unit.deleted_at).to be_present
   end
+  it 'keeps expired SAT keys selectable as historical filters for the current organization' do
+    archived = create(:unit_of_measure, organization:, sat_unit_key: sat, code: 'HIST')
+    current_key = create(:sat_unit_key, code: 'KGM')
+    create(:unit_of_measure, organization:, sat_unit_key: current_key, code: 'LIVE')
+    sat.update!(valid_to: Date.yesterday)
+
+    get admin_units_of_measure_path(sat_health: 'invalid')
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('HIST', I18n.t('admin.units_of_measure.sat.invalid'))
+    expect(response.body).not_to include('LIVE')
+
+    get admin_units_of_measure_path(sat_unit_key_id: sat.id)
+    expect(response.body).to include('HIST')
+    expect(response.body).not_to include('LIVE')
+
+    sat.update!(deleted_at: Time.current)
+    get admin_units_of_measure_path(sat_health: 'invalid')
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(archived.code, sat.code)
+    expect(archived.reload.sat_unit_key).to eq(sat)
+  end
+
+  it 'shows only the organizations linked SAT keys in the filter, keeping create options unrestricted' do
+    unused = create(:sat_unit_key, code: 'ZZ91')
+    create(:unit_of_measure, organization:, sat_unit_key: sat, code: 'LOCAL')
+    create(:unit_of_measure, organization: create(:organization), sat_unit_key: unused, code: 'FOREIGN')
+
+    get admin_units_of_measure_path
+    expect(response.body).to include('H87')
+    expect(response.body).not_to include('ZZ91')
+
+    get new_admin_unit_of_measure_path
+    expect(response.body).to include('ZZ91')
+  end
 end
