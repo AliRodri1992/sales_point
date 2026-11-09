@@ -2,11 +2,16 @@
 
 Rama: `feature/fixes` · Alcance: `/admin/languages`, selector y traducciones I18n.
 
-- **Estado:** CAMBIOS PUBLICADOS, VERIFICACIÓN CI EN CURSO, **NO CERRADO**.
+- **Estado:** CAMBIOS PUBLICADOS; VERIFICACIÓN FOCALIZADA **PASÓ**; CI GLOBAL / ACEPTACIÓN VISUAL **PENDIENTES**; **NO CERRADO**.
 - **SHA de implementación inicial:** `cca3b028359320682585e6d1712be2d06d295a60`.
-- **SHA de aceptación:** **PENDIENTE**.
-- **Evidencia RSpec / RuboCop / seguridad / migraciones / UI:** **PENDIENTE** de verificación satisfactoria sobre el mismo SHA.
-- **Auditoría UI con navegador autenticado:** NO EJECUTADA; **PENDIENTE**.
+- **SHA focalizado verificado:** `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`.
+- **SHA de aceptación global:** **PENDIENTE**.
+- **Evidencia RSpec focalizado:** **PASÓ**, 82 ejemplos y 0 fallos (modelos, peticiones y navegador en Chrome).
+- **Evidencia RuboCop focalizado e I18n/YAML:** **PASÓ**.
+- **Evidencia de ejecución:** [Languages CI #42623183766](https://github.com/AliRodri1992/sales_point/actions/runs/42623183766).
+- **Migraciones en CI focalizado:** **PASÓ** para el SHA verificado.
+- **Auditoría visual manual WCAG / responsive 320, 390, 768, 1440 / lector de pantalla:** **PENDIENTE**; hubo dos escenarios automatizados de navegador, no una revisión visual exhaustiva.
+- **CI global e inspección independiente:** **PENDIENTE**; los jobs globales de `feature/fixes` se cancelaron repetidamente por commits de otros módulos.
 
 ## Registro de hallazgos
 
@@ -41,3 +46,14 @@ Los archivos `config/locales` son una fuente de traducciones separada de los
 registros del catálogo. La carga admite todos los módulos identificables,
 pero **no garantiza que cada cadena esté traducida correctamente**. La
 paridad semántica de contenido es una auditoría de traducción independiente.
+
+## Evidencia de reauditoría — 2026-11-09
+
+En el SHA `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`:
+- **PASÓ:** `Languages module RuboCop`.
+- **PASÓ:** `Languages locale integrity` (paridad YAML y registro modular).
+- **PASÓ:** `Languages requests, models and browser` (82 ejemplos, 0 fallos, con Chrome).
+- Los casos de inserción de idioma no admitido, código inmutable, protección del idioma predeterminado, preferencia de usuario/sesión, overrides de traducción y regresión de interfaz **PASARON** en esa batería.
+- IDI-001 a IDI-009: **IMPLEMENTADOS Y VERIFICADOS EN COBERTURA FOCALIZADA** conforme a las pruebas existentes. La evaluación visual/manual y el cierre global permanecen **PENDIENTES**.
+- Los fallos de los flujos anteriores provinieron de un `db/schema.rb` temporalmente corrupto durante trabajos paralelos y de la preparación del usuario/membresía en `languages_diagnostic_spec.rb`. Se corrigió la preparación y las 82 pruebas del flujo final pasaron.
+- El resultado de la batería focalizada **no prueba** la ausencia de problemas en el CI global ni certifica WCAG/UX manual. **NO CERRADO**.
