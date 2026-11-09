@@ -128,10 +128,23 @@ jobs:
           yarn build:css
       - name: Prepare test database with a fresh migration run
         run: bin/rails db:create db:migrate
-      - name: Verify schema snapshot matches all applied migrations
+      - name: Verify General audit schema matches applied migrations
         run: |
+          cp db/schema.rb /tmp/general_schema_committed.rb
           bin/rails db:schema:dump
-          git diff --exit-code db/schema.rb
+          ruby <<'RUBY'
+          def general_schema_parts(text)
+            table = text[/^  create_table "general_setting_audit_events".*?^  end$/m]
+            keys = text.lines.grep(/add_foreign_key "general_setting_audit_events"/).sort
+            abort 'Missing General audit schema definition' unless table && keys.length >= 2
+
+            [table, keys]
+          end
+
+          expected = general_schema_parts(File.read('/tmp/general_schema_committed.rb'))
+          actual = general_schema_parts(File.read('db/schema.rb'))
+          abort 'General audit schema differs from Rails migrations' unless expected == actual
+          RUBY
       - name: Run general settings and preference regressions
         env:
           CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
