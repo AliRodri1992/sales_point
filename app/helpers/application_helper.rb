@@ -82,16 +82,17 @@ module ApplicationHelper
     'border border-slate-200 bg-slate-50'
   end
 
-  def error_message_for(object, attribute, label: nil)
+  def error_message_for(object, attribute, label: nil, error_id: nil)
     return '' unless object && object.errors[attribute].any?
 
     model = object.class.name.underscore.tr('/', '_')
     name = label || validation_attribute_name(object, attribute)
     messages = object.errors[attribute].uniq
+    error_id ||= "#{model}_#{attribute}_error"
 
     safe_join(messages.each_with_index.map do |message, index|
       content_tag(:p, "#{name} #{message}",
-                  id: index.zero? ? "#{model}_#{attribute}_error" : "#{model}_#{attribute}_error_#{index + 1}",
+                  id: index.zero? ? error_id : "#{error_id}_#{index + 1}",
                   role: 'alert', class: 'mt-1 text-xs text-rose-600',
                   data: { server_field_error: true, validation_attribute: attribute })
     end)

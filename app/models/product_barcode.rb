@@ -7,7 +7,7 @@ class ProductBarcode < ApplicationRecord
   belongs_to :product_variant, optional: true
   belongs_to :product_presentation, optional: true
   normalizes :value, with: ->(value) { value.strip }
-  validates :value, presence: true, length: { maximum: 100 }, uniqueness: { scope: :organization_id }
+  validates :value, presence: true, length: { maximum: 100 }, uniqueness: { scope: :organization_id, case_sensitive: false }
   validates :symbology, inclusion: { in: %w[code128 ean13 ean8 upca qr] }
   before_validation :inherit_organization
   validate :same_product

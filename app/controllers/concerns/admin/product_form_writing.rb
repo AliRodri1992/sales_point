@@ -49,7 +49,7 @@ module Admin
                       :position, :featured, :price_change_reason,
                       { product_variants_attributes: [%i[id name sku status size color model]],
                         product_presentations_attributes: [%i[id name units status]],
-                        product_barcodes_attributes: [%i[id value symbology product_variant_id
+                        product_barcodes_attributes: [%i[id _destroy value symbology product_variant_id
                                                          product_presentation_id]] }
                     ]).tap { |attributes| normalize_image_parameters(attributes) }
     end

@@ -9,10 +9,12 @@ module ProductCommercialCatalog
     has_many :product_barcodes, inverse_of: :product, dependent: :restrict_with_error
     has_many :price_list_items, dependent: :restrict_with_error
     has_many :price_change_events, dependent: :restrict_with_error
-    accepts_nested_attributes_for :product_variants, :product_presentations, :product_barcodes,
+    accepts_nested_attributes_for :product_variants, :product_presentations,
                                   reject_if: :all_blank, limit: 50
+    accepts_nested_attributes_for :product_barcodes, reject_if: :all_blank, limit: 50, allow_destroy: true
     normalizes :barcode, with: ->(value) { value.strip.presence }
     validate :barcode_available_in_organization
+    validate :preserve_primary_barcode
     after_save :synchronize_primary_barcode, if: :saved_change_to_barcode?
     validate :preserve_product_history, if: -> { will_save_change_to_deleted_at? && deleted_at.present? }
     after_save :retire_commercial_options, if: -> { saved_change_to_deleted_at? && deleted_at.present? }
@@ -43,9 +45,16 @@ module ProductCommercialCatalog
 
   def barcode_available_in_organization
     return if barcode.blank?
-    return unless ProductBarcode.where(organization_id:, value: barcode).where.not(product_id: id).exists?
+    return unless ProductBarcode.where(organization_id:).where('lower(value) = lower(?)', barcode)
+                                .where.not(product_id: id).exists?
 
     errors.add(:barcode, :taken)
+  end
+
+  def preserve_primary_barcode
+    return unless product_barcodes.any? { |item| item.primary? && item.marked_for_destruction? }
+
+    errors.add(:barcode, :invalid)
   end
 
   def synchronize_primary_barcode

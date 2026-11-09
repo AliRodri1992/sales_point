@@ -23,21 +23,25 @@ module CatalogDesignHelper
   def catalog_field(form, attribute, type: :text_field, label: nil, **options)
     record = form.object
     label ||= t("admin.catalog_design.#{attribute}")
+    error_id = "#{form.field_id(attribute)}_error"
+    aria = options.fetch(:aria, {}).merge(invalid: record.errors[attribute].any?)
+    aria[:describedby] = error_id if record.errors[attribute].any?
     content_tag(:div, class: 'catalog-field') do
       safe_join([form.label(attribute, label),
-                 form.public_send(type, attribute, **options.except(:aria),
-                                  aria: options.fetch(:aria, {}).merge(invalid: record.errors[attribute].any?)),
-                 error_message_for(record, attribute)])
+                 form.public_send(type, attribute, **options.except(:aria), aria:),
+                 error_message_for(record, attribute, error_id:)])
     end
   end
 
   def catalog_select(form, attribute, choices, label: nil, include_blank: true)
     label ||= t("admin.catalog_design.#{attribute}")
+    error_id = "#{form.field_id(attribute)}_error"
+    aria = { invalid: form.object.errors[attribute].any? }
+    aria[:describedby] = error_id if form.object.errors[attribute].any?
     content_tag(:div, class: 'catalog-field') do
       safe_join([form.label(attribute, label),
-                 form.select(attribute, choices, { include_blank: },
-                             aria: { invalid: form.object.errors[attribute].any? }),
-                 error_message_for(form.object, attribute)])
+                 form.select(attribute, choices, { include_blank: }, aria:),
+                 error_message_for(form.object, attribute, error_id:)])
     end
   end
 
@@ -48,6 +52,11 @@ module CatalogDesignHelper
       records << retained if retained
     end
     records.map { |record| [record.public_send(label), record.id] }
+  end
+
+  def product_money(amount, currency: nil)
+    currency ||= current_organization&.organization_settings&.active_records&.first&.base_currency&.code || 'MXN'
+    "#{number_to_currency(amount)} #{currency}"
   end
 
   def product_image_form_token(product)
