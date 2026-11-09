@@ -23,10 +23,15 @@
 | UOM-002 | P1 | Posible acceso cruzado entre empresas | Scope por `organization_id`, request de aislamiento y unicidad por empresa | PENDIENTE RSpec |
 | UOM-003 | P1 | Claves SAT retiradas o fuera de vigencia | Solo permitir asociar claves `SatUnitKey.current` en nuevas asociaciones | PENDIENTE RSpec |
 | UOM-004 | P2 | Inconsistencias visuales y de interacción | Reutilizar modal Stimulus, dropdown Delta, helpers de campo, skeleton y mensajes | PENDIENTE prueba navegador |
-| UOM-005 | P2 | Entradas duplicadas y códigos inconsistentes | Normalización, modelo e índice funcional parcial PostgreSQL | PENDIENTE migración y pruebas |
+| UOM-005 | P2 | Entradas duplicadas y códigos inconsistentes | Normalización, modelo e índice funcional parcial PostgreSQL | PENDIENTE pruebas |
 | UOM-006 | P2 | Integridad de precisión y baja lógica | CHECK de decimal 0..6 y estado, `deleted_at`, PaperTrail | PENDIENTE pruebas |
 | UOM-007 | P2 | Traducciones o etiquetas incompletas | Locales es, en y ko | PENDIENTE auditoría I18n |
 | UOM-008 | P2 | Permisos de lectura y escritura por rol | `CatalogPolicy` + códigos `units_of_measure.*` | PENDIENTE regresión de permisos |
+
+### UOM-009 · P1 · Compatibilidad de esquema histórico
+- **Hallazgo confirmado por RSpec focalizado:** `db:drop db:create db:migrate` cargó el esquema previo y marcó como aplicada la versión antigua de creación de `units_of_measure` sin crear la tabla, provocando `PG::UndefinedTable`.
+- **Adecuación:** incluir el nuevo catálogo en `db/schema.rb`, conservar la migración junto a Productos y añadir migración defensiva `20261110140000` para bases ya migradas sin tabla.
+- **Verificación:** PENDIENTE de repetir `db:drop db:create db:migrate` y RSpec en CI del nuevo SHA.
 
 ## Evidencias y límites
 
