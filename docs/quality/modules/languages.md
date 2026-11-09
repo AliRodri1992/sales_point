@@ -54,6 +54,6 @@ En el SHA `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`:
 - **PASÓ:** `Languages locale integrity` (paridad YAML y registro modular).
 - **PASÓ:** `Languages requests, models and browser` (82 ejemplos, 0 fallos, con Chrome).
 - Los casos de inserción de idioma no admitido, código inmutable, protección del idioma predeterminado, preferencia de usuario/sesión, overrides de traducción y regresión de interfaz **PASARON** en esa batería.
-- IDI-001 a IDI-009: **IMPLEMENTADOS Y VERIFICADOS EN COBERTURA FOCALIZADA** conforme a las pruebas existentes. La evaluación visual/manual y el cierre global permanecen **PENDIENTES**.
+- IDI-001 a IDI-009: **IMPLEMENTADOS**; sus comportamientos cubiertos por RSpec y los dos escenarios de navegador **PASARON**. La ejecución independiente de scripts de carga (IDI-008), el comportamiento del selector con lector de pantalla/teclado (IDI-007) y la evaluación visual/manual completa (IDI-006/007) permanecen **PENDIENTES**. No atribuir a esas áreas una prueba que no se ejecutó.
 - Los fallos de los flujos anteriores provinieron de un `db/schema.rb` temporalmente corrupto durante trabajos paralelos y de la preparación del usuario/membresía en `languages_diagnostic_spec.rb`. Se corrigió la preparación y las 82 pruebas del flujo final pasaron.
 - El resultado de la batería focalizada **no prueba** la ausencia de problemas en el CI global ni certifica WCAG/UX manual. **NO CERRADO**.
