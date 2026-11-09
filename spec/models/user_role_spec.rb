@@ -69,16 +69,19 @@ RSpec.describe UserRole, type: :model do
       expect(assignment.errors[:organization]).to be_present
     end
 
-    it 'does not promote an orphan system role when a user joins the first organization' do
+    it 'scopes a preassigned role to the first membership without granting it to another' do
       user = create(:user)
-      role = create(:system_role, :system, code: 'legacy_unassigned_role')
+      role = create(:system_role, :system, code: 'initial_preassigned_role')
       assignment = create(:user_role, user:, system_role: role)
       organization = create(:organization)
 
       create(:organization_membership, user:, organization:)
+      other = create(:organization)
+      create(:organization_membership, user:, organization: other)
 
-      expect(assignment.reload.organization_id).to be_nil
-      expect(user.role?('legacy_unassigned_role', organization:)).to be(false)
+      expect(assignment.reload.organization_id).to eq(organization.id)
+      expect(user.role?('initial_preassigned_role', organization:)).to be(true)
+      expect(user.role?('initial_preassigned_role', organization: other)).to be(false)
     end
 
     it 'rejects new organizationless role grants after a membership exists' do
