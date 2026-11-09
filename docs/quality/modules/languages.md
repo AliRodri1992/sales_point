@@ -2,6 +2,12 @@
 
 Rama: `feature/fixes` · Alcance: `/admin/languages`, selector y traducciones I18n.
 
+- **Estado:** CAMBIOS PUBLICADOS, VERIFICACIÓN CI EN CURSO, **NO CERRADO**.
+- **SHA de implementación inicial:** `cca3b028359320682585e6d1712be2d06d295a60`.
+- **SHA de aceptación:** **PENDIENTE**.
+- **Evidencia RSpec / RuboCop / seguridad / migraciones / UI:** **PENDIENTE** de verificación satisfactoria sobre el mismo SHA.
+- **Auditoría UI con navegador autenticado:** NO EJECUTADA; **PENDIENTE**.
+
 ## Registro de hallazgos
 
 | ID | Severidad | Causa / impacto | Adecuación | Verificación |
