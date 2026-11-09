@@ -99,8 +99,8 @@ RSpec.describe EmailTemplates::Branding do
     source = EmailTemplateVersion.new(subject: 'Privacy', html_body: '{{privacy_url}}', text_body: 'Privacy')
     allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
     allow(ENV).to receive(:fetch).and_call_original
-    allow(ENV).to receive(:fetch).with('DELTA_POS_PRIVACY_URL', 'https://example.org/privacy')
-                       .and_return('https://user:password@delta-pos.mx/privacy')
+    fallback = 'https://user:password@delta-pos.mx/privacy'
+    allow(ENV).to receive(:fetch).with('DELTA_POS_PRIVACY_URL', 'https://example.org/privacy').and_return(fallback)
 
     expect(EmailTemplates::DeliveryReadiness.missing_contacts(source:, organization: nil))
       .to eq(['privacy_url'])
