@@ -6,10 +6,12 @@ module Users
     private
 
     def prevent_last_admin!
-      return unless @user.admin? && @target != 'active'
+      return unless @user.role?('administrator', organization: @organization) ||
+                  @user.role?('super_admin', organization: @organization)
+      return if @target == 'active'
 
       members = @organization.organization_memberships.accessible.select(:user_id)
-      remaining = UserRole.active.where(branch_id: nil)
+      remaining = UserRole.active.where(branch_id: nil, organization: @organization)
                           .where(user_id: members)
                           .where.not(user_id: @user.id)
                           .joins(:user)
