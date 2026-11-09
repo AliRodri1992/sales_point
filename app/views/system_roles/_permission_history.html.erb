@@ -4,7 +4,7 @@
     <ol class="mt-4 divide-y divide-slate-100">
       <% @permission_audit_events.each do |event| %>
         <li class="py-4 first:pt-0">
-          <p class="text-xs text-slate-600"><%= event.actor.display_name %> · <%= l(event.created_at, format: :short) %></p>
+          <p class="text-xs text-slate-600"><%= event.actor&.display_name || t('admin.system_roles.permission_history.system_actor') %> · <%= l(event.created_at, format: :short) %></p>
           <% if event.added_permission_codes.any? %>
             <p class="mt-2 break-words text-sm text-emerald-800"><strong><%= t('admin.system_roles.permission_history.added') %>:</strong> <%= event.added_permission_codes.join(', ') %></p>
           <% end %>

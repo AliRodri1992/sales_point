@@ -26,18 +26,15 @@ module SystemRoles
     private
 
     def missing_base_access?(selected)
-      access_codes = Permission.available.where(
-        code: DEPENDENT_PREFIXES.map { |prefix| "#{prefix}.access" }
-      ).pluck(:code)
-      selected.any? { |code| dependent_access_missing?(code, selected, access_codes) }
+      selected.any? { |code| dependent_access_missing?(code, selected) }
     end
 
-    def dependent_access_missing?(code, selected, access_codes)
+    def dependent_access_missing?(code, selected)
       prefix, action = code.split('.', 2)
       return false if action.blank? || action == 'access' || DEPENDENT_PREFIXES.exclude?(prefix)
 
       access = "#{prefix}.access"
-      access_codes.include?(access) && selected.exclude?(access)
+      selected.exclude?(access)
     end
   end
 end

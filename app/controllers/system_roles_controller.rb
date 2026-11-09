@@ -62,13 +62,15 @@ class SystemRolesController < ApplicationController
 
   def update
     authorize @system_role
-    params[:permission_ids] = @system_role.permissions.available.ids unless params.key?(:permission_ids)
-    save_permissions(attributes: params.expect(system_role: %i[name status description]))
+    save_permissions(
+      attributes: params.expect(system_role: %i[name status description]),
+      change_permissions: params.key?(:permission_ids)
+    )
   end
 
   def update_permissions
     authorize @system_role, :update_permissions?
-    save_permissions
+    save_permissions(change_permissions: true)
   end
 
   def destroy
@@ -78,12 +80,12 @@ class SystemRolesController < ApplicationController
 
   private
 
-  def save_permissions(attributes: {})
-    @assigned_permission_ids = selected_permission_ids
+  def save_permissions(attributes: {}, change_permissions: false)
+    @assigned_permission_ids = change_permissions ? selected_permission_ids : @system_role.permissions.available.ids
     @system_role.with_lock do
       authorize @system_role, :update?
       @system_role.update!(attributes)
-      replace_permissions
+      replace_permissions if change_permissions
     end
     notify_system_role(current_user, @system_role, 'updated')
     redirect_to system_role_path(@system_role),
