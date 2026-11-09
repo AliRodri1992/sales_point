@@ -24,7 +24,7 @@ module Users
       role_ids = requested_role_ids
       branch_roles = branch_role_editor
       return false unless valid_access_selection?(role_ids, branch_roles)
-      return false unless @user.valid? && tenant_safe_update?(role_ids)
+      return false unless @user.valid? && tenant_safe_update?
 
       persist!(role_ids, branch_roles)
       Users::SessionRevoker.call(@user) if @access_changed
