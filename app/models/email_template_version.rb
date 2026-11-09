@@ -33,14 +33,15 @@ class EmailTemplateVersion < ApplicationRecord
   before_destroy :protect_published_version
 
   def publish!(actor:)
-    email_template.with_lock do
+    template = email_template
+    template.with_lock do
       # Serialize competing publish requests and recheck the database state under
       # the template lock. The second request must not publish/audit twice.
       reload
       raise ActiveRecord::StaleObjectError.new(self, 'publish') unless status == 'draft'
 
       update!(status: 'published', published_by: actor, published_at: Time.current)
-      email_template.update!(
+      template.update!(
         published_version: self, status: 'published', enabled: true,
         version: version_number, subject:, html_body:, text_body:, updated_by: actor
       )
@@ -82,8 +83,7 @@ class EmailTemplateVersion < ApplicationRecord
 
   def declared_variables
     validate_placeholder_syntax
-    return unless allowed_variables.is_a?(Array)
-    return if errors[:allowed_variables].any?
+    return unless allowed_variables.is_a?(Array) && errors[:allowed_variables].empty?
 
     errors.add(:allowed_variables, :undeclared_placeholders) unless (used_variables - allowed_variables).empty?
   end
