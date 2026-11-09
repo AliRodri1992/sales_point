@@ -26,9 +26,7 @@ module UserEffectiveRoles
 
   def effective_role_assignments(organization:)
     scope = user_roles.active
-    if organization && !organization_memberships.accessible.exists?(organization:)
-      return scope.none
-    end
+    return scope.none if organization && !organization_memberships.accessible.exists?(organization:)
 
     active_branches = Branch.not_deleted.where(operational_status: 'active')
     active_branches = active_branches.where(organization:) if organization
