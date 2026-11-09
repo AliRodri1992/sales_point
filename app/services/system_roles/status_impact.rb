@@ -53,16 +53,23 @@ module SystemRoles
     def effective_other_assignment_pairs
       return [] if user_ids.empty?
 
-      valid_branches = Branch.not_deleted.where(operational_status: 'active').select(:id)
+      memberships = accessible_membership_pairs
+      effective_other_roles.distinct.pluck(:user_id, :organization_id).select do |pair|
+        pair.last.nil? || memberships.include?(pair)
+      end
+    end
+
+    def accessible_membership_pairs
+      OrganizationMembership.accessible.where(user_id: user_ids)
+                            .pluck(:user_id, :organization_id).to_set
+    end
+
+    def effective_other_roles
+      branches = Branch.not_deleted.where(operational_status: 'active').select(:id)
       scope = UserRole.active.where(user_id: user_ids).where.not(system_role_id: @role.id)
                       .joins(system_role: { system_role_permissions: :permission })
                       .where(system_role_permissions: { deleted_at: nil }, permissions: { status: 'active' })
-      scope = scope.where(branch_id: nil).or(scope.where(branch_id: valid_branches))
-      memberships = OrganizationMembership.accessible.where(user_id: user_ids)
-                                          .pluck(:user_id, :organization_id).to_set
-      scope.distinct.pluck(:user_id, :organization_id).select do |user_id, organization_id|
-        organization_id.nil? || memberships.include?([user_id, organization_id])
-      end
+      scope.where(branch_id: nil).or(scope.where(branch_id: branches))
     end
 
     def affected_branch_states

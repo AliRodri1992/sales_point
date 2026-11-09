@@ -57,5 +57,4 @@ class SystemRolePolicy < ApplicationPolicy
   def protected_role?
     record.is_a?(SystemRole) && record.protected_permissions?
   end
-
 end
