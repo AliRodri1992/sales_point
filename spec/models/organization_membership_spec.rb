@@ -21,6 +21,20 @@ RSpec.describe OrganizationMembership, type: :model do
     expect(user.role?('preassigned_membership_role', organization: other)).to be(false)
   end
 
+  it 'does not activate an unscoped role when a previously removed member joins a new organization' do
+    user = create(:user)
+    prior = create(:organization_membership, user:)
+    prior.update!(deleted_at: Time.current)
+    role = create(:system_role, :system, code: 'stale_first_membership_role')
+    assignment = create(:user_role, user:, system_role: role)
+    next_organization = create(:organization)
+
+    create(:organization_membership, user:, organization: next_organization)
+
+    expect(assignment.reload.organization_id).to be_nil
+    expect(user.role?('stale_first_membership_role', organization: next_organization)).to be(false)
+  end
+
   it 'defines the supported statuses' do
     expect(described_class.statuses).to include(
       'active' => 'active',
