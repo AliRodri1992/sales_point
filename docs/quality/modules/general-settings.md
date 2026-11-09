@@ -1,6 +1,6 @@
 # Registro de calidad — General (`/admin/general_settings`)
 
-**Estado actual:** ADECUACIONES 005/010/011/012/013/014 IMPLEMENTADAS; VERIFICACIÓN FOCALIZADA VERDE (42 ejemplos, 0 fallos); CI GLOBAL EN ROJO POR RUBOCOP DE OTROS MÓDULOS; REVISIÓN INDEPENDIENTE PENDIENTE; NO CERRADO.  
+**Estado actual:** REAUDITADO 2026-11-09; ANTERIORES ADECUACIONES CONSERVADAS; GENERAL CI VERDE (42 ejemplos, 0 fallos); NUEVOS HALLAZGOS 015 (P2) Y 016 (P3), PENDIENTES DE CORRECCIÓN; CI GLOBAL CON FALLOS EXTERNOS Y REVISIÓN VISUAL INDEPENDIENTE PENDIENTES; NO CERRADO.  
 **Fecha:** 2026-11-08 (America/Mexico_City). **Rama:** `feature/fixes`.  
 **SHA base de inspección:** `8974fee011f9422066985a0ab088ed2d771e1c8a`. **SHA revisado posteriormente:** `719ae720c3464bbab3478ef7cd91399b5c911b53` (comparación sin cambios en archivos de General).  
 **SHA de aceptación:** PENDIENTE. **Responsable propuesto:** equipo Delta POS. **Revisor independiente:** PENDIENTE.  
@@ -217,3 +217,33 @@ Este seguimiento conserva los IDs de la auditoría. La presencia de cambios en G
 **Revisión de calidad:** IDs GENERAL_SETTINGS-005, 010, 011, 012, 013 y 014 = **implementados y cubiertos por pruebas focalizadas**. El caso GENERAL_SETTINGS-008 de permisos se probó con roles por organización: segundo tenant con rol explícito permitido; segundo tenant sin rol administrativo rechazado. Los controles 001–004, 006 y 007 se mantuvieron. **PENDIENTE** evidencia manual de contraste visual con screenshots, lector de pantalla y revisión independiente formal. **No declarar cerrado** hasta CI completo verde y aprobación del expediente.
 
 **Commits:** `74f99dbd` (funcionalidad/diseño), `0c3df3f7` (fixtures multi-organización, workflow y seguimiento), `a2a5cec0` (schema-load en job con Postgres), `ce8dba74` (comparación acotada al schema propio). Sin merge.
+
+## 10. Reauditoría 2026-11-09 — General y contrato de preferencias
+
+**Método:** AI Dev Suite (Impeccable, UI UX Pro Max, Ponytail), inspección dirigida de controlador, vistas, Stimulus, `delta-select`, modelo, validaciones, traducciones, política de usuario/organización, auditorías y migraciones; contraste con ejecución focalizada de GitHub Actions. El plugin aporta los procedimientos, no se ejecutó el detector CLI original.
+
+**Código verificado:** `d414ec7d6380dd75675836c05b501391c010365f`, coincidente en archivos de General con el SHA `d1361e206189b2be4b0999e3f55fa3c2aea6dc61` (el único cambio intermedio fue documentación de Usuarios).
+
+**Pruebas comprobadas (no supuestas):**
+- [General Settings CI #42609076831](https://github.com/AliRodri1992/sales_point/actions/runs/42609076831): **SUCCESS**, 42 ejemplos y 0 fallos; RuboCop focal, I18n/YAML, migraciones, esquema, carga de schema, Chrome browser con cuatro anchos y reflujo equivalente a 200%.
+- [CI global #42609077039](https://github.com/AliRodri1992/sales_point/actions/runs/42609077039): seguridad, I18n y migraciones/semillas aprobaron; RuboCop global **falló con 32 ofensas fuera de General** (Inventario, Onboarding, modelos compartidos, scripts y specs), RSpec global cancelado. **Bloquea cierre técnico** sin transferir responsabilidades.
+- **Sin evidencia real:** capturas de antes/después, ejecución con lector de pantalla, teclado completo en los *tres* dropdowns de recuperación y prueba manual de zoom 200% en navegador. Las únicas pestañas de navegador disponibles eran conversaciones de ChatGPT, no la aplicación.
+
+### GENERAL_SETTINGS-015 — P2 · PROPIO · nuevo · causa confirmada por código/framework, falta prueba request
+
+**Campo `payment_method` inválido genera excepción en la recuperación.** En el camino sin configuración, `Admin::GeneralSettingsController#recover_settings` ejecuta `@settings.assign_attributes(recovery_params)` sin rescate, donde `recovery_params` permite `payment_method`. `OrganizationSetting` declara `enum :payment_method, { cash: 'cash', card: 'card', qr: 'qr' }` sin `validate: true`. Rails 8.1 lanza `ArgumentError` *al asignar* un valor no contemplado, antes de `@settings.save`; la validación de inclusión existente (contexto `create`) no llega a ejecutarse. **Escenario:** organización activa sin ningún ajuste previo, usuario administrador; enviar PATCH con moneda y zona válidas, y `organization_setting[payment_method]=crypto`. **Efecto esperado por las reglas del formulario:** 422 con error individual debajo de Método de pago y ningún registro creado. **Efecto deducido:** error no controlado en lugar de 422. **Causa:** enum estricto + entrada confiada a la asignación. **Acción:** configuración de enum con validación del modelo o normalización segura que preserve el mensaje de campo, sin ocultar los valores inválidos ni confiar en el HTML. **Regresión:** incluir valor fuera de catálogo, nil/cadena vacía, moneda inactiva y valor válido; verificar 422, contenido del error y que no haya escritura. **Estado:** pendiente; **no** se ejecutó esta solicitud contra una instancia. Referencia: documentación Rails 8.1 `ActiveRecord::Enum`.
+
+### GENERAL_SETTINGS-016 — P3 · PROPIO · nuevo · inconsistencia de estado identificada por código, falta browser
+
+**El preview anuncia un tamaño rechazado tras HTTP 422.** En la edición existente, PATCH con `default_table_page_size=99` deja `@settings` con atributo asignado no válido y errores; `show.html.erb` vuelve a dibujar el resumen de ejemplo con `count: @settings.default_table_page_size` (99). El selector solo ofrece 5/10/15/25/50, agrega una opción en blanco al haber error, y `general_settings_preview_controller.js#update` omite tamaños fuera de catálogo, por lo que no corrige el texto. **Efecto:** la tarjeta afirma «99 registros por página de forma predeterminada» aunque no se guardó la modificación. **Esperado:** nunca comunicar como predeterminado un valor inválido; usar el valor persistido o un estado de vista previa no disponible mientras se corrige el campo. **Regresión:** request 422 con 99 que compruebe el resumen, y browser al corregir la selección. **Estado:** pendiente.
+
+### GENERAL_SETTINGS-009 — actualización de brecha de verificación
+
+Conservar los 42 tests funcionales y de Chrome aprobados: la mejora es real y **no reabrir** lo ya verificado. Extender el escenario browser al modo recuperación (moneda/zona/método de pago con errores reales); probar teclado/escape/foco de cada dropdown, conflicto con reintento y cambio de idioma con nombres largos. Los controles manuales con lector de pantalla, captura visual y zoom *real* siguen sin acreditar. En el workflow focal, considerar incluir los cambios del componente `delta_select_controller.js` y `form_validation_helper.rb` como gatillos de CI, por su papel contractual directo.
+
+### Evaluación y cierre
+
+- **P0/P1 nuevos confirmados:** 0. **P2 nuevo:** 1 (`015`). **P3 nuevo:** 1 (`016`). **Puerta adicional:** `009` parcial por escenarios de accesibilidad no ejecutados.
+- No se hallaron regresiones por código en `005` (recuperación con bloqueo de organización y respeto de ajustes archivados), `008` (permiso por organización), `010` (token obligatorio y bloqueo de fila), `011` (tabla de auditoría en schema), `012` (contraste), `013` (no-op/CTA) ni `014` (pulido existente).
+- **Prioridad:** corregir `015` y `016` con pruebas negativas específicas; después cubrir `009` y obtener evidencia visual y CI global completo verde. **No cerrar el expediente** por el mero éxito del pipeline focal.
+- **Esta reauditoría es documental:** no cambia controladores, modelos, formularios ni migraciones; únicamente agrega hallazgos al registro estable para adecuación posterior.
