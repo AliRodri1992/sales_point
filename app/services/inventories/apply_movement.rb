@@ -54,7 +54,7 @@ module Inventories
 
     def self.authorized_adjustment?(inventory, user)
       user&.admin? && user.organization_memberships.accessible
-                           .exists?(organization_id: inventory.organization_id)
+                          .exists?(organization_id: inventory.organization_id)
     end
 
     def self.authorized_branch_operator?(inventory, user)

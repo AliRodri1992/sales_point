@@ -16,6 +16,8 @@ slugs = modules.map { |entry| entry.fetch('slug') }
 errors << 'Module registry has no entries' if slugs.empty?
 errors << 'Duplicate module slugs' unless slugs.uniq == slugs
 
+allowed_kinds = %w[module embedded shared public]
+
 modules.each do |entry|
   slug = entry.fetch('slug')
   record = entry.fetch('record')
@@ -25,7 +27,7 @@ modules.each do |entry|
   errors << "Wrong record path for #{slug}: #{record}" unless record == expected_path
   errors << "Missing module index entry: #{slug}" unless index.include?("](#{slug}.md)")
   errors << "Missing route for #{slug}" unless entry.fetch('entry_route').start_with?('/')
-  errors << "Unknown module kind for #{slug}" unless %w[module embedded shared public].include?(entry.fetch('kind'))
+  errors << "Unknown module kind for #{slug}" unless allowed_kinds.include?(entry.fetch('kind'))
 
   file = root / record
   unless file.file?
@@ -36,8 +38,9 @@ modules.each do |entry|
   content = file.read
   errors << "Missing scope in #{record}" unless content.include?('Alcance') || content.include?('alcance')
   errors << "Missing quality status in #{record}" unless content.match?(/NO CERRADO|CERRADO/)
-  errors << "Missing verification evidence field in #{record}" unless content.include?('PENDIENTE') ||
-                                                                 content.include?('PASÓ')
+  unless content.include?('PENDIENTE') || content.include?('PASÓ')
+    errors << "Missing verification evidence field in #{record}"
+  end
 end
 
 registered_paths = modules.map { |entry| entry.fetch('record') }

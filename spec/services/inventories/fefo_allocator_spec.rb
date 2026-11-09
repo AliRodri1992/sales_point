@@ -33,7 +33,7 @@ RSpec.describe Inventories::FefoAllocator do
     expect(later.reload.quantity).to eq(3)
   end
 
-
+  it 'allocates from the earliest expiring lot first' do
     described_class.call(inventory:, quantity: 1, user:)
 
     expect(earlier.reload.quantity).to eq(1)

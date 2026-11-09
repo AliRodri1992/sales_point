@@ -4,6 +4,12 @@
 module RestrictsClosedBranchMutations
   extend ActiveSupport::Concern
 
+  BRANCH_OWNER_PATHS = [
+    %i[addressable], %i[phoneable], %i[notable], %i[branch],
+    %i[inventory branch], %i[inventory_lot inventory branch],
+    %i[goods_receipt branch], %i[goods_receipt_item goods_receipt branch]
+  ].freeze
+
   included do
     validate :reject_closed_branch_owner
     around_save :serialize_branch_owned_save
@@ -56,22 +62,7 @@ module RestrictsClosedBranchMutations
   end
 
   def branch_record_owner
-    if respond_to?(:addressable)
-      addressable
-    elsif respond_to?(:phoneable)
-      phoneable
-    elsif respond_to?(:notable)
-      notable
-    elsif respond_to?(:branch)
-      branch
-    elsif respond_to?(:inventory)
-      inventory&.branch
-    elsif respond_to?(:inventory_lot)
-      inventory_lot&.inventory&.branch
-    elsif respond_to?(:goods_receipt)
-      goods_receipt&.branch
-    elsif respond_to?(:goods_receipt_item)
-      goods_receipt_item&.goods_receipt&.branch
-    end
+    path = BRANCH_OWNER_PATHS.find { |steps| respond_to?(steps.first) }
+    path&.reduce(self) { |record, association| record&.public_send(association) }
   end
 end

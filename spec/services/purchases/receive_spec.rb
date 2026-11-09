@@ -44,7 +44,7 @@ RSpec.describe Purchases::Receive do
     expect(order.goods_receipts).to be_empty
   end
 
-
+  it 'records accepted and damaged quantities with a purchase cost allocation' do
     receipt = receive(quantity: 6, accepted: 5, damaged: 1)
     inventory = Inventory.find_by!(branch:, product:)
 

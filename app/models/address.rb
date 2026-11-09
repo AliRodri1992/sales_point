@@ -18,6 +18,7 @@ class Address < ApplicationRecord
   validates :purpose, inclusion: { in: PURPOSES }
   validate :single_primary_address
   validate :protect_operational_branch_address_removal
+  before_validation :clear_unused_supplier_fields
   before_destroy :prevent_operational_branch_address_destroy
 
   def restore_safely
@@ -50,7 +51,6 @@ class Address < ApplicationRecord
   validates :neighborhood, length: { in: 2..100 }, allow_blank: true, on: %i[create update]
   validates :city, presence: true, length: { in: 2..100 }, on: %i[create update]
   validates :state, length: { in: 2..100 }, allow_blank: true, on: %i[create update]
-  before_validation :clear_unused_supplier_fields
   validate :check_country_requirements, on: %i[create update onboardingstep2]
 
   validates :latitude,

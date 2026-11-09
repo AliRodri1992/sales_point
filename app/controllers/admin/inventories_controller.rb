@@ -81,16 +81,20 @@ module Admin
       )
       redirect_to admin_branch_inventories_path(@branch), status: :see_other
     rescue ActiveRecord::RecordInvalid, ArgumentError => e
+      restore_adjustment_errors(e)
+      load_inventory_list
+      render :index, status: :unprocessable_content
+    end
+
+    def restore_adjustment_errors(error)
       @adjustment_inventory_id = @inventory.id
       @adjustment_value = params[:quantity]
       @adjustment_lot_id = params[:inventory_lot_id].to_s
-      if e.is_a?(ArgumentError) && e.message.match?(/lot/i)
+      if error.is_a?(ArgumentError) && error.message.match?(/lot/i)
         @adjustment_lot_error = t('admin.branch_lifecycle.inventory_lot_invalid')
       else
-        @adjustment_error = quantity_error_message(e)
+        @adjustment_error = quantity_error_message(error)
       end
-      load_inventory_list
-      render :index, status: :unprocessable_content
     end
 
     def quantity_error_message(error)

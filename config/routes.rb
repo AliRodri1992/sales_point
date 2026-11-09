@@ -66,7 +66,12 @@ Rails.application.routes.draw do
         member { post :adjust }
         resources :inventory_lots, only: :index
       end
-      member { patch :select; patch :transition_status; post :add_terminal; patch :change_terminal }
+      member do
+        patch :select
+        patch :transition_status
+        post :add_terminal
+        patch :change_terminal
+      end
     end
     get 'user_restorations', to: 'user_restorations#index', as: :user_restorations
     post 'users/:user_id/restoration', to: 'user_restorations#create', as: :user_restoration

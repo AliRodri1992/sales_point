@@ -18,6 +18,7 @@ export default class extends Controller {
   }
 
   open(event) {
+    this.opener = event?.currentTarget
     this.formTarget.reset()
     this.formTarget.action = this.formTarget.dataset.createUrl
     this.methodTarget.value = ""
@@ -33,6 +34,7 @@ export default class extends Controller {
 
   edit(event) {
     event.preventDefault()
+    this.opener = event.currentTarget
     const values = event.currentTarget.dataset
     this.formTarget.reset()
     this.formTarget.action = values.eventUrl
@@ -73,7 +75,9 @@ export default class extends Controller {
     this.drawerTarget.classList.add("hidden")
     this.drawerTarget.setAttribute("aria-hidden", "true")
     document.body.style.overflow = this.previousOverflow || ""
-    this.previousFocus?.focus()
+    const restoreTarget = this.opener?.isConnected ? this.opener : this.previousFocus
+    restoreTarget?.focus()
+    this.opener = null
   }
 
   onKeydown(event) {

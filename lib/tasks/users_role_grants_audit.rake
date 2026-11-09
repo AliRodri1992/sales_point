@@ -8,7 +8,7 @@ namespace :users do
     output = ENV.fetch('OUTPUT', 'tmp/user_role_grants_review.csv')
     assignments = UserRole.where(deleted_at: nil)
     unscoped = assignments.where(organization_id: nil)
-    foreign = assignments.where.not(organization_id: nil).where(<<~SQL)
+    foreign = assignments.where.not(organization_id: nil).where(<<~SQL.squish)
       NOT EXISTS (
         SELECT 1 FROM organization_memberships memberships
         WHERE memberships.user_id = user_roles.user_id

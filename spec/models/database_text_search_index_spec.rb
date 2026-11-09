@@ -3,19 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe 'Admin partial-text search indexes', type: :model do
-  SEARCH_COLUMNS = {
+  {
     users: %i[email username],
     email_templates: %i[key name subject],
     clients: %i[code name email rfc],
     demo_requests: %i[name email company phone],
     phones: %i[number]
-  }.freeze
-
-  it 'enables PostgreSQL trigram matching' do
-    expect(ActiveRecord::Base.connection.extension_enabled?('pg_trgm')).to be(true)
-  end
-
-  SEARCH_COLUMNS.each do |table, columns|
+  }.each do |table, columns|
     columns.each do |column|
       it "indexes #{table}.#{column} for substring searches of non-deleted records" do
         index_name = "idx_#{table}_#{column}_trgm"
@@ -27,5 +21,9 @@ RSpec.describe 'Admin partial-text search indexes', type: :model do
         expect(index.where).to include('deleted_at IS NULL')
       end
     end
+  end
+
+  it 'enables PostgreSQL trigram matching' do
+    expect(ActiveRecord::Base.connection.extension_enabled?('pg_trgm')).to be(true)
   end
 end
