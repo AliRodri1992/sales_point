@@ -204,3 +204,33 @@
 - **EM-010 — COBERTURA ESPECIALIZADA IMPLEMENTADA / CI PENDIENTE:** `EmailSettingAuditPolicy` y `EmailTemplateNotification` ya están en disparadores y RuboCop especializado; las dependencias del CI global permanecen en sus módulos.
 
 **Limitaciones de cierre:** no se ha verificado un proveedor SMTP real, SPF/DKIM/DMARC, idempotencia efectiva del proveedor ni Gmail/Outlook y lector de pantalla/zoom 200 %; EM-003/004/008/009 mantienen su estado externo hasta contar con el entorno. Los errores de CI global fuera de Plantillas conservan propietario externo. Sin merge.
+
+## Reauditoría de estabilidad — AI Dev Suite, 2026-11-09 (post EM-019 a EM-021)
+
+**Código inspeccionado:** `d414ec7d6380dd75675836c05b501391c010365f`, rama `feature/fixes`. Al terminar, el árbol avanzó hasta `d1361e206189b2be4b0999e3f55fa3c2aea6dc61` por ajustes del registro de Usuarios; comparación del diff sin archivos funcionales de Plantillas. **Método:** lectura de modelos, controlador, políticas, renderer, publicación, dispatcher, delivery readiness, remitentes y branding; validaciones, estados, i18n, specs y workflow. Guías procedimentales AI Dev Suite (Ponytail, Impeccable, UI UX Pro Max); sin invocar sus CLI externas, un navegador de producción ni un proveedor SMTP.
+
+### Verificación de las correcciones anteriores
+
+- **EM-019, EM-020, EM-021 y EM-010 (cobertura especializada) — VERIFICADOS POR CI AUTOMATIZADO:** [Email Templates CI #42566550249](https://github.com/AliRodri1992/sales_point/actions/runs/42566550249) terminó en **success** para `6d1fd6f05f318298990622cf41fc8b98723aae36`, con **282 ejemplos/0 fallos**, RuboCop e integridad/paridad es/en/ko aprobados. Comparación con SHA inspeccionado: migración, schema, backup de schema y registro de Roles únicamente.
+- **Repetición sobre el SHA inspeccionado:** [Email Templates CI #42609077149](https://github.com/AliRodri1992/sales_point/actions/runs/42609077149) igualmente **success**, **282 ejemplos/0 fallos**, lint e i18n correctos. Se conserva evidencia sobre el corte más reciente.
+- **EM-003, EM-004, EM-008 y EM-009:** sin pruebas nuevas de DNS/SPF/DKIM/DMARC, idempotencia de proveedor, recepción Gmail/Outlook, teclado/lector de pantalla/zoom 200 %; NO cerrar.
+- **EM-010 (CI global):** [CI #42609077039](https://github.com/AliRodri1992/sales_point/actions/runs/42609077039) en `d414ec7d` con seguridad, migración/semillas e i18n correctos; RuboCop **failure** por **32 ofensas**, fuera de archivos del módulo de Plantillas (principalmente inventarios, compras, branch-guard y utilidades). RSpec global **cancelled**; no se considera aprobado. La cobertura específica de Plantillas sí pasó.
+
+### Hallazgo propio: ampliar EM-016, no crear ID nuevo
+
+**EM-016 (subcaso de accesibilidad de enlaces críticos) — P2 / CONFIANZA ALTA POR CÓDIGO, REPRODUCCIÓN AUTOMATIZADA PENDIENTE.** `EmailTemplateVersion#visible_security_link?` toma `link.text.strip.present?` o imágenes con `alt`, y comprueba ocultación solo en el enlace y ancestros; **no** comprueba nodos hijos que contienen todo el texto/imagen. Ejemplo:
+
+```html
+<a href="{{recovery_url}}"><span style="display:none">Recuperar contraseña</span></a>
+```
+
+`actionable_security_link?` repite el mismo chequeo tras `Renderer.sanitize_html`, que permite `span` y `style`; Loofah admite CSS `display` (ver [documentación de CSS sanitization](https://thedocumentation.org/loofah/advanced/uri_and_css/)). Por ello puede validar una plantilla de recuperación con enlace pero sin etiqueta visible, aunque las regresiones anteriores prueban solo `<a style="display:none">...` y ancestros ocultos. Las comprobaciones actuales **no prueban este descendiente oculto**.
+
+**Adecuación y prueba de aceptación:** comprobar, en el HTML saneado, que exista un descendiente de texto o imagen con `alt` verdaderamente visible bajo el enlace, considerando la cadena de ancestros **hasta el enlace**; negar casos donde todos estén ocultos con `display:none`, `visibility:hidden` o `font-size:0`, sin rechazar enlaces con al menos una etiqueta visible real. Añadir casos `span`, `img`, mezclas ocultas/visibles y los tres locales, ejecutando model specs, request de publicación, renderer y CI especializado. No declarar EM-016 cerrado para este subcaso antes de la prueba.
+
+**EM-020 — cobertura manual/especializada adicional:** las regresiones actuales protegen solicitud duplicada y snapshot obsoleto, pero no simulan dos transacciones de publicación que se solapen realmente; esto sigue como **verificación de concurrencia pendiente**, no un error funcional nuevo.
+
+### Dictamen
+
+**Auditoría de código y CI especializado APROBADOS, con EM-016 ampliado y pendiente de prueba/corrección específica; NO cierre integral del módulo** debido a EM-003/004/008/009, RSpec/RuboCop globales y pruebas manuales/externas. No hubo cambios funcionales ni merge en esta reauditoría. Las secciones históricas reflejan el estado de su fecha, no sustituyen esta actualización.
+
