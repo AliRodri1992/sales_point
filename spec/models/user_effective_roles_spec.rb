@@ -68,6 +68,27 @@ RSpec.describe User, type: :model do
     expect(user.role?('effective_suspended_role', organization:)).to be(false)
   end
 
+  it 'does not inherit an organization-specific administrator role when joining another organization' do
+    first_org = create(:organization)
+    second_org = create(:organization)
+    create(:organization_membership, user:, organization: first_org)
+    system_role = create(:system_role, :system, code: 'effective_company_admin')
+    first_grant = create(:user_role, user:, system_role:, organization: first_org)
+
+    create(:organization_membership, user:, organization: second_org)
+
+    expect(user.role?('effective_company_admin', organization: first_org)).to be(true)
+    expect(user.role?('effective_company_admin', organization: second_org)).to be(false)
+
+    second_grant = create(:user_role, user:, system_role:, organization: second_org)
+    expect(user.role?('effective_company_admin', organization: second_org)).to be(true)
+
+    second_grant.update!(deleted_at: Time.current)
+    expect(user.role?('effective_company_admin', organization: second_org)).to be(false)
+    expect(first_grant.reload.deleted_at).to be_nil
+    expect(user.role?('effective_company_admin', organization: first_org)).to be(true)
+  end
+
   it 'keeps a valid global role available independently of branch state' do
     system_role = create(:system_role, :system, code: 'effective_global_role')
     create(:user_role, user:, system_role:)
