@@ -177,8 +177,10 @@ RSpec.describe 'Branch workspace interactions', type: :feature, js: true do
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
 
     within('.branch-detail-nav') { click_link I18n.t('admin.branch_workspace.notes', locale: :en) }
-    expect(page).to have_current_path(admin_branch_path(central, search: 'Central', per_page: '5') +
-                                      '#branch-detail-notes', ignore_query: false)
+    expect(page).to have_css('#branch-detail-notes:target')
+    expect(page.evaluate_script('window.location.hash')).to eq('#branch-detail-notes')
+    expect(page).to have_current_path(admin_branch_path(central, search: 'Central', per_page: '5'),
+                                      ignore_query: false)
     expect(page).to have_css('#branch-detail-notes')
 
     within('.branch-detail-actions') { click_link I18n.t('admin.branches.form.buttons.back', locale: :en) }
