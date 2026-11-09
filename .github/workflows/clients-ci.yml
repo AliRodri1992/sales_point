@@ -61,7 +61,6 @@ jobs:
             spec/models/client_spec.rb \
             spec/requests/admin/clients_spec.rb \
             spec/requests/admin/clients_tenant_spec.rb \
-            spec/requests/admin/clients_tenant_spec.rb \
             spec/features/clients_browser_spec.rb
 
   clients_specs:
@@ -124,4 +123,5 @@ jobs:
           bundle exec rspec \
             spec/models/client_spec.rb \
             spec/requests/admin/clients_spec.rb \
+            spec/requests/admin/clients_tenant_spec.rb \
             spec/features/clients_browser_spec.rb

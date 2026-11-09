@@ -29,6 +29,5 @@ module Admin
     def per_page_param
       table_page_size_for('clients')
     end
-
   end
 end
