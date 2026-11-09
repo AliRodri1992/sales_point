@@ -5,7 +5,7 @@
 - **Módulo:** Usuarios — directorio `/admin/users` y acciones propias de estados, invitaciones y restauración.
 - **Rama:** `feature/fixes`.
 - **SHA de partida de código:** `fe9f7aeb06f1c77026f6c81ba870d840b5095705` (2026-11-08).
-- **SHA de último Users CI verde inspeccionado:** `513700eae96d9f105727b858ea7f51e0b632b5fe`; nueva prueba de teclado pendiente en `a4a4f48826457972893fe03ce66a27eb88f043ec`.
+- **SHA de último Users CI verde inspeccionado:** `a4a4f48826457972893fe03ce66a27eb88f043ec` (306 ejemplos, 0 fallos; RuboCop aprobado).
 - **SHA de aceptación:** PENDIENTE. **Estado:** AUDITADO, NO CERRADO; hallazgos P1 y verificaciones pendientes.
 - **Responsable de corrección:** módulo Usuarios; **revisión independiente:** pendiente de asignación.
 - **Método:** AI Dev Suite — Impeccable (pantallas), UI UX Pro Max (UX/a11y) y Ponytail (lógica/seguridad), mediante inspección GitHub y logs de Actions. No se ejecutaron las CLIs originales.
@@ -54,7 +54,7 @@
 | **USERS-011** | **P3 PROPIO — diseño por evaluar** | **Hipótesis de densidad:** `users/index.html.erb` ocupa cinco tarjetas KPI antes de filtros y tabla. El estándar de Delta POS no exige KPI por módulo; la necesidad de esos cinco indicadores no está justificada con evidencia de usuarios. | Evaluar simplificar a resumen compacto si reduce desplazamiento y mejora flujo de administración sin perder estados útiles. | Prueba visual móvil/escritorio, tarea de búsqueda/edición y comparación de altura/scroll. | **PENDIENTE DE VALIDACIÓN UX** · Usuarios/diseño |
 | **USERS-012** | **P0 de proceso — EXTERNO** | **CI general no verde:** en [CI del SHA `fe9f7aeb`](https://github.com/AliRodri1992/sales_point/actions/runs/42550692900) RuboCop indicó **50 ofensas** principalmente en Sucursales, Inventarios, Onboarding y Compras; también halló error de sintaxis en una spec FEFO externa. Seguridad e I18n pasaron; RSpec general fue cancelado. | Transferir a los expedientes de esos módulos, sin modificar su lógica desde esta auditoría de Usuarios. Aun siendo externo, impide cerrar el módulo en un SHA de aceptación no verde. | CI global completo y verde en el SHA de aceptación. | **ABIERTO / BLOQUEO EXTERNO** · dueños de módulos vecinos |
 
-| **USERS-013** | **P2 PROPIO — petición UX** | **Implementado en código y probado en CI anterior:** la baja se inicia desde un `<dialog>` en el listado y detalle, sin visitar otra pantalla. La confirmación exige `reason` validado por Rails, devuelve error 422 inline y respeta Pundit. | Conservar modal accesible, cierre por cancelar/Escape, foco restaurado, manejo de error y registro de baja. El formulario de estado directo queda como alternativa técnica para otros cambios de estado. | `spec/features/admin_users_experience_spec.rb` (baja con 422 y éxito; nuevo escenario Escape desde detalle), `spec/requests/admin/user_statuses_spec.rb`. | **IMPLEMENTADO Y PARCIALMENTE VERIFICADO** · la nueva prueba Escape requiere CI en SHA final |
+| **USERS-013** | **P2 PROPIO — petición UX** | **Implementado en código y probado en CI anterior:** la baja se inicia desde un `<dialog>` en el listado y detalle, sin visitar otra pantalla. La confirmación exige `reason` validado por Rails, devuelve error 422 inline y respeta Pundit. | Conservar modal accesible, cierre por cancelar/Escape, foco restaurado, manejo de error y registro de baja. El formulario de estado directo queda como alternativa técnica para otros cambios de estado. | `spec/features/admin_users_experience_spec.rb` (baja con 422 y éxito; nuevo escenario Escape desde detalle), `spec/requests/admin/user_statuses_spec.rb`. | **VERIFICADO EN USERS CI `a4a4f488`** · 306 pruebas verdes, Escape y foco comprobados en Chrome automatizado; validación manual pendiente |
 
 ## 4. Matriz de aceptación por pantalla
 
@@ -74,13 +74,15 @@
 |---|---|---|---|---|
 | 2026-11-08 | `cc009709` | [Users CI](https://github.com/AliRodri1992/sales_point/actions/runs/42556099051) tras corregir hallazgos y modal | **PASÓ: 305 ejemplos, 0 fallos; RuboCop específico PASÓ** | Inspección visual manual y CI general pendientes |
 | 2026-11-08 | `513700ea` | [Users CI](https://github.com/AliRodri1992/sales_point/actions/runs/42557051637), incluida política `UserPolicy` en lint especializado | **PASÓ: 305 ejemplos, 0 fallos; RuboCop específico PASÓ** | Última prueba de teclado de modal publicada después en `a4a4f488` |
-| 2026-11-08 | `a4a4f488` | [Users CI](https://github.com/AliRodri1992/sales_point/actions/runs/42557254742): prueba Escape/cancelación de modal y restauración de foco | **PENDIENTE** hasta que finalice la ejecución | No atribuir verificación por un commit |
+| 2026-11-08 | `a4a4f488` | [Users CI](https://github.com/AliRodri1992/sales_point/actions/runs/42557254742): prueba Escape/cancelación de modal y restauración de foco | **PASÓ: 306 ejemplos, 0 fallos; RuboCop específico PASÓ** | No atribuir verificación por un commit |
 | 2026-11-08 | `97a8c488` | [Users CI](https://github.com/AliRodri1992/sales_point/actions/runs/42549788993): RuboCop y RSpec con browser feature specs | **PASÓ: 293 ejemplos, 0 fallos; RuboCop específico PASÓ** | SHA previo al estándar documental; no equivale a prueba manual integral ni CI global |
 | 2026-11-08 | `fe9f7aeb` | [CI general](https://github.com/AliRodri1992/sales_point/actions/runs/42550692900) | **FALLÓ** RuboCop: 50 ofensas; **PASÓ** seguridad e I18n; RSpec completo y migraciones cancelados | Problemas propios de módulos vecinos; cierre global bloqueado |
 | 2026-11-08 | `fe9f7aeb` | Inspección GitHub de rutas, controladores, modelos, servicios, vistas, JS, esquema y tests propios | **REVISADO POR CÓDIGO**; hallazgos USERS-001–011 | No es test ejecutado ni demuestra incidencia visible |
 | 2026-11-08 | `fe9f7aeb` | Comparación estática de claves e interpolaciones de ocho familias `users*` / `user_*` de `es/en/ko` | **PASÓ inspección de paridad** en familias revisadas | No certifica cada texto renderizado dinámicamente |
 | 2026-11-08 | — | Navegador real local, lector de pantalla, zoom 200 % y pruebas manuales de extremo a extremo | **NO EJECUTADO** | La lectura de `localhost` no estaba disponible en esta sesión |
 | 2026-11-08 | — | Docker/Overcommit local, CI global verde sobre SHA de aceptación y revisión independiente | **NO EJECUTADO / NO CONFIRMADO** | Pendientes |
+
+**CI general de referencia tras las adecuaciones:** [run 42557434502](https://github.com/AliRodri1992/sales_point/actions/runs/42557434502) en `af782051`: seguridad e I18n **PASARON**; RuboCop global **FALLÓ con 54 ofensas**, ninguna en archivos propios de Usuarios. RSpec general y migraciones todavía estaban en ejecución al consultar. No confundir este bloqueo externo con una prueba específica fallida de Usuarios.
 
 ## 6. Contratos de integración y traspasos
 
@@ -97,7 +99,7 @@
 - [x] Alcance delimitado desde rutas propias y contratos externos identificados.
 - [x] Inventario de archivos, acciones, vistas, pruebas y flujos propios inspeccionado.
 - [x] Reglas principales de formularios, Pundit, modelos, membresías y soft delete revisadas estáticamente.
-- [x] RSpec especializado y RuboCop verde en SHA anterior identificable: `97a8c488`.
+- [x] RSpec especializado (306 ejemplos), prueba de modal con teclado y RuboCop verde en SHA `a4a4f488`.
 - [x] Comparación estática de claves e interpoladores de ocho familias es/en/ko; auditoría I18n general verde en SHA inspeccionado.
 - [ ] USERS-001 y USERS-003 con regresiones verdes; **USERS-002 sigue abierto** hasta fijar el contrato de roles globales por empresa.
 - [ ] P2 corregidos o aceptados por propietario con motivo y pruebas.
@@ -109,7 +111,7 @@
 
 ## 8. Dictamen y regla de reapertura
 
-**IMPLEMENTADO PARCIALMENTE Y VERIFICADO EN CI ESPECIALIZADO, NO CERRADO.** USERS-001 y USERS-003 cuentan con regresiones verdes; USERS-002 permanece pendiente de decisión arquitectónica multiempresa. Ninguno debe etiquetarse “reproducido en navegador” sin ejecución; `USERS-002` exige confirmar la regla de negocio. El CI especializado previo tiene 293 pruebas verdes, pero CI general del SHA inspeccionado falla por módulos externos y no existe evidencia visual manual.
+**IMPLEMENTADO PARCIALMENTE Y VERIFICADO EN CI ESPECIALIZADO, NO CERRADO.** USERS-001 y USERS-003 cuentan con regresiones verdes; USERS-002 permanece pendiente de decisión arquitectónica multiempresa. Ninguno debe etiquetarse “reproducido en navegador” sin ejecución; `USERS-002` exige confirmar la regla de negocio. El CI especializado de `a4a4f488` tiene 306 pruebas verdes, pero CI general del SHA inspeccionado falla por módulos externos y no existe evidencia visual manual.
 
 **Próximo paso técnico:** corregir o decidir P1; crear pruebas de regresión; después P2, mediciones, UI real, CI especializado y general del SHA final y reauditoría independiente sobre estos **mismos IDs**. No fusionar con CI requerido fallido o pendiente.
 
