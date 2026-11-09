@@ -172,7 +172,8 @@ RSpec.describe 'Admin::UnitsOfMeasure', type: :request do
   end
 
   it 'retains list query parameters when returning Turbo Stream updates' do
-    create(:unit_of_measure, organization:, sat_unit_key: sat, code: 'ACTIVE', status: 'active')
+    create(:unit_of_measure, organization:, sat_unit_key: sat,
+                             code: 'ACTIVE', name: 'Visible active record', status: 'active')
     target = create(:unit_of_measure, organization:, sat_unit_key: sat,
                                       code: 'INACTIVE', status: 'inactive')
     headers = { 'Accept' => 'text/vnd.turbo-stream.html' }
@@ -180,15 +181,14 @@ RSpec.describe 'Admin::UnitsOfMeasure', type: :request do
 
     patch admin_unit_of_measure_path(target, query), params: {
       unit_of_measure: { name: 'Renamed inactive unit' }
-    }, headers:
+    }, headers: headers
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('Renamed inactive unit', 'status=inactive', 'sort=code')
-    expect(response.body).not_to include('ACTIVE</code>')
+    expect(response.body).not_to include('Visible active record')
 
-    delete admin_unit_of_measure_path(target, query), headers:
+    delete admin_unit_of_measure_path(target, query), headers: headers
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('status=inactive', 'sort=code')
     expect(response.body).to include(I18n.t('admin.units_of_measure.index.no_results'))
   end
-
 end

@@ -227,6 +227,7 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
     expect(page).to have_css('#units_of_measure_list', text: '1 / 1', wait: 10)
     expect(page).to have_css('#units_of_measure_list [data-list-query*="status=inactive"]')
     expect(page).to have_css('#units_of_measure_list [data-list-query*="page=1"]')
+    expect(URI.parse(current_url).query).to include('page=1', 'status=inactive')
     expect(page).to have_css('#units-status option[value="inactive"]:checked', visible: :all)
     expect(page).to have_no_css('#units_of_measure_list', text: 'Active not matching')
   end
@@ -248,5 +249,4 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
     find('#unit_of_measure_code').send_keys(:escape)
     expect(page).to have_css('turbo-frame#unit_of_measure_modal.hidden', visible: :all, wait: 10)
   end
-
 end

@@ -1,6 +1,6 @@
 <% listing_query = request.query_parameters.slice(*%w[search status fractional sat_unit_key_id sat_health sort direction page per_page])
                                     .merge('page' => @current_page) %>
-<div data-list-query="<%= listing_query.to_query %>"
+<div data-controller="units-of-measure-context" data-list-query="<%= listing_query.to_query %>"
      class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
   <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
     <div>
