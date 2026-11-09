@@ -19,6 +19,15 @@ Estas instrucciones se aplican a todo este repositorio y a cualquier agente de I
 
 El hook de Overcommit se instala con `bundle exec overcommit --install` y se firma con `bundle exec overcommit --sign`. Se mantienen RuboCop y los demás controles de calidad; **no** existe una verificación de cantidad de archivos por commit.
 
+## Estándar obligatorio de calidad por módulo
+
+- Antes de auditar o modificar un módulo, leer [docs/quality/module-quality-standard.md](docs/quality/module-quality-standard.md) y su registro de calidad en `docs/quality/modules/<slug>.md`. Si no existe, crearlo con [la plantilla](docs/quality/module-audit-template.md).
+- El alcance parte de **las rutas, pantallas y acciones propias solicitadas**. Examinar componentes, permisos y servicios directamente utilizados; en módulos vecinos **solo comprobar contratos de integración**. No transformar una auditoría de Sucursales en auditoría completa de Onboarding, Terminales, Inventario o Compras.
+- Mantener IDs de hallazgos entre auditorías; distinguir problema reproducido, riesgo de código y prueba pendiente. Registrar causa raíz, regresión, dueño, SHA y evidencia. No reiniciar la auditoría desde cero ni duplicar defectos.
+- Las modificaciones se etiquetan **IMPLEMENTADO**, **VERIFICADO** o **CERRADO** según su evidencia. Un commit **no equivale** a tests ejecutados. No cerrar con P0/P1, pruebas obligatorias fallidas o CI sin comprobar en el SHA de aceptación.
+- Documentar visual/UX, validaciones del modelo, accesibilidad y locales es/en/ko; usar `.github/PULL_REQUEST_TEMPLATE.md` para trazar alcance, resultados y revisión independiente.
+- Si un módulo externo falla, registrar traspaso al propietario y probar solamente el contrato desde el módulo actual. No atribuir el defecto al módulo actual, aunque un CI global rojo siga bloqueando el cierre técnico.
+
 ## Seguridad y calidad
 - No guardar claves, tokens ni datos personales en Git; revisar diffs y archivos generados.
 - Conservar convenciones existentes, permisos/autorización, pruebas, accesibilidad, estilos e internacionalización.
