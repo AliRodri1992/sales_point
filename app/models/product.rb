@@ -18,6 +18,7 @@ class Product < ApplicationRecord
 
   has_one_attached :image
   include ProductCommercialCatalog
+  include ProductCatalogIntegrity
   include ProductImageValidation
 
   validates :code,
@@ -83,9 +84,6 @@ class Product < ApplicationRecord
   before_validation :set_defaults, if: :new_record?
   before_validation :set_slug, if: -> { name.present? && slug.blank? }
   validate :valid_catalog_references
-  validate :valid_primary_barcode_format
-  validate :sku_available_among_variants, if: -> { sku.present? }
-  validate :preserve_tracking_history, if: -> { persisted? && will_save_change_to_tracking_mode? }
 
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :available, -> { where(status: :active) }
@@ -99,28 +97,6 @@ class Product < ApplicationRecord
   def to_param = slug.presence || id&.to_s
 
   private
-
-  def valid_primary_barcode_format
-    return if barcode.blank? || Products::BarcodeFormat.valid?(barcode, 'code128')
-
-    errors.add(:barcode, :invalid)
-  end
-
-  def sku_available_among_variants
-    persisted = ProductVariant.where(organization_id:).where('lower(sku) = lower(?)', sku).exists?
-    nested = product_variants.any? do |variant|
-      !variant.marked_for_destruction? && variant.sku.present? && variant.sku.casecmp?(sku)
-    end
-    errors.add(:sku, :taken) if persisted || nested
-  end
-
-  def preserve_tracking_history
-    inventory_scope = Inventory.with_deleted.where(organization_id:, product_id: id)
-    used = inventory_scope.where.not(stock: 0).exists?
-    used ||= InventoryMovement.with_deleted.where(inventory_id: inventory_scope.select(:id)).exists?
-    used ||= InventoryLot.with_deleted.where(inventory_id: inventory_scope.select(:id)).exists?
-    errors.add(:tracking_mode, I18n.t('admin.catalog_design.tracking_mode_locked')) if used
-  end
 
   def valid_catalog_references
     %i[category sat_unit_key sat_tax].each do |association|

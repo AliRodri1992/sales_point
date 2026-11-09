@@ -20,15 +20,19 @@ module Products
         update_existing?
       end
     rescue ActiveRecord::RecordInvalid => e
-      if e.record.is_a?(ProductBarcode) && e.record.primary?
-        @product.errors.add(:barcode, :invalid)
-      elsif e.record != @product
-        @product.errors.add(:base, e.record.errors.full_messages.to_sentence)
-      end
+      record_validation_failure(e.record)
       false
     end
 
     private
+
+    def record_validation_failure(record)
+      if record.is_a?(ProductBarcode) && record.primary?
+        @product.errors.add(:barcode, :invalid)
+      elsif record != @product
+        @product.errors.add(:base, record.errors.full_messages.to_sentence)
+      end
+    end
 
     def save_new?
       @product.assign_attributes(@attributes)
