@@ -6,7 +6,7 @@ class UnitOfMeasure < ApplicationRecord
 
   belongs_to :organization
   # Historical units must retain their SAT label even after that fiscal key is retired.
-  belongs_to :sat_unit_key, -> { with_deleted }
+  belongs_to :sat_unit_key, -> { with_deleted }, inverse_of: false
 
   enum :status, { active: 'active', inactive: 'inactive' }, default: :active, validate: true
 
