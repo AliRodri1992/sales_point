@@ -144,7 +144,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_120000) do
     t.index ["code"], name: "idx_categories_legacy_code", unique: true, where: "((deleted_at IS NULL) AND (organization_id IS NULL))"
     t.index ["organization_id", "code"], name: "idx_categories_organization_code", unique: true, where: "((deleted_at IS NULL) AND (organization_id IS NOT NULL))"
     t.check_constraint "name IS NOT NULL AND btrim(name::text) <> ''::text", name: "chk_categories_name_present", validate: false
-    t.check_constraint "code IS NOT NULL AND code ~ '^[a-z0-9_]{1,20}
+    t.check_constraint "code IS NOT NULL AND code !~ '[^a-z0-9_]' AND length(code) BETWEEN 1 AND 20", name: "chk_categories_code_valid", validate: false
+    t.check_constraint "status IS NOT NULL AND status IN ('active', 'inactive')", name: "chk_categories_status_valid", validate: false
     t.index ["deleted_at"], name: "index_categories_on_deleted_at"
     t.index ["name"], name: "index_categories_on_name", where: "(deleted_at IS NULL)"
   end
