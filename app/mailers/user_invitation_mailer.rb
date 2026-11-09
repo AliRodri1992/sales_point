@@ -8,26 +8,35 @@ class UserInvitationMailer < ApplicationMailer
 
   def invite(invitation_id, encrypted_token)
     @invitation_id = invitation_id
-    raw_token = Users::InvitationDeliveryToken.decrypt(encrypted_token)
     invitation = UserInvitation.includes(:user, :organization).find(invitation_id)
+    raw_token = Users::InvitationDeliveryToken.decrypt(encrypted_token)
     return unless valid_invitation?(invitation, raw_token)
 
     @deliverable_invitation = invitation
+    subject, html, plain = invitation_content(invitation, raw_token)
+    send_invitation(invitation, subject:, html:, plain:)
+  end
+
+  private
+
+  def invitation_content(invitation, raw_token)
     template = invitation_template(invitation)
     subject, html, plain = template.render_with(template_variables(invitation, raw_token))
-    if invitation.user.active?
-      html, plain = Users::ExistingInvitationPresentation.call(
-        html:, plain:, locale: template.locale, organization_name: invitation.organization.name
-      )
-    end
+    return [subject, html, plain] unless invitation.user.active?
+
+    html, plain = Users::ExistingInvitationPresentation.call(
+      html:, plain:, locale: template.locale, organization_name: invitation.organization.name
+    )
+    [subject, html, plain]
+  end
+
+  def send_invitation(invitation, subject:, html:, plain:)
     headers = EmailTemplates::Sender.headers_for(organization: invitation.organization)
     mail(to: invitation.user.email, subject:, **headers) do |format|
       format.html { render body: html, content_type: 'text/html' }
       format.text { render plain: }
     end
   end
-
-  private
 
   def mark_delivered
     @deliverable_invitation&.update!(delivery_status: 'sent', sent_at: Time.current)
