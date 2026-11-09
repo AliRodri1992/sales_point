@@ -1,4 +1,7 @@
 <% status_form.errors[:base].each do |message| %>
   <p class="mt-2 text-xs font-medium text-rose-700"><%= message %></p>
 <% end %>
+<% if status_form.errors[:reason].any? %>
+  <span data-deactivation-reason-error hidden></span>
+<% end %>
 <%= error_message_for(status_form, :reason, label: t('admin.users.status_management.reason')) %>
