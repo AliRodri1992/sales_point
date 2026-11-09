@@ -14,7 +14,8 @@ class UserRole < ApplicationRecord
 
   before_validation :resolve_organization
   validate :organization_matches_branch
-  validate :organization_required_for_shared_user
+  validate :organization_required_for_membership
+  validate :organization_membership_matches_user
   validate :branch_role_requires_branch
   validate :global_role_cannot_have_branch
   validate :assignable_role
@@ -45,11 +46,18 @@ class UserRole < ApplicationRecord
     errors.add(:organization, :invalid)
   end
 
-  def organization_required_for_shared_user
-    return if branch_id.present? || organization_id.present? || !user&.persisted?
-    return unless user.organization_memberships.where(deleted_at: nil).many?
+  def organization_required_for_membership
+    return unless new_assignment? && organization_id.nil? && user&.persisted?
+    return unless user.organization_memberships.where(deleted_at: nil).exists?
 
     errors.add(:organization, :blank)
+  end
+
+  def organization_membership_matches_user
+    return unless new_assignment? && organization_id && user&.persisted?
+    return if user.organization_memberships.where(deleted_at: nil).exists?(organization_id:)
+
+    errors.add(:organization, :invalid)
   end
 
   def branch_assignment_change?
