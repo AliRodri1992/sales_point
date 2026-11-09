@@ -3,6 +3,28 @@
 require 'rails_helper'
 
 RSpec.describe SystemRolePolicy do
+  it 'blocks edits and lifecycle changes for a role assigned in another organization' do
+    admin = create(:user)
+    own = create(:organization)
+    other = create(:organization)
+    create(:organization_membership, user: admin, organization: own)
+    super_role = create(:system_role, :system, code: 'super_admin')
+    create(:user_role, user: admin, system_role: super_role, organization: own)
+    shared = create(:system_role, :system, code: 'shared_store')
+    other_user = create(:user)
+    create(:organization_membership, user: other_user, organization: other)
+    create(:user_role, user: other_user, system_role: shared, organization: other)
+
+    CurrentOrganizationAccess.set(organization: own) do
+      policy = described_class.new(admin, shared)
+      expect(policy.show?).to be(true)
+      expect(policy.update?).to be(false)
+      expect(policy.update_permissions?).to be(false)
+      expect(policy.change_status?).to be(false)
+      expect(policy.audit_history?).to be(false)
+    end
+  end
+
   it 'requires an accessible tenant membership for every administrative action' do
     user = create(:user)
     organization = create(:organization)

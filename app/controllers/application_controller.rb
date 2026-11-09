@@ -58,7 +58,8 @@ class ApplicationController < ActionController::Base
 
   def enforce_active_account
     return unless user_signed_in?
-    return if current_user.active? && current_user.deleted_at.nil? && session_not_revoked?
+    return if current_user.active? && current_user.deleted_at.nil? &&
+              current_user.organization_accessible? && session_not_revoked?
 
     sign_out(current_user)
     cookies.delete(:user_id)

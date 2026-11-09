@@ -119,6 +119,33 @@ RSpec.describe SystemRoles::StatusTransition do
     end
   end
 
+  it 'invalidates a signed review when another role loses active permissions or membership' do
+    organization = actor.organization_memberships.first!.organization
+    user = create(:user)
+    membership = create(:organization_membership, user:, organization:)
+    create(:user_role, user:, system_role: role, organization:)
+    alternate = create(:system_role, :system, code: 'review_fallback')
+    alternate_permission = create(:permission, code: 'review_fallback.access')
+    create(:system_role_permission, system_role: alternate, permission: alternate_permission)
+    create(:user_role, user:, system_role: alternate, organization:)
+
+    token = SystemRoles::StatusReview.new(role:, actor:, target: 'inactive').token
+    alternate_permission.update!(status: :inactive)
+    expect do
+      described_class.new(role:, actor:, target: 'inactive', reason: 'Impact changed',
+                          review_token: token, confirmed: '1').call!
+    end.to raise_error(described_class::InvalidTransition, /review/i)
+
+    alternate_permission.update!(status: :active)
+    token = SystemRoles::StatusReview.new(role:, actor:, target: 'inactive').token
+    membership.update!(account_status: :suspended)
+    expect do
+      described_class.new(role:, actor:, target: 'inactive', reason: 'Membership changed',
+                          review_token: token, confirmed: '1').call!
+    end.to raise_error(described_class::InvalidTransition, /review/i)
+    expect(role.reload).to be_active
+  end
+
   it 'binds review to its actor, target and role' do
     other = create(:system_role, :system)
     token = SystemRoles::StatusReview.new(role: other, actor:, target: 'inactive').token
