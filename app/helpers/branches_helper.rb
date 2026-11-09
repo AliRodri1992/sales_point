@@ -41,7 +41,6 @@ module BranchesHelper
     when :pending_orders then admin_purchase_orders_path
     when :pending_returns then admin_purchase_returns_path
     when :assigned_team then admin_users_path
-    else nil
     end
   end
 
@@ -67,17 +66,12 @@ module BranchesHelper
     type.safe_constantize.human_attribute_name(attribute)
   end
 
-  def branch_audit_value(attribute, value)
-    case attribute
-    when 'deleted_at'
-      t("admin.branch_lifecycle.audit_#{value.present? ? 'removed' : 'present'}")
-    when 'country_id'
-      @branch_change_countries[value.to_i]&.localized_name || value.to_s
-    when 'primary', 'whatsapp_enabled'
-      t("admin.branch_lifecycle.audit_#{value ? 'yes' : 'no'}")
-    else
-      value.presence&.to_s&.truncate(160) || '—'
-    end
+  def branch_audit_value(attribute, value, countries: {})
+    return t("admin.branch_lifecycle.audit_#{value.present? ? 'removed' : 'present'}") if attribute == 'deleted_at'
+    return countries[value.to_i]&.localized_name || value.to_s if attribute == 'country_id'
+    return t("admin.branch_lifecycle.audit_#{value ? 'yes' : 'no'}") if %w[primary whatsapp_enabled].include?(attribute)
+
+    value.to_s.presence&.truncate(160) || '—'
   end
 
   def branch_mobile(branch)
@@ -111,14 +105,17 @@ module BranchesHelper
       next if value.blank?
 
       label = t("admin.branch_workspace.filters.#{key}")
-      display = case key
-                when 'status' then t("admin.branch_lifecycle.statuses.#{value}")
-                when 'contact', 'team' then t("admin.branch_workspace.options.#{value}")
-                when 'country_id' then countries.find { |country| country.id.to_s == value }&.localized_name
-                when 'created_from', 'created_to' then l(Date.iso8601(value))
-                else value
-                end
-      [key, "#{label}: #{display}"]
+      [key, "#{label}: #{branch_filter_badge_value(key, value, countries)}"]
+    end
+  end
+
+  def branch_filter_badge_value(key, value, countries)
+    case key
+    when 'status' then t("admin.branch_lifecycle.statuses.#{value}")
+    when 'contact', 'team' then t("admin.branch_workspace.options.#{value}")
+    when 'country_id' then countries.find { |country| country.id.to_s == value }&.localized_name
+    when 'created_from', 'created_to' then l(Date.iso8601(value))
+    else value
     end
   end
 

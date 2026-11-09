@@ -42,7 +42,18 @@
     </div>
   </header>
 
-  <section class="catalog-card branch-lifecycle-panel" aria-labelledby="branch-lifecycle-title">
+  <nav class="catalog-nav branch-detail-nav" aria-label="<%= t('admin.catalog_design.sections') %>">
+    <%= link_to t('admin.branch_lifecycle.title'), '#branch-detail-lifecycle' %>
+    <% %w[identity contact location notes].each do |section| %>
+      <%= link_to t("admin.branch_workspace.#{section}"), "#branch-detail-#{section}" %>
+    <% end %>
+    <% if @branch_operation_counts %>
+      <%= link_to t('admin.branch_workspace.operations'), '#branch-detail-operations' %>
+    <% end %>
+  </nav>
+
+  <section class="catalog-card branch-lifecycle-panel" id="branch-detail-lifecycle"
+           aria-labelledby="branch-lifecycle-title">
     <div class="catalog-card-body branch-lifecycle-body">
       <h2 id="branch-lifecycle-title" class="branch-lifecycle-heading font-jakarta text-base font-bold"><%= t('admin.branch_lifecycle.title') %></h2>
       <p class="catalog-hint branch-lifecycle-description"><%= t("admin.branch_lifecycle.descriptions.#{@branch.operational_status}") %></p>
@@ -50,7 +61,7 @@
       <% if @branch.preparing? || @branch.suspended? %>
         <h3 class="mt-4 font-semibold"><%= t('admin.branch_lifecycle.requirements_title') %></h3>
         <ul class="mt-2 grid gap-2 sm:grid-cols-2">
-          <% branch_activation_requirements(@branch).each do |key, complete| %>
+          <% @branch_activation_requirements.each do |key, complete| %>
             <li class="flex items-center gap-2 text-sm">
               <%= delta_icon(complete ? 'check-circle' : 'exclamation-circle',
                              class: "size-4 #{complete ? 'text-emerald-600' : 'text-amber-600'}") %>
@@ -64,8 +75,7 @@
            role="alert"><%= @transition_error %></p>
       <% end %>
       <% if can_change_lifecycle && !@branch.closed? %>
-        <% Branches::TransitionStatus::ALLOWED.fetch(@branch.operational_status, []).each do |target| %>
-          <% blockers = branch_transition_blockers(@branch, target) %>
+        <% @branch_transition_blockers.each do |target, blockers| %>
           <% if blockers.any? %>
             <section class="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4"
                      aria-label="<%= t('admin.branch_lifecycle.pending_for', action: t("admin.branch_lifecycle.actions.#{target}")) %>">
@@ -94,9 +104,9 @@
         <% selected_state = if allowed.include?(@transition_to)
                               @transition_to
                             else
-                              allowed.find { |state| branch_transition_blockers(@branch, state).empty? } || allowed.first
+                              allowed.find { |state| @branch_transition_blockers.fetch(state).empty? } || allowed.first
                             end %>
-        <% selected_blocked = branch_transition_blockers(@branch, selected_state).any? %>
+        <% selected_blocked = @branch_transition_blockers.fetch(selected_state).any? %>
         <%= form_with url: transition_status_admin_branch_path(@branch, branch_directory_parameters),
                       method: :patch, class: 'mt-5 space-y-4 rounded-xl border border-slate-200 p-4',
                       html: { novalidate: true },
@@ -112,7 +122,7 @@
               <%= select_tag :to_status,
                              options_for_select(allowed.map { |state|
                                [t("admin.branch_lifecycle.actions.#{state}"), state,
-                                { data: { blocked: branch_transition_blockers(@branch, state).any?,
+                                { data: { blocked: @branch_transition_blockers.fetch(state).any?,
                                           description: t("admin.branch_lifecycle.descriptions.#{state}"),
                                           confirmation: t("admin.branch_lifecycle.confirmations.#{state}"),
                                           action_label: t("admin.branch_lifecycle.actions.#{state}") } }]
@@ -174,15 +184,6 @@
       <% end %>
     </div>
   </section>
-
-  <nav class="catalog-nav branch-detail-nav" aria-label="<%= t('admin.catalog_design.sections') %>">
-    <% %w[identity contact location notes].each do |section| %>
-      <%= link_to t("admin.branch_workspace.#{section}"), "#branch-detail-#{section}" %>
-    <% end %>
-    <% if @branch_operation_counts %>
-      <%= link_to t('admin.branch_workspace.operations'), '#branch-detail-operations' %>
-    <% end %>
-  </nav>
 
   <div class="catalog-layout branch-detail-layout <%= 'branch-detail-layout-single' unless @branch_operation_counts %>">
     <div class="catalog-main branch-detail-main">

@@ -117,5 +117,4 @@ RSpec.describe 'Concurrent branch transitions', :concurrent_db do
       expect(UserRole.active.where(branch_id: branch.id)).to exist
     end
   end
-
 end

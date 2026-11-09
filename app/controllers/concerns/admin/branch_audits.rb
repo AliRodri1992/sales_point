@@ -17,7 +17,7 @@ module Admin
     def load_branch_change_events
       events = branch_audit_sources.flat_map { |type, ids| branch_audit_versions(type, ids) }
       @branch_change_events = events.filter_map { |event| branch_audit_entry(event) }
-                                    .sort_by { |entry| entry[:event].created_at }.reverse.first(20)
+                                    .sort_by { |entry| entry[:event].created_at }.last(20).reverse
       load_branch_change_actors
       load_branch_change_countries
     end

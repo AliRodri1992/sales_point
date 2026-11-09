@@ -29,7 +29,7 @@
                     <%= branch_audit_attribute(event.item_type, attribute) %>:
                   </dt>
                   <dd class="break-all text-slate-600">
-                    <%= Array(values).map { |value| branch_audit_value(attribute, value) }.join(' → ') %>
+                    <%= Array(values).map { |value| branch_audit_value(attribute, value, countries: @branch_change_countries) }.join(' → ') %>
                   </dd>
                 </div>
               <% end %>

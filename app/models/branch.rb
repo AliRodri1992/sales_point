@@ -7,6 +7,7 @@ class Branch < ApplicationRecord
   # Only the initial placeholder branch created during account registration can
   # be saved before the business has completed its address setup.
   include BranchLifecycle
+
   attr_accessor :registration_bootstrap, :lifecycle_created_by
 
   has_many :phones, as: :phoneable, dependent: :restrict_with_exception
@@ -119,7 +120,7 @@ class Branch < ApplicationRecord
   end
 
   def pending_purchase_returns?
-    PurchaseReturn.joins(:goods_receipt).where(goods_receipts: { branch_id: id }, status: 'draft').exists?
+    PurchaseReturn.joins(:goods_receipt).exists?(goods_receipts: { branch_id: id }, status: 'draft')
   end
 
   def preserve_operational_history

@@ -162,3 +162,16 @@ Ver las [reglas de cierre](../module-quality-standard.md) y la [plantilla](../mo
 
 
 **Actualización CI posterior a la consulta inicial:** el job global RSpec del SHA `3c31725` terminó **CANCELADO** (no aprobado), tras haberse observado inicialmente en ejecución. La nueva actualización documental genera otro SHA; sus propios checks requieren consulta separada. Se conserva el historial de ambos estados para trazabilidad.
+
+
+## Adecuaciones BR-006 / BR-007 / BR-008 — 2026-11-08
+
+**Estado:** IMPLEMENTADO SIN VERIFICAR. Se conserva el historial de BR-001 a BR-005 y el dictamen NO CERRADO; el commit de adecuación deberá validarse en CI y navegador.
+
+- **BR-006:** corregidas las ofensas identificadas en archivos de Sucursales: filtro de acciones en concerns, ordenación de auditoría, complejidad y variable de instancia de helper, orden/consultas de modelo y dependencia del historial, complejidad y `exists?` del servicio de estado, y formato de specs. Se preservan las reglas de transición y el historial. **RuboCop focalizado: PENDIENTE.**
+- **BR-007:** requisitos y bloqueos calculados desde `load_branch_detail` una vez por transición; reutiliza requisitos de activación y los resultados en la vista. Añadidas pruebas de regresión sobre la creación del servicio y la equivalencia de bloqueos. **Medición real de consultas y RSpec: PENDIENTES.**
+- **BR-008:** Estado operativo incorporado a la navegación anclada del detalle, ahora antes de las tarjetas; separación escritorio/móvil reajustada, prueba estructural ampliada. **Revisión visual/teclado/zoom 200 %: PENDIENTE.**
+- **BR-001 / BR-002 / BR-003 / BR-004:** siguen sin verificarse integralmente; conservar las comprobaciones manuales.
+- **BR-005:** requiere CI global verde para el SHA final. Hallazgos internos de otros módulos son EXTERNOS y no justifican ampliar esta modificación.
+
+**Los cambios no incluyen merge ni certifican cierre técnico.**

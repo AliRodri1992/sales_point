@@ -25,6 +25,16 @@ RSpec.describe Branches::LifecycleRequirements do
     expect(requirements.activation[:currency]).to be(false)
   end
 
+  it 'reuses the same readiness rules for available transitions' do
+    requirements = described_class.new(branch:, actor:)
+
+    expected_activation = requirements.activation.reject { |_key, ready| ready }.keys
+    expect(requirements.blockers_for('active')).to eq(expected_activation)
+    expect(requirements.blockers_for('suspended')).to eq(requirements.suspension_blockers)
+    expect(requirements.blockers_for('closed')).to eq(requirements.closure_blockers)
+    expect(requirements.blockers_for('unknown')).to be_empty
+  end
+
   it 'blocks suspension while a terminal is enabled' do
     create(:terminal, branch:, status: 'active')
     requirements = described_class.new(branch:, actor:)

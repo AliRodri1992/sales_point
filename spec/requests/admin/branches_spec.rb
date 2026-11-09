@@ -254,6 +254,21 @@ RSpec.describe 'Admin::Branches', type: :request do
       expect(panel).to be_present
       expect(panel.at_css('.branch-lifecycle-body .branch-lifecycle-heading')).to be_present
       expect(panel.at_css('.branch-lifecycle-description')).to be_present
+      expect(document.at_css('.branch-detail-nav a[href="#branch-detail-lifecycle"]')).to be_present
+    end
+
+    it 'evaluates operational requirements once for a preparing branch detail' do
+      branch = create(:branch, organization:, name: 'Nueva sucursal', operational_state: 'preparing')
+      allow(Branches::LifecycleRequirements).to receive(:new).and_call_original
+
+      get admin_branch_path(branch)
+
+      expect(response).to have_http_status(:ok)
+      expect(Branches::LifecycleRequirements).to have_received(:new).once
+      document = Nokogiri::HTML(response.body)
+      expect(document.css('#branch-transition-target option').map { |option| option['value'] })
+        .to contain_exactly('active', 'closed')
+      expect(document.at_css('#branch-detail-lifecycle')).to be_present
     end
 
     it 'shows an assigned branch to a branch user' do

@@ -4,6 +4,7 @@ RSpec.describe Branch, type: :model do
   describe 'associations' do
     it { is_expected.to have_one(:address).dependent(:destroy) }
     it { is_expected.to have_many(:user_roles).dependent(:restrict_with_exception) }
+    it { is_expected.to have_many(:branch_status_transitions).dependent(:restrict_with_exception) }
     it { is_expected.to have_many(:users).through(:user_roles) }
   end
 
@@ -211,5 +212,4 @@ RSpec.describe Branch, type: :model do
     expect(branch.errors[:operational_status]).to be_present
     expect(branch.reload).to be_active
   end
-
 end

@@ -13,15 +13,23 @@ module Branches
     end
 
     def activation
-      settings = organization&.organization_settings&.active_records&.first
       {
         organization: organization&.active? == true,
-        name: branch.name.to_s.length.between?(3, 150),
-        code: branch.code.present? && branch.code.match?(/\A[A-Z0-9_-]{1,30}\z/),
+        name: valid_branch_name?,
+        code: valid_branch_code?,
         address: branch.address&.valid? == true,
-        currency: settings&.base_currency&.active? == true,
+        currency: active_base_currency?,
         team: manager_assigned?
       }
+    end
+
+    def blockers_for(status)
+      case status.to_s
+      when 'active' then activation.reject { |_key, ready| ready }.keys
+      when 'suspended' then suspension_blockers
+      when 'closed' then closure_blockers
+      else []
+      end
     end
 
     def suspension_blockers
@@ -34,11 +42,7 @@ module Branches
     def closure_blockers
       blockers = suspension_blockers
       blockers << :outstanding_stock if outstanding_inventory?
-      blockers << :pending_requests if branch.purchase_requests.where(status: OPEN_REQUESTS).exists?
-      blockers << :pending_orders if branch.purchase_orders.where(status: OPEN_ORDERS).exists?
-      returns = PurchaseReturn.joins(:goods_receipt)
-                              .where(goods_receipts: { branch_id: branch.id }, status: 'draft')
-      blockers << :pending_returns if returns.exists?
+      blockers.concat(purchase_blockers)
       blockers << :assigned_team if branch.user_roles.active.exists?
       blockers
     end
@@ -49,6 +53,29 @@ module Branches
 
     def organization = branch.organization
 
+    def valid_branch_name?
+      branch.name.to_s.length.between?(3, 150)
+    end
+
+    def valid_branch_code?
+      branch.code.present? && branch.code.match?(/\A[A-Z0-9_-]{1,30}\z/)
+    end
+
+    def active_base_currency?
+      relation = organization&.organization_settings
+      settings = relation&.active_records&.first
+      settings&.base_currency&.active? == true
+    end
+
+    def purchase_blockers
+      blockers = []
+      blockers << :pending_requests if branch.purchase_requests.exists?(status: OPEN_REQUESTS)
+      blockers << :pending_orders if branch.purchase_orders.exists?(status: OPEN_ORDERS)
+      returns = PurchaseReturn.joins(:goods_receipt)
+      blockers << :pending_returns if returns.exists?(goods_receipts: { branch_id: branch.id }, status: 'draft')
+      blockers
+    end
+
     def outstanding_inventory?
       return true if branch.inventories.where('stock > 0').exists?
 
@@ -56,7 +83,7 @@ module Branches
       return true if lots.where('inventory_lots.quantity > 0').exists?
 
       InventorySerial.joins(inventory_lot: :inventory)
-                     .where(inventories: { branch_id: branch.id }, status: %w[available quarantined]).exists?
+                     .exists?(inventories: { branch_id: branch.id }, status: %w[available quarantined])
     end
 
     def manager_assigned?
@@ -65,7 +92,7 @@ module Branches
       membership = actor&.organization_memberships&.accessible
       administrator = actor&.admin? &&
                       membership&.exists?(organization_id: organization.id)
-      administrator || Branch.team_assignments(organization).where(branch_id: branch.id).exists?
+      administrator || Branch.team_assignments(organization).exists?(branch_id: branch.id)
     end
 
     def last_active_branch?

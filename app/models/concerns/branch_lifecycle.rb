@@ -12,7 +12,7 @@ module BranchLifecycle
                                 suspended: 'suspended', closed: 'closed' },
          default: :preparing, validate: true
 
-    has_many :branch_status_transitions
+    has_many :branch_status_transitions, dependent: :restrict_with_exception
     after_create :record_initial_operational_status
 
     before_validation :sync_legacy_status
