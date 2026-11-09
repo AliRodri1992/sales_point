@@ -85,6 +85,8 @@ RSpec.describe 'Admin email templates', type: :request do
     draft.update!(subject: 'Invite', html_body: '<a href="{{activation_url}}">Join</a>',
                   text_body: '{{activation_url}}', allowed_variables: ['activation_url'])
     allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:[]).with('DELTA_POS_PUBLIC_HOST').and_return('mail.delta.test')
 
     get preview_admin_email_template_path(template, version_id: draft.id)
 
