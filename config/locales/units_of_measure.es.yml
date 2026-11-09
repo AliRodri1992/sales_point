@@ -8,6 +8,7 @@ es:
         total: "Total de unidades"
         active: "Unidades activas"
         fractional: "Permiten fracciones"
+        invalid_sat: "Unidades con incidencia SAT"
         catalog_title: "Directorio de unidades"
         results:
           one: "%{count} resultado"
@@ -25,6 +26,7 @@ es:
         placeholder: "Nombre, código, abreviatura o clave SAT…"
         fractional: "Cantidades fraccionarias"
         sat: "Clave SAT"
+        sat_health: "Vigencia SAT"
         search_sat: "Buscar clave SAT…"
         all: "Todos"
         yes: "Sí"
@@ -57,6 +59,12 @@ es:
           one: "%{count} decimal"
           other: "%{count} decimales"
         status: "Estado"
+        status_hint: "Inactivo: se conserva y puede reactivarse. Dar de baja: retira la unidad del listado habitual y conserva su historial."
+      sat:
+        current: "SAT vigente"
+        invalid: "SAT no vigente"
+        invalid_suffix: "no vigente"
+        invalid_hint: "La clave SAT asociada ya no está vigente. La unidad conserva su estado e historial, pero para reactivarla debes seleccionar una clave SAT vigente."
       statuses:
         active: "Activo"
         inactive: "Inactivo"

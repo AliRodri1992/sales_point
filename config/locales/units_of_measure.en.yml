@@ -8,6 +8,7 @@ en:
         total: "Total units"
         active: "Active units"
         fractional: "Allow fractions"
+        invalid_sat: "Units with SAT issues"
         catalog_title: "Units directory"
         results:
           one: "%{count} result"
@@ -25,6 +26,7 @@ en:
         placeholder: "Name, code, abbreviation or SAT code…"
         fractional: "Fractional quantities"
         sat: "SAT code"
+        sat_health: "SAT validity"
         search_sat: "Search SAT codes…"
         all: "All"
         yes: "Yes"
@@ -57,6 +59,12 @@ en:
           one: "%{count} decimal"
           other: "%{count} decimals"
         status: "Status"
+        status_hint: "Inactive: retained and can be reactivated. Remove: hides the unit from the catalog while preserving its history."
+      sat:
+        current: "Current SAT code"
+        invalid: "SAT not current"
+        invalid_suffix: "not current"
+        invalid_hint: "The linked SAT code is no longer current. This unit keeps its status and history, but reactivation requires a current SAT code."
       statuses:
         active: "Active"
         inactive: "Inactive"

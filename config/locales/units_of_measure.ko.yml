@@ -8,6 +8,7 @@ ko:
         total: "전체 단위"
         active: "활성 단위"
         fractional: "소수 허용 단위"
+        invalid_sat: "SAT 코드 문제가 있는 단위"
         catalog_title: "단위 목록"
         results:
           one: "%{count}개 결과"
@@ -25,6 +26,7 @@ ko:
         placeholder: "이름, 코드, 약어 또는 SAT 코드…"
         fractional: "소수 수량"
         sat: "SAT 코드"
+        sat_health: "SAT 유효성"
         search_sat: "SAT 코드 검색…"
         all: "전체"
         yes: "예"
@@ -57,6 +59,12 @@ ko:
           one: "소수 %{count}자리"
           other: "소수 %{count}자리"
         status: "상태"
+        status_hint: "비활성 상태에서는 기록을 보존하며 다시 활성화할 수 있습니다. 목록에서 제외하면 기록을 유지하면서 일반 목록에서 숨깁니다."
+      sat:
+        current: "SAT 코드 유효"
+        invalid: "SAT 코드 유효하지 않음"
+        invalid_suffix: "유효하지 않음"
+        invalid_hint: "연결된 SAT 코드가 더 이상 유효하지 않습니다. 단위의 상태와 기록은 유지되지만 재활성화하려면 유효한 SAT 코드가 필요합니다."
       statuses:
         active: "활성"
         inactive: "비활성"
