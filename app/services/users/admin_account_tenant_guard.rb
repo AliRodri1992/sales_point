@@ -14,10 +14,8 @@ module Users
       end
       return reject_shared_change?(field) if field
 
-      original_ids = @user.user_roles.active.where(branch_id: nil).pluck(:system_role_id)
-      return true if role_ids.nil? || role_ids.sort == original_ids.sort
-
-      reject_shared_change?(:system_role_ids)
+      # Role grants are organization-scoped; shared identity fields remain protected.
+      true
     end
 
     def delegated_employee_allowed?
@@ -40,7 +38,7 @@ module Users
     def another_administrator_available?
       members = @organization.organization_memberships.accessible
                              .where.not(user_id: @user.id).select(:user_id)
-      UserRole.active.where(branch_id: nil, user_id: members)
+      UserRole.active.where(branch_id: nil, user_id: members, organization: @organization)
               .joins(:user)
               .where(users: { status: 'active', deleted_at: nil })
               .exists?(system_roles: { code: SystemRole::ADMINISTRATIVE_CODES })
