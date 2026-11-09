@@ -62,17 +62,7 @@ jobs:
             spec/models/organization_setting_spec.rb \
             spec/models/general_setting_audit_event_spec.rb \
             spec/features/general_settings_browser_spec.rb
-      - name: Verify a clean database can load the checked-in schema
-        run: |
-          bin/rails db:drop db:create db:schema:load
-          bin/rails runner '
-            db = ActiveRecord::Base.connection
-            table = :general_setting_audit_events
-            abort "General audit table missing" unless db.data_source_exists?(table)
-            abort "Soft-delete column missing" unless db.column_exists?(table, :deleted_at)
-            abort "Audit foreign keys missing" unless db.foreign_keys(table).size >= 2
-            abort "Audit check constraints missing" unless db.check_constraints(table).size >= 2
-          '
+
 
   general_locales:
     name: General translations and YAML integrity
@@ -153,3 +143,14 @@ jobs:
             spec/models/organization_setting_spec.rb \
             spec/models/general_setting_audit_event_spec.rb \
             spec/features/general_settings_browser_spec.rb
+      - name: Verify a clean database can load the checked-in schema
+        run: |
+          bin/rails db:drop db:create db:schema:load
+          bin/rails runner '
+            db = ActiveRecord::Base.connection
+            table = :general_setting_audit_events
+            abort "General audit table missing" unless db.data_source_exists?(table)
+            abort "Soft-delete column missing" unless db.column_exists?(table, :deleted_at)
+            abort "Audit foreign keys missing" unless db.foreign_keys(table).size >= 2
+            abort "Audit check constraints missing" unless db.check_constraints(table).size >= 2
+          '
