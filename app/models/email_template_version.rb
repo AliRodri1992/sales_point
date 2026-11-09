@@ -69,8 +69,7 @@ class EmailTemplateVersion < ApplicationRecord
   end
 
   def only_one_draft_per_template
-    other_drafts = self.class.where(email_template_id:, status: 'draft').where.not(id: id)
-    errors.add(:status, :taken) if other_drafts.exists?
+    errors.add(:status, :taken) if self.class.where(email_template_id:, status: 'draft').where.not(id: id).exists?
   end
 
   def variables_are_safe
