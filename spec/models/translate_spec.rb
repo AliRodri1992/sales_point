@@ -154,6 +154,22 @@ RSpec.describe Translate, type: :model do
     end
   end
 
+  describe 'database-backed I18n refresh' do
+    it 'applies overrides, updates them, and falls back after deletion' do
+      language = create(:language, code: 'es', name: 'Español', flag_iso: 'mx')
+      key = 'admin.languages.index.title'
+      original = I18n.t(key, locale: :es)
+      translation = create(:translate, language:, key:, value: 'Idiomas personalizados')
+
+      expect(I18n.t(key, locale: :es)).to eq('Idiomas personalizados')
+      translation.update!(value: 'Idiomas actualizados')
+      expect(I18n.t(key, locale: :es)).to eq('Idiomas actualizados')
+
+      translation.destroy!
+      expect(I18n.t(key, locale: :es)).to eq(original)
+    end
+  end
+
   describe 'uniqueness' do
     it 'rejects duplicate keys in a language' do
       language = create(:language, code: 'en')
@@ -162,6 +178,15 @@ RSpec.describe Translate, type: :model do
 
       expect(duplicate).to be_invalid
       expect(duplicate.errors[:key]).to include('already exists for this language')
+    end
+
+    it 'rejects duplicate key changes before reaching the database unique index' do
+      language = create(:language, :english)
+      create(:translate, language:, key: 'reserved.key')
+      translation = create(:translate, language:, key: 'other.key')
+
+      expect(translation.update(key: 'reserved.key')).to be(false)
+      expect(translation.errors[:key]).to be_present
     end
 
     it 'allows same key in another language' do
@@ -173,7 +198,9 @@ RSpec.describe Translate, type: :model do
     it 'uses legacy locale uniqueness' do
       translate = described_class.new(key: 'shared.key', locale: 'en')
       allow(described_class).to receive(:column_exists?).with(:language_id).and_return(false)
-      allow(described_class).to receive(:exists?).with(key: 'shared.key', locale: 'en').and_return(true)
+      relation = instance_double(ActiveRecord::Relation)
+      expect(described_class).to receive(:where).with(key: 'shared.key', locale: 'en').and_return(relation)
+      expect(relation).to receive(:exists?).and_return(true)
 
       translate.valid?
 

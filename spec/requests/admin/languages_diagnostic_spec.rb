@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Admin::Languages Diagnostic', type: :request do
   include Devise::Test::IntegrationHelpers
 
-  let!(:user) { create(:user, status: 'active') }
+  let!(:user) { create(:user, status: 'inactive') }
 
   before do
     permission_role = create(:system_role, :system)
@@ -18,7 +18,7 @@ RSpec.describe 'Admin::Languages Diagnostic', type: :request do
 
   it 'create response body contains swal toast' do
     post admin_languages_path(format: :turbo_stream),
-         params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'active' } }
+         params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'inactive' } }
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('action="swal"')
@@ -26,7 +26,7 @@ RSpec.describe 'Admin::Languages Diagnostic', type: :request do
 
   it 'create stores user param' do
     post admin_languages_path(format: :turbo_stream),
-         params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'active' } }
+         params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'inactive' } }
 
     notification = Noticed::Notification.last
 

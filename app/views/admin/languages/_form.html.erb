@@ -6,15 +6,26 @@
       <div class="catalog-card-body catalog-fields">
         <% [:name, :code, :flag_iso].each do |attribute| %>
           <div class="catalog-field <%= 'catalog-full' if attribute == :name %>">
-            <%= form.label attribute, t("admin.languages.form.#{attribute}") %>
-            <%= form.text_field attribute, required: true, maxlength: attribute == :name ? 100 : 2, autocomplete: 'off', spellcheck: false, aria: { invalid: language.errors[attribute].any?, describedby: "language_#{attribute}_hint" }, class: form_state_classes(language, attribute) %>
+            <%= form.label attribute, required_field_label(t("admin.languages.form.#{attribute}")) %>
+            <%= form.text_field attribute, maxlength: attribute == :name ? 100 : 2,
+                readonly: attribute == :code && language.persisted?,
+                autocomplete: 'off', spellcheck: false,
+                aria: { invalid: language.errors[attribute].any?,
+                        describedby: validation_describedby(language, attribute, "language_#{attribute}_hint") },
+                class: form_state_classes(language, attribute) %>
             <p id="language_<%= attribute %>_hint" class="catalog-hint"><%= t("admin.catalog_design.language_#{attribute}_hint") %></p>
             <%= error_message_for(language, attribute) %>
           </div>
         <% end %>
         <div class="catalog-field">
           <%= form.label :status, t('admin.languages.form.status') %>
-          <%= form.select :status, Language.statuses.keys.map { |status| [t("admin.languages.statuses.#{status}"), status] } %>
+          <div class="relative" data-controller="delta-select">
+            <%= form.select :status,
+                  Language.statuses.keys.map { |status| [t("admin.languages.statuses.#{status}"), status] },
+                  {},
+                  aria: { invalid: language.errors[:status].any?,
+                          describedby: validation_describedby(language, :status) } %>
+          </div>
           <%= error_message_for(language, :status) %>
         </div>
       </div>

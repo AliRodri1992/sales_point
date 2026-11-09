@@ -17,7 +17,14 @@ class Language < ApplicationRecord
             length: { maximum: 2 }
 
   validates :name,
-            presence: true
+            presence: true,
+            length: { maximum: 100 }
+
+  validate :supported_locale_if_active
+  validate :code_is_immutable, on: :update
+  validate :protect_default_locale
+
+  after_commit :invalidate_translation_cache
 
   validates :flag_iso,
             presence: true,
@@ -31,8 +38,7 @@ class Language < ApplicationRecord
        },
        validate: true
 
-  # New languages always default to "active" so the status field doesn't
-  # need to be exposed on the create form.
+  # New languages are active by default; only configured locales can be active.
   after_initialize :set_default_status, if: :new_record?
 
   scope :available, lambda {
@@ -54,6 +60,30 @@ class Language < ApplicationRecord
   def flag_srcset = "#{flag_url} 1x"
 
   private
+
+  def supported_locale_if_active
+    return unless active? && code.present?
+    return if I18n.available_locales.map(&:to_s).include?(code)
+
+    errors.add(:code, I18n.t('admin.languages.validation.unsupported_locale'))
+  end
+
+  def code_is_immutable
+    return unless will_save_change_to_code?
+
+    errors.add(:code, I18n.t('admin.languages.validation.immutable_code'))
+  end
+
+  def protect_default_locale
+    return unless code == I18n.default_locale.to_s
+    return if active? && deleted_at.nil?
+
+    errors.add(:base, I18n.t('admin.languages.validation.default_required'))
+  end
+
+  def invalidate_translation_cache
+    Translate.invalidate_cache!
+  end
 
   def set_default_status
     self.status ||= 'active'

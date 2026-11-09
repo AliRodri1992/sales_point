@@ -65,7 +65,11 @@ module Admin
     end
 
     def destroy
-      @language.update!(deleted_at: Time.current)
+      unless @language.update(deleted_at: Time.current)
+        redirect_to admin_languages_path, alert: @language.errors.full_messages.to_sentence,
+                                           status: :see_other
+        return
+      end
       load_languages
       notify_language(current_user, @language, 'destroyed')
       return if redirect_without_catalog_listing(@language, :destroyed)

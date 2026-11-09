@@ -382,6 +382,10 @@ es:
         text: Los cambios del panel se guardaron correctamente.
         title: Panel guardado
     languages:
+      validation:
+        unsupported_locale: "no está habilitado en el sistema. Configura y publica sus traducciones antes de activarlo."
+        immutable_code: "no puede modificarse después del registro."
+        default_required: "El idioma predeterminado debe permanecer activo y no puede retirarse."
       confirm:
         cancel: Cancelar
       created: Idioma creado correctamente

@@ -378,6 +378,10 @@ en:
         subtitle: Overview of your business operations.
         title: Dashboard
     languages:
+      validation:
+        unsupported_locale: "is not configured in the application. Configure and publish its translations before activation."
+        immutable_code: "cannot be changed after registration."
+        default_required: "The default language must remain active and cannot be removed."
       confirm:
         cancel: Cancel
       created: Language created successfully

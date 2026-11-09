@@ -47,7 +47,7 @@ RSpec.describe 'Admin::Languages', type: :request do
     it 'sends a "created" notification to the current user' do
       expect do
         post admin_languages_path(format: :turbo_stream),
-             params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'active' } }
+             params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'inactive' } }
       end.to change(Noticed::Notification, :count).by(1)
 
       notification = Noticed::Notification.last
@@ -61,16 +61,16 @@ RSpec.describe 'Admin::Languages', type: :request do
         .with('language_selector', target: 'language_selector_content', html: kind_of(String))
 
       post admin_languages_path(format: :turbo_stream),
-           params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'active' } }
+           params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl', status: 'inactive' } }
     end
 
     it 'defaults the status to active when not provided' do
       expect do
         post admin_languages_path(format: :turbo_stream),
-             params: { language: { name: 'Test Language', code: 'tl', flag_iso: 'tl' } }
+             params: { language: { name: 'Español', code: 'es', flag_iso: 'mx' } }
       end.to change(Language, :count).by(1)
 
-      expect(Language.find_by(code: 'tl').status).to eq('active')
+      expect(Language.find_by(code: 'es').status).to eq('active')
     end
 
     it 're-renders the form when the language is invalid' do
@@ -82,10 +82,37 @@ RSpec.describe 'Admin::Languages', type: :request do
 
     it 'redirects after an HTML create and sets a notice' do
       post admin_languages_path,
-           params: { language: { name: 'HTML Language', code: 'hl', flag_iso: 'hl', status: 'active' } }
+           params: { language: { name: 'HTML Language', code: 'hl', flag_iso: 'hl', status: 'inactive' } }
 
       expect(response).to redirect_to(admin_languages_path)
       expect(flash[:notice]).to eq(I18n.t('admin.languages.created'))
+    end
+  end
+
+  describe 'unsupported and protected language changes' do
+    it 'rejects activation of a language absent from the configured locales' do
+      post admin_languages_path,
+           params: { language: { name: 'Français', code: 'fr', flag_iso: 'fr', status: 'active' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(Language.find_by(code: 'fr')).to be_nil
+    end
+
+    it 'rejects a code change from a forged request' do
+      language = create(:language, :english)
+      patch admin_language_path(language),
+            params: { language: { code: 'ko' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(language.reload.code).to eq('en')
+    end
+
+    it 'does not allow removing the default Spanish language' do
+      language = create(:language, code: 'es', name: 'Español', flag_iso: 'mx')
+      delete admin_language_path(language)
+
+      expect(response).to have_http_status(:see_other)
+      expect(language.reload.deleted_at).to be_nil
     end
   end
 
@@ -95,7 +122,7 @@ RSpec.describe 'Admin::Languages', type: :request do
     it 'sends an "updated" notification to the current user' do
       expect do
         patch admin_language_path(language, format: :turbo_stream),
-              params: { language: { name: 'New Name', code: 'ol', flag_iso: 'ol', status: 'active' } }
+              params: { language: { name: 'New Name', code: 'ol', flag_iso: 'ol', status: 'inactive' } }
       end.to change(Noticed::Notification, :count).by(1)
 
       notification = Noticed::Notification.last
@@ -109,7 +136,7 @@ RSpec.describe 'Admin::Languages', type: :request do
         .with('language_selector', target: 'language_selector_content', html: kind_of(String))
 
       patch admin_language_path(language, format: :turbo_stream),
-            params: { language: { name: 'New Name', code: 'ol', flag_iso: 'ol', status: 'active' } }
+            params: { language: { name: 'New Name', code: 'ol', flag_iso: 'ol', status: 'inactive' } }
     end
 
     it 're-renders the edit form when the update is invalid' do
@@ -121,7 +148,7 @@ RSpec.describe 'Admin::Languages', type: :request do
 
     it 'redirects after an HTML update and sets a notice' do
       patch admin_language_path(language),
-            params: { language: { name: 'Updated HTML Language', code: 'ol', flag_iso: 'ol', status: 'active' } }
+            params: { language: { name: 'Updated HTML Language', code: 'ol', flag_iso: 'ol', status: 'inactive' } }
 
       expect(response).to redirect_to(admin_languages_path)
       expect(flash[:notice]).to eq(I18n.t('admin.languages.updated'))

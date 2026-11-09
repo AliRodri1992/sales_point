@@ -378,6 +378,10 @@ ko:
         subtitle: 비즈니스 운영 현황을 한눈에 확인하세요.
         title: 대시보드
     languages:
+      validation:
+        unsupported_locale: "는 시스템에 설정되지 않았습니다. 활성화하기 전에 번역을 준비하고 배포하세요."
+        immutable_code: "는 등록 후 변경할 수 없습니다."
+        default_required: "기본 언어는 활성 상태로 유지해야 하며 삭제할 수 없습니다."
       confirm:
         cancel: 취소
       created: 언어가 성공적으로 생성되었습니다

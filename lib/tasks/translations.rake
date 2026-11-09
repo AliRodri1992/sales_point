@@ -5,22 +5,17 @@ namespace :translations do
   task load: :environment do
     puts '🌱 Loading translations from YAML files...'
 
-    # Load all locale files
-    Rails.root.glob('config/locales/*.yml').each do |file|
-      next if file.include?('devise.security_extension')
+    # Support both module.en.yml and en.module.yml naming conventions.
+    Rails.root.glob('config/locales/*.yml').sort.each do |file|
+      filename = file.basename.to_s
+      next if filename.start_with?('devise.security_extension.')
 
-      filename = File.basename(file)
-      case filename
-      when 'en.yml', 'devise.en.yml'
-        Translate.load_from_file(file, 'en')
-        puts "✅ Loaded #{filename} (English)"
-      when 'es.yml', 'devise.es.yml'
-        Translate.load_from_file(file, 'es')
-        puts "✅ Loaded #{filename} (Spanish)"
-      when 'ko.yml', 'devise.ko.yml'
-        Translate.load_from_file(file, 'ko')
-        puts "✅ Loaded #{filename} (Korean)"
-      end
+      locale = filename[/\A(en|es|ko)(?=\.)/, 1] ||
+               filename[/\.(en|es|ko)\.yml\z/, 1]
+      next unless locale
+
+      Translate.load_from_file(file, locale)
+      puts "✅ Loaded #{filename} (#{locale})"
     end
 
     puts "\n📊 Summary:"
@@ -39,7 +34,7 @@ namespace :translations do
 
   desc 'Show translation statistics'
   task stats: :environment do
-    total = Translate.count
+    total = Translate.with_deleted.count
     active = Translate.count
     deleted = Translate.only_deleted.count
 

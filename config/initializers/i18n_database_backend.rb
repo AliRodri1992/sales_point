@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-# Custom I18n backend that loads translations from both files and database
-# This backend chains file translations with database translations
-
+# PostgreSQL overrides take precedence; YAML remains the safe fallback.
+# Keep the database backend installed even before the first db:migrate.
 require 'i18n/backend/chain'
 
 module I18n
@@ -10,72 +9,68 @@ module I18n
     class DatabaseBackend < Simple
       def initialize
         super
+        @reload_mutex = Mutex.new
         @translations_loaded = false
       end
 
-      def load_all_from_database
-        return if @translations_loaded
-        return unless defined?(Translate) && table_exists?
-
-        begin
-          Translate.includes(:language).each do |translate|
-            locale = translate.language&.code
-            next unless locale
-
-            store_translation(locale.to_sym, translate.key, translate.value)
-          end
-          @translations_loaded = true
-        rescue StandardError => e
-          Rails.logger.warn("Failed to load translations from database: #{e.message}")
-        end
-      end
-
       def lookup(locale, key, scope = [], options = {})
-        load_all_from_database unless @translations_loaded
+        refresh_translations
         super
       end
 
       private
 
-      def table_exists?
-        return false unless defined?(ActiveRecord)
+      def refresh_translations
+        return unless defined?(Translate)
 
-        begin
-          ActiveRecord::Base.connection.table_exists?('translates')
-        rescue StandardError
-          false
+        revision = Translate.cache_revision
+        return if @translations_loaded && @loaded_revision == revision
+        return unless translation_tables_exist?
+
+        @reload_mutex.synchronize do
+          return if @translations_loaded && @loaded_revision == revision
+
+          fresh = {}
+          Translate.includes(:language).find_each do |entry|
+            language_code = entry.language&.code
+            next unless language_code
+
+            parts = entry.key.to_s.split('.')
+            next if parts.empty?
+
+            node = (fresh[language_code.to_sym] ||= {})
+            parts[0..-2].each { |part| node = (node[part.to_sym] ||= {}) }
+            node[parts.last.to_sym] = entry.value
+          end
+
+          # Only replace the published snapshot after a successful full load.
+          @translations = fresh
+          @initialized = true
+          @translations_loaded = true
+          @loaded_revision = revision
         end
+      rescue StandardError => e
+        Rails.logger.warn("Failed to refresh database translations: #{e.class}: #{e.message}")
       end
 
-      def store_translation(locale, key, value)
-        key_parts = key.split('.')
-        translations = (@translations ||= {})[locale] ||= {}
-
-        key_parts[0..-2].each do |part|
-          translations = translations[part.to_sym] ||= {}
-        end
-
-        translations[key_parts.last.to_sym] = value
+      def translation_tables_exist?
+        connection = ActiveRecord::Base.connection
+        connection.data_source_exists?('translates') &&
+          connection.data_source_exists?('languages') &&
+          connection.column_exists?(:translates, :language_id)
       end
     end
   end
 end
 
-# Chain the file backend with the database backend
-# File backend first, then database backend as fallback
 begin
   file_backend = I18n::Backend::Simple.new
   file_backend.load_translations(Dir[Rails.root.join('config', 'locales', '**', '*.yml')])
 
-  if defined?(ActiveRecord) && ActiveRecord::Base.connection.table_exists?('translates')
-    db_backend = I18n::Backend::DatabaseBackend.new
-    I18n.backend = I18n::Backend::Chain.new(file_backend, db_backend)
-    Rails.logger.debug("Using chained I18n backend (file + database)")
-  else
-    I18n.backend = file_backend
-    Rails.logger.debug("Using I18n file backend")
-  end
+  # This backend retries loading when the schema first becomes available and
+  # automatically reloads after translation/language changes.
+  I18n.backend = I18n::Backend::Chain.new(I18n::Backend::DatabaseBackend.new, file_backend)
+  Rails.logger.debug('Using chained I18n backend (database overrides, YAML fallback)')
 rescue StandardError => e
-  Rails.logger.warn("Failed to configure I18n backend: #{e.message}")
-  # Keep default backend if anything fails
+  Rails.logger.warn("Failed to configure I18n backend: #{e.class}: #{e.message}")
 end

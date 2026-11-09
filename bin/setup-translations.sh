@@ -7,7 +7,7 @@ set -e
 echo "🗂️  Setting up translations table..."
 echo "=================================="
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
 # Run migration
 echo "📝 Running migration..."
@@ -22,8 +22,6 @@ echo "✅ Translations setup complete!"
 echo ""
 echo "📊 Summary:"
 bundle exec rails runner "
-  require 'table_print'
-  
   puts 'Total translations by locale:'
   %w[en es ko].each do |locale|
     count = Translate.by_locale(locale).count

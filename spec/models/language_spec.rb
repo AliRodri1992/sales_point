@@ -62,6 +62,37 @@ RSpec.describe Language, type: :model do
     end
   end
 
+  describe 'supported locales and lifecycle protections' do
+    it 'rejects activation of a locale without configured translations' do
+      language = build(:language, code: 'fr', status: 'active')
+      expect(language).not_to be_valid
+      expect(language.errors[:code]).to be_present
+    end
+
+    it 'allows registering an unsupported locale as inactive' do
+      expect(build(:language, code: 'fr', status: 'inactive')).to be_valid
+    end
+
+    it 'does not allow changes to the language identifier' do
+      language = create(:language, :english)
+      language.code = 'es'
+
+      expect(language).not_to be_valid
+      expect(language.errors[:code]).to be_present
+    end
+
+    it 'keeps the default locale active and not deleted' do
+      language = create(:language, code: 'es', name: 'Español', flag_iso: 'mx')
+      language.status = 'inactive'
+      expect(language).not_to be_valid
+      expect(language.errors[:base]).to be_present
+
+      language.status = 'active'
+      language.deleted_at = Time.current
+      expect(language).not_to be_valid
+    end
+  end
+
   describe 'flag URLs' do
     let(:language) { build(:language, flag_iso: 'mx') }
 
@@ -82,7 +113,8 @@ RSpec.describe Language, type: :model do
 
   describe 'scopes' do
     before do
-      create_list(:language, 2, status: 'active')
+      create(:language, :english)
+      create(:language, code: 'es', name: 'Español', flag_iso: 'mx')
       create_list(:language, 1, status: 'inactive')
       create(:language, deleted_at: Time.current)
     end

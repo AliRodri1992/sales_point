@@ -604,11 +604,9 @@ SeedConsole.track('Traducciones', Translate) do
     next if file.to_s.include?('devise.security_extension')
 
     filename = File.basename(file)
-    case filename
-    when 'en.yml', 'devise.en.yml' then load_translations_from_file(file, 'en')
-    when 'es.yml', 'devise.es.yml' then load_translations_from_file(file, 'es')
-    when 'ko.yml', 'devise.ko.yml' then load_translations_from_file(file, 'ko')
-    end
+    locale = filename[/\A(en|es|ko)(?=\.)/, 1] ||
+             filename[/\.(en|es|ko)\.yml\z/, 1]
+    load_translations_from_file(file, locale) if locale
   end
 end
 

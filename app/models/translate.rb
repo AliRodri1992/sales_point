@@ -1,14 +1,37 @@
 # frozen_string_literal: true
 
 class Translate < ApplicationRecord
+  CACHE_KEY = 'delta_pos:i18n:translations:revision'.freeze
+
   belongs_to :language, optional: true
 
-  validates :key, presence: true
+  after_commit :invalidate_translation_backend
+
+  validates :key, presence: true, length: { maximum: 255 }
   validates :value, presence: true
 
   validates :language, presence: true, if: -> { ActiveRecord::Base.connection.column_exists?(:translates, :language_id) }
 
-  validate :validate_uniqueness, on: :create
+  validate :validate_uniqueness
+
+  # Shared cache token + local generation: works with Redis/SolidCache and
+  # immediately invalidates the current process even with a null cache in tests.
+  def self.cache_revision
+    now = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    if !defined?(@checked_at) || now - @checked_at >= 1
+      @shared_revision = Rails.cache.read(CACHE_KEY)
+      @checked_at = now
+    end
+
+    [@local_revision || 0, @shared_revision]
+  end
+
+  def self.invalidate_cache!
+    @local_revision = (@local_revision || 0) + 1
+    @shared_revision = SecureRandom.hex(16)
+    Rails.cache.write(CACHE_KEY, @shared_revision)
+    @checked_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+  end
 
   scope :by_language, ->(language) { where(language: language) if Translate.column_exists?(:language_id) }
   scope :by_locale, ->(locale) { by_locale_code(locale) }
@@ -87,13 +110,19 @@ class Translate < ApplicationRecord
 
   private
 
+  def invalidate_translation_backend
+    self.class.invalidate_cache!
+  end
+
   def validate_uniqueness
     if self.class.column_exists?(:language_id)
-      if Translate.where(key: key, language_id: language_id).exists?(deleted_at: nil)
-        errors.add(:key, 'already exists for this language')
-      end
-    elsif Translate.exists?(key: key, locale: self[:locale])
-      errors.add(:key, 'already exists for this locale')
+      duplicates = Translate.where(key: key, language_id: language_id, deleted_at: nil)
+      duplicates = duplicates.where.not(id: id) if persisted?
+      errors.add(:key, 'already exists for this language') if duplicates.exists?
+    else
+      duplicates = Translate.where(key: key, locale: self[:locale])
+      duplicates = duplicates.where.not(id: id) if persisted?
+      errors.add(:key, 'already exists for this locale') if duplicates.exists?
     end
   end
 end

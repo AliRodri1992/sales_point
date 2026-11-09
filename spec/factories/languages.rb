@@ -6,7 +6,7 @@ FactoryBot.define do
     end
     sequence(:name) { |n| "Language #{n}" }
     flag_iso { 'us' }
-    status { 'active' }
+    status { I18n.available_locales.map(&:to_s).include?(code) ? 'active' : 'inactive' }
     deleted_at { nil }
 
     trait :english do
