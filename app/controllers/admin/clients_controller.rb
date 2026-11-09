@@ -14,6 +14,7 @@ module Admin
 
     def index
       load_clients
+      load_fiscal_regimes
     end
 
     def show; end
@@ -77,7 +78,7 @@ module Admin
     private
 
     def set_client
-      @client = Client.not_deleted.includes(:sat_fiscal_regime).find(params[:id])
+      @client = Client.not_deleted.includes(:sat_fiscal_regime, :phones).find(params[:id])
     end
 
     def load_fiscal_regimes
@@ -101,10 +102,13 @@ module Admin
     end
 
     def load_clients
-      @clients = ClientFilter.new(Client.not_deleted, params).call
+      base = Client.not_deleted
+      @unfiltered_count = base.count
+      @active_count = base.where(status: :active).count
+      @credit_count = base.where('credit_limit > 0').count
+      @clients = ClientFilter.new(base, params).call
       @total_count = @clients.count
-      @clients = @clients.includes(:sat_fiscal_regime, :phones)
-      @clients = paginate(@clients)
+      @clients = paginate(@clients.includes(:sat_fiscal_regime, :phones))
     end
 
     def paginate(scope)
@@ -114,6 +118,7 @@ module Admin
       @per_page = per_page
       @total_pages = [(@total_count / per_page.to_f).ceil, 1].max
       page = @total_pages if page > @total_pages
+      @current_page = page
 
       scope.limit(per_page).offset((page - 1) * per_page)
     end
@@ -123,7 +128,7 @@ module Admin
     end
 
     def render_duplicate_error(template = :new)
-      @client.errors.add(:base, t('admin.clients.errors.duplicate'))
+      @client.errors.add(:code, t('admin.clients.errors.duplicate'))
       load_fiscal_regimes
       render template, status: :unprocessable_content
     end

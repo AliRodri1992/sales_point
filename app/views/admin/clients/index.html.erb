@@ -1,61 +1,115 @@
-<div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-  <div>
-    <h1 class="font-jakarta text-2xl font-bold text-slate-900"><%= t('admin.clients.index.title') %></h1>
-    <p class="mt-1 text-sm text-slate-500"><%= t('admin.clients.index.subtitle') %></p>
-  </div>
+<% content_for :title, t('admin.clients.index.title') %>
 
-  <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-    <% if policy(Client).create? %>
-<%= link_to new_admin_client_path,
-                data: { tooltip: t('admin.clients.index.new') },
-                class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
+<header class="mb-7 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+  <div class="flex items-start gap-4">
+    <span class="hidden size-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800 shadow-sm sm:inline-flex" aria-hidden="true">
+      <%= delta_icon('users', class: 'size-6') %>
+    </span>
+    <div class="space-y-1.5">
+      <p class="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700"><%= t('admin.clients.workspace.eyebrow') %></p>
+      <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.clients.index.title') %></h1>
+      <p class="max-w-xl text-sm leading-relaxed text-slate-500"><%= t('admin.clients.index.subtitle') %></p>
+    </div>
+  </div>
+  <% if policy(Client).create? %>
+    <%= link_to new_admin_client_path,
+                data: { tooltip: t('admin.clients.index.new'), turbo_frame: '_top' },
+                class: 'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 lg:self-auto' do %>
       <%= delta_icon('plus', class: 'size-4') %>
       <%= t('admin.clients.index.new') %>
     <% end %>
-<% end %>
+  <% end %>
+</header>
 
-    <%= form_with url: admin_clients_path, method: :get,
-                  data: { turbo_frame: 'clients_list' },
-                  class: 'flex items-center gap-2' do %>
-      <%= text_field_tag :search, params[:search],
-            placeholder: t('admin.clients.index.search_placeholder'),
-            class: 'w-full min-w-48 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
-      <%= select_tag :status,
-            options_for_select(
-              [
-                [t('admin.clients.index.filters.all_statuses'), 'all'],
-                [t('admin.clients.statuses.active'), 'active'],
-                [t('admin.clients.statuses.inactive'), 'inactive']
-              ],
-              params[:status] || 'all'
-            ),
-            class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
-      <%= button_tag type: 'submit',
-            class: 'inline-flex items-center justify-center rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-200' do %>
+<section aria-label="<%= t('admin.clients.workspace.overview') %>" class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+  <div class="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.clients.workspace.total') %></p>
+    <p class="mt-2 font-jakarta text-2xl font-bold tabular-nums text-slate-900"><%= @unfiltered_count %></p>
+  </div>
+  <div class="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.clients.workspace.active') %></p>
+    <p class="mt-2 font-jakarta text-2xl font-bold tabular-nums text-emerald-700"><%= @active_count %></p>
+  </div>
+  <div class="rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500"><%= t('admin.clients.workspace.credit') %></p>
+    <p class="mt-2 font-jakarta text-2xl font-bold tabular-nums text-slate-900"><%= @credit_count %></p>
+  </div>
+</section>
+
+<section aria-labelledby="client-filters-title" class="mb-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+  <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+    <h2 id="client-filters-title" class="font-jakarta text-sm font-bold text-slate-900"><%= t('admin.clients.workspace.filters_title') %></h2>
+    <span class="text-xs text-slate-500"><%= t('admin.clients.workspace.filters_description') %></span>
+  </div>
+  <%= form_with url: admin_clients_path, method: :get, data: { turbo_frame: 'clients_list' },
+                class: 'grid grid-cols-1 items-end gap-3 md:grid-cols-2 xl:grid-cols-12' do %>
+    <div class="md:col-span-2 xl:col-span-4">
+      <label for="clients-search" class="mb-1.5 block text-xs font-semibold text-slate-600"><%= t('admin.clients.workspace.search') %></label>
+      <%= search_field_tag :search, params[:search], id: 'clients-search', maxlength: 100,
+                           placeholder: t('admin.clients.index.search_placeholder'),
+                           class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100' %>
+    </div>
+    <div class="xl:col-span-2">
+      <label for="clients-status" class="mb-1.5 block text-xs font-semibold text-slate-600"><%= t('admin.clients.form.status') %></label>
+      <div class="relative" data-controller="delta-select">
+        <%= select_tag :status, options_for_select([
+              [t('admin.clients.index.filters.all_statuses'), 'all'],
+              [t('admin.clients.statuses.active'), 'active'],
+              [t('admin.clients.statuses.inactive'), 'inactive']
+            ], params[:status] || 'all'), id: 'clients-status',
+            class: 'min-h-11 w-full rounded-xl border border-slate-200 text-sm' %>
+      </div>
+    </div>
+    <div class="xl:col-span-2">
+      <label for="clients-credit" class="mb-1.5 block text-xs font-semibold text-slate-600"><%= t('admin.clients.workspace.credit_filter') %></label>
+      <div class="relative" data-controller="delta-select">
+        <%= select_tag :credit, options_for_select([
+              [t('admin.clients.workspace.all'), 'all'],
+              [t('admin.clients.workspace.with_credit'), 'yes'],
+              [t('admin.clients.workspace.without_credit'), 'no']
+            ], params[:credit] || 'all'), id: 'clients-credit',
+            class: 'min-h-11 w-full rounded-xl border border-slate-200 text-sm' %>
+      </div>
+    </div>
+    <div class="xl:col-span-2">
+      <label for="clients-rfc" class="mb-1.5 block text-xs font-semibold text-slate-600"><%= t('admin.clients.form.rfc') %></label>
+      <div class="relative" data-controller="delta-select">
+        <%= select_tag :rfc, options_for_select([
+              [t('admin.clients.workspace.all'), 'all'],
+              [t('admin.clients.workspace.with_rfc'), 'yes'],
+              [t('admin.clients.workspace.without_rfc'), 'no']
+            ], params[:rfc] || 'all'), id: 'clients-rfc',
+            class: 'min-h-11 w-full rounded-xl border border-slate-200 text-sm' %>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 xl:col-span-2">
+      <%= button_tag type: :submit, class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-100' do %>
         <%= delta_icon('funnel', class: 'size-4') %>
         <%= t('admin.clients.index.filters.apply') %>
       <% end %>
-    <% end %>
-  </div>
-</div>
+      <%= link_to t('admin.clients.workspace.clear'), admin_clients_path, data: { turbo_frame: '_top' },
+                  class: 'inline-flex min-h-11 items-center justify-center rounded-xl px-3 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800' %>
+    </div>
+  <% end %>
+</section>
 
+<div id="clients_alert" aria-live="polite"></div>
 <div class="delta-skeleton-region" data-controller="skeleton-loading"
      data-skeleton-loading-region-value="clients_list" aria-busy="false"
      data-action="skeleton:begin@document->skeleton-loading#begin skeleton:end@document->skeleton-loading#finish turbo:before-fetch-request@document->skeleton-loading#turboStart turbo:frame-load@document->skeleton-loading#turboFinish turbo:fetch-request-error@document->skeleton-loading#turboError turbo:frame-missing@document->skeleton-loading#turboMissing turbo:before-cache@document->skeleton-loading#clear">
   <span class="sr-only" role="status" aria-live="polite" hidden data-skeleton-loading-target="status"><%= t('admin.action_loader.processing') %></span>
   <div class="delta-skeleton-region__progress" data-skeleton-loading-target="indicator" hidden aria-hidden="true"><span></span></div>
   <div data-skeleton-loading-target="content">
-<%= turbo_frame_tag "clients_list" do %>
-  <%= render "list", clients: @clients %>
-<% end %>
+    <%= turbo_frame_tag 'clients_list' do %>
+      <%= render 'list', clients: @clients %>
+    <% end %>
   </div>
   <div data-skeleton-loading-target="placeholder" hidden>
-    <%= render Ui::SkeletonComponent.new(variant: :table, rows: 6, columns: 5) %>
+    <%= render Ui::SkeletonComponent.new(variant: :table, rows: 6, columns: 6) %>
   </div>
   <div data-skeleton-loading-target="error" hidden role="alert"
        class="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
-    <span><%= t('admin.skeleton_loading.failed') %></span>
-    <button type="button" data-action="skeleton-loading#retry"
-            class="ml-2 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-rose-600"><%= t('admin.skeleton_loading.retry') %></button>
+    <%= t('admin.skeleton_loading.failed') %>
+    <button type="button" data-action="skeleton-loading#retry" class="ml-2 font-semibold underline"><%= t('admin.skeleton_loading.retry') %></button>
   </div>
 </div>

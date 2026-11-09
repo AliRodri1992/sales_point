@@ -1,55 +1,84 @@
-<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-  <div class="border-b border-slate-100 px-6 py-5">
-    <div class="mb-7 flex items-start justify-between gap-4">
-      <div>
-        <h1 class="font-jakarta text-2xl font-bold text-slate-900">
-          <%= t('admin.clients.show.title') %>
-        </h1>
-        <p class="mt-1 text-sm text-slate-500">
-          <%= t('admin.clients.show.subtitle') %>
-        </p>
+<div class="mx-auto max-w-6xl space-y-5">
+  <header class="flex flex-wrap items-start justify-between gap-4">
+    <div class="space-y-1">
+      <p class="text-xs font-bold uppercase tracking-[0.15em] text-emerald-700"><%= t('admin.clients.workspace.eyebrow') %></p>
+      <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.clients.show.title') %></h1>
+      <p class="text-sm text-slate-500"><%= t('admin.clients.show.subtitle') %></p>
+    </div>
+    <%= link_to catalog_back_path(Client), data: { turbo_frame: '_top' },
+                class: 'inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50' do %>
+      <%= delta_icon('arrow-left', class: 'size-4') %>
+      <%= t('admin.clients.show.back') %>
+    <% end %>
+  </header>
+
+  <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="client-profile-name">
+    <div class="flex flex-wrap items-center gap-4 border-b border-slate-100 bg-gradient-to-r from-emerald-50/80 to-white px-5 py-6 sm:px-7">
+      <span class="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-white font-jakarta text-xl font-bold text-emerald-800 shadow-sm" aria-hidden="true"><%= @client.name.to_s.first&.upcase %></span>
+      <div class="min-w-0 flex-1">
+        <h2 id="client-profile-name" class="break-words font-jakarta text-xl font-bold text-slate-900"><%= @client.name %></h2>
+        <div class="mt-2 flex flex-wrap items-center gap-2">
+          <code class="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700"><%= @client.code %></code>
+          <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold <%= @client.active? ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700' %>">
+            <span class="size-1.5 rounded-full <%= @client.active? ? 'bg-emerald-500' : 'bg-slate-500' %>"></span>
+            <%= t("admin.clients.statuses.#{@client.status}") %>
+          </span>
+        </div>
       </div>
-      <%= link_to catalog_back_path(Client),
-                  data: { turbo_frame: '_top' },
-                  class: 'inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50' do %>
-        <%= delta_icon('arrow-left', class: 'size-4') %>
-        <%= t('admin.clients.show.back') %>
+      <% if policy(Client).update? %>
+        <%= link_to edit_admin_client_path(@client), data: { turbo_frame: '_top' },
+                    class: 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800' do %>
+          <%= delta_icon('pencil-square', class: 'size-4') %>
+          <%= t('admin.clients.index.edit') %>
+        <% end %>
       <% end %>
     </div>
-  </div>
 
-  <dl class="grid gap-x-8 px-6 py-2 sm:grid-cols-2">
-    <% fields = [
-      ['code', @client.code],
-      ['name', @client.name],
-      ['email', @client.email.presence || '—'],
-      ['phone', @client.phones.active.find_by(kind: 'mobile', primary: true)&.number || '—'],
-      ['rfc', @client.rfc.presence || '—'],
-      ['fiscal_regime', @client.sat_fiscal_regime ? "#{@client.sat_fiscal_regime.code} — #{@client.sat_fiscal_regime.description}" : '—'],
-      ['postal_code', @client.postal_code.presence || '—'],
-      ['credit_limit', number_to_currency(@client.credit_limit)],
-      ['status', t("admin.clients.statuses.#{@client.status}")],
-      ['notes', @client.notes.presence || '—']
-    ] %>
-
-    <% fields.each do |key, value| %>
-      <div class="border-b border-slate-100 py-4 <%= key == 'notes' ? 'sm:col-span-2' : '' %>">
-        <dt class="text-xs font-semibold uppercase tracking-wide text-slate-400">
-          <%= t("admin.clients.show.fields.#{key}") %>
-        </dt>
-        <dd class="mt-1 break-words text-sm font-medium text-slate-900"><%= value %></dd>
-      </div>
-    <% end %>
-  </dl>
-
-  <div class="flex items-center justify-end gap-2 border-t border-slate-100 px-6 py-4">
-    <% if policy(Client).update? %>
-<%= link_to edit_admin_client_path(@client),
-                data: { turbo_frame: '_top' },
-                class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' do %>
-      <%= delta_icon('pencil-square', class: 'size-4') %>
-      <%= t('admin.clients.index.edit') %>
-    <% end %>
-<% end %>
-  </div>
+    <% primary_mobile = @client.phones.find { |phone| phone.deleted_at.nil? && phone.kind == 'mobile' && phone.primary? } %>
+    <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-7">
+      <section class="rounded-xl border border-slate-100 bg-slate-50/60 p-5" aria-labelledby="client-contact-details">
+        <h3 id="client-contact-details" class="mb-4 font-jakarta text-sm font-bold text-slate-900"><%= t('admin.clients.workspace.contact_heading') %></h3>
+        <dl class="space-y-4">
+          <div>
+            <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.clients.show.fields.email') %></dt>
+            <dd class="mt-1 break-all text-sm font-medium text-slate-900"><%= @client.email.presence || '—' %></dd>
+          </div>
+          <div>
+            <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.clients.show.fields.phone') %></dt>
+            <dd class="mt-1 text-sm font-medium text-slate-900"><%= primary_mobile&.number || '—' %></dd>
+          </div>
+        </dl>
+      </section>
+      <section class="rounded-xl border border-slate-100 bg-slate-50/60 p-5" aria-labelledby="client-fiscal-details">
+        <h3 id="client-fiscal-details" class="mb-4 font-jakarta text-sm font-bold text-slate-900"><%= t('admin.clients.workspace.fiscal_heading') %></h3>
+        <dl class="space-y-4">
+          <div>
+            <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.clients.show.fields.rfc') %></dt>
+            <dd class="mt-1 break-words text-sm font-semibold text-slate-900"><%= @client.rfc.presence || '—' %></dd>
+          </div>
+          <div>
+            <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.clients.show.fields.fiscal_regime') %></dt>
+            <dd class="mt-1 break-words text-sm font-medium text-slate-900"><%= @client.sat_fiscal_regime ? "#{@client.sat_fiscal_regime.code} — #{@client.sat_fiscal_regime.description}" : '—' %></dd>
+          </div>
+          <div>
+            <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.clients.show.fields.postal_code') %></dt>
+            <dd class="mt-1 text-sm font-medium text-slate-900"><%= @client.postal_code.presence || '—' %></dd>
+          </div>
+        </dl>
+      </section>
+      <section class="rounded-xl border border-slate-100 bg-slate-50/60 p-5 sm:col-span-2" aria-labelledby="client-commercial-details">
+        <h3 id="client-commercial-details" class="mb-4 font-jakarta text-sm font-bold text-slate-900"><%= t('admin.clients.workspace.commercial_heading') %></h3>
+        <dl class="grid gap-5 sm:grid-cols-2">
+          <div>
+            <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.clients.show.fields.credit_limit') %></dt>
+            <dd class="mt-1 font-jakarta text-xl font-bold tabular-nums text-slate-900"><%= number_to_currency(@client.credit_limit) %></dd>
+          </div>
+          <div>
+            <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500"><%= t('admin.clients.show.fields.notes') %></dt>
+            <dd class="mt-1 whitespace-pre-wrap break-words text-sm text-slate-900"><%= @client.notes.presence || '—' %></dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+  </section>
 </div>

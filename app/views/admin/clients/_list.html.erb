@@ -1,75 +1,79 @@
-<% total_count = local_assigns[:total_count] || @total_count || 0 %>
-<% total_pages = local_assigns[:total_pages] || @total_pages || 1 %>
-
-<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-  <div class="flex items-center justify-between px-6 py-4">
+<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
     <div>
-      <h3 class="font-bold"><%= t('admin.clients.index.card_title') %></h3>
-      <p class="mt-1 text-xs text-slate-400"><%= t('admin.clients.index.total_count', count: total_count) %></p>
+      <h2 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.clients.index.card_title') %></h2>
+      <p class="mt-1 text-xs text-slate-500" role="status" aria-live="polite"><%= t('admin.clients.index.total_count', count: @total_count) %></p>
     </div>
+    <span class="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700"><%= t('admin.clients.workspace.directory') %></span>
   </div>
 
   <% if clients.any? %>
     <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="border-y border-slate-100 text-xs text-slate-400">
-            <th class="px-6 py-3 text-left font-medium"><%= sort_link('code', t('admin.clients.index.columns.code'), frame: 'clients_list') %></th>
-            <th class="px-6 py-3 text-left font-medium"><%= sort_link('name', t('admin.clients.index.columns.name'), frame: 'clients_list') %></th>
-            <th class="px-6 py-3 text-left font-medium"><%= t('admin.clients.index.columns.contact') %></th>
-            <th class="px-6 py-3 text-left font-medium"><%= t('admin.clients.index.columns.rfc') %></th>
-            <th class="px-6 py-3 text-center font-medium"><%= t('admin.clients.index.columns.status') %></th>
-            <th class="px-6 py-3 text-center font-medium"><%= t('admin.clients.index.columns.actions') %></th>
+      <table class="w-full min-w-[870px] text-sm">
+        <thead class="bg-slate-50/80">
+          <tr class="border-b border-slate-100 text-xs text-slate-500">
+            <th scope="col" class="px-5 py-3 text-left font-semibold sm:px-6"><%= sort_link('code', t('admin.clients.index.columns.code'), frame: 'clients_list') %></th>
+            <th scope="col" class="px-4 py-3 text-left font-semibold"><%= sort_link('name', t('admin.clients.index.columns.name'), frame: 'clients_list') %></th>
+            <th scope="col" class="px-4 py-3 text-left font-semibold"><%= t('admin.clients.index.columns.contact') %></th>
+            <th scope="col" class="px-4 py-3 text-left font-semibold"><%= t('admin.clients.index.columns.rfc') %></th>
+            <th scope="col" class="px-4 py-3 text-center font-semibold"><%= t('admin.clients.index.columns.status') %></th>
+            <th scope="col" class="px-5 py-3 text-right font-semibold sm:px-6"><%= t('admin.clients.index.columns.actions') %></th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
           <% clients.each do |client| %>
-            <tr class="hover:bg-slate-50">
-              <td class="px-6 py-4"><code class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600"><%= client.code %></code></td>
-              <td class="px-6 py-4 font-semibold text-slate-900"><%= client.name %></td>
-              <td class="px-6 py-4">
-                <div class="space-y-0.5">
-                  <div class="text-slate-700"><%= client.email.presence || '—' %></div>
-                  <div class="text-xs text-slate-400"><%= client.phones.to_a.find { |phone| phone.deleted_at.nil? && phone.kind == 'mobile' && phone.primary? }&.number || '—' %></div>
+            <% primary_mobile = client.phones.find { |phone| phone.deleted_at.nil? && phone.kind == 'mobile' && phone.primary? } %>
+            <tr class="transition hover:bg-slate-50/80">
+              <td class="px-5 py-4 sm:px-6"><code class="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700"><%= client.code %></code></td>
+              <td class="px-4 py-4">
+                <div class="flex min-w-0 items-center gap-3">
+                  <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-sm font-bold text-emerald-800" aria-hidden="true"><%= client.name.to_s.first&.upcase %></span>
+                  <div class="min-w-0">
+                    <div class="max-w-64 truncate font-semibold text-slate-900" title="<%= client.name %>"><%= client.name %></div>
+                    <div class="mt-0.5 text-xs text-slate-500"><%= t('admin.clients.workspace.customer') %></div>
+                  </div>
                 </div>
               </td>
-              <td class="px-6 py-4 text-slate-600"><%= client.rfc.presence || '—' %></td>
-              <td class="px-6 py-4 text-center">
-                <span class="inline-flex rounded-full px-2 py-1 text-[11px] font-semibold <%= client.active? ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' %>">
+              <td class="px-4 py-4">
+                <div class="max-w-52 space-y-1">
+                  <div class="truncate text-slate-700" title="<%= client.email %>"><%= client.email.presence || '—' %></div>
+                  <div class="text-xs text-slate-500"><%= primary_mobile&.number || '—' %></div>
+                </div>
+              </td>
+              <td class="px-4 py-4"><code class="text-xs font-semibold tracking-wide text-slate-600"><%= client.rfc.presence || '—' %></code></td>
+              <td class="px-4 py-4 text-center">
+                <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold <%= client.active? ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' %>">
+                  <span class="size-1.5 rounded-full <%= client.active? ? 'bg-emerald-500' : 'bg-slate-400' %>" aria-hidden="true"></span>
                   <%= t("admin.clients.statuses.#{client.status}") %>
                 </span>
               </td>
-              <td class="px-6 py-4 text-center">
-                <div class="flex items-center justify-center gap-1">
+              <td class="px-5 py-4 sm:px-6">
+                <div class="flex items-center justify-end gap-1">
                   <% if policy(Client).show? %>
-<%= link_to admin_client_path(client),
-                              data: { turbo_frame: '_top', tooltip: t('admin.clients.index.show') },
-                              class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
-                              aria: { label: t('admin.clients.index.show') } do %>
-                    <%= delta_icon('eye', class: 'size-4') %>
+                    <%= link_to admin_client_path(client), data: { turbo_frame: '_top', tooltip: t('admin.clients.index.show') },
+                                aria: { label: t('admin.clients.index.show') },
+                                class: 'inline-flex size-10 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus-visible:outline-2 focus-visible:outline-emerald-600' do %>
+                      <%= delta_icon('eye', class: 'size-4') %>
+                    <% end %>
                   <% end %>
-<% end %>
                   <% if policy(Client).update? %>
-<%= link_to edit_admin_client_path(client),
-                              data: { turbo_frame: '_top', tooltip: t('admin.clients.index.edit') },
-                              class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
-                              aria: { label: t('admin.clients.index.edit') } do %>
-                    <%= delta_icon('pencil-square', class: 'size-4') %>
+                    <%= link_to edit_admin_client_path(client), data: { turbo_frame: '_top', tooltip: t('admin.clients.index.edit') },
+                                aria: { label: t('admin.clients.index.edit') },
+                                class: 'inline-flex size-10 items-center justify-center rounded-lg text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-2 focus-visible:outline-emerald-600' do %>
+                      <%= delta_icon('pencil-square', class: 'size-4') %>
+                    <% end %>
                   <% end %>
-<% end %>
                   <% if policy(Client).destroy? %>
-<%= button_to admin_client_path(client), method: :delete,
-                                class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600',
-                                data: {
-                                  controller: 'swal-confirm',
-                                  turbo_frame: 'clients_list',
-                                  turbo_confirm: t('admin.clients.index.confirm_delete'),
-                                  swal_cancel_text: t('admin.clients.confirm.cancel')
-                                },
-                                aria: { label: t('admin.clients.index.delete') } do %>
-                    <%= delta_icon('trash', class: 'size-4') %>
+                    <%= button_to admin_client_path(client), method: :delete,
+                                  data: { controller: 'swal-confirm', turbo_frame: 'clients_list',
+                                          turbo_confirm: t('admin.clients.index.confirm_delete'),
+                                          swal_cancel_text: t('admin.clients.confirm.cancel'),
+                                          confirm_record: client.name },
+                                  aria: { label: t('admin.clients.index.delete') },
+                                  class: 'inline-flex size-10 items-center justify-center rounded-lg text-slate-500 transition hover:bg-rose-50 hover:text-rose-700 focus-visible:outline-2 focus-visible:outline-rose-600' do %>
+                      <%= delta_icon('trash', class: 'size-4') %>
+                    <% end %>
                   <% end %>
-<% end %>
                 </div>
               </td>
             </tr>
@@ -78,54 +82,40 @@
       </table>
     </div>
 
-    <% if total_count > 0 %>
-      <div class="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 px-6 py-4">
-        <%= form_with url: admin_clients_path, method: :get, id: 'client-pagination-form',
-                      data: { turbo_frame: 'clients_list' },
-                      class: 'flex items-center gap-2 text-sm text-slate-600' do %>
-          <span><%= t('admin.clients.index.pagination.per_page_label') %>:</span>
-          <%= hidden_field_tag :search, params[:search] if params[:search].present? %>
-          <%= hidden_field_tag :status, params[:status] if params[:status].present? %>
-          <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
-          <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
-          <%= select_tag :per_page,
-                options_for_select(TablePagePreference::OPTIONS, @per_page || TablePagePreference::DEFAULT),
-                data: { controller: 'table-page-size', table_page_size_key_value: 'clients',
-                        action: 'change->table-page-size#apply' },
-                class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700' %>
-          <%= button_tag t('admin.pagination.apply'), type: 'submit',
-                class: 'rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-600 transition hover:bg-slate-50' %>
+    <footer class="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 px-5 py-4 sm:px-6">
+      <%= form_with url: admin_clients_path, method: :get, id: 'client-pagination-form',
+                    data: { turbo_frame: 'clients_list' }, class: 'flex items-center gap-3 text-xs font-semibold text-slate-600' do %>
+        <% %i[search status credit rfc sat_fiscal_regime_id sort direction].each do |filter| %>
+          <%= hidden_field_tag filter, params[filter] if params[filter].present? %>
         <% end %>
-
-        <div class="flex items-center gap-1">
-          <% page_num = (params[:page] || 1).to_i %>
-          <% if page_num > 1 %>
-            <%= link_to t('admin.pagination.prev'),
-                        admin_clients_path(request.query_parameters.merge(page: page_num - 1, per_page: params[:per_page])),
-                        class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-100' %>
-          <% end %>
-          <% (1..total_pages).each do |page| %>
-            <% if page == page_num %>
-              <span class="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white" aria-current="page"><%= page %></span>
-            <% else %>
-              <%= link_to page,
-                          admin_clients_path(request.query_parameters.merge(page: page, per_page: params[:per_page])),
-                          class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-100' %>
-            <% end %>
-          <% end %>
-          <% if page_num < total_pages %>
-            <%= link_to t('admin.pagination.next'),
-                        admin_clients_path(request.query_parameters.merge(page: page_num + 1, per_page: params[:per_page])),
-                        class: 'rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-100' %>
-          <% end %>
+        <label for="clients-page-size"><%= t('admin.clients.index.pagination.per_page_label') %></label>
+        <div class="relative w-24" data-controller="delta-select">
+          <%= select_tag :per_page, options_for_select(TablePagePreference::OPTIONS, @per_page),
+                         id: 'clients-page-size',
+                         data: { controller: 'table-page-size', table_page_size_key_value: 'clients', action: 'change->table-page-size#apply' },
+                         class: 'min-h-10 w-full rounded-lg border border-slate-200 text-sm' %>
         </div>
-      </div>
-    <% end %>
+        <span class="tabular-nums" aria-live="polite"><%= @current_page %> / <%= @total_pages %></span>
+      <% end %>
+      <nav aria-label="<%= t('admin.clients.workspace.pagination') %>" class="flex flex-wrap items-center gap-1">
+        <%= pagination_links(@total_pages, frame: 'clients_list', window: 2) if @total_pages > 1 %>
+      </nav>
+    </footer>
   <% else %>
-    <div class="flex flex-col items-center gap-2 p-12 text-center">
-      <%= delta_icon('users', class: 'size-8 text-slate-300') %>
-      <p class="text-sm font-semibold text-slate-500"><%= t('admin.clients.index.empty_title') %></p>
-      <p class="text-xs text-slate-400"><%= t('admin.clients.index.empty_subtitle') %></p>
+    <div class="flex flex-col items-center px-6 py-14 text-center">
+      <div class="mb-4 flex size-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700" aria-hidden="true"><%= delta_icon('users', class: 'size-7') %></div>
+      <h3 class="font-jakarta text-base font-bold text-slate-900">
+        <%= t(@unfiltered_count.positive? ? 'admin.clients.workspace.no_results' : 'admin.clients.index.empty_title') %>
+      </h3>
+      <p class="mt-2 max-w-md text-sm text-slate-500"><%= t(@unfiltered_count.positive? ? 'admin.clients.workspace.try_filters' : 'admin.clients.index.empty_subtitle') %></p>
+      <% if @unfiltered_count.positive? %>
+        <%= link_to t('admin.clients.workspace.clear'), admin_clients_path,
+                    data: { turbo_frame: '_top' }, class: 'mt-5 text-sm font-semibold text-emerald-700 hover:underline' %>
+      <% elsif policy(Client).create? %>
+        <%= link_to t('admin.clients.index.new'), new_admin_client_path,
+                    data: { turbo_frame: '_top' },
+                    class: 'mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white hover:bg-emerald-800' %>
+      <% end %>
     </div>
   <% end %>
 </div>

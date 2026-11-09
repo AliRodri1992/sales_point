@@ -74,7 +74,6 @@ Rails.application.routes.draw do
       resource :status, only: %i[edit update], controller: 'user_statuses'
       resource :invitation, only: :create, controller: 'user_invitations'
     end
-    resources :clients
     resource :profile, only: %i[show update]
     get 'guide', to: 'guide#show', as: :guide
     post 'assistant/reply', to: 'assistant#reply', as: :assistant_reply

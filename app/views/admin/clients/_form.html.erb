@@ -1,86 +1,137 @@
-<%= form_with model: [:admin, client],
-                  class: 'space-y-6 p-6 lg:p-8' do |form| %>
+<%= form_with model: [:admin, client], html: { novalidate: true },
+              class: 'space-y-8 px-5 py-6 sm:px-8 sm:py-8' do |form| %>
   <% if client.errors[:base].any? %>
-    <div class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-      <%= client.errors.full_messages_for(:base).first %>
+    <div role="alert" class="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+      <%= client.errors.full_messages_for(:base).to_sentence %>
     </div>
   <% end %>
 
-  <div class="grid gap-5 sm:grid-cols-2">
-    <div>
-      <%= form.label :code, t('admin.clients.form.code'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.text_field :code, data: { autofocus: true },
-                          class: "input-field w-full rounded-xl #{form_state_classes(client, :code)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
-                          placeholder: t('admin.clients.form.code_placeholder') %>
-      <%= error_message_for(client, :code) %>
-    </div>
-    <div>
-      <%= form.label :name, t('admin.clients.form.name'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.text_field :name,
-                          class: "input-field w-full rounded-xl #{form_state_classes(client, :name)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
-                          placeholder: t('admin.clients.form.name_placeholder') %>
-      <%= error_message_for(client, :name) %>
-    </div>
-    <div>
-      <%= form.label :email, t('admin.clients.form.email'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.email_field :email,
-                           class: "input-field w-full rounded-xl #{form_state_classes(client, :email)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
-                           placeholder: t('admin.clients.form.email_placeholder') %>
-      <%= error_message_for(client, :email) %>
-    </div>
-    <%= render 'admin/shared/primary_mobile_field', form: form, record: client %>
-    <div>
-      <%= form.label :rfc, t('admin.clients.form.rfc'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.text_field :rfc, maxlength: 13,
-                          class: "input-field w-full rounded-xl #{form_state_classes(client, :rfc)} px-4 py-3 text-sm uppercase text-slate-800 placeholder:text-slate-400",
-                          placeholder: t('admin.clients.form.rfc_placeholder') %>
-      <%= error_message_for(client, :rfc) %>
-    </div>
-    <div>
-      <%= form.label :sat_fiscal_regime_id, t('admin.clients.form.fiscal_regime'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.collection_select :sat_fiscal_regime_id, @fiscal_regimes, :id,
-                                 ->(regime) { "#{regime.code} — #{regime.description}" },
-                                 { include_blank: t('admin.clients.form.fiscal_regime_blank') },
-                                 class: "input-field w-full rounded-xl #{form_state_classes(client, :sat_fiscal_regime_id)} px-4 py-3 text-sm text-slate-800" %>
-      <%= error_message_for(client, :sat_fiscal_regime_id) %>
-    </div>
-    <div>
-      <%= form.label :postal_code, t('admin.clients.form.postal_code'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.text_field :postal_code, maxlength: 5, inputmode: 'numeric',
-                          class: "input-field w-full rounded-xl #{form_state_classes(client, :postal_code)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
-                          placeholder: t('admin.clients.form.postal_code_placeholder') %>
-      <%= error_message_for(client, :postal_code) %>
-    </div>
-    <div>
-      <%= form.label :credit_limit, t('admin.clients.form.credit_limit'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.number_field :credit_limit, min: 0, step: 0.01,
-                            class: "input-field w-full rounded-xl #{form_state_classes(client, :credit_limit)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
-                            placeholder: t('admin.clients.form.credit_limit_placeholder') %>
-      <%= error_message_for(client, :credit_limit) %>
-    </div>
-    <% if client.persisted? %>
+  <section aria-labelledby="client-identity-heading">
+    <div class="mb-5 flex items-start gap-3">
+      <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700" aria-hidden="true"><%= delta_icon('identification', class: 'size-5') %></span>
       <div>
-        <%= form.label :status, t('admin.clients.form.status'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-        <%= form.select :status,
-                        options_for_select(Client.statuses.keys.map { |status| [t("admin.clients.statuses.#{status}"), status] }, client.status || 'active'),
-                        {},
-                        class: "input-field w-full rounded-xl #{form_state_classes(client, :status)} px-4 py-3 text-sm text-slate-800" %>
-        <%= error_message_for(client, :status) %>
+        <h2 id="client-identity-heading" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.clients.workspace.identity_heading') %></h2>
+        <p class="mt-1 text-xs leading-relaxed text-slate-500"><%= t('admin.clients.workspace.identity_description') %></p>
       </div>
-    <% end %>
-    <div class="sm:col-span-2">
-      <%= form.label :notes, t('admin.clients.form.notes'), class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.text_area :note_body, name: "#{form.object_name}[notes]", rows: 3,
-                         class: "input-field w-full rounded-xl #{form_state_classes(client, :notes)} px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400",
-                         placeholder: t('admin.clients.form.notes_placeholder') %>
-      <%= error_message_for(client, :notes) %>
     </div>
-  </div>
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div>
+        <%= form.label :code, required_field_label(t('admin.clients.form.code')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :code, maxlength: 30, autocomplete: 'off', data: { autofocus: true },
+                            placeholder: t('admin.clients.form.code_placeholder'),
+                            aria: { invalid: client.errors[:code].any?, describedby: validation_describedby(client, :code, 'client-code-hint') },
+                            class: "min-h-11 w-full rounded-xl px-4 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(client, :code)}" %>
+        <p id="client-code-hint" class="mt-1 text-xs text-slate-500"><%= t('admin.clients.workspace.code_hint') %></p>
+        <%= error_message_for(client, :code, label: t('admin.clients.form.code')) %>
+      </div>
+      <div>
+        <%= form.label :name, required_field_label(t('admin.clients.form.name')), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :name, maxlength: 150, placeholder: t('admin.clients.form.name_placeholder'),
+                            aria: { invalid: client.errors[:name].any?, describedby: validation_describedby(client, :name) },
+                            class: "min-h-11 w-full rounded-xl px-4 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(client, :name)}" %>
+        <%= error_message_for(client, :name, label: t('admin.clients.form.name')) %>
+      </div>
+      <% if client.persisted? %>
+        <div>
+          <%= form.label :status, t('admin.clients.form.status'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+          <div class="relative" data-controller="delta-select">
+            <%= form.select :status, options_for_select(Client.statuses.keys.map { |status| [t("admin.clients.statuses.#{status}"), status] }, client.status || 'active'),
+                            {}, aria: { invalid: client.errors[:status].any?, describedby: validation_describedby(client, :status) },
+                            class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm' %>
+          </div>
+          <%= error_message_for(client, :status, label: t('admin.clients.form.status')) %>
+        </div>
+      <% end %>
+    </div>
+  </section>
 
-  <div class="flex items-center justify-end gap-2 border-t border-slate-100 pt-5">
+  <section aria-labelledby="client-contact-heading" class="border-t border-slate-100 pt-7">
+    <div class="mb-5 flex items-start gap-3">
+      <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700" aria-hidden="true"><%= delta_icon('chat-bubble-left-right', class: 'size-5') %></span>
+      <div>
+        <h2 id="client-contact-heading" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.clients.workspace.contact_heading') %></h2>
+        <p class="mt-1 text-xs leading-relaxed text-slate-500"><%= t('admin.clients.workspace.contact_description') %></p>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div>
+        <%= form.label :email, t('admin.clients.form.email'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+        <%= form.email_field :email, maxlength: 150, placeholder: t('admin.clients.form.email_placeholder'),
+                             aria: { invalid: client.errors[:email].any?, describedby: validation_describedby(client, :email) },
+                             class: "min-h-11 w-full rounded-xl px-4 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(client, :email)}" %>
+        <%= error_message_for(client, :email, label: t('admin.clients.form.email')) %>
+      </div>
+      <%= render 'admin/shared/primary_mobile_field', form: form, record: client %>
+    </div>
+  </section>
+
+  <section aria-labelledby="client-fiscal-heading" class="border-t border-slate-100 pt-7">
+    <div class="mb-5 flex items-start gap-3">
+      <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700" aria-hidden="true"><%= delta_icon('document-text', class: 'size-5') %></span>
+      <div>
+        <h2 id="client-fiscal-heading" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.clients.workspace.fiscal_heading') %></h2>
+        <p class="mt-1 text-xs leading-relaxed text-slate-500"><%= t('admin.clients.workspace.fiscal_description') %></p>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div>
+        <%= form.label :rfc, t('admin.clients.form.rfc'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :rfc, maxlength: 13, autocomplete: 'off',
+                            placeholder: t('admin.clients.form.rfc_placeholder'),
+                            aria: { invalid: client.errors[:rfc].any?, describedby: validation_describedby(client, :rfc) },
+                            class: "min-h-11 w-full rounded-xl px-4 text-sm uppercase text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(client, :rfc)}" %>
+        <%= error_message_for(client, :rfc, label: t('admin.clients.form.rfc')) %>
+      </div>
+      <div>
+        <%= form.label :sat_fiscal_regime_id, t('admin.clients.form.fiscal_regime'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+        <div class="relative" data-controller="delta-select" data-searchable="true" data-search-placeholder="<%= t('admin.clients.workspace.search_regime') %>">
+          <%= form.collection_select :sat_fiscal_regime_id, @fiscal_regimes, :id, ->(regime) { "#{regime.code} — #{regime.description}" },
+                                     { include_blank: t('admin.clients.form.fiscal_regime_blank') },
+                                     aria: { invalid: client.errors[:sat_fiscal_regime_id].any?, describedby: validation_describedby(client, :sat_fiscal_regime_id) },
+                                     class: 'min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm' %>
+        </div>
+        <%= error_message_for(client, :sat_fiscal_regime_id, label: t('admin.clients.form.fiscal_regime')) %>
+      </div>
+      <div>
+        <%= form.label :postal_code, t('admin.clients.form.postal_code'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_field :postal_code, maxlength: 5, inputmode: 'numeric', placeholder: t('admin.clients.form.postal_code_placeholder'),
+                            aria: { invalid: client.errors[:postal_code].any?, describedby: validation_describedby(client, :postal_code) },
+                            class: "min-h-11 w-full rounded-xl px-4 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(client, :postal_code)}" %>
+        <%= error_message_for(client, :postal_code, label: t('admin.clients.form.postal_code')) %>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="client-commercial-heading" class="border-t border-slate-100 pt-7">
+    <div class="mb-5 flex items-start gap-3">
+      <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700" aria-hidden="true"><%= delta_icon('banknotes', class: 'size-5') %></span>
+      <div>
+        <h2 id="client-commercial-heading" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.clients.workspace.commercial_heading') %></h2>
+        <p class="mt-1 text-xs leading-relaxed text-slate-500"><%= t('admin.clients.workspace.commercial_description') %></p>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div>
+        <%= form.label :credit_limit, t('admin.clients.form.credit_limit'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+        <%= form.number_field :credit_limit, min: 0, step: 0.01, placeholder: t('admin.clients.form.credit_limit_placeholder'),
+                              aria: { invalid: client.errors[:credit_limit].any?, describedby: validation_describedby(client, :credit_limit) },
+                              class: "min-h-11 w-full rounded-xl px-4 text-sm tabular-nums text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(client, :credit_limit)}" %>
+        <%= error_message_for(client, :credit_limit, label: t('admin.clients.form.credit_limit')) %>
+      </div>
+      <div class="md:col-span-2">
+        <%= form.label :notes, t('admin.clients.form.notes'), class: 'mb-1.5 block text-sm font-semibold text-slate-700' %>
+        <%= form.text_area :notes, rows: 3, maxlength: 1000, placeholder: t('admin.clients.form.notes_placeholder'),
+                           aria: { invalid: client.errors[:notes].any?, describedby: validation_describedby(client, :notes) },
+                           class: "w-full resize-y rounded-xl px-4 py-3 text-sm text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 #{form_state_classes(client, :notes)}" %>
+        <%= error_message_for(client, :notes, label: t('admin.clients.form.notes')) %>
+      </div>
+    </div>
+  </section>
+
+  <footer class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-6">
     <%= link_to t('admin.clients.form.cancel'), catalog_back_path(Client),
-                class: 'inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50' if client.persisted? %>
+                class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50' %>
     <%= form.submit client.persisted? ? t('admin.clients.form.update') : t('admin.clients.form.create'),
-                    class: 'inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700' %>
-  </div>
+                    class: 'inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl bg-emerald-700 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' %>
+  </footer>
 <% end %>
