@@ -234,3 +234,9 @@
 
 **Auditoría de código y CI especializado APROBADOS, con EM-016 ampliado y pendiente de prueba/corrección específica; NO cierre integral del módulo** debido a EM-003/004/008/009, RSpec/RuboCop globales y pruebas manuales/externas. No hubo cambios funcionales ni merge en esta reauditoría. Las secciones históricas reflejan el estado de su fecha, no sustituyen esta actualización.
 
+## Adecuaciones de reauditoría — 2026-11-09: EM-016 y EM-020
+
+- **EM-016 — IMPLEMENTADO, PENDIENTE DE CI:** `EmailTemplates::SecurityLinkVisibility` valida contenido visible descendiente (texto o ALT de imagen), excluyendo nodos y ancestros ocultos por `hidden`, `aria-hidden`, `display:none`, `visibility:hidden/collapse`, `opacity:0` y `font-size:0`. Se conserva la revisión antes y después del saneamiento de HTML en `actionable_security_link?`. Regresiones a nivel de servicio y modelo para los tres locales, incluyendo contenido mixto visible/oculto.
+- **EM-020 — PRUEBA DE SUPERPOSICIÓN IMPLEMENTADA, PENDIENTE DE CI:** RSpec usa dos hilos con conexiones independientes. Una transacción retiene el bloqueo real de PostgreSQL en el template; el segundo hilo inicia `publish!` mientras el bloqueo sigue tomado, luego la primera transacción completa. Se exige conflicto controlado en el segundo hilo, una versión publicada y una única auditoría.
+- **EM-003/004/008/009:** continúan sin verificación de proveedor SMTP, DNS/SPF/DKIM/DMARC, Gmail/Outlook ni lector de pantalla/teclado/zoom 200%; los resultados de CI no sustituyen estas comprobaciones.
+- **EM-010:** cierre integral aún dependiente del CI global, manteniendo propietario de errores ajenos en sus propios módulos. Sin mezcla de código de Sucursales/Inventarios/Compras ni merge de ramas.

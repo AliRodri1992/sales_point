@@ -153,6 +153,35 @@ RSpec.describe EmailTemplateVersion, type: :model do
     expect(secure.reload.published_version).to eq(draft)
   end
 
+  it 'requires a visible label on sanitized security links in all supported locales' do
+    invalid_labels = [
+      '<span style="display:none">Reset</span>',
+      '<span style="font-size:0px">Reset</span>',
+      '<span style="visibility:hidden">Reset</span>',
+      '<img src="https://delta.test/icon.png" alt="Reset" style="opacity:0">'
+    ]
+
+    %w[es en ko].each do |locale|
+      secure = EmailTemplate.create!(
+        key: 'password_recovery', name: "Recovery #{locale}", category: 'security',
+        locale:, subject: 'Recovery', html_body: '<p>Reset</p>',
+        text_body: 'Reset', status: 'draft', enabled: false
+      )
+      draft = secure.new_draft!(actor: nil)
+      invalid_labels.each do |label|
+        draft.update!(html_body: %(<a href="{{recovery_url}}">#{label}</a>),
+                      text_body: '{{recovery_url}}', allowed_variables: ['recovery_url'])
+        expect { draft.publish!(actor: nil) }.to raise_error(ActiveRecord::RecordInvalid)
+        expect(draft.errors[:html_body]).to be_present
+        expect(draft.reload.status).to eq('draft')
+      end
+
+      draft.update!(html_body: '<a href="{{recovery_url}}"><span style="display:none">Hidden</span>Reset access</a>')
+      draft.publish!(actor: nil)
+      expect(secure.reload.published_version).to eq(draft)
+    end
+  end
+
   it 'protects essential security links in global published versions' do
     global = EmailTemplate.create!(
       key: 'password_recovery', name: 'Password recovery', locale: 'en',

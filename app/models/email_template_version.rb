@@ -131,14 +131,7 @@ class EmailTemplateVersion < ApplicationRecord
   end
 
   def visible_security_link?(link)
-    text_visible = link.text.strip.present? || link.css('img[alt]').any? { |image| image['alt'].present? }
-    return false unless text_visible
-
-    ([link] + link.ancestors.to_a).none? do |element|
-      style = element['style'].to_s
-      element.attribute('hidden') || element['aria-hidden'] == 'true' ||
-        style.match?(/(?:\A|;)\s*(?:display\s*:\s*none|visibility\s*:\s*hidden|opacity\s*:\s*0(?:\.0+)?)\b/i)
-    end
+    EmailTemplates::SecurityLinkVisibility.visible?(link)
   end
 
   def protect_published_version
