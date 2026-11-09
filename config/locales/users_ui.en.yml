@@ -11,6 +11,7 @@ en:
         deactivation_hint: "This will remove the user's access to this organization and may sign out active sessions. Record a reason for the audit history."
         deactivation_cancel: "Cancel"
         deactivation_confirm: "Confirm deactivation"
+        deactivation_request_failed: "Could not deactivate this user. Check your access or try again."
         shared_sessions_warning: "This user belongs to other organizations. For security, this change may also sign out their sessions in those organizations."
         invitation_not_ready: "Assign at least one active role in this organization before inviting this employee."
         restored_needs_roles: "Account restored as pending. Assign the employee's roles before sending an invitation."
