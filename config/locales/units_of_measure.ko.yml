@@ -33,6 +33,9 @@ ko:
         no: "아니요"
         apply: "필터"
         clear: "초기화"
+        clear_all: "모든 필터 해제"
+        active: "적용된 필터"
+        remove: "%{filter} 필터 제거"
       new:
         title: "새 측정 단위"
       edit:

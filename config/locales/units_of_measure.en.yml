@@ -33,6 +33,9 @@ en:
         no: "No"
         apply: "Filter"
         clear: "Clear"
+        clear_all: "Clear all"
+        active: "Active filters"
+        remove: "Remove filter %{filter}"
       new:
         title: "New unit of measure"
       edit:

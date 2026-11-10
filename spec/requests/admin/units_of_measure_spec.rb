@@ -42,6 +42,24 @@ RSpec.describe 'Admin::UnitsOfMeasure', type: :request do
     expect(response.body).to include('unit_of_measure_modal', I18n.t('admin.units_of_measure.index.title'))
   end
 
+  it 'renders active filter chips and keeps each removal scoped to its own criterion' do
+    create(:unit_of_measure, organization:, sat_unit_key: sat,
+                             code: 'FRACTIONAL', name: 'Fractional record', decimal_precision: 3)
+    get admin_units_of_measure_path(fractional: 'yes', sat_unit_key_id: sat.id, sat_health: 'current')
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    chips = document.at_css('#units_of_measure_active_filters')
+    expect(chips).to be_present
+    expect(chips.css('a[aria-label*="Remove filter"]').size).to eq(3)
+
+    sat_link = chips.at_css('a[aria-label*="SAT code:"]')
+    expect(sat_link).to be_present
+    query = Rack::Utils.parse_nested_query(URI.parse(sat_link['href']).query)
+    expect(query).to include('fractional' => 'yes', 'sat_health' => 'current')
+    expect(query).not_to have_key('sat_unit_key_id')
+  end
+
   it 'blocks users without access permissions' do
     role.system_role_permissions.delete_all
     get admin_units_of_measure_path

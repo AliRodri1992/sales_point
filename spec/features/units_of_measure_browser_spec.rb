@@ -249,4 +249,64 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
     find('#unit_of_measure_code').send_keys(:escape)
     expect(page).to have_css('turbo-frame#unit_of_measure_modal.hidden', visible: :all, wait: 10)
   end
+
+  scenario 'applies filters immediately and keeps sorting and removable filter chips synchronized' do
+    create(:unit_of_measure, organization:, sat_unit_key: sat_key,
+                             code: 'ACTIVE_REF', name: 'Active reference', status: 'active')
+    create(:unit_of_measure, organization:, sat_unit_key: sat_key,
+                             code: 'INACTIVE_REF', name: 'Inactive reference', status: 'inactive')
+
+    visit admin_units_of_measure_path
+    expect(page).to have_no_css('#units_of_measure_active_filters')
+
+    within('#units_of_measure_list') { find('a[href*="sort=code"]').click }
+    expect(page).to have_css('#units-of-measure-filters input[name="sort"][value="code"]',
+                             visible: :all, wait: 10)
+
+    dropdown = find('#units-status', visible: :all).find(:xpath, '..')
+    dropdown.find('button[aria-haspopup="listbox"]').click
+    dropdown.find('[role="option"]', text: 'Inactive').click
+
+    expect(page).to have_css('#units_of_measure_active_filters', text: 'Status: Inactive', wait: 10)
+    expect(page).to have_css('#units_of_measure_list', text: 'Inactive reference')
+    expect(page).to have_no_css('#units_of_measure_list', text: 'Active reference')
+    expect(URI.parse(current_url).query).to include('sort=code', 'status=inactive')
+
+    fill_in 'units-search', with: 'Inactive reference'
+    expect(page).to have_css('#units_of_measure_active_filters',
+                             text: 'Find units: Inactive reference', wait: 10)
+
+    within('#units_of_measure_active_filters') do
+      find('a[aria-label*="Status: Inactive"]').click
+    end
+    expect(page).to have_css('#units_of_measure_active_filters',
+                             text: 'Find units: Inactive reference', wait: 10)
+    expect(page).to have_no_css('#units_of_measure_active_filters', text: 'Status: Inactive')
+    expect(page).to have_css('#units-status option[value="all"]:checked', visible: :all)
+
+    within('#units_of_measure_active_filters') { click_link 'Clear all' }
+    expect(page).to have_no_css('#units_of_measure_active_filters', wait: 10)
+    expect(page).to have_css('#units_of_measure_list', text: 'Active reference')
+    expect(page).to have_css('#units_of_measure_list', text: 'Inactive reference')
+  end
+
+  scenario 'removes one SAT filter without discarding remaining filters' do
+    create(:unit_of_measure, organization:, sat_unit_key: sat_key,
+                             code: 'FRACTIONAL', name: 'Fractional reference', decimal_precision: 3)
+    visit admin_units_of_measure_path(fractional: 'yes', sat_unit_key_id: sat_key.id, sat_health: 'current')
+
+    expect(page).to have_css('#units_of_measure_active_filters', text: 'Fractional quantities', wait: 10)
+    expect(page).to have_css('#units_of_measure_active_filters', text: 'SAT code')
+    expect(page).to have_css('#units_of_measure_active_filters', text: 'SAT validity')
+
+    within('#units_of_measure_active_filters') do
+      find('a[aria-label*="SAT code:"]').click
+    end
+
+    expect(page).to have_no_css('#units_of_measure_active_filters a[aria-label*="SAT code:"]', wait: 10)
+    expect(page).to have_css('#units_of_measure_active_filters', text: 'Fractional quantities')
+    expect(page).to have_css('#units_of_measure_active_filters', text: 'SAT validity')
+    expect(URI.parse(current_url).query).to include('fractional=yes', 'sat_health=current')
+    expect(page).to have_css('#units_of_measure_list', text: 'Fractional reference')
+  end
 end

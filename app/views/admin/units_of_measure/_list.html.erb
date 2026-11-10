@@ -2,6 +2,36 @@
                                     .merge('page' => @current_page) %>
 <div data-controller="units-of-measure-context" data-list-query="<%= listing_query.to_query %>"
      class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <% sat_filter = @sat_filter_options.find { |(_label, id)| id.to_s == params[:sat_unit_key_id].to_s }&.first %>
+  <% active_filters = {
+       'search' => [t('admin.units_of_measure.filters.search'), params[:search].to_s.strip.presence],
+       'status' => [t('admin.units_of_measure.form.status'),
+                    UnitOfMeasure.statuses.key?(params[:status]) ? t("admin.units_of_measure.statuses.#{params[:status]}") : nil],
+       'fractional' => [t('admin.units_of_measure.filters.fractional'),
+                        { 'yes' => t('admin.units_of_measure.filters.yes'), 'no' => t('admin.units_of_measure.filters.no') }[params[:fractional]]],
+       'sat_unit_key_id' => [t('admin.units_of_measure.filters.sat'), sat_filter],
+       'sat_health' => [t('admin.units_of_measure.filters.sat_health'),
+                        %w[current invalid].include?(params[:sat_health]) ? t("admin.units_of_measure.sat.#{params[:sat_health]}") : nil]
+     }.select { |_key, (_label, value)| value.present? } %>
+  <% if active_filters.any? %>
+    <nav id="units_of_measure_active_filters"
+         aria-label="<%= t('admin.units_of_measure.filters.active') %>"
+         class="flex flex-wrap items-center gap-2 border-b border-slate-100 bg-slate-50/70 px-5 py-3 sm:px-6">
+      <span class="mr-1 text-xs font-semibold text-slate-600"><%= t('admin.units_of_measure.filters.active') %></span>
+      <% active_filters.each do |key, (label, value)| %>
+        <%= link_to admin_units_of_measure_path(listing_query.except(key, 'page')),
+                    data: { turbo_frame: '_top' },
+                    aria: { label: t('admin.units_of_measure.filters.remove', filter: "#{label}: #{value}") },
+                    class: 'inline-flex min-h-9 max-w-full items-center gap-2 rounded-full border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-800 transition hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600' do %>
+          <span class="truncate"><%= label %>: <%= value %></span>
+          <%= delta_icon('x-mark', class: 'size-3.5 shrink-0') %>
+        <% end %>
+      <% end %>
+      <%= link_to t('admin.units_of_measure.filters.clear_all'), admin_units_of_measure_path,
+                  data: { turbo_frame: '_top' },
+                  class: 'text-xs font-semibold text-slate-600 underline-offset-2 hover:text-emerald-800 hover:underline' %>
+    </nav>
+  <% end %>
   <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
     <div>
       <h2 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.units_of_measure.index.catalog_title') %></h2>

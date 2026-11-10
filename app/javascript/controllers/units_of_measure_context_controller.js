@@ -22,6 +22,30 @@ export default class extends Controller {
     if (url.href !== window.location.href) {
       window.history.replaceState(window.history.state, "", url.href)
     }
+    this.syncFilters(query)
+  }
+
+  // The list can navigate inside its Turbo Frame while filters remain outside.
+  // Reflect its actual query without firing change events or another request.
+  syncFilters(query) {
+    const form = document.getElementById("units-of-measure-filters")
+    if (!form) return
+
+    const defaults = { search: "", status: "all", fractional: "all",
+      sat_unit_key_id: "", sat_health: "all", sort: "", direction: "", per_page: "" }
+
+    Object.entries(defaults).forEach(([name, fallback]) => {
+      const control = form.elements.namedItem(name)
+      if (!control) return
+
+      const value = query.get(name) ?? fallback
+      if (control.value === value) return
+      if (control.tagName === "SELECT" && ![...control.options].some((option) => option.value === value)) return
+
+      control.value = value
+      const dropdown = control.closest('[data-controller~="delta-select"]')
+      if (dropdown) this.application.getControllerForElementAndIdentifier(dropdown, "delta-select")?.refresh()
+    })
   }
 
   preserve(event) {

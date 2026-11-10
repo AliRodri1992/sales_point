@@ -33,6 +33,9 @@ es:
         no: "No"
         apply: "Filtrar"
         clear: "Limpiar"
+        clear_all: "Limpiar todos"
+        active: "Filtros activos"
+        remove: "Quitar filtro %{filter}"
       new:
         title: "Nueva unidad de medida"
       edit:
