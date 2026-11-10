@@ -92,26 +92,31 @@ RSpec.describe 'Languages administration quality', type: :feature, js: true do
     expect(page).to have_current_path(admin_languages_path)
   end
 
-  scenario 'places New language just above filters and preserves the wider dialog' do
+  scenario 'aligns New language with the unchanged subtitle above filters' do
     page.driver.browser.manage.window.resize_to(1280, 900)
     visit admin_languages_path
 
-    expect(page).to have_css('.languages-actions-bar .languages-new-button', visible: true)
+    expect(page).to have_css('.languages-description-row .languages-new-button', visible: true)
+    expect(page).to have_css('.languages-description-row p', visible: true)
+    expect(page).to have_no_css('.languages-actions-bar')
     expect(page).to have_no_css('.languages-filters .languages-new-button')
-    expect(page).to have_no_css('.languages-page-header .languages-new-button')
     positioning = page.evaluate_script(<<~JS)
       (() => {
-        const button = document.querySelector('.languages-actions-bar .languages-new-button')
-        const filters = document.querySelector('.languages-filters')
+        const row = document.querySelector('.languages-description-row')
+        const description = row.querySelector('p').getBoundingClientRect()
+        const button = row.querySelector('.languages-new-button').getBoundingClientRect()
+        const filters = document.querySelector('.languages-filters').getBoundingClientRect()
         return {
-          gap: filters.getBoundingClientRect().top - button.getBoundingClientRect().bottom,
-          rightGap: Math.abs(button.getBoundingClientRect().right - filters.getBoundingClientRect().right)
+          centerDifference: Math.abs((description.top + description.bottom) / 2 - (button.top + button.bottom) / 2),
+          gap: filters.top - button.bottom,
+          rightGap: Math.abs(button.right - filters.right)
         }
       })()
     JS
-    expect(positioning.fetch('gap')).to be_between(0, 16)
+    expect(positioning.fetch('centerDifference')).to be <= 4
+    expect(positioning.fetch('gap')).to be_between(0, 20)
     expect(positioning.fetch('rightGap')).to be <= 2
-    within('.languages-actions-bar') { click_link 'New language' }
+    within('.languages-description-row') { click_link 'New language' }
 
     expect(page).to have_css('#language_modal[aria-hidden="false"] .languages-modal-panel', wait: 10)
     dimensions = page.evaluate_script(<<~JS)

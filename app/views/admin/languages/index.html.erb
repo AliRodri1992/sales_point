@@ -5,20 +5,19 @@
     <div>
       <p class="catalog-eyebrow"><%= t('admin.catalog_design.localization') %></p>
       <h1><%= t('admin.languages.index.title') %></h1>
-      <p><%= t('admin.languages.index.subtitle') %></p>
+      <div class="languages-description-row">
+        <p><%= t('admin.languages.index.subtitle') %></p>
+        <% if policy(Language).create? %>
+          <%= link_to new_admin_language_path(request.query_parameters),
+                      class: 'catalog-button catalog-button-primary languages-new-button',
+                      data: { turbo_frame: 'language_modal' } do %>
+            <%= delta_icon('plus', class: 'size-4', aria: { hidden: true }) %>
+            <%= t('admin.languages.index.new') %>
+          <% end %>
+        <% end %>
+      </div>
     </div>
   </header>
-
-  <% if policy(Language).create? %>
-    <div class="languages-actions-bar">
-      <%= link_to new_admin_language_path(request.query_parameters),
-                  class: 'catalog-button catalog-button-primary languages-new-button',
-                  data: { turbo_frame: 'language_modal' } do %>
-        <%= delta_icon('plus', class: 'size-4', aria: { hidden: true }) %>
-        <%= t('admin.languages.index.new') %>
-      <% end %>
-    </div>
-  <% end %>
 
   <section class="languages-filters" aria-label="<%= t('admin.languages.ui.filters_title') %>">
     <div class="languages-filters__toolbar">

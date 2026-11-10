@@ -165,3 +165,13 @@ En el SHA `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`:
 **Invariantes:** el botón sigue protegido por `policy(Language).create?`; el destino continúa siendo el Turbo Frame `language_modal`; no se alteran rutas, controladores, modelo, textos ni las modales de creación/edición. El formulario de filtros mantiene su comportamiento automático y accesible.
 
 **Método:** auditoría del código con criterios de AI Dev Suite (`impeccable-audit`, `ui-ux-pro-max`); no se ejecutaron sus CLIs externas. **Estado:** corrección **IMPLEMENTADA Y VERIFICADA** en `62f14bbbd4f17ebb0128a9df43b2e32ea5179480`. [Languages CI #42760889246](https://github.com/AliRodri1992/sales_point/actions/runs/42760889246) **APROBÓ**: 96 ejemplos RSpec, 0 fallos (incluido Chrome con verificación de posición); RuboCop y la integridad de traducciones también aprobaron. CI global del mismo commit aún pendiente en el momento de registrar la evidencia. La revisión visual manual, zoom 200 % y lector de pantalla continúan **PENDIENTES**, por lo que la auditoría **NO ESTÁ CERRADA FORMALMENTE**.
+
+## Corrección de alineación de descripción y acción — IDI-029 (2026-11-09)
+
+**Hallazgo IDI-029 (P3, UI):** ubicar «Nuevo idioma» en una barra independiente justo encima del panel de filtros dejó el subtítulo «Administra los idiomas disponibles en Delta POS.» aislado arriba del botón, alterando la jerarquía vertical. La necesidad expresada es mantener el subtítulo **en su ubicación habitual inmediatamente bajo el título** y presentar el botón a la **derecha, en esa misma fila**. Ambos deben permanecer **fuera del panel de filtros**.
+
+**Corrección:** `languages-description-row` agrupa subtítulo y enlace; se eliminó la barra separada `languages-actions-bar`. La fila está alineada verticalmente, conserva el enlace con permisos Pundit y destino `language_modal`, y permite ajuste flexible en pantallas pequeñas. El encabezado sigue inmediatamente antes del panel de filtros.
+
+**Verificación añadida:** un request spec comprueba estructura, traducción del subtítulo, botón único y separación del panel; un escenario Chrome comprueba centros verticales coincidentes, proximidad al panel, alineación a la derecha y apertura del modal. No se alteraron formularios, modelos, controladores ni traducciones.
+
+**Estado:** cambio preparado; CI focalizado y revisión visual manual pendientes. Se mantiene **NO CERRADO** hasta verificar los resultados.

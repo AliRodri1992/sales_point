@@ -301,19 +301,21 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it 'places the new language action above and outside the filters card' do
+    it 'keeps the page subtitle and New language on the same row above filters' do
       get admin_languages_path
 
       document = Nokogiri::HTML(response.body)
-      action = document.at_css('.languages-actions-bar > .languages-new-button')
+      row = document.at_css('.languages-page-header .languages-description-row')
+      action = row.at_css('.languages-new-button')
       filters = document.at_css('section.languages-filters')
-      expect(action).to be_present
+
+      expect(row.at_css('p').text.strip).to eq(I18n.t('admin.languages.index.subtitle'))
       expect(action['data-turbo-frame']).to eq('language_modal')
       expect(filters).to be_present
-      expect(action.parent.next_element).to eq(filters)
+      expect(document.at_css('.languages-actions-bar')).to be_nil
       expect(document.at_css('.languages-filters .languages-new-button')).to be_nil
-      expect(document.at_css('.languages-page-header .languages-new-button')).to be_nil
       expect(document.css('.languages-new-button').size).to eq(1)
+      expect(row.closest('header').next_element).to eq(filters)
     end
 
     it 'renders compact automatic filters without a wide submit input' do
