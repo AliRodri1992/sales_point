@@ -41,7 +41,8 @@ export default class extends Controller {
     const url = new URL(this.element.action, window.location.href)
     for (const [key, value] of new FormData(this.element)) {
       const text = String(value).trim()
-      if (text && text !== "all") url.searchParams.set(key, text)
+      const unselected = ["status", "featured", "tracking_mode", "stock_status"].includes(key) && text === "all"
+      if (text && !unselected) url.searchParams.set(key, text)
       else url.searchParams.delete(key)
     }
     url.searchParams.delete("page")
@@ -72,7 +73,9 @@ export default class extends Controller {
       if (!nextResults || !currentResults) throw new Error("missing results")
       if (request.signal.aborted || sequence !== this.sequence) return
 
-      currentResults.replaceWith(nextResults)
+      // Keep the Turbo Frame element connected; replacing it outright breaks
+      // the frame's navigation lifecycle and the surrounding loading state.
+      currentResults.replaceChildren(...nextResults.childNodes)
       this.syncBadges(page)
       window.history.replaceState(window.history.state, "", url)
     } catch (error) {

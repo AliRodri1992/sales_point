@@ -1,4 +1,4 @@
-<% filter_categories = current_organization.categories.not_deleted.order(:name).pluck(:name, :id) %>
+<% filter_categories = current_organization ? current_organization.categories.not_deleted.order(:name).pluck(:name, :id) : [] %>
 <% selected_category = filter_categories.find { |name, id| id.to_s == params[:category_id].to_s }&.first %>
 <% filter_labels = {
      'search' => [t('admin.catalog_design.search'), params[:search].to_s.strip.presence],
@@ -25,7 +25,16 @@
   <%= form_with url: admin_products_path, method: :get,
                 class: 'products-filters',
                 data: { turbo_frame: '_top', controller: 'products-search',
-                        action: 'submit->products-search#cancelSearch' } do %>
+                        action: 'submit->products-search#cancelSearch change->products-search#cancelSearch' } do %>
+    <% if Admin::ProductsListing::SORTABLE_COLUMNS.include?(params[:sort]) %>
+      <%= hidden_field_tag :sort, params[:sort] %>
+    <% end %>
+    <% if Admin::ProductsListing::SORT_DIRECTIONS.include?(params[:direction]) %>
+      <%= hidden_field_tag :direction, params[:direction] %>
+    <% end %>
+    <% if TablePagePreference::OPTIONS.map(&:to_s).include?(params[:per_page].to_s) %>
+      <%= hidden_field_tag :per_page, params[:per_page] %>
+    <% end %>
     <div class="products-filters__primary">
       <div class="products-filters__field products-filters__search">
         <%= label_tag :products_search, t('admin.catalog_design.search') %>
@@ -91,7 +100,7 @@
     </details>
 
     <div class="products-filters__actions">
-      <%= button_tag type: :submit, class: 'catalog-button catalog-button-primary products-filters__apply' do %>
+      <%= button_tag type: :submit, name: nil, class: 'catalog-button catalog-button-primary products-filters__apply' do %>
         <%= delta_icon('funnel', class: 'size-4') %>
         <%= t('admin.catalog_design.filter') %>
       <% end %>

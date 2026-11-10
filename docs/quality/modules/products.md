@@ -48,6 +48,16 @@ Todos los hallazgos siguientes proceden de **inspección estática** del SHA ind
 
 **Criterios adicionales de aceptación:** búsqueda → URL persistida; estado/categoría/destacado/seguimiento/existencias/precios combinados; selección de categorías tenant-safe; chip individual sin perder los otros; botón que nunca ocupa todo el ancho; cambio de página, orden y tamaño sin borrar el filtrado; uso por teclado/lector y en anchos de 320/390/768/1440 px. Se requiere CI focalizado y ejecución visual real.
 
+## Segunda inspección de filtros y listado — 2026-11-09
+
+- **PRODUCTS-013 (P1 · filtros):** la navegación GET normal y el buscador incremental descartaban `sort`, `direction` y `per_page` al construir parámetros, aunque la paginación y el selector de tamaño preservaban la URL. Se añaden campos ocultos validados contra listas permitidas y se prueba su conservación en el formulario y el flujo navegador.
+- **PRODUCTS-014 (P2 · UX/estabilidad):** el buscador incremental sustituía el elemento `turbo-frame` completo por otro creado mediante `DOMParser`. Esto interrumpe el ciclo de vida del frame; ahora conserva el nodo y reemplaza solo sus hijos, evitando perder el foco del buscador o el estado del wrapper.
+- **PRODUCTS-015 (P2 · presentación):** la página local de Productos en español mostraba un importe con el símbolo **€** acompañado del código **MXN**. `product_money` dependía del símbolo predeterminado del locale; ahora escoge el símbolo explícito para MXN, USD, EUR y KRW sin quitar el código ISO.
+- **PRODUCTS-016 (P2 · robustez):** `_filters` llamaba directamente a `current_organization.categories` sin proteger el caso de organización no resuelta, mientras `ProductsLookup` ya contempla ese caso. El selector pasa a devolver opciones vacías sin excepción.
+- **PRODUCTS-017 (P3 · comportamiento):** el texto de búsqueda literal `all` se descartaba como si fuera un valor comodín de dropdown; la normalización se limita a los selectores con opción `all` y se elimina el `name=button` innecesario de la petición GET.
+
+**Implementación y verificación:** los cambios de esta reauditoría están publicados en `feature/fixes`, con pruebas de solicitud y de navegador escritas. **No se ha ejecutado una prueba interactiva del localhost**: la conexión de navegador en modo Chat permite inspeccionar el contenido de la pestaña abierta, pero no enviar clics ni introducir valores. El cierre sigue condicionado a RSpec/CI y a una verificación interactiva real tras actualizar el entorno local.
+
 ## Controles ya presentes: no duplicar hallazgos anteriores
 
 - `ProductsLookup#accessible_products` limita catálogo y operaciones a la organización actual; `ProductImagesController` valida permisos y organización antes de aceptar imágenes.

@@ -104,6 +104,28 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     expect(page.evaluate_script('document.activeElement.id')).to eq('products_search')
   end
 
+  scenario 'preserves sort and page size when applying advanced filters' do
+    category = create(:category, organization:, name: 'Drinkware')
+    create(:product, organization:, category:, name: 'Insulated cup', price: 35)
+
+    visit admin_products_path(sort: 'products.price', direction: 'desc', per_page: '5')
+    find('details.products-filters__advanced summary').click
+
+    wrapper = find('#products_category', visible: :all).find(:xpath, '..')
+    wrapper.find('button[aria-haspopup="listbox"]').click
+    wrapper.find('[role="option"]', text: 'Drinkware', exact_text: true).click
+    click_button 'Apply filters'
+
+    expect(page).to have_current_path(/category_id=#{category.id}/)
+    expect(page.current_url).to include('sort=products.price', 'direction=desc', 'per_page=5')
+    expect(page).to have_css('#admin_products_list', text: 'Insulated cup')
+
+    fill_in 'products_search', with: 'Insulated'
+    expect(page).to have_css('#admin_products_list', text: 'Insulated cup')
+    expect(page.current_url).to include('search=Insulated', 'sort=products.price', 'per_page=5')
+    expect(page.evaluate_script('document.activeElement.id')).to eq('products_search')
+  end
+
   scenario 'keeps branch and user pages usable on mobile and retains clear desktop navigation' do
     branch = create(:branch, organization:, name: 'Central branch')
     member = create(:user, :english, username: 'catalog_member')

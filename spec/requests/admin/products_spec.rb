@@ -451,6 +451,36 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(document.at_css('#admin_products_list a[href="/admin/products"]')).to be_present
     end
 
+    it 'preserves the selected sorting and page size in the advanced filters form' do
+      get admin_products_path, params: { sort: 'products.price', direction: 'desc',
+                                         per_page: '5', status: 'active' }
+
+      document = Nokogiri::HTML(response.body)
+      form = document.at_css('form.products-filters')
+      expect(form.at_css('input[name="sort"]')['value']).to eq('products.price')
+      expect(form.at_css('input[name="direction"]')['value']).to eq('desc')
+      expect(form.at_css('input[name="per_page"]')['value']).to eq('5')
+      expect(form.at_css('button.products-filters__apply')['name']).to be_nil
+    end
+
+    it 'does not propagate invalid sorting values through the filters form' do
+      get admin_products_path, params: { sort: 'products.dangerous', direction: 'wrong', per_page: '9999' }
+
+      form = Nokogiri::HTML(response.body).at_css('form.products-filters')
+      expect(form.at_css('input[name="sort"]')).to be_nil
+      expect(form.at_css('input[name="direction"]')).to be_nil
+      expect(form.at_css('input[name="per_page"]')).to be_nil
+    end
+
+    it 'uses the configured currency unit instead of a mismatched locale symbol' do
+      create(:product, organization:, name: 'Currency fixture product', price: 150)
+      get admin_products_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('MXN')
+      expect(response.body).not_to include('€ MXN')
+    end
+
     it 'filters available, depleted and low-stock products using tenant inventories' do
       branch = create(:branch, organization:)
       available = create(:product, organization:, name: 'Low quantity item')
