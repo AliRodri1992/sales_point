@@ -14,7 +14,11 @@ module Admin
 
     def index
       authorize Inventory, :index?
-      @branches = policy_scope(current_organization.branches).not_deleted.order(:name)
+      @branches = current_organization.branches.not_deleted.order(:name)
+      unless current_user.admin?
+        roles = InventoryPolicy.permitted_roles(current_user, current_organization, InventoryPolicy::READ_KEYS)
+        @branches = @branches.where(id: roles.where.not(branch_id: nil).select(:branch_id)) unless roles.where(branch_id: nil).exists?
+      end
       @filters = FILTERS.index_with { |key| params[key].to_s.strip }
       @filters['search'] = @filters['search'].first(120)
       @filters['branch_id'] = '' unless @branches.exists?(id: @filters['branch_id'])

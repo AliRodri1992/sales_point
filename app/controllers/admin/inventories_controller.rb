@@ -68,7 +68,8 @@ module Admin
     def set_branch
       return head :forbidden unless current_organization
 
-      @branch = policy_scope(current_organization.branches).not_deleted.find(params[:branch_id])
+      @branch = current_organization.branches.not_deleted.find(params[:branch_id])
+      authorize Inventory.new(organization: current_organization, branch: @branch), :show?
     end
 
     def set_inventory
@@ -77,7 +78,7 @@ module Admin
 
     def load_inventory_list
       @can_manage = policy(Inventory.new(organization: current_organization, branch: @branch)).create?
-      @can_adjust = current_user.admin? || current_user.permission?('inventory.adjust')
+      @can_adjust = policy(Inventory.new(organization: current_organization, branch: @branch)).adjust?
       @inventory_filters = {
         'search' => params[:search].to_s.strip.first(120),
         'status' => %w[out low available].include?(params[:status]) ? params[:status] : '',

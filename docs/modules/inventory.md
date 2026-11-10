@@ -22,9 +22,10 @@ El espacio operativo vive en `/admin/inventory` y el detalle de cada sucursal en
 `InventoryPolicy` comprueba pertenencia activa y el alcance de sucursales:
 `inventory.access` o `inventory.view` permiten la lectura; `inventory.manage` autoriza
 altas y edición de umbrales; `inventory.adjust` habilita ajustes. Los administradores
-con acceso vigente a su organización conservan la operación. Los usuarios que no sean
-administradores necesitan una asignación activa a la sucursal. El rol de sistema `inventory`
-recibe los cuatro permisos al sembrar.
+con acceso vigente a su organización conservan la operación. Los roles globales con el permiso de Inventario conceden acceso a las sucursales de la organización;
+los roles limitados a una sucursal solo pueden ver y operar esa sucursal, incluso cuando el usuario
+tiene otros roles sin autorización de Inventario. El rol de sistema `inventory` recibe los cuatro
+permisos al sembrar.
 
 Las existencias no pueden editarse mediante parámetros del formulario. Los cambios pasan por
 `Inventories::ApplyMovement`, que trabaja con transacciones, bloqueos, verificaciones de

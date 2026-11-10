@@ -9,7 +9,7 @@
 | ID | Prioridad | Hallazgo de la revisión | Adecuación | Verificación |
 | --- | --- | --- | --- | --- |
 | INVENTORY-001 | Alta | Inventarios accesibles solo dentro de cada sucursal; no hay consulta transversal | Nuevo `/admin/inventory` y enlace lateral | Request specs |
-| INVENTORY-002 | Alta | Controlador restringido al rol de administrador, sin permiso independiente | `InventoryPolicy`, alcance organizacional y por sucursal, permisos separados de consulta y gestión | Requests de rechazo |
+| INVENTORY-002 | Alta | Controlador restringido al rol de administrador, sin permiso independiente | `InventoryPolicy`, alcance organizacional y por sucursal, permisos separados de consulta y gestión; comprobar permiso del rol que concede cada sucursal, no cualquier rol del usuario | Requests de rechazo y acceso cruzado |
 | INVENTORY-003 | Alta | Listado por sucursal completo sin paginación ni filtros | Búsqueda, estatus, seguimiento, KPIs, preferencias y paginación | Requests + navegador |
 | INVENTORY-004 | Media | Formulario de alta y muchos ajustes ocupan cada fila continuamente | Panel de alta y controles de ajuste/umbrales desplegables, edición puntual por registro | Navegador |
 | INVENTORY-005 | Media | Ajuste no solicita referencia contextual | Campo de referencia opcional persistido en `InventoryMovement` | Request de persistencia |

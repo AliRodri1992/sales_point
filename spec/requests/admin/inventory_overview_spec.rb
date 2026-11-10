@@ -83,6 +83,52 @@ RSpec.describe 'Inventory overview and branch operations', type: :request do
     )
   end
 
+
+  it 'keeps inventory permissions scoped to the branch granting them' do
+    other_branch = create(:branch, organization:)
+    visible_product = create(:product, organization:, name: 'ARTICULO AUTORIZADO')
+    hidden_product = create(:product, organization:, name: 'ARTICULO RESTRINGIDO')
+    create(:inventory, organization:, branch:, product: visible_product)
+    create(:inventory, organization:, branch: other_branch, product: hidden_product)
+
+    employee = create(:user)
+    create(:organization_membership, organization:, user: employee)
+    inventory_role = create(:system_role, :branch)
+    other_role = create(:system_role, :branch)
+    permission = create(:permission, code: 'inventory.view')
+    create(:system_role_permission, system_role: inventory_role, permission:)
+    create(:user_role, user: employee, system_role: inventory_role, branch:)
+    create(:user_role, user: employee, system_role: other_role, branch: other_branch)
+    sign_out admin
+    sign_in employee
+
+    get admin_inventory_overview_path
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('ARTICULO AUTORIZADO')
+    expect(response.body).not_to include('ARTICULO RESTRINGIDO')
+
+    get admin_branch_inventories_path(other_branch)
+    expect(response).to have_http_status(:forbidden)
+  end
+
+  it 'allows organization-wide inventory roles across their organization' do
+    product = create(:product, organization:, name: 'PRODUCTO GLOBAL')
+    create(:inventory, organization:, branch:, product:)
+
+    employee = create(:user)
+    create(:organization_membership, organization:, user: employee)
+    role = create(:system_role, :system)
+    permission = create(:permission, code: 'inventory.access')
+    create(:system_role_permission, system_role: role, permission:)
+    create(:user_role, user: employee, system_role: role)
+    sign_out admin
+    sign_in employee
+
+    get admin_branch_inventories_path(branch)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('PRODUCTO GLOBAL')
+  end
+
   it 'denies inventory access to a member without inventory permissions' do
     employee = create(:user)
     create(:organization_membership, organization:, user: employee)
