@@ -1,7 +1,10 @@
-<div class="catalog-nested-row" data-nested-catalog-row <%= 'hidden' if form.object.marked_for_destruction? %>>
+<div class="catalog-nested-row" data-nested-catalog-row data-nested-catalog-kind="<%= section %>" <%= 'hidden' if form.object.marked_for_destruction? %>>
   <%= form.hidden_field :id if form.object.persisted? %>
   <% if section == :barcodes && form.object.persisted? %>
     <%= form.hidden_field :_destroy, value: form.object.marked_for_destruction? ? '1' : '0', data: { nested_catalog_destroy: true } %>
+  <% end %>
+  <% if section != :barcodes && !form.object.persisted? %>
+    <%= form.hidden_field :client_key, value: form.object.client_key.presence || 'NEW_RECORD' %>
   <% end %>
   <% if section == :variants %>
     <%= catalog_field(form, :name, label: required_field_label(t('admin.catalog_design.name')), maxlength: 100) %><%= catalog_field(form, :sku, maxlength: 50) %>
@@ -12,8 +15,12 @@
     <%= catalog_select(form, :status, ProductPresentation.statuses.keys.map { |status| [t("admin.products.statuses.#{status}"), status] }, include_blank: false) %>
   <% else %>
     <%= catalog_field(form, :value, label: required_field_label(t('admin.catalog_design.value')), maxlength: 100) %><%= catalog_select(form, :symbology, %w[code128 ean13 ean8 upca qr].map { |code| [code.upcase, code] }, include_blank: false) %>
-    <%= catalog_select(form, :product_variant_id, @product.product_variants.select(&:persisted?).map { |variant| [variant.name, variant.id] }) %>
-    <%= catalog_select(form, :product_presentation_id, @product.product_presentations.select(&:persisted?).map { |presentation| [presentation.name, presentation.id] }) %>
+    <div data-nested-catalog-pending-value="<%= form.object.product_variant_client_key %>">
+      <%= catalog_select(form, :product_variant_id, @product.product_variants.select(&:persisted?).map { |variant| [variant.name, variant.id] }) %>
+    </div>
+    <div data-nested-catalog-pending-value="<%= form.object.product_presentation_client_key %>">
+      <%= catalog_select(form, :product_presentation_id, @product.product_presentations.select(&:persisted?).map { |presentation| [presentation.name, presentation.id] }) %>
+    </div>
   <% end %>
   <% if !form.object.persisted? || section == :barcodes %>
     <button type="button" class="catalog-button" data-action="nested-catalog#remove"><%= t('admin.catalog_design.remove') %></button>
