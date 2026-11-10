@@ -72,10 +72,29 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
 
     expect(page).to have_css('turbo-frame#categories_list a.categories-filter-chip', text: 'Descending', wait: 10)
     expect(page).to have_no_css('details.categories-advanced')
-    expect(page).to have_field('category_direction', with: 'desc', visible: :all, wait: 10)
+    expect(page).to have_css('input#category_direction[type="hidden"][value="desc"]', visible: :all, wait: 10)
 
     fill_in 'category_search', with: 'groceries'
     expect(page).to have_css('turbo-frame#categories_list a.categories-filter-chip', text: 'Descending', wait: 10)
+  end
+
+
+  scenario 'preserves an active search after creating an unrelated category' do
+    create(:category, organization:, name: 'Groceries', code: 'groceries')
+
+    visit admin_categories_path
+    fill_in 'category_search', with: 'groceries'
+    expect(page).to have_css('turbo-frame#categories_list .categories-filter-chip', text: 'groceries', wait: 10)
+
+    click_link 'New category'
+    fill_in 'category_code', with: 'new_unrelated'
+    fill_in 'category_name', with: 'Cleaning'
+    click_button 'Create category'
+
+    expect(page).to have_css('#category_search[value="groceries"]', visible: :all, wait: 10)
+    expect(page).to have_css('turbo-frame#categories_list', text: 'Groceries', wait: 10)
+    expect(page).to have_no_css('turbo-frame#categories_list a.categories-name-link', text: 'Cleaning')
+    expect(organization.categories.find_by!(code: 'new_unrelated')).to be_present
   end
 
   scenario 'searches live and renders a removable filter chip' do

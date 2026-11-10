@@ -364,6 +364,61 @@ RSpec.describe 'Admin::Categories', type: :request do
       expect(document.css('table.categories-table tbody').text).to include('Food and pantry products')
     end
 
+
+    it 'keeps page ordering stable for categories with identical names' do
+      categories = Array.new(12) do |index|
+        create(:category, organization:, name: 'Duplicate', code: "same_name_#{index}")
+      end
+
+      ids = [1, 2].flat_map do |page_number|
+        get admin_categories_path(sort: 'name', direction: 'asc', page: page_number)
+        Nokogiri::HTML(response.body).css('table.categories-table tbody a.categories-name-link')
+                                .map { |link| link['href'].match(%r{/categories/(\\d+)})[1].to_i }
+      end
+
+      expect(ids).to eq(categories.map(&:id).sort)
+    end
+
+    it 'announces the active table sort direction to assistive technology' do
+      create(:category, organization:, name: 'One', code: 'one')
+
+      get admin_categories_path(sort: 'code', direction: 'desc')
+
+      headings = Nokogiri::HTML(response.body).css('th[aria-sort]')
+      expect(headings.size).to eq(1)
+      expect(headings.first['aria-sort']).to eq('descending')
+      expect(headings.first.text).to include(I18n.t('admin.categories.index.columns.code'))
+    end
+
+    it 'retains filters in category navigation and edit form URLs' do
+      category = create(:category, organization:, name: 'Groceries', code: 'groceries')
+      filters = { search: 'Groceries', status: 'active', sort: 'name', direction: 'desc' }
+
+      get admin_categories_path(filters)
+
+      document = Nokogiri::HTML(response.body)
+      create_link = document.at_css('a.categories-primary-button')
+      edit_link = document.at_css('a[aria-label*="Groceries"][href*="edit"]')
+      expect(create_link['href']).to include('search=Groceries', 'status=active')
+      expect(edit_link['href']).to include('search=Groceries', 'status=active')
+
+      get edit_admin_category_path(category, filters)
+      edit_form = Nokogiri::HTML(response.body).at_css('form.categories-form')
+      expect(edit_form['action']).to include('search=Groceries', 'status=active')
+    end
+
+    it 'keeps an active search on the results after creating another category via Turbo' do
+      create(:category, organization:, name: 'Groceries', code: 'groceries')
+
+      post admin_categories_path(search: 'groceries', status: 'active', format: :turbo_stream),
+           params: { category: { name: 'Cleaning', code: 'cleaning' } }
+
+      expect(response).to have_http_status(:ok)
+      content = response.body
+      expect(content).to include('Groceries', 'search=groceries')
+      expect(content).not_to include('categories-name-link">Cleaning')
+    end
+
     it 'provides mobile cards retaining the category description' do
       create(:category, organization:, name: 'Personal Care', code: 'personal_care',
                         description: 'Daily hygiene essentials')
@@ -376,6 +431,7 @@ RSpec.describe 'Admin::Categories', type: :request do
     end
 
     it 'keeps the table-header sort available without advanced filters' do
+      create(:category, organization:, name: 'Visible', code: 'visible')
       get admin_categories_path(sort: 'name', direction: 'desc')
 
       document = Nokogiri::HTML(response.body)

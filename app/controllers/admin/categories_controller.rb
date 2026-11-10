@@ -87,7 +87,7 @@ module Admin
       sort_column = SORTABLE_COLUMNS.include?(params[:sort]) ? params[:sort] : 'name'
       sort_direction = %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
 
-      scope.order(sort_column => sort_direction)
+      scope.order(sort_column => sort_direction, id: :asc)
     end
 
     def paginate(scope)

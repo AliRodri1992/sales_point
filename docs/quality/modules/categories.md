@@ -320,3 +320,13 @@ El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios;
 4. Revisar backfill y constraints sobre datos históricos; repetir RSpec, RuboCop, seguridad, I18n y migraciones; pedir revisión independiente y CI global verde antes de cualquier fusión.
 
 **Estado:** REAUDITADO, HALLAZGOS ABIERTOS, NO CERRADO. Esta entrega registra solo auditoría/evidencia, sin cambios en código funcional, datos ni migraciones.
+
+## Implementación de hallazgos CATEGORIES-025 y CATEGORIES-027 a 030 (2026-11-10)
+
+- **CATEGORIES-025 / regresiones propias:** `categories_spec` ahora crea datos antes de buscar el enlace de ordenación; la prueba Chrome verifica el campo de dirección oculto mediante selector CSS explícito, sin confundirlo con un campo visible. **IMPLEMENTADO; CI del nuevo SHA pendiente**.
+- **CATEGORIES-027 · filtros tras CRUD:** rutas y acciones de creación, edición, consulta y baja conservan el contexto de filtros del listado mediante query params. El controller Stimulus sincroniza los valores visibles al navegar o enviar un formulario, y usa `history.replaceState` tras refrescos Turbo Frame para que un broadcast no descarte los filtros de la URL. Los formularios preservan dichos parámetros en sus acciones. **IMPLEMENTADO; CI pendiente**.
+- **CATEGORIES-028 · orden determinista:** `apply_sorting` introduce `id ASC` como desempate en cualquier columna seleccionada; regresión request para nombres repetidos y páginas múltiples. **IMPLEMENTADO; CI pendiente**.
+- **CATEGORIES-029 · identidad de tema:** insignias decorativas, chips de filtros, controles hover e iconografía vacía utilizan `--brand-light` / `--brand-on-white`. El estado «activo» permanece verde por semántica, no por decoración. **IMPLEMENTADO; contraste visual por cada tema pendiente**.
+- **CATEGORIES-030 · lector de pantalla:** los encabezados ordenables de Nombre/Código incorporan `aria-sort` únicamente cuando representan la columna activa; request spec nuevo para orden descendente. **IMPLEMENTADO; lector de pantalla físico pendiente**.
+- **Cobertura nueva:** escenarios Chrome de búsqueda activa + alta; request con enlaces y formularios que retienen parámetros y persistencia de orden en paginación. Sin migraciones ni cambios de permisos.
+- **Bloqueos de cierre externos:** RSpec global en Clientes (rendimiento de teléfonos), permisos granulares Clientes y paginación Productos siguen clasificados como EXTERNOS; se requieren correcciones independientes y CI global verde para cierre. Verificar migración histórica/constraints con una copia de datos reales antes de declarar CATEGORIES-001 / 009 cerrados.

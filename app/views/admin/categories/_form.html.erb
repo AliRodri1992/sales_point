@@ -1,4 +1,7 @@
-<%= form_with model: [:admin, category], html: { novalidate: true },
+<%= form_with model: [:admin, category],
+              url: category.persisted? ? admin_category_path(category, request.query_parameters) :
+                                         admin_categories_path(request.query_parameters),
+              html: { novalidate: true, data: { categories_filter_mutation: true } },
               class: 'categories-form space-y-6',
               data: { turbo_frame: (local_assigns[:standalone] ? '_top' : 'category_modal'),
                       turbo: !local_assigns[:standalone] } do |form| %>

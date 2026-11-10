@@ -1,23 +1,26 @@
 <div class="categories-row-actions" role="group" aria-label="<%= t('admin.categories.index.columns.actions') %>">
   <% if policy(Category).show? %>
-    <%= link_to admin_category_path(category),
-                data: { turbo_frame: 'category_modal', tooltip: t('admin.categories.show.title') },
+    <%= link_to admin_category_path(category, request.query_parameters),
+                data: { turbo_frame: 'category_modal', categories_filter_navigation: true,
+                        tooltip: t('admin.categories.show.title') },
                 class: 'categories-icon-button',
                 aria: { label: "#{t('admin.categories.show.title')}: #{category.name}" } do %>
       <%= delta_icon('eye', class: 'size-4', aria: { hidden: true }) %>
     <% end %>
   <% end %>
   <% if policy(Category).update? %>
-    <%= link_to edit_admin_category_path(category),
-                data: { turbo_frame: 'category_modal', tooltip: t('admin.categories.index.edit') },
+    <%= link_to edit_admin_category_path(category, request.query_parameters),
+                data: { turbo_frame: 'category_modal', categories_filter_navigation: true,
+                        tooltip: t('admin.categories.index.edit') },
                 class: 'categories-icon-button',
                 aria: { label: "#{t('admin.categories.index.edit')}: #{category.name}" } do %>
       <%= delta_icon('pencil-square', class: 'size-4', aria: { hidden: true }) %>
     <% end %>
   <% end %>
   <% if policy(Category).destroy? %>
-    <%= button_to admin_category_path(category),
+    <%= button_to admin_category_path(category, request.query_parameters),
                   method: :delete,
+                  form: { data: { categories_filter_mutation: true } },
                   class: 'categories-icon-button categories-icon-button--danger',
                   data: {
                     controller: 'swal-confirm',

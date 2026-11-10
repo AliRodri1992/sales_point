@@ -60,8 +60,8 @@
       <table class="categories-table">
         <thead>
           <tr>
-            <th scope="col"><%= sort_link('name', t('admin.categories.index.columns.name'), frame: 'categories_list') %></th>
-            <th scope="col"><%= sort_link('code', t('admin.categories.index.columns.code'), frame: 'categories_list') %></th>
+            <th scope="col" <%= tag.attributes(aria: { sort: sort_direction == 'desc' ? 'descending' : 'ascending' }) if sort_filter.nil? || sort_filter == 'name' %>><%= sort_link('name', t('admin.categories.index.columns.name'), frame: 'categories_list') %></th>
+            <th scope="col" <%= tag.attributes(aria: { sort: sort_direction == 'desc' ? 'descending' : 'ascending' }) if sort_filter == 'code' %>><%= sort_link('code', t('admin.categories.index.columns.code'), frame: 'categories_list') %></th>
             <th scope="col"><%= t('admin.categories.index.columns.description') %></th>
             <th scope="col"><%= t('admin.categories.index.columns.status') %></th>
             <th scope="col" class="categories-actions-heading"><%= t('admin.categories.index.columns.actions') %></th>
@@ -75,8 +75,8 @@
                   <span class="categories-avatar" aria-hidden="true"><%= category.name.to_s[0].to_s.upcase %></span>
                   <span class="categories-name">
                     <% if policy(Category).show? %>
-                      <%= link_to category.name, admin_category_path(category),
-                                  data: { turbo_frame: 'category_modal' }, class: 'categories-name-link' %>
+                      <%= link_to category.name, admin_category_path(category, request.query_parameters),
+                                  data: { turbo_frame: 'category_modal', categories_filter_navigation: true }, class: 'categories-name-link' %>
                     <% else %>
                       <%= category.name %>
                     <% end %>
@@ -105,8 +105,8 @@
             <div class="categories-mobile-identity">
               <strong>
                 <% if policy(Category).show? %>
-                  <%= link_to category.name, admin_category_path(category),
-                              data: { turbo_frame: 'category_modal' }, class: 'categories-name-link' %>
+                  <%= link_to category.name, admin_category_path(category, request.query_parameters),
+                              data: { turbo_frame: 'category_modal', categories_filter_navigation: true }, class: 'categories-name-link' %>
                 <% else %>
                   <%= category.name %>
                 <% end %>
