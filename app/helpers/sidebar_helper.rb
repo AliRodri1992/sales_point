@@ -8,6 +8,7 @@ module SidebarHelper
     purchase_orders: 'clipboard-document-list',
     account_payables: 'document-text',
     cash_register: 'banknotes',
+    inventory_overview: 'cube',
     clients: 'users',
     demo_requests: 'calendar-days',
     employees: 'identification',

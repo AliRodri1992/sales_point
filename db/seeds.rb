@@ -151,6 +151,12 @@ unless defined?(DEFAULT_PERMISSIONS)
       module_name: 'Inventario',
       description: 'Permite acceder al módulo de inventario.'
     },
+    { code: 'inventory.view', name: 'View inventory',
+      module_name: 'Inventario', description: 'View stock by authorized branch.' },
+    { code: 'inventory.manage', name: 'Manage inventory',
+      module_name: 'Inventario', description: 'Manage products and stock limits by branch.' },
+    { code: 'inventory.adjust', name: 'Adjust inventory',
+      module_name: 'Inventario', description: 'Record audited stock adjustments.' },
     {
       code: 'customers.access',
       name: 'Acceso a clientes',
@@ -434,6 +440,13 @@ def assign_default_role_permissions
   SystemRole::ADMINISTRATIVE_CODES.each do |role_code|
     role = SystemRole.available.find_by!(code: role_code)
     AdministratorPermissionProvisioner.call(role:)
+  end
+
+  if (role = SystemRole.available.find_by(code: 'inventory'))
+    %w[inventory.access inventory.view inventory.manage inventory.adjust].each do |code|
+      permission = Permission.find_by!(code:)
+      SystemRolePermission.find_or_create_by!(system_role: role, permission:)
+    end
   end
 end
 

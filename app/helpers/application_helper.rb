@@ -48,7 +48,8 @@ module ApplicationHelper
     'suppliers' => %w[supplier_addresses supplier_contacts supplier_schedules supplier_documents
                       supplier_bank_accounts supplier_offers supplier_fiscal_information supplier_commercial_data],
     'purchase_orders' => %w[goods_receipts purchase_requests purchase_quotations],
-    'account_payables' => %w[supplier_invoices supplier_payments supplier_credit_notes]
+    'account_payables' => %w[supplier_invoices supplier_payments supplier_credit_notes],
+    'inventory_overview' => %w[inventories inventory_lots]
   }.freeze
 
   def sidebar_item_active?(controller)

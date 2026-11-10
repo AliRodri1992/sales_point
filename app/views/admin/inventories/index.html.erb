@@ -1,145 +1,256 @@
-<div class="space-y-6">
-  <header class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-    <h1 class="font-jakarta text-2xl font-bold text-slate-900">
-      <%= t('admin.inventory.title') %>: <%= @branch.name %>
-    </h1>
-    <p class="mt-2 text-sm text-slate-500"><%= t('admin.inventory.description') %></p>
+<% content_for :title, "#{t('admin.inventory.title')} · #{@branch.name}" %>
+<div class="mx-auto max-w-[1480px] space-y-6 pb-10">
+  <header class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <%= link_to admin_inventory_overview_path, class: 'mb-4 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:underline' do %>
+          <%= delta_icon('arrow-left', class: 'size-4') %><%= t('admin.inventory.actions.back') %>
+        <% end %>
+        <p class="text-xs font-bold uppercase tracking-[.16em] text-emerald-700"><%= t('admin.inventory.eyebrow') %></p>
+        <h1 class="mt-1 font-jakarta text-2xl font-extrabold text-slate-900 sm:text-3xl"><%= @branch.name %></h1>
+        <p class="mt-2 max-w-2xl text-sm text-slate-600"><%= t('admin.inventory.branch_description') %></p>
+      </div>
+      <% if @can_manage && !@branch.closed? && !@branch.suspended? %>
+        <a href="#inventory-create" class="catalog-button catalog-button-primary inline-flex items-center gap-2">
+          <%= delta_icon('cube', class: 'size-4') %><%= t('admin.inventory.actions.add') %>
+        </a>
+      <% end %>
+    </div>
   </header>
 
-  <% unless @branch.closed? || @branch.suspended? %>
-    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-             aria-labelledby="inventory-create-title">
-      <h2 id="inventory-create-title" class="mb-4 font-jakarta text-sm font-bold text-slate-800">
-        <%= t('admin.inventory.add') %>
-      </h2>
-      <%= form_with model: (@new_inventory || Inventory.new), scope: :inventory,
-                    url: admin_branch_inventories_path(@branch),
-                    html: { novalidate: true }, class: 'grid gap-4 sm:grid-cols-3' do |form| %>
-        <div class="catalog-field sm:col-span-3">
-          <%= form.label :product_id, branch_required_label(t('admin.inventory.product')),
-                         class: 'catalog-label' %>
-          <div data-controller="delta-select" data-searchable="true"
-               data-search-placeholder="<%= t('admin.branch_workspace.filters.search') %>">
-            <%= form.collection_select :product_id, current_organization.products.not_deleted.order(:name),
-                                       :id, :name, { include_blank: t('admin.inventory.product') },
-                                       { class: 'w-full rounded-xl border border-slate-200 p-3',
-                                         aria: { invalid: @new_inventory&.errors&.attribute_names&.include?(:product),
-                                                 describedby: 'inventory-product-error' } } %>
-          </div>
-          <% if @new_inventory&.errors&.[](:product)&.present? %>
-            <p id="inventory-product-error" role="alert" class="mt-1 text-xs text-rose-700">
-              <%= t('admin.inventory.product') %> <%= @new_inventory.errors[:product].join(', ') %>
-            </p>
-          <% end %>
-        </div>
-        <% %i[min_stock max_stock].each do |field| %>
-          <div class="catalog-field">
-            <%= form.label field, t("admin.inventory.#{field}"), class: 'catalog-label' %>
-            <%= form.number_field field, step: 0.001,
-                                  class: 'w-full rounded-xl border border-slate-200 p-3',
-                                  aria: { invalid: @new_inventory&.errors&.attribute_names&.include?(field),
-                                          describedby: "inventory-#{field}-error" } %>
-            <% if @new_inventory&.errors&.[](field)&.present? %>
-              <p id="inventory-<%= field %>-error" role="alert" class="mt-1 text-xs text-rose-700">
-                <%= t("admin.inventory.#{field}") %> <%= @new_inventory.errors[field].join(', ') %>
+  <section aria-label="<%= t('admin.inventory.metrics.title') %>" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <% [['records', @inventory_totals[:records]], ['stock', number_with_delimiter(@inventory_totals[:stock])], ['low', @inventory_totals[:low]], ['out', @inventory_totals[:out]]].each do |key, value| %>
+      <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p class="text-sm font-semibold text-slate-600"><%= t("admin.inventory.metrics.#{key}") %></p>
+        <p class="mt-2 font-jakarta text-3xl font-bold tabular-nums text-slate-900"><%= value %></p>
+      </article>
+    <% end %>
+  </section>
+
+  <% if @can_manage && !@branch.closed? && !@branch.suspended? %>
+    <details id="inventory-create" class="group rounded-2xl border border-slate-200 bg-white shadow-sm" <%= 'open' if @new_inventory&.errors&.any? %>>
+      <summary class="flex cursor-pointer list-none items-center justify-between gap-3 p-5 font-jakarta text-base font-bold text-slate-900">
+        <span class="inline-flex items-center gap-2"><%= delta_icon('cube', class: 'size-5 text-emerald-700') %><%= t('admin.inventory.actions.add') %></span>
+        <%= delta_icon('arrow-down', class: 'size-4 transition group-open:rotate-180') %>
+      </summary>
+      <div class="border-t border-slate-100 p-5">
+        <p class="mb-4 text-sm text-slate-600"><%= t('admin.inventory.form_description') %></p>
+        <%= form_with model: (@new_inventory || Inventory.new), scope: :inventory,
+                      url: admin_branch_inventories_path(@branch),
+                      html: { novalidate: true }, class: 'grid gap-4 sm:grid-cols-2 xl:grid-cols-4' do |form| %>
+          <div class="sm:col-span-2">
+            <%= form.label :product_id, branch_required_label(t('admin.inventory.product')), class: 'mb-1 block text-sm font-semibold text-slate-700' %>
+            <div data-controller="delta-select" data-searchable="true">
+              <%= form.collection_select :product_id, current_organization.products.not_deleted.order(:name),
+                                         :id, :name, { include_blank: t('admin.inventory.filters.choose_product') },
+                                         { class: 'w-full rounded-xl border border-slate-300 bg-white p-2.5 text-sm',
+                                           aria: { invalid: @new_inventory&.errors&.attribute_names&.include?(:product),
+                                                   describedby: 'inventory-product-error' } } %>
+            </div>
+            <% if @new_inventory&.errors&.[](:product)&.present? %>
+              <p id="inventory-product-error" role="alert" class="mt-1 text-xs text-rose-700">
+                <%= t('admin.inventory.product') %> <%= @new_inventory.errors[:product].join(', ') %>
+              </p>
+            <% end %>
+            <% if @new_inventory&.errors&.[](:product_id)&.present? %>
+              <p id="inventory-product-id-error" role="alert" class="mt-1 text-xs text-rose-700">
+                <%= t('admin.inventory.product') %> <%= @new_inventory.errors[:product_id].join(', ') %>
               </p>
             <% end %>
           </div>
+          <% %i[min_stock max_stock].each do |field| %>
+            <div>
+              <%= form.label field, t("admin.inventory.#{field}"), class: 'mb-1 block text-sm font-semibold text-slate-700' %>
+              <%= form.number_field field, step: 0.001,
+                                    class: 'w-full rounded-xl border border-slate-300 bg-white p-2.5 text-sm',
+                                    aria: { invalid: @new_inventory&.errors&.attribute_names&.include?(field),
+                                            describedby: "inventory-#{field}-error" } %>
+              <% if @new_inventory&.errors&.[](field)&.present? %>
+                <p id="inventory-<%= field %>-error" role="alert" class="mt-1 text-xs text-rose-700">
+                  <%= t("admin.inventory.#{field}") %> <%= @new_inventory.errors[field].join(', ') %>
+                </p>
+              <% end %>
+            </div>
+          <% end %>
+          <div class="flex items-end sm:col-span-2 xl:col-span-4">
+            <%= form.submit t('admin.inventory.actions.save'), class: 'catalog-button catalog-button-primary' %>
+          </div>
         <% end %>
-        <div class="flex items-end">
-          <%= form.submit t('admin.inventory.add'), class: 'catalog-button catalog-button-primary w-full' %>
-        </div>
-      <% end %>
-    </section>
+      </div>
+    </details>
   <% end %>
 
-  <section class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-    <table class="min-w-full divide-y divide-slate-100 text-sm">
-      <thead><tr>
-        <% %w[product stock min_stock max_stock movements].each do |key| %>
-          <th scope="col" class="p-4 text-left"><%= t("admin.inventory.#{key}") %></th>
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" aria-labelledby="branch-inventory-filters">
+    <h2 id="branch-inventory-filters" class="mb-3 font-jakarta text-base font-bold"><%= t('admin.inventory.filters.title') %></h2>
+    <%= form_with url: admin_branch_inventories_path(@branch), method: :get,
+                  data: { controller: 'inventory-search' }, class: 'space-y-3' do %>
+      <div class="flex flex-wrap items-end gap-3">
+        <div class="min-w-[200px] flex-1">
+          <label for="branch-inventory-search" class="mb-1 block text-sm font-semibold text-slate-700"><%= t('admin.inventory.filters.search') %></label>
+          <%= search_field_tag :search, @inventory_filters['search'], id: 'branch-inventory-search', maxlength: 120,
+                               placeholder: t('admin.inventory.filters.search_placeholder'),
+                               data: { action: 'input->inventory-search#schedule compositionstart->inventory-search#compositionStart compositionend->inventory-search#compositionEnd' },
+                               class: 'w-full rounded-xl border border-slate-300 bg-white p-2.5 text-sm' %>
+        </div>
+        <button class="catalog-button catalog-button-primary h-10 px-4" type="submit"><%= t('admin.inventory.actions.apply') %></button>
+      </div>
+      <details class="group rounded-xl border border-slate-200 bg-slate-50 p-4" <%= 'open' if @inventory_filters['status'].present? || @inventory_filters['tracking'].present? %>>
+        <summary class="flex cursor-pointer list-none items-center justify-between text-sm font-semibold text-slate-700">
+          <%= t('admin.inventory.filters.advanced') %><%= delta_icon('arrow-down', class: 'size-4 transition group-open:rotate-180') %>
+        </summary>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2">
+          <div><label for="branch-inventory-status" class="mb-1 block text-xs font-semibold"><%= t('admin.inventory.filters.status') %></label>
+            <%= select_tag :status, options_for_select([[t('admin.inventory.filters.any_status'), ''], *%w[available low out].map { |value| [t("admin.inventory.stock_statuses.#{value}"), value] }], @inventory_filters['status']),
+                           id: 'branch-inventory-status', data: { action: 'change->inventory-search#change' }, class: 'w-full rounded-xl border border-slate-300 p-2.5 text-sm' %></div>
+          <div><label for="branch-inventory-tracking" class="mb-1 block text-xs font-semibold"><%= t('admin.inventory.filters.tracking') %></label>
+            <%= select_tag :tracking, options_for_select([[t('admin.inventory.filters.any_tracking'), ''], *%w[none lot serial].map { |value| [t("admin.inventory.tracking_modes.#{value}"), value] }], @inventory_filters['tracking']),
+                           id: 'branch-inventory-tracking', data: { action: 'change->inventory-search#change' }, class: 'w-full rounded-xl border border-slate-300 p-2.5 text-sm' %></div>
+        </div>
+      </details>
+    <% end %>
+    <% active = @inventory_filters.select { |_, value| value.present? } %>
+    <% if active.any? %>
+      <div class="mt-3 flex flex-wrap items-center gap-2" aria-label="<%= t('admin.inventory.filters.active') %>">
+        <span class="text-xs text-slate-500"><%= t('admin.inventory.filters.active') %>:</span>
+        <% active.each do |key, value| %>
+          <% label = key == 'status' ? t("admin.inventory.stock_statuses.#{value}") : (key == 'tracking' ? t("admin.inventory.tracking_modes.#{value}") : value) %>
+          <%= link_to admin_branch_inventories_path(@branch, request.query_parameters.except(key, 'page')),
+                      class: 'inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800',
+                      aria: { label: t('admin.inventory.filters.remove', filter: t("admin.inventory.filters.#{key}")) } do %>
+            <%= label %><span aria-hidden="true">×</span>
+          <% end %>
         <% end %>
-      </tr></thead>
-      <tbody>
-        <% @inventories.each do |inventory| %>
-          <tr class="border-t border-slate-100">
-            <td class="p-4"><%= inventory.product.name %></td>
-            <td class="p-4"><%= inventory.stock %></td>
-            <td class="p-4"><%= inventory.min_stock %></td>
-            <td class="p-4"><%= inventory.max_stock || '—' %></td>
-            <td class="p-4">
-              <%= link_to t('admin.purchases.lot_traceability'),
-                          admin_branch_inventory_inventory_lots_path(@branch, inventory),
-                          class: 'mb-2 inline-block font-semibold text-emerald-700 hover:underline' %>
-              <% unless @branch.closed? %>
-                <% if inventory.product.tracking_serial? %>
-                  <p class="mb-2 text-xs text-amber-800">
-                    <%= t('admin.branch_lifecycle.serial_adjustment_notice') %>
-                  </p>
-                <% else %>
-                  <%= form_with url: adjust_admin_branch_inventory_path(@branch, inventory),
-                                html: { novalidate: true },
-                                class: 'flex flex-wrap items-start gap-2' do |form| %>
-                    <% if inventory.product.tracking_lot? || inventory.inventory_lots.any? %>
-                      <div class="catalog-field">
-                        <%= label_tag "inventory-lot-#{inventory.id}",
-                                      branch_required_label(t('admin.branch_lifecycle.inventory_lot_label')),
-                                      class: 'catalog-label' %>
-                        <% available_lots = inventory.inventory_lots.reject(&:quarantined?).sort_by(&:code) %>
-                        <% lot_options = available_lots.map { |lot| ["#{lot.code} · #{lot.quantity}", lot.id] } %>
-                        <div data-controller="delta-select" data-searchable="false">
-                          <%= select_tag :inventory_lot_id,
-                                         options_for_select(
-                                           [[t('admin.branch_lifecycle.inventory_lot_choose'), ''], *lot_options],
-                                           @adjustment_inventory_id == inventory.id ? @adjustment_lot_id : nil
-                                         ),
-                                         id: "inventory-lot-#{inventory.id}",
-                                         class: 'w-44 rounded-xl border border-slate-200 p-2',
-                                         aria: { required: true,
-                                                 invalid: @adjustment_inventory_id == inventory.id &&
-                                                          @adjustment_lot_error.present?,
-                                                 describedby: "inventory-lot-error-#{inventory.id}" } %>
-                        </div>
-                        <% if @adjustment_inventory_id == inventory.id && @adjustment_lot_error.present? %>
-                          <p id="inventory-lot-error-<%= inventory.id %>" role="alert"
-                             class="mt-1 max-w-44 text-xs text-rose-700">
-                            <%= t('admin.branch_lifecycle.inventory_lot_label') %>
-                            <%= @adjustment_lot_error %>
-                          </p>
-                        <% end %>
-                      </div>
-                    <% end %>
-                    <div class="catalog-field">
-                      <%= form.label :quantity, t('admin.inventory.quantity'), class: 'sr-only' %>
-                      <%= form.number_field :quantity, step: 0.001,
-                                            value: (@adjustment_inventory_id == inventory.id ? @adjustment_value : nil),
-                                            placeholder: t('admin.inventory.quantity'),
-                                            class: 'w-32 rounded-xl border border-slate-200 p-2',
-                                            aria: { invalid: @adjustment_inventory_id == inventory.id &&
-                                                             @adjustment_error.present?,
-                                                    describedby: "inventory-quantity-error-#{inventory.id}" } %>
-                      <% if @adjustment_inventory_id == inventory.id && @adjustment_error.present? %>
-                        <p id="inventory-quantity-error-<%= inventory.id %>" role="alert"
-                           class="mt-1 max-w-40 text-xs text-rose-700">
-                          <%= t('admin.inventory.quantity') %> <%= @adjustment_error %>
-                        </p>
-                      <% end %>
-                    </div>
-                    <%= form.submit t('admin.inventory.adjust'),
-                                    class: 'catalog-button catalog-button-primary' %>
-                  <% end %>
-                <% end %>
-              <% end %>
-              <% (@recent_movements_by_inventory[inventory.id] || []).each do |movement| %>
-                <p class="mt-1 text-xs text-slate-500"><%= movement.kind %>: <%= movement.quantity %></p>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-    <% if @inventories.empty? %>
-      <p class="p-6 text-sm text-slate-600"><%= t('admin.branch_lifecycle.inventory_empty') %></p>
+        <%= link_to t('admin.inventory.actions.clear'), admin_branch_inventories_path(@branch), class: 'text-xs font-semibold text-emerald-700 hover:underline' %>
+      </div>
     <% end %>
   </section>
+
+  <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="branch-inventory-results">
+    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-5 py-4">
+      <h2 id="branch-inventory-results" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.inventory.results', count: @total_count) %></h2>
+      <span class="text-xs text-slate-500"><%= t('admin.inventory.page', current: @current_page, total: @total_pages) %></span>
+    </div>
+    <% if @inventories.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-[850px] w-full text-left text-sm">
+          <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500"><tr>
+            <% %w[product stock min_stock max_stock status actions].each do |key| %>
+              <th scope="col" class="px-5 py-3 font-bold"><%= t("admin.inventory.columns.#{key}") %></th>
+            <% end %>
+          </tr></thead>
+          <tbody class="divide-y divide-slate-100">
+            <% @inventories.each do |inventory| %>
+              <% stock_status = inventory.stock.zero? ? 'out' : (inventory.low_stock? ? 'low' : 'available') %>
+              <tr class="align-top hover:bg-slate-50/70">
+                <td class="px-5 py-4">
+                  <span class="block font-semibold text-slate-900"><%= inventory.product.name %></span>
+                  <span class="mt-1 block text-xs text-slate-500"><%= inventory.product.code %> · <%= t("admin.inventory.tracking_modes.#{inventory.product.tracking_mode}") %></span>
+                </td>
+                <td class="px-5 py-4 font-semibold tabular-nums text-slate-900"><%= inventory.stock %></td>
+                <td class="px-5 py-4 tabular-nums text-slate-600"><%= inventory.min_stock %></td>
+                <td class="px-5 py-4 tabular-nums text-slate-600"><%= inventory.max_stock || '—' %></td>
+                <td class="px-5 py-4">
+                  <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= { 'out' => 'bg-rose-50 text-rose-700', 'low' => 'bg-amber-50 text-amber-800', 'available' => 'bg-emerald-50 text-emerald-800' }.fetch(stock_status) %>"><%= t("admin.inventory.stock_statuses.#{stock_status}") %></span>
+                </td>
+                <td class="min-w-[270px] px-5 py-4">
+                  <div class="flex flex-wrap items-center gap-3">
+                    <%= link_to t('admin.purchases.lot_traceability'),
+                                admin_branch_inventory_inventory_lots_path(@branch, inventory),
+                                class: 'font-semibold text-emerald-700 hover:underline' %>
+                    <% if @can_manage && !@branch.closed? && !@branch.suspended? %>
+                      <details class="group" <%= 'open' if @threshold_inventory_id == inventory.id %>>
+                        <summary class="cursor-pointer text-xs font-semibold text-emerald-700 underline"><%= t('admin.inventory.actions.thresholds') %></summary>
+                        <%= form_with url: admin_branch_inventory_path(@branch, inventory), method: :patch,
+                                      scope: :inventory, html: { novalidate: true },
+                                      class: 'mt-3 grid gap-2 rounded-xl border border-slate-200 bg-white p-3' do |form| %>
+                          <% %i[min_stock max_stock].each do |field| %>
+                            <div>
+                              <%= form.label field, t("admin.inventory.#{field}"), class: 'mb-1 block text-xs font-semibold text-slate-600' %>
+                              <%= form.number_field field, value: inventory.public_send(field), step: 0.001,
+                                                    class: 'w-full rounded-lg border border-slate-300 p-2 text-sm' %>
+                              <% if @threshold_inventory_id == inventory.id && @inventory.errors[field].any? %>
+                                <p role="alert" class="mt-1 text-xs text-rose-700"><%= t("admin.inventory.#{field}") %> <%= @inventory.errors[field].join(', ') %></p>
+                              <% end %>
+                            </div>
+                          <% end %>
+                          <%= form.submit t('admin.inventory.actions.save'), class: 'catalog-button catalog-button-primary justify-self-start' %>
+                        <% end %>
+                      </details>
+                    <% end %>
+                  </div>
+                  <% if @can_adjust && !@branch.closed? %>
+                    <% if inventory.product.tracking_serial? %>
+                      <p class="mt-2 max-w-xs text-xs text-amber-800"><%= t('admin.branch_lifecycle.serial_adjustment_notice') %></p>
+                    <% else %>
+                      <details class="group mt-2" <%= 'open' if @adjustment_inventory_id == inventory.id %>>
+                        <summary class="cursor-pointer text-xs font-semibold text-emerald-700 underline"><%= t('admin.inventory.adjust') %></summary>
+                        <%= form_with url: adjust_admin_branch_inventory_path(@branch, inventory),
+                                      html: { novalidate: true },
+                                      class: 'mt-3 grid gap-2 rounded-xl border border-slate-200 bg-white p-3' do |form| %>
+                          <% if inventory.product.tracking_lot? || inventory.inventory_lots.any? %>
+                            <div>
+                              <%= label_tag "inventory-lot-#{inventory.id}", branch_required_label(t('admin.branch_lifecycle.inventory_lot_label')),
+                                            class: 'mb-1 block text-xs font-semibold' %>
+                              <% lots = inventory.inventory_lots.reject(&:quarantined?).sort_by(&:code) %>
+                              <%= select_tag :inventory_lot_id,
+                                             options_for_select([[t('admin.branch_lifecycle.inventory_lot_choose'), ''], *lots.map { |lot| ["#{lot.code} · #{lot.quantity}", lot.id] }],
+                                                                @adjustment_inventory_id == inventory.id ? @adjustment_lot_id : nil),
+                                             id: "inventory-lot-#{inventory.id}",
+                                             class: 'w-full rounded-lg border border-slate-300 p-2 text-sm',
+                                             aria: { invalid: @adjustment_inventory_id == inventory.id && @adjustment_lot_error.present?,
+                                                     describedby: "inventory-lot-error-#{inventory.id}" } %>
+                              <% if @adjustment_inventory_id == inventory.id && @adjustment_lot_error.present? %>
+                                <p id="inventory-lot-error-<%= inventory.id %>" role="alert" class="mt-1 text-xs text-rose-700"><%= t('admin.branch_lifecycle.inventory_lot_label') %> <%= @adjustment_lot_error %></p>
+                              <% end %>
+                            </div>
+                          <% end %>
+                          <div>
+                            <%= form.label :quantity, t('admin.inventory.quantity'), class: 'mb-1 block text-xs font-semibold text-slate-700' %>
+                            <%= form.number_field :quantity, step: 0.001,
+                                                  value: @adjustment_inventory_id == inventory.id ? @adjustment_value : nil,
+                                                  placeholder: t('admin.inventory.quantity'),
+                                                  class: 'w-full rounded-lg border border-slate-300 p-2 text-sm',
+                                                  aria: { invalid: @adjustment_inventory_id == inventory.id && @adjustment_error.present?,
+                                                          describedby: "inventory-quantity-error-#{inventory.id}" } %>
+                            <% if @adjustment_inventory_id == inventory.id && @adjustment_error.present? %>
+                              <p id="inventory-quantity-error-<%= inventory.id %>" role="alert" class="mt-1 text-xs text-rose-700"><%= t('admin.inventory.quantity') %> <%= @adjustment_error %></p>
+                            <% end %>
+                          </div>
+                          <div>
+                            <%= label_tag "inventory-reference-#{inventory.id}", t('admin.inventory.reference'), class: 'mb-1 block text-xs font-semibold text-slate-700' %>
+                            <%= text_field_tag :reference, @adjustment_inventory_id == inventory.id ? @adjustment_reference : nil,
+                                               id: "inventory-reference-#{inventory.id}", maxlength: 100,
+                                               class: 'w-full rounded-lg border border-slate-300 p-2 text-sm' %>
+                          </div>
+                          <%= form.submit t('admin.inventory.adjust'), class: 'catalog-button catalog-button-primary justify-self-start' %>
+                        <% end %>
+                      </details>
+                    <% end %>
+                  <% end %>
+                  <% recent = @recent_movements_by_inventory.fetch(inventory.id, []) %>
+                  <% if recent.any? %>
+                    <details class="group mt-3 text-xs text-slate-600">
+                      <summary class="cursor-pointer font-semibold"><%= t('admin.inventory.movements') %> (<%= recent.size %>)</summary>
+                      <ul class="mt-2 space-y-1">
+                        <% recent.each do |movement| %>
+                          <li><%= t("admin.inventory.movement_kinds.#{movement.kind}", default: movement.kind.humanize) %>: <span class="tabular-nums"><%= movement.quantity %></span></li>
+                        <% end %>
+                      </ul>
+                    </details>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="px-6 py-12 text-center">
+        <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.inventory.empty.title') %></h3>
+        <p class="mt-2 text-sm text-slate-600"><%= t('admin.branch_lifecycle.inventory_empty') %></p>
+        <%= link_to t('admin.inventory.actions.clear'), admin_branch_inventories_path(@branch), class: 'mt-4 inline-flex font-semibold text-emerald-700 hover:underline' %>
+      </div>
+    <% end %>
+  </section>
+  <%= render 'admin/shared/table_pagination', table_key: 'branch_inventories' %>
 </div>

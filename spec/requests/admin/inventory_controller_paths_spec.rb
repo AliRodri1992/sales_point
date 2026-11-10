@@ -55,7 +55,8 @@ RSpec.describe 'Inventory administration controller paths', type: :request do
     post admin_branch_inventories_path(branch), params: {
       inventory: { product_id: product.id, min_stock: 2 }
     }
-    expect(response).to redirect_to(admin_branch_inventories_path(branch))
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include('inventory-product-id-error')
     expect(Inventory.where(branch:, product:).count).to eq(1)
   end
 
@@ -80,7 +81,8 @@ RSpec.describe 'Inventory administration controller paths', type: :request do
   it 'rejects invalid adjustment quantities' do
     stock = Inventory.create!(organization:, branch:, product:, stock: 5, min_stock: 1)
     post adjust_admin_branch_inventory_path(branch, stock), params: { quantity: 'invalid' }
-    expect(response).to redirect_to(admin_branch_inventories_path(branch))
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include("inventory-quantity-error-#{stock.id}")
   end
 
   it 'blocks inventory in another organization branch' do

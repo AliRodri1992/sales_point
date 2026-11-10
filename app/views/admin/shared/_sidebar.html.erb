@@ -73,6 +73,16 @@
       </p>
 
       <div class="space-y-1">
+        <% if current_organization && (current_user.admin? || current_user.permission?('inventory.access') || current_user.permission?('inventory.view')) %>
+          <%= link_to admin_inventory_overview_path,
+                      class: sidebar_link_classes('inventory_overview'),
+                      data: { tooltip: t('admin.shared.sidebar.inventory') },
+                      aria: { label: t('admin.shared.sidebar.inventory'),
+                              current: sidebar_item_active?('inventory_overview') ? 'page' : 'false' } do %>
+            <%= sidebar_navigation_icon(:inventory_overview, class_name: 'size-5') %>
+            <span class="sidebar-label"><%= t('admin.shared.sidebar.inventory') %></span>
+          <% end %>
+        <% end %>
 <% if current_organization && (current_user.admin? || current_user.permission?('purchases.view')) %>
           <a href="<%= admin_purchase_orders_path %>" data-tooltip="<%= t('admin.purchases.orders') %>" aria-label="<%= t('admin.purchases.orders') %>"
              aria-current="<%= sidebar_item_active?('purchase_orders') ? 'page' : 'false' %>"

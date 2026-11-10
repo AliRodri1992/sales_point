@@ -3,6 +3,7 @@ ko:
     breadcrumbs:
       controllers:
         general_settings: "일반 설정"
+        inventory_overview: "재고 관리"
         inventories: "재고 관리"
         inventory_lots: "재고 로트"
         organization_contacts: "조직 연락처"

@@ -122,6 +122,9 @@ application.register("supplier-page-size", SupplierPageSizeController)
 import TablePageSizeController from "./table_page_size_controller"
 application.register("table-page-size", TablePageSizeController)
 
+import InventorySearchController from "./inventory_search_controller"
+application.register("inventory-search", InventorySearchController)
+
 import GeneralSettingsPreviewController from "./general_settings_preview_controller"
 application.register("general-settings-preview", GeneralSettingsPreviewController)
 

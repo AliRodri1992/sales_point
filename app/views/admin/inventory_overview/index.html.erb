@@ -1,0 +1,171 @@
+<% content_for :title, t('admin.inventory.overview_title') %>
+<div class="mx-auto max-w-[1480px] space-y-6 pb-10">
+  <header class="flex flex-wrap items-end justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+    <div class="flex items-start gap-4">
+      <span class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
+        <%= delta_icon('cube', class: 'size-7') %>
+      </span>
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[.16em] text-emerald-700"><%= t('admin.inventory.eyebrow') %></p>
+        <h1 class="mt-1 font-jakarta text-2xl font-extrabold text-slate-900 sm:text-3xl"><%= t('admin.inventory.overview_title') %></h1>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600"><%= t('admin.inventory.overview_description') %></p>
+      </div>
+    </div>
+    <%= link_to admin_branches_path, class: 'catalog-button inline-flex items-center gap-2' do %>
+      <%= delta_icon('building-storefront', class: 'size-4') %>
+      <%= t('admin.inventory.actions.branches') %>
+    <% end %>
+  </header>
+
+  <section aria-label="<%= t('admin.inventory.metrics.title') %>" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <% [
+      ['records', @summary[:records], 'cube', 'slate'],
+      ['stock', number_with_delimiter(@summary[:stock]), 'chart-bar', 'emerald'],
+      ['low', @summary[:low], 'adjustments-horizontal', 'amber'],
+      ['out', @summary[:out], 'archive-box', 'rose']
+    ].each do |key, value, icon_name, tone| %>
+      <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-3">
+          <p class="text-sm font-semibold text-slate-600"><%= t("admin.inventory.metrics.#{key}") %></p>
+          <span class="flex size-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600">
+            <%= delta_icon(icon_name, class: 'size-5') %>
+          </span>
+        </div>
+        <p class="mt-3 font-jakarta text-3xl font-bold tabular-nums text-slate-900"><%= value %></p>
+      </article>
+    <% end %>
+  </section>
+
+  <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6" aria-labelledby="inventory-filter-title">
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+      <div>
+        <h2 id="inventory-filter-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.inventory.filters.title') %></h2>
+        <p class="mt-1 text-xs text-slate-500"><%= t('admin.inventory.filters.hint') %></p>
+      </div>
+      <% if @filters.except('sort').values.any?(&:present?) %>
+        <%= link_to t('admin.inventory.actions.clear'), admin_inventory_overview_path, class: 'text-sm font-semibold text-emerald-700 hover:underline' %>
+      <% end %>
+    </div>
+    <%= form_with url: admin_inventory_overview_path, method: :get,
+                  data: { controller: 'inventory-search' },
+                  class: 'space-y-4' do %>
+      <div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(180px,230px)_auto] md:items-end">
+        <div>
+          <label for="inventory-search" class="mb-1.5 block text-sm font-semibold text-slate-700"><%= t('admin.inventory.filters.search') %></label>
+          <%= search_field_tag :search, @filters['search'], id: 'inventory-search',
+                               maxlength: 120, autocomplete: 'off',
+                               placeholder: t('admin.inventory.filters.search_placeholder'),
+                               data: { action: 'input->inventory-search#schedule compositionstart->inventory-search#compositionStart compositionend->inventory-search#compositionEnd' },
+                               class: 'w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-100' %>
+        </div>
+        <div>
+          <label for="inventory-branch" class="mb-1.5 block text-sm font-semibold text-slate-700"><%= t('admin.inventory.filters.branch') %></label>
+          <div data-controller="delta-select" data-searchable="true">
+            <%= select_tag :branch_id, options_for_select([[t('admin.inventory.filters.all_branches'), ''], *@branches.map { |branch| [branch.name, branch.id] }], @filters['branch_id']),
+                           id: 'inventory-branch', data: { action: 'change->inventory-search#change' },
+                           class: 'w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm' %>
+          </div>
+        </div>
+        <button type="submit" class="catalog-button catalog-button-primary inline-flex h-10 items-center justify-center gap-2 px-4">
+          <%= delta_icon('magnifying-glass', class: 'size-4') %>
+          <%= t('admin.inventory.actions.apply') %>
+        </button>
+      </div>
+      <details class="group rounded-xl border border-slate-200 bg-slate-50/70 p-4" <%= 'open' if @filters['status'].present? || @filters['tracking'].present? || @filters['sort'] != 'product' %>>
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+          <span class="inline-flex items-center gap-2"><%= delta_icon('adjustments-horizontal', class: 'size-4') %><%= t('admin.inventory.filters.advanced') %></span>
+          <%= delta_icon('arrow-down', class: 'size-4 transition group-open:rotate-180') %>
+        </summary>
+        <div class="mt-4 grid gap-3 md:grid-cols-3">
+          <div>
+            <label for="inventory-status" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.inventory.filters.status') %></label>
+            <%= select_tag :status, options_for_select([[t('admin.inventory.filters.any_status'), ''], *%w[available low out].map { |value| [t("admin.inventory.stock_statuses.#{value}"), value] }], @filters['status']),
+                           id: 'inventory-status', data: { action: 'change->inventory-search#change' },
+                           class: 'w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm' %>
+          </div>
+          <div>
+            <label for="inventory-tracking" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.inventory.filters.tracking') %></label>
+            <%= select_tag :tracking, options_for_select([[t('admin.inventory.filters.any_tracking'), ''], *%w[none lot serial].map { |value| [t("admin.inventory.tracking_modes.#{value}"), value] }], @filters['tracking']),
+                           id: 'inventory-tracking', data: { action: 'change->inventory-search#change' },
+                           class: 'w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm' %>
+          </div>
+          <div>
+            <label for="inventory-sort" class="mb-1 block text-xs font-semibold text-slate-600"><%= t('admin.inventory.filters.sort') %></label>
+            <%= select_tag :sort, options_for_select(%w[product branch stock_asc stock_desc updated].map { |value| [t("admin.inventory.sorts.#{value}"), value] }, @filters['sort']),
+                           id: 'inventory-sort', data: { action: 'change->inventory-search#change' },
+                           class: 'w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm' %>
+          </div>
+        </div>
+      </details>
+    <% end %>
+    <% active_filters = @filters.except('sort').select { |_, value| value.present? } %>
+    <% if active_filters.any? %>
+      <div class="mt-4 flex flex-wrap items-center gap-2" aria-label="<%= t('admin.inventory.filters.active') %>">
+        <span class="text-xs font-semibold text-slate-500"><%= t('admin.inventory.filters.active') %>:</span>
+        <% active_filters.each do |key, value| %>
+          <% label = case key
+                     when 'branch_id' then @branches.find { |branch| branch.id.to_s == value }&.name
+                     when 'status' then t("admin.inventory.stock_statuses.#{value}")
+                     when 'tracking' then t("admin.inventory.tracking_modes.#{value}")
+                     else value
+                     end %>
+          <%= link_to admin_inventory_overview_path(request.query_parameters.except(key, 'page')),
+                      class: 'inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-100',
+                      aria: { label: t('admin.inventory.filters.remove', filter: t("admin.inventory.filters.#{key == 'branch_id' ? 'branch' : key}")) } do %>
+            <%= label %><span aria-hidden="true">×</span>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-labelledby="inventory-results-title">
+    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-5 py-4">
+      <h2 id="inventory-results-title" class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.inventory.results', count: @total_count) %></h2>
+      <span class="text-xs text-slate-500"><%= t('admin.inventory.page', current: @current_page, total: @total_pages) %></span>
+    </div>
+    <% if @inventories.any? %>
+      <div class="overflow-x-auto">
+        <table class="min-w-[860px] w-full text-left text-sm">
+          <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <tr>
+              <% %w[product branch stock min_stock max_stock status actions].each do |key| %>
+                <th scope="col" class="px-5 py-3 font-bold"><%= t("admin.inventory.columns.#{key}") %></th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <% @inventories.each do |inventory| %>
+              <% stock_status = inventory.stock.zero? ? 'out' : (inventory.low_stock? ? 'low' : 'available') %>
+              <tr class="transition hover:bg-slate-50/80">
+                <td class="px-5 py-4">
+                  <span class="block font-semibold text-slate-900"><%= inventory.product.name %></span>
+                  <span class="mt-1 block text-xs text-slate-500"><%= inventory.product.code %> · <%= t("admin.inventory.tracking_modes.#{inventory.product.tracking_mode}") %></span>
+                </td>
+                <td class="px-5 py-4 text-slate-600"><%= inventory.branch.name %></td>
+                <td class="px-5 py-4 font-semibold tabular-nums text-slate-900"><%= number_with_delimiter(inventory.stock) %></td>
+                <td class="px-5 py-4 tabular-nums text-slate-600"><%= inventory.min_stock %></td>
+                <td class="px-5 py-4 tabular-nums text-slate-600"><%= inventory.max_stock || '—' %></td>
+                <td class="px-5 py-4">
+                  <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold <%= { 'out' => 'bg-rose-50 text-rose-700', 'low' => 'bg-amber-50 text-amber-800', 'available' => 'bg-emerald-50 text-emerald-800' }.fetch(stock_status) %>"><%= t("admin.inventory.stock_statuses.#{stock_status}") %></span>
+                </td>
+                <td class="px-5 py-4">
+                  <%= link_to t('admin.inventory.actions.manage'), admin_branch_inventories_path(inventory.branch),
+                              class: 'font-semibold text-emerald-700 hover:underline' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="flex flex-col items-center gap-3 px-6 py-14 text-center">
+        <span class="rounded-2xl bg-slate-50 p-4 text-slate-500"><%= delta_icon('archive-box', class: 'size-8') %></span>
+        <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t('admin.inventory.empty.title') %></h3>
+        <p class="max-w-lg text-sm text-slate-600"><%= t('admin.inventory.empty.description') %></p>
+        <%= link_to t('admin.inventory.actions.clear'), admin_inventory_overview_path, class: 'catalog-button' %>
+      </div>
+    <% end %>
+  </section>
+  <%= render 'admin/shared/table_pagination', table_key: 'inventories' %>
+</div>

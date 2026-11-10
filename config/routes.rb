@@ -59,6 +59,7 @@ Rails.application.routes.draw do
       member { get :quote }
     end
     resources :clients
+    get 'inventory', to: 'inventory_overview#index', as: :inventory_overview
     resources :demo_requests, only: %i[index show update]
     resources :branches, only: %i[index show new create edit update destroy] do
       collection { get :postal_suggestions }
