@@ -18,6 +18,8 @@ on:
       - 'app/views/admin/shared/_language_selector*'
       - 'app/components/authentication/language_selector_component.*'
       - 'app/javascript/controllers/language_selector_controller.js'
+      - 'app/javascript/controllers/languages_search_controller.js'
+      - 'app/assets/stylesheets/components/languages_workspace.css'
       - 'config/initializers/i18n_database_backend.rb'
       - 'config/locales/*.yml'
       - 'lib/tasks/translations.rake'
