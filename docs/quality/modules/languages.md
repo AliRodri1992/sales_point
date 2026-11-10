@@ -254,3 +254,38 @@ El flujo `.github/workflows/languages-ci.yml` ahora escucha también cambios en 
 - **Aceptación visual:** pruebas automatizadas Chrome a 320, 390, 768, 1280 y 1440 px; la inspección visual humana con zoom al 200 %, contraste real, teclado completo y lector de pantalla permanece **PENDIENTE**.
 
 **Estado:** los hallazgos IDI-030 a IDI-036 tienen adecuación de código y cobertura focal verificada en el SHA indicado; **NO CERRADO FORMALMENTE** hasta que pasen las puertas restantes en el SHA final. Sin fusiones.
+
+
+## Reauditoría posterior a IDI-030–036 — 2026-11-10
+
+**Rama inspeccionada:** `feature/fixes`, commit de partida `db8e44d07df1d95d7e1d9d8054ec014e155b1404` y sus dependencias del catálogo. **Método:** revisión del código fuente ERB/Ruby/Stimulus, políticas, asociaciones/soft-delete, specs y resultados GitHub Actions. Se consultó el contenido textual de la pestaña abierta en `http://localhost:3000/admin/languages` (3 idiomas), sin interactuar con controles ni efectuar mediciones de contraste/zoom o lector de pantalla. Procedimientos AI Dev Suite `impeccable-audit` y `ponytail-engineering`; **no se ejecutó el CLI externo de Impeccable**.
+
+### Revalidación de hallazgos anteriores
+
+- **IDI-030:** `_row_actions.html.erb` conserva `request.query_parameters` en DELETE; el listado se reconstruye con filtros. La paginación limita internamente `@current_page` cuando el resultado disminuye.
+- **IDI-031:** enlaces de orden y paginación usan `frame: '_top'`, de modo que la navegación mantiene los controles de filtro y la URL sincronizados.
+- **IDI-032:** `modal_controller.js` ya protege los cierres manuales y clic exterior mediante `isOpen`; la prueba Chrome incluye foco tras Escape/Cancelar.
+- **IDI-033:** desarrollo usa caché Redis compartida; hay prueba con dos clientes Redis, **pero no** ensayo operativo entre procesos Rails/Sidekiq separados.
+- **IDI-034:** importación `Translate.load_from_file` no modifica registros existentes por defecto; seeds preservan valores; `OVERWRITE=1` habilita reemplazo y `DRY_RUN=1` evita escritura.
+- **IDI-035:** el selector «Mostrar» se omite para un catálogo global de hasta cinco idiomas (salvo necesidad de varias páginas); la condición actual no considera si un filtro reduce el resultado a pocos registros.
+- **IDI-036:** cobertura añadida de permisos, validaciones, filtros, navegación, cierre/foco y anchos 320/390/768/1280/1440. Se mantienen sin validar manualmente lector de pantalla, zoom 200% y contraste.
+- **IDI-029:** el título mantiene el subtítulo y botón «Nuevo idioma» en `.languages-description-row`, **misma fila en escritorio y fuera del panel de filtros**. No rediseñar esa disposición salvo nuevo requisito.
+
+### Hallazgos nuevos
+
+| ID | Prioridad | Tipo y evidencia de código | Riesgo / adecuación recomendada | Estado |
+|---|---|---|---|---|
+| **IDI-037** | **P2** | **Desincronización reproducible por lógica:** `db:seed` carga las claves YAML a `translates`. `i18n_database_backend.rb` da prioridad a PostgreSQL sobre YAML. Después, `db/seeds.rb#persist_translation` y `Translate.load_from_file(overwrite: false)` dejan intactos **todos** los valores existentes, incluso los que son simples copias de un YAML anterior. | Un cambio de traducción distribuido por código no aparecerá para las claves existentes al sembrar/importar normalmente. Diferenciar traducción base vs. override personalizado (procedencia/hash/estado) y sincronizar solo las bases no personalizadas, conservando overrides. Añadir integración que cambie YAML y verifique I18n tras `db:seed` y recarga. | **ABIERTO, confirmado por rutas de código; requiere test E2E** |
+| **IDI-038** | **P3** | `_list.html.erb` muestra paginación/selector si `unfiltered_count > TablePagePreference::OPTIONS.min` aunque `total_count` filtrado sea 1. | Un filtro muy restrictivo sigue mostrando «Mostrar 5/10/15/25/50» sin aportar utilidad. Ajustar visibilidad al resultado efectivo sin perder preferencias. | **ABIERTO (UX)** |
+| **IDI-039** | **P2** | `Admin::LanguagesListing#apply_sorting` ordena únicamente por `name`, `code` o `status`. `status` tiene muchos empates, y los nombres también pueden repetirse; no hay desempate estable. | PostgreSQL no garantiza orden relativo de filas empatadas; al paginar pueden cambiar posiciones. Añadir desempate `id` y specs con registros del mismo estado/nombre en varias páginas. | **ABIERTO, riesgo confirmado de orden no determinista** |
+| **IDI-040** | **P2** | `Admin::LanguagesController#destroy` usa `update(deleted_at: Time.current)` y no `destroy`, por lo que `Language.has_many :translates, dependent: :destroy` no se ejecuta. `languages.code` tiene índice único parcial en registros activos y `translates` referencia `language_id`. | Retirar y registrar otra vez el mismo código crea un nuevo ID; las traducciones del registro antiguo no se reasignan automáticamente. Definir conservación/restauración de traducciones y comportamiento de reactivación, y añadir pruebas de retiro/re-registro con overrides. **No realizar borrado masivo sin política de retención.** | **ABIERTO, comportamiento de lifecycle no cubierto** |
+| **IDI-041** | **P2** | `index.html.erb` genera `hidden_field_tag :per_page` (id `per_page`) cuando hay parámetro explícito; `_list.html.erb` también genera `select_tag :per_page` (mismo id) cuando hay paginación. | IDs HTML duplicados en ese escenario; el `label for="per_page"` puede apuntar al campo oculto en lugar del selector, dificultando accesibilidad y automatización. Asignar id exclusivo al campo oculto; probar `per_page=5` con >5 idiomas. | **ABIERTO, confirmado por ERB** |
+| **IDI-042** | **P3** | `LanguagesListing#paginate` ajusta `@current_page` cuando la última fila se retira, pero DELETE solo actualiza `languages_list` por Turbo Stream, sin actualizar `page` en la URL. | La pantalla puede mostrar la página anterior correctamente mientras la barra de dirección conserva una página ya fuera de rango. Ajustar historial con URL canónica o redireccionar si fue necesario reducir la página; prueba Chrome de borrado de la última fila de la última página. | **ABIERTO** |
+
+### Evidencia CI y límites
+
+- [Languages CI #42812845652](https://github.com/AliRodri1992/sales_point/actions/runs/42812845652) sobre commit `871f371006c7ded8043b9335c8e9c34335a520bd`: **110 ejemplos RSpec, 0 fallos**, 3 jobs **APROBADOS** (Chrome/request/model, RuboCop focal, integridad de locales). Comparación hasta `41afb15dbcb4c9b136a9888db970813a1669579a`: **17 archivos modificados, ninguno de Idiomas o sus dependencias directas**. No extrapolar automáticamente a un HEAD futuro.
+- [CI global #42813710970](https://github.com/AliRodri1992/sales_point/actions/runs/42813710970), commit `db8e44d07df1d95d7e1d9d8054ec014e155b1404`: **NO APROBADO**. RuboCop: 17 infracciones en archivos de Productos; seguridad: Brakeman sin alertas, pero falla por error de parseo de `app/views/admin/products/_filters.html.erb:116`; RSpec/prepare: error de seeds de Productos por categoría inválida. Estos fallos **no acreditan un defecto de Idiomas**, pero impiden el cierre de la puerta global.
+- No se ejecutaron nuevas specs en esta reauditoría; las cifras citadas corresponden a ejecuciones verificadas de GitHub Actions. Tampoco se validó lector de pantalla o zoom 200 %, ni una sesión operativa web/Sidekiq real. No se modificaron modelos, vistas, migraciones ni datos durante la auditoría.
+
+**Estado de esta reauditoría: IMPLEMENTACIONES ANTERIORES REVALIDADAS EN CÓDIGO, SEIS HALLAZGOS NUEVOS ABIERTOS (IDI-037–042) Y ACEPTACIÓN GLOBAL PENDIENTE. NO CERRADO.**
