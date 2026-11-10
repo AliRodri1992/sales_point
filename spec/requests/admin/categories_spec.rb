@@ -373,7 +373,7 @@ RSpec.describe 'Admin::Categories', type: :request do
       ids = [1, 2].flat_map do |page_number|
         get admin_categories_path(sort: 'name', direction: 'asc', page: page_number)
         Nokogiri::HTML(response.body).css('table.categories-table tbody a.categories-name-link')
-                                .map { |link| link['href'].match(%r{/categories/(\\d+)})[1].to_i }
+                                .map { |link| link['href'].match(%r{/categories/(\d+)})[1].to_i }
       end
 
       expect(ids).to eq(categories.map(&:id).sort)
