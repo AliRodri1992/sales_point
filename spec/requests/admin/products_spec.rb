@@ -393,7 +393,7 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(chosen.name)
       expect(response.body).not_to include('Not matching item', 'Foreign catalog item')
-      expect(Nokogiri::HTML(response.body).at_css('details.products-filters__advanced')['open']).to be_present
+      expect(Nokogiri::HTML(response.body).at_css('details.products-filters__advanced').key?('open')).to be(true)
     end
 
     it 'shows only this organization categories in the advanced filters' do
@@ -425,7 +425,7 @@ RSpec.describe 'Admin::Products', type: :request do
                                          featured: 'false', tracking_mode: 'none' }
 
       document = Nokogiri::HTML(response.body)
-      expect(document.at_css('details.products-filters__advanced')['open']).to eq('open')
+      expect(document.at_css('details.products-filters__advanced').key?('open')).to be(true)
       chips = document.css('nav.products-filter-chips a.products-filter-chip')
       expect(chips.size).to eq(4)
       expect(chips.map(&:text).join).to include(category.name)
@@ -715,7 +715,7 @@ RSpec.describe 'Admin::Products', type: :request do
 
       expect(response).to have_http_status(:unprocessable_content)
       document = Nokogiri::HTML(response.body)
-      fields = document.css('#product-variants input[name$="[name]"]')
+      fields = document.css('#product-variants [data-nested-catalog-rows] input[name$="[name]"]')
       expect(fields.size).to eq(2)
       ids = fields.map { |field| field.attributes.fetch('aria-describedby').value }
       expect(ids).to all(be_present)
@@ -735,6 +735,7 @@ RSpec.describe 'Admin::Products', type: :request do
       product = create(:product, organization:)
       attributes = { name: 'Wholesale', code: 'WHS-QUO', currency: 'MXN',
                      status: 'active', customer_segment: 'wholesale' }
+      create(:currency, code: 'MXN')
       price_list = organization.price_lists.create!(attributes)
       query = { price_list_id: price_list.id, customer_segment: 'retail' }
       get quote_admin_product_path(product), params: query

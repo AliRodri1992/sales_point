@@ -106,7 +106,7 @@ RSpec.describe 'Commercial validation boundaries' do
     end
 
     it 'matches categories and minimum amounts, rejecting missing segments and unknown conditions' do
-      category = create(:category)
+      category = create(:category, organization: product.organization)
       product.update!(category:)
       offer.promotion_conditions.build(kind: 'category', category:)
       offer.promotion_conditions.build(kind: 'min_subtotal', amount: 150)

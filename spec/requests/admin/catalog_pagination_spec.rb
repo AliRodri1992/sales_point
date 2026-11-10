@@ -47,7 +47,8 @@ RSpec.describe 'Catalog pagination links', type: :request do
   it 'labels every products page link' do
     get admin_products_path(per_page: 5)
 
-    expect_pagination_labels(response.body, 'admin_products_list')
+    # Products paginate with full-page navigation so the visible URL keeps all filters.
+    expect_pagination_labels(response.body, '_top')
   end
 
   it 'marks the current categories page' do

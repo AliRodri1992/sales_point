@@ -220,6 +220,14 @@ El fallo de Clientes **bloquea la aceptación global**, pero no se atribuye a Pr
 
 **Aún pendientes para aceptación:** ejecución completa de RSpec, migraciones y seeds sin errores, Brakeman, RuboCop y traducciones en el SHA publicado; navegador real (formulario anidado, filtros, teclado, resoluciones 320/390/768/1440, zoom 200 %); revisión independiente. No se aplicó ningún cambio a la base de datos de desarrollo del usuario desde esta sesión.
 
+## Verificación focalizada de Productos — 2026-11-10
+
+La primera ejecución real de [Products CI #42817098840](https://github.com/AliRodri1992/sales_point/actions/runs/42817098840) inspeccionó 195 ejemplos de modelos, transacciones, controladores, servicios e integración. **190 aprobaron y 5 fallaron**: dos expectativas incorrectas del atributo HTML booleano `details[open]`, una selección de campos que incluía el contenido de un `template` de filas vacías, una moneda de prueba no creada y una categoría de otra organización usada por el spec de promociones. Las pruebas de reserva compartida de SKU, incluida la concurrencia entre dos inserciones, **pasaron**. La ejecución no llegó al paso de navegador porque los ejemplos anteriores fallaron.
+
+Se actualizaron las expectativas sin alterar el comportamiento correcto de producción: revisión de presencia real del atributo `open`, selector limitado a filas activas, creación explícita de MXN y uso de categoría perteneciente a la organización del producto. Se incorporó también el test de paginación al CI de Productos: su expectativa `admin_products_list` estaba obsoleta desde que los enlaces usan `_top` para mantener los filtros en la URL.
+
+**Estado:** correcciones de regresión publicadas; aceptación condicionada a repetir el CI focalizado completo, incluidas las pruebas de navegador en esta misma rama.
+
 ## Dictamen
 
 **IMPLEMENTADO EN CÓDIGO; VERIFICACIÓN PENDIENTE; NO CERRADO.**

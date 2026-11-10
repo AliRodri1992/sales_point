@@ -25,6 +25,7 @@ on:
       - 'spec/models/product*'
       - 'spec/services/products/**'
       - 'spec/requests/admin/product*'
+      - 'spec/requests/admin/catalog_pagination_spec.rb'
       - 'spec/controllers/concerns/admin/product*'
       - 'spec/features/products_quality_browser_spec.rb'
       - 'docs/quality/modules/products.md'
@@ -68,6 +69,7 @@ jobs:
             app/services/products \
             spec/models/product_spec.rb spec/models/product_sku_claim_spec.rb \
             spec/requests/admin/products_spec.rb spec/requests/admin/product_tenant_access_spec.rb \
+            spec/requests/admin/catalog_pagination_spec.rb \
             spec/controllers/concerns/admin/products_listing_spec.rb \
             spec/controllers/concerns/admin/products_lookup_spec.rb \
             spec/features/products_quality_browser_spec.rb
@@ -132,6 +134,7 @@ jobs:
             spec/models/product_spec.rb spec/models/product_sku_claim_spec.rb \
             spec/requests/admin/products_spec.rb \
             spec/requests/admin/product_tenant_access_spec.rb \
+            spec/requests/admin/catalog_pagination_spec.rb \
             spec/controllers/concerns/admin/products_listing_spec.rb \
             spec/controllers/concerns/admin/products_lookup_spec.rb \
             spec/services/products
