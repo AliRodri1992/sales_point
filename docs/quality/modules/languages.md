@@ -244,3 +244,13 @@ Se incorporó una prueba para `Translate.cache_revision` con **dos instancias in
 El flujo `.github/workflows/languages-ci.yml` ahora escucha también cambios en `modal_controller.js` y `config/environments/development.rb`, además de los archivos de Idiomas, para evitar regresiones inadvertidas.
 
 **Evidencia:** pruebas y nuevo flujo pendientes de ejecución sobre el commit que incluya estos dos cambios. El requisito de validación visual manual con lector de pantalla y zoom al 200 % permanece abierto.
+
+### Reauditoría tras implementación — evidencia del 10 de noviembre de 2026
+
+- **IDI-030/031/032/034/035/036:** cubiertos por nuevos casos de solicitud, navegador Chrome y modelo; el commit `132e7d5637f8732f6f696ec24cf7450ef95357f8` aprobó [Languages CI #42811652479](https://github.com/AliRodri1992/sales_point/actions/runs/42811652479) con **110 ejemplos, 0 fallos**, RuboCop focal e integridad de traducciones aprobados.
+- **IDI-033:** la ejecución anterior incluyó una prueba de dos clientes Redis independientes que comprueba la visibilidad de una revisión entre conexiones. Se mantiene **pendiente** prueba operativa entre dos procesos reales de aplicación/Sidekiq en el entorno local.
+- **Preparación de semillas:** el primer CI global señaló `Style/RedundantReturn` en `db/seeds.rb`, corregido en `c1dec6f2cffd8399e43c8ae85bfc85cccc993b44`. El workflow Languages CI incorpora ahora también `db/seeds.rb` y `config/environments/development.rb` en RuboCop focal para que no se repita este vacío de cobertura.
+- **CI global:** no se confunde éxito focal con aceptación global. Con anterioridad, la puerta general estuvo bloqueada por un test de rendimiento N+1 de Clientes; el resultado final del nuevo CI global debe verificarse por separado.
+- **Aceptación visual:** pruebas automatizadas Chrome a 320, 390, 768, 1280 y 1440 px; la inspección visual humana con zoom al 200 %, contraste real, teclado completo y lector de pantalla permanece **PENDIENTE**.
+
+**Estado:** los hallazgos IDI-030 a IDI-036 tienen adecuación de código y cobertura focal verificada en el SHA indicado; **NO CERRADO FORMALMENTE** hasta que pasen las puertas restantes en el SHA final. Sin fusiones.
