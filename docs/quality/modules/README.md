@@ -40,7 +40,7 @@ Consulta primero el [estándar de calidad modular](../module-quality-standard.md
 | Módulo | Ruta principal | Expediente |
 |---|---|---|
 | Compras | `/admin/purchase_requests`, `purchase_orders`, recepciones y devoluciones | [Purchases](purchases.md) |
-| Inventario | `/admin/branches/:branch_id/inventories` | [Inventario](inventory.md) |
+| Inventario | `/admin/inventory` y `/admin/branches/:branch_id/inventories` | [Inventario](inventory.md) |
 | Terminales | Acciones `add_terminal` y `change_terminal` en `/admin/branches/:id` | [Terminales](terminals.md) |
 | Cuentas por pagar | `/admin/account_payables` | [Cuentas por pagar](accounts-payable.md) |
 | Facturas de proveedores | `/admin/supplier_invoices` | [Facturas](supplier-invoices.md) |

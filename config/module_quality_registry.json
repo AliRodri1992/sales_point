@@ -100,7 +100,7 @@
     },
     {
       "slug": "inventory",
-      "entry_route": "/admin/branches/:branch_id/inventories",
+      "entry_route": "/admin/inventory",
       "kind": "module",
       "record": "docs/quality/modules/inventory.md"
     },
