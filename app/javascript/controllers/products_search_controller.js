@@ -1,19 +1,28 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Auto-submits the products search form as the user types, debounced,
-// so results update live without needing to press Enter or click Apply.
+// Debounced catalog search; the complete GET navigation keeps filters, sorting,
+// page size and browser history in sync with the address bar.
 export default class extends Controller {
   static values = { delay: { type: Number, default: 400 } }
 
   connect() {
-    this.timeoutId = null
+    this.composing = false
+  }
+
+  compositionStart() {
+    this.composing = true
+    clearTimeout(this.timeoutId)
+  }
+
+  compositionEnd() {
+    this.composing = false
+    this.debouncedSubmit()
   }
 
   debouncedSubmit() {
+    if (this.composing) return
     clearTimeout(this.timeoutId)
-    this.timeoutId = setTimeout(() => {
-      this.element.requestSubmit()
-    }, this.delayValue)
+    this.timeoutId = setTimeout(() => this.element.requestSubmit(), this.delayValue)
   }
 
   disconnect() {

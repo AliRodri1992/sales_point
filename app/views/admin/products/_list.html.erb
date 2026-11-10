@@ -22,13 +22,13 @@
         <thead>
           <tr class="border-y border-slate-100 text-xs text-slate-400">
             <th class="px-6 py-3 text-left font-medium">
-              <%= sort_link('products.code', t('admin.products.index.columns.code'), frame: 'admin_products_list') %>
+              <%= sort_link('products.code', t('admin.products.index.columns.code'), frame: '_top') %>
             </th>
             <th class="px-6 py-3 text-left font-medium">
-              <%= sort_link('products.name', t('admin.products.index.columns.name'), frame: 'admin_products_list') %>
+              <%= sort_link('products.name', t('admin.products.index.columns.name'), frame: '_top') %>
             </th>
             <th class="px-6 py-3 text-right font-medium">
-              <%= sort_link('products.price', t('admin.products.index.columns.price'), frame: 'admin_products_list') %>
+              <%= sort_link('products.price', t('admin.products.index.columns.price'), frame: '_top') %>
             </th>
             <th class="px-6 py-3 text-right font-medium">
               <%= t('admin.products.index.columns.stock') %>
@@ -126,7 +126,7 @@
                 class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500' %>
         </div>
         <div class="flex items-center gap-1">
-          <%= pagination_links(total_pages, frame: 'admin_products_list') if total_pages > 1 %>
+          <%= pagination_links(total_pages, frame: '_top') if total_pages > 1 %>
         </div>
       </div>
     <% end %>
@@ -134,11 +134,13 @@
     <div class="flex flex-col items-center gap-2 p-12 text-center">
       <%= delta_icon('cube', class: 'size-8 text-slate-300') %>
       <p class="text-sm font-semibold text-slate-500">
-        <%= t('admin.products.index.empty_title') %>
+        <%= t(request.query_parameters.slice('search', 'status', 'category_id', 'featured', 'tracking_mode', 'stock_status', 'min_price', 'max_price').values.any? { |value| value.present? && value != 'all' } ? 'admin.catalog_design.no_results' : 'admin.products.index.empty_title') %>
       </p>
-      <p class="text-xs text-slate-400">
-        <%= t('admin.products.index.empty_subtitle') %>
-      </p>
+      <p class="text-xs text-slate-400"><%= t('admin.products.index.empty_subtitle') %></p>
+      <% if request.query_parameters.slice('search', 'status', 'category_id', 'featured', 'tracking_mode', 'stock_status', 'min_price', 'max_price').values.any? { |value| value.present? && value != 'all' } %>
+        <%= link_to t('admin.catalog_design.product_clear_all'), admin_products_path,
+                    class: 'catalog-button mt-2', data: { turbo_frame: '_top' } %>
+      <% end %>
     </div>
   <% end %>
 </div>
