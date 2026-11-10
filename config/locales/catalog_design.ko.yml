@@ -189,7 +189,8 @@
         "product_filters_applied": "활성 필터 %{count}개",
         "product_active_filters": "활성 필터",
         "product_remove_filter": "%{filter} 필터 제거",
-        "product_clear_all": "모두 지우기"
+        "product_clear_all": "모두 지우기",
+        "product_filter_request_error": "결과를 새로고침할 수 없습니다. 다시 시도하거나 필터 적용을 눌러주세요."
       },
       "breadcrumbs": {
         "controllers": {

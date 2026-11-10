@@ -189,7 +189,8 @@
         "product_filters_applied": "%{count} filtros activos",
         "product_active_filters": "Filtros activos",
         "product_remove_filter": "Quitar filtro %{filter}",
-        "product_clear_all": "Limpiar todos"
+        "product_clear_all": "Limpiar todos",
+        "product_filter_request_error": "No se pudieron actualizar los resultados. Puedes volver a intentar o aplicar los filtros."
       },
       "breadcrumbs": {
         "controllers": {

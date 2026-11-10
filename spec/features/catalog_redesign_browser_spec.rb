@@ -96,6 +96,12 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     end
     expect(page.current_url).not_to include('category_id=')
     expect(page).to have_css('#admin_products_list', text: 'Catalog printer paper')
+
+    fill_in 'products_search', with: 'orange tea'
+    expect(page).to have_css('#admin_products_list', text: 'Catalog orange tea')
+    expect(page).to have_no_css('#admin_products_list', text: 'Catalog printer paper')
+    expect(page.current_url).to include('search=orange')
+    expect(page.evaluate_script('document.activeElement.id')).to eq('products_search')
   end
 
   scenario 'keeps branch and user pages usable on mobile and retains clear desktop navigation' do

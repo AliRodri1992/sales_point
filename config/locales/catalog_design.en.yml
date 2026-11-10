@@ -189,7 +189,8 @@
         "product_filters_applied": "%{count} active filters",
         "product_active_filters": "Active filters",
         "product_remove_filter": "Remove filter %{filter}",
-        "product_clear_all": "Clear all"
+        "product_clear_all": "Clear all",
+        "product_filter_request_error": "Results could not be refreshed. Try again or apply the filters."
       },
       "breadcrumbs": {
         "controllers": {
