@@ -109,7 +109,7 @@ RSpec.describe Translate, type: :model do
       allow(described_class).to receive(:column_exists?).with(:language_id).and_return(false)
       expect(described_class).to receive(:find_or_initialize_by)
         .with(key: 'save', locale: 'en').and_return(translation)
-      expect(translation).to receive(:update!).with(yaml_value: 'Save', value: 'Save')
+      expect(translation).to receive(:update!).with({ yaml_value: 'Save', value: 'Save' })
 
       described_class.load_from_file(file.path, 'en')
     ensure

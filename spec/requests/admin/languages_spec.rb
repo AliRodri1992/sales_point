@@ -393,8 +393,8 @@ RSpec.describe 'Admin::Languages', type: :request do
     it 'uses stable identifier order for tied statuses across pagination' do
       get admin_languages_path(sort: 'status', direction: 'asc', per_page: 5)
 
-      actual = Nokogiri::HTML(response.body).css('.languages-desktop-table tbody .languages-code')
-                               .map { |element| element.text.strip }
+      codes = Nokogiri::HTML(response.body).css('.languages-desktop-table tbody .languages-code')
+      actual = codes.map { |element| element.text.strip }
       expected = Language.not_deleted.order(status: :asc, id: :asc).limit(5).pluck(:code)
 
       expect(actual).to eq(expected)

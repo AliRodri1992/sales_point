@@ -556,6 +556,9 @@ SeedConsole.track('Idiomas', Language) do
     { code: 'es', name: 'Español', flag_iso: 'mx', status: 'active' },
     { code: 'ko', name: '한국어', flag_iso: 'kr', status: 'active' }
   ].each do |lang_attrs|
+    # Respect manually retired locales; seeds must never create a second ID.
+    next if Language.only_deleted.exists?(code: lang_attrs[:code])
+
     Language.find_or_create_by(code: lang_attrs[:code]) do |language|
       language.assign_attributes(lang_attrs)
     end

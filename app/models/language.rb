@@ -54,7 +54,7 @@ class Language < ApplicationRecord
   # Keeping the ID preserves its translations and references from other tables.
   def self.restore_retired(candidate)
     transaction do
-      archived = where(code: candidate.code).where.not(deleted_at: nil).order(:id).lock.first
+      archived = only_deleted.where(code: candidate.code).order(:id).lock.first
       next unless archived
 
       archived.assign_attributes(name: candidate.name, flag_iso: candidate.flag_iso,

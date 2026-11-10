@@ -77,7 +77,7 @@ class Translate < ApplicationRecord
   end
 
   def self.import_translation_entry(key, value, language, locale_code, options)
-    return if options[:dry_run] || value.blank? || value.is_a?(Hash)
+    return if options[:dry_run] || value.blank?
 
     lookup = column_exists?(:language_id) ? { key:, language: } : { key:, locale: locale_code }
     translation = find_or_initialize_by(**lookup)

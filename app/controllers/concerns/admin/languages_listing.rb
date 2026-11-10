@@ -11,6 +11,7 @@ module Admin
       @total_count = @languages.count
       @languages = apply_sorting(@languages)
       @languages = paginate(@languages)
+      @page_clamped = params[:page].present? && params[:page].to_i != @current_page
     end
 
     def filter_scope(scope)
@@ -33,8 +34,7 @@ module Admin
     end
 
     def paginate(scope)
-      requested_page = params[:page].to_s.to_i
-      page = [requested_page, 1].max
+      page = [params[:page].to_s.to_i, 1].max
       per_page = per_page_param
       @per_page = per_page
 
@@ -43,7 +43,6 @@ module Admin
       page = @total_pages if page > @total_pages
 
       @current_page = page
-      @page_clamped = params[:page].present? && requested_page != page
       scope.limit(per_page).offset((page - 1) * per_page)
     end
 
