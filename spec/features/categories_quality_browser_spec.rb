@@ -34,7 +34,6 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     expect(organization.categories.find_by!(code: 'browser_category').description).to eq('Browser verified description')
   end
 
-
   scenario 'synchronizes sort selectors after sorting by a table header' do
     create(:category, organization:, name: 'Groceries', code: 'groceries')
 

@@ -373,7 +373,6 @@ RSpec.describe 'Admin::Categories', type: :request do
       expect(document.css('.categories-mobile-card').map(&:text).join).to include('Daily hygiene essentials')
     end
 
-
     it 'shows descending name order as a removable sorting chip' do
       get admin_categories_path(sort: 'name', direction: 'desc')
 

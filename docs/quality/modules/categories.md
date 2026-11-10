@@ -219,3 +219,23 @@ Metodología: AI Dev Suite (impeccable-audit, ui-ux-pro-max y ponytail-engineeri
 - Nuevos escenarios request/Chrome cubren filtros, descripciones y tarjetas; se deben ejecutar en el SHA de aceptación.
 - Se mantienen pendientes la prueba de migración de datos históricos, validación de restricciones NOT VALID, CI global verde y revisión visual manual en 320, 390, 768 y 1440 px, zoom 200 %, teclado, es/en/ko y lector de pantalla.
 - Estado del módulo: IMPLEMENTADO Y EN REAUDITORÍA; NO CERRADO.
+
+## Reauditoría de diseño y navegación — segunda pasada (2026-11-09)
+
+**Método:** AI Dev Suite: impeccable-audit (jerarquía/estados), ui-ux-pro-max (sistema de componentes), ponytail-engineering (cambios acotados). Alcance: /admin/categories y sus contratos visibles; rama feature/fixes. No se utilizó Figma ni se modificaron datos o migraciones.
+
+| ID | Prioridad | Hallazgo confirmado por código | Corrección aplicada | Estado |
+|---|---|---|---|---|
+| CATEGORIES-020 | P2 | Ordenar nombre descendente dejaba el encabezado ordenado sin chip de filtro activo | Chip eliminable con dirección ascendente/descendente y conservación de los demás parámetros | Implementado; por verificar en nuevo CI |
+| CATEGORIES-021 | P2 | Los encabezados de tabla actualizaban resultados por Turbo Frame pero no los controles avanzados fuera del frame | Sincronización de selectores de orden/dirección tras turbo:frame-load; prueba Chrome añadida | Implementado; por verificar en nuevo CI |
+| CATEGORIES-022 | P2 | CTA en color --brand podía presentar contraste insuficiente con texto blanco; targets de acciones solo 40 px | Fondo --brand-on-white del sistema, targets de 44 px, foco visible, ajustes suaves de jerarquía y modales | Implementado; por revisar contraste de temas en navegador |
+| CATEGORIES-023 | P3 | Consultar dependía de identificar el icono de ojo; nombre sin enlace | El nombre también abre el detalle en modal, solo con permiso show?, en escritorio y móvil | Implementado; pruebas de request añadidas |
+| CATEGORIES-024 | P2 | Estado inválido vía URL producía cero coincidencias sin una etiqueta que explicara el filtro | El controlador ignora estados fuera de los enumerados, como se hace con columnas de orden; nueva prueba | Implementado; CI pendiente |
+
+### Comprobaciones y riesgos
+
+- Commit de implementación: 9c59dc8e909f29dc7aab3ad0a0d6e95b18fd2fe7. Nueve archivos alterados en un commit de refuerzo visual, estado de filtros, accesibilidad y pruebas.
+- Categories CI #42761545785: RuboCop encontró dos detalles de líneas vacías en las pruebas nuevas; se ajustaron en este commit. El job funcional todavía estaba en ejecución cuando se registró esta nota; consultar el resultado por SHA, no asumir éxito.
+- La ejecución anterior #42759712208 incluyó 98 ejemplos, con cuatro fallos fuera de Categorías: tres de Clientes y uno de paginación de Productos. Son contratos de otros módulos y no se borran de la suite para ocultar fallos.
+- SIGUE PENDIENTE: inspección renderizada 320/390/768/1440 y zoom 200 %, navegación real por teclado, lector de pantalla, es/en/ko, contraste de todos los temas, backfill de categorías históricas y validación de constraints NOT VALID.
+- Cierre de Categorías: NO CERRADO hasta verificar el SHA de aceptación con CI global y revisión visual independiente.
