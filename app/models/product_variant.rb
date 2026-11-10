@@ -2,6 +2,7 @@
 
 class ProductVariant < ApplicationRecord
   include CommercialTenant
+  include ProductSkuReservation
 
   belongs_to :product, inverse_of: :product_variants
   has_many :product_barcodes, dependent: :restrict_with_error

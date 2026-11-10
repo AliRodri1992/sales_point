@@ -19,6 +19,7 @@ class Product < ApplicationRecord
   has_one_attached :image
   include ProductCommercialCatalog
   include ProductCatalogIntegrity
+  include ProductSkuReservation
   include ProductImageValidation
 
   validates :code,

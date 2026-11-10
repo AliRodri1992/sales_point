@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_130200) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_160000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -1030,6 +1030,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_130200) do
     t.index ["organization_id"], name: "index_product_presentations_on_organization_id"
     t.index ["product_id"], name: "index_product_presentations_on_product_id"
     t.check_constraint "units > 0::numeric", name: "presentation_positive_units"
+  end
+
+  create_table "product_sku_claims", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.string "normalized_sku", limit: 50, null: false
+    t.string "owner_type", limit: 50, null: false
+    t.bigint "owner_id", null: false
+    t.datetime "deleted_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id", "normalized_sku"], name: "idx_product_sku_claim_unique", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["owner_type", "owner_id"], name: "idx_product_sku_claim_owner", unique: true, where: "(deleted_at IS NULL)"
+    t.index ["organization_id"], name: "index_product_sku_claims_on_organization_id"
   end
 
   create_table "product_variants", force: :cascade do |t|
@@ -2599,6 +2612,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_130200) do
   add_foreign_key "product_presentations", "organizations"
   add_foreign_key "product_presentations", "products"
   add_foreign_key "product_presentations", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
+  add_foreign_key "product_sku_claims", "organizations"
   add_foreign_key "product_variants", "organizations"
   add_foreign_key "product_variants", "products"
   add_foreign_key "product_variants", "products", column: ["organization_id", "product_id"], primary_key: ["organization_id", "id"]
