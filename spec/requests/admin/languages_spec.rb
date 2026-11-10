@@ -315,7 +315,7 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(document.at_css('.languages-actions-bar')).to be_nil
       expect(document.at_css('.languages-filters .languages-new-button')).to be_nil
       expect(document.css('.languages-new-button').size).to eq(1)
-      expect(row.closest('header').next_element).to eq(filters)
+      expect(document.at_css('header.languages-page-header + section.languages-filters')).to eq(filters)
     end
 
     it 'renders compact automatic filters without a wide submit input' do
