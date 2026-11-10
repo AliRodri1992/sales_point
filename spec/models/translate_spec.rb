@@ -199,6 +199,27 @@ RSpec.describe Translate, type: :model do
   end
 
   describe 'shared translation revision' do
+    it 'propagates the i18n revision between separate Redis cache clients' do
+      skip 'Requires REDIS_URL' if ENV['REDIS_URL'].blank?
+
+      options = { url: ENV.fetch('REDIS_URL'), namespace: "delta-pos:i18n:spec:#{SecureRandom.hex(6)}" }
+      first = ActiveSupport::Cache::RedisCacheStore.new(**options)
+      second = ActiveSupport::Cache::RedisCacheStore.new(**options)
+
+      allow(Rails).to receive(:cache).and_return(first)
+      described_class.invalidate_cache!
+      published = second.read(described_class::CACHE_KEY)
+      expect(published).to be_present
+
+      allow(Rails).to receive(:cache).and_return(second)
+      described_class.instance_variable_set(:@checked_at, nil)
+      expect(described_class.cache_revision.last).to eq(published)
+    ensure
+      first&.delete(described_class::CACHE_KEY)
+      described_class.instance_variable_set(:@checked_at, nil)
+      described_class.instance_variable_set(:@shared_revision, nil)
+    end
+
     it 'checks a revision published by another process through the shared cache' do
       shared_cache = ActiveSupport::Cache::MemoryStore.new
       allow(Rails).to receive(:cache).and_return(shared_cache)

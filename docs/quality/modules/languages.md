@@ -236,3 +236,11 @@ OVERWRITE=1 bin/rails translations:load     # Reemplaza explícitamente los valo
 La importación forzada puede sobrescribir personalizaciones; usar solo después de respaldo y revisión del archivo. El modo sin `OVERWRITE` no modifica los overrides.
 
 **Estado de aceptación:** cambios de código y regresiones preparados para CI en el momento de escribir; **NO declarar aprobados** RSpec, RuboCop, migraciones ni revisión visual antes de verificar los resultados concretos. No tocar la prueba de rendimiento ajena de Clientes ni fusionar ramas hasta cumplir la puerta global.
+
+### Cobertura adicional de integración (IDI-033/036)
+
+Se incorporó una prueba para `Translate.cache_revision` con **dos instancias independientes de `ActiveSupport::Cache::RedisCacheStore`** y un namespace temporal. Con el servicio Redis disponible (`REDIS_URL`, en Languages CI), una instancia publica la revisión y otra la lee. La simulación con MemoryStore continúa probando la vía local. Las pruebas aisladas no sustituyen la prueba operativa con web y Sidekiq reales.
+
+El flujo `.github/workflows/languages-ci.yml` ahora escucha también cambios en `modal_controller.js` y `config/environments/development.rb`, además de los archivos de Idiomas, para evitar regresiones inadvertidas.
+
+**Evidencia:** pruebas y nuevo flujo pendientes de ejecución sobre el commit que incluya estos dos cambios. El requisito de validación visual manual con lector de pantalla y zoom al 200 % permanece abierto.
