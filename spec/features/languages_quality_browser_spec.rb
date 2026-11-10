@@ -92,6 +92,49 @@ RSpec.describe 'Languages administration quality', type: :feature, js: true do
     expect(page).to have_current_path(admin_languages_path)
   end
 
+  scenario 'places New language next to filters and shortens the wider dialog on desktop' do
+    page.driver.browser.manage.window.resize_to(1280, 900)
+    visit admin_languages_path
+
+    expect(page).to have_css('.languages-filters__toolbar .languages-new-button', visible: true)
+    expect(page).to have_no_css('.languages-page-header .languages-new-button')
+    within('.languages-filters__toolbar') { click_link 'New language' }
+
+    expect(page).to have_css('#language_modal[aria-hidden="false"] .languages-modal-panel', wait: 10)
+    dimensions = page.evaluate_script(<<~JS)
+      (() => {
+        const panel = document.querySelector('.languages-modal-panel')
+        const fields = panel.querySelector('.languages-editor__fields')
+        return {
+          width: Math.round(panel.getBoundingClientRect().width),
+          columns: getComputedStyle(fields).gridTemplateColumns.trim().split(/\\s+/).length
+        }
+      })()
+    JS
+    expect(dimensions.fetch('width')).to be_between(620, 710)
+    expect(dimensions.fetch('columns')).to eq(2)
+
+    page.driver.browser.manage.window.resize_to(390, 844)
+    compact = page.evaluate_script(<<~JS)
+      (() => {
+        const panel = document.querySelector('.languages-modal-panel')
+        const rect = panel.getBoundingClientRect()
+        return {
+          columns: getComputedStyle(panel.querySelector('.languages-editor__fields')).gridTemplateColumns
+            .trim().split(/\\s+/).length,
+          left: rect.left,
+          right: rect.right,
+          viewportWidth: window.innerWidth
+        }
+      })()
+    JS
+    expect(compact.fetch('columns')).to eq(1)
+    expect(compact.fetch('left')).to be >= 0
+    expect(compact.fetch('right')).to be <= compact.fetch('viewportWidth')
+  ensure
+    page.driver.browser.manage.window.resize_to(1280, 900)
+  end
+
   scenario 'edits an existing language without navigating away' do
     create(:language, name: 'French draft', code: 'fr', flag_iso: 'fr', status: 'inactive')
     visit admin_languages_path

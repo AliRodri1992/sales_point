@@ -301,6 +301,16 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(response).to have_http_status(:ok)
     end
 
+    it 'places the new language action alongside the filters' do
+      get admin_languages_path
+
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('.languages-filters__toolbar .languages-new-button')).to be_present
+      expect(document.at_css('.languages-page-header .languages-new-button')).to be_nil
+      expect(document.at_css('.languages-filters__toolbar .languages-new-button')['data-turbo-frame'])
+        .to eq('language_modal')
+    end
+
     it 'renders compact automatic filters without a wide submit input' do
       get admin_languages_path
 

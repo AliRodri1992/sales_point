@@ -7,6 +7,11 @@
       <h1><%= t('admin.languages.index.title') %></h1>
       <p><%= t('admin.languages.index.subtitle') %></p>
     </div>
+  </header>
+
+  <section class="languages-filters" aria-label="<%= t('admin.languages.ui.filters_title') %>">
+    <div class="languages-filters__toolbar">
+      <h2><%= t('admin.languages.ui.filters_title') %></h2>
     <% if policy(Language).create? %>
       <%= link_to new_admin_language_path(request.query_parameters),
                   class: 'catalog-button catalog-button-primary languages-new-button',
@@ -15,9 +20,7 @@
         <%= t('admin.languages.index.new') %>
       <% end %>
     <% end %>
-  </header>
-
-  <section class="languages-filters" aria-label="<%= t('admin.languages.ui.filters_title') %>">
+    </div>
     <%= form_with url: admin_languages_path, method: :get,
                   class: 'languages-filter-form',
                   role: :search,

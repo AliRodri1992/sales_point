@@ -135,3 +135,19 @@ En el SHA `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`:
 - **Frontera:** auditoría exclusivamente de Idiomas y su integración modal. Hallazgos externos del CI global se registrarán con sus propietarios, no se corregirán en este expediente.
 
 **No se declara el módulo cerrado** hasta contar con la puerta global, accesibilidad verificable y revisión visual manual. Las pruebas focalizadas sí acreditan el flujo funcional de los nuevos modales en el SHA de implementación.
+
+## Auditoría de densidad y proximidad de acciones — 2026-11-09
+
+**Alcance estricto:** tamaño y distribución del modal de `new/edit` y ubicación de «Nuevo idioma» respecto de los filtros en `/admin/languages`. No se revisaron permisos, impuestos, Clientes u otros módulos.
+
+**Procedimiento:** inspección estática de ERB/CSS con criterios AI Dev Suite (`impeccable-audit`, `ui-ux-pro-max` y `ponytail-engineering`). Los ejecutables externos no se usaron.
+
+| ID | Prioridad | Evidencia | Adecuación | Regresión |
+|---|---|---|---|---|
+| IDI-024 | P3 | El panel tiene `max-w-xl` y `width: min(100%, 36rem)`; en escritorio limita el espacio disponible | Ampliar a `max-w-2xl` y `42rem`, manteniendo ancho adaptable a móvil | Chrome mide el ancho real a 1280 px |
+| IDI-025 | P3 | `.languages-editor__fields > :first-child` ocupa toda la fila, generando tres filas de cuatro campos dentro del modal | Usar cuadrícula de dos columnas y dos filas para formulario modal en escritorio; una columna debajo de 640 px | Chrome comprueba columnas a 1280 y 390 px |
+| IDI-026 | P3 | «Nuevo idioma» está alineado con el encabezado principal, visualmente separado de la búsqueda | Colocar la acción dentro del panel de filtros, junto a su encabezado; conservar autorización y `language_modal` | Requests verifican ubicación y Turbo Frame; Chrome verifica botón visible |
+
+**Criterios de aceptación:** sin doble botón, sin desbordamiento horizontal del modal a 390 px, controles accesibles y espaciado consistente con Delta POS. La altura se reduce por distribución de filas; no se garantiza un número de píxeles de alto sin medición. Las rutas, la validación y las traducciones del modal permanecen intactas.
+
+**Estado:** modificaciones preparadas en `feature/fixes`; **pendiente** de publicación, GitHub Actions, revisión de accesibilidad y aceptación visual manual. **NO CERRADO**.
