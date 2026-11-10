@@ -34,6 +34,20 @@ Todos los hallazgos siguientes proceden de **inspección estática** del SHA ind
 | **PRODUCTS-008** | **P1 · INTEGRACIÓN Inventario (hipótesis)** | **Cambio de `tracking_mode` sin barrera explícita por inventario previo.** El formulario y params permiten cambiar `none/lot/serial`; `Product` solo valida enum, y `SaveCatalogEntry` no consulta lotes/series existentes. **Riesgo de coherencia por verificar** con contrato real de Inventario. | Probar producto con movimientos/lotes/series y definir transiciones permitidas en el límite de Productos. No refactorizar internamente Inventario aquí. | IMPLEMENTADO EN CÓDIGO — pendiente de prueba operativa |
 | **PRODUCTS-009** | **P3 · DOCUMENTACIÓN** | **Guía funcional desactualizada.** `docs/modules/products.md` describe `stock`, `min_stock`, `max_stock` como atributos de `Product`, mientras `spec/models/product_spec.rb` verifica que el inventario no vive en esos campos. **Confirmado por comparación.** | Sincronizar la documentación con inventario por sucursal y las opciones comerciales actuales. | IMPLEMENTADO — NO VERIFICADO |
 
+## Reauditoría focalizada — filtros avanzados (2026-11-09)
+
+**Código base inspeccionado:** `4d2eaf3` en `feature/fixes`. Método de AI Dev Suite: revisión de UX con `impeccable-audit` + criterios de `ui-ux-pro-max` y cambio acotado de `ponytail-engineering`. La identificación de fallos procede de comparación de rutas, Turbo, formularios y componentes; **no** de una sesión visual ejecutada.
+
+| ID | Prioridad / propiedad | Hallazgo y causa comprobable | Remediación publicada | Estado |
+|---|---|---|---|---|
+| **PRODUCTS-010** | **P1 · PROPIO** | El formulario GET dirigía la actualización exclusivamente a `admin_products_list`, mientras sus filtros quedaban fuera del frame. Los enlaces de orden/paginación también navegaban el frame, dejando `window.location` atrás. `table_page_size_controller.js` usa esa URL visible, por lo que una preferencia nueva perdía parámetros filtrados. | `_filters` usa navegación `_top`, y `_list` hace lo propio con orden/páginas, manteniendo URL, recarga, tamaño de página e historial coherentes. | **CORREGIDO EN CÓDIGO — NO VERIFICADO EN NAVEGADOR** |
+| **PRODUCTS-011** | **P2 · PROPIO** | No había chips que identificaran criterios activos ni enlaces para quitar un criterio concreto, pese al estándar modular. Panel de seis campos y botón con tratamiento visual inconsistente frente a Clientes/Sucursales. | Panel reorganizado, dropdowns Delta, categoría con búsqueda, contador de filtros avanzados, chips removibles, limpieza total y botón `Aplicar filtros` compacto (sin ancho completo en móvil). | **CORREGIDO EN CÓDIGO — NO VERIFICADO EN NAVEGADOR** |
+| **PRODUCTS-012** | **P2 · PROPIO** | Ya existía `products_search_controller.js` con búsqueda diferida, pero `index.html.erb` no lo conectaba: la búsqueda dependía de pulsar Aplicar. | Se conecta Stimulus al formulario y la entrada de búsqueda, con debounce de 400 ms y protección durante composición IME. | **CORREGIDO EN CÓDIGO — NO VERIFICADO EN NAVEGADOR** |
+
+**Evidencia de cambios:** `443b960` (navegación, controles, chips), `5b36ff0` (responsive y `es/en/ko`), `3a70339` (RSpec request y flujo navegador). Las pruebas están escritas, pero no se declara su aprobación hasta obtener resultados efectivos en el SHA de aceptación.
+
+**Criterios adicionales de aceptación:** búsqueda → URL persistida; estado/categoría/destacado/seguimiento/existencias/precios combinados; selección de categorías tenant-safe; chip individual sin perder los otros; botón que nunca ocupa todo el ancho; cambio de página, orden y tamaño sin borrar el filtrado; uso por teclado/lector y en anchos de 320/390/768/1440 px. Se requiere CI focalizado y ejecución visual real.
+
 ## Controles ya presentes: no duplicar hallazgos anteriores
 
 - `ProductsLookup#accessible_products` limita catálogo y operaciones a la organización actual; `ProductImagesController` valida permisos y organización antes de aceptar imágenes.

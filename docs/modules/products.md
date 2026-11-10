@@ -20,7 +20,7 @@ El catálogo se administra en `/admin/products`, con acciones de listado, búsqu
 
 Se busca por nombre, código, SKU, código principal, códigos secundarios y variantes. Los filtros incluyen estado, categoría, destacado, tipo de seguimiento, precio mínimo/máximo y existencias: con existencias, agotados y bajo mínimo en alguna sucursal.
 
-El formulario ofrece búsqueda y estado siempre visibles, y el resto dentro de **Filtros avanzados** desplegables. El botón **Aplicar filtros** es compacto y conserva paginación/ordenamiento. Los valores numéricos inválidos de consulta se ignoran de manera segura. La paginación usa las preferencias del sistema.
+El formulario ofrece búsqueda automática (debounce), estado siempre visible y el resto dentro de **Filtros avanzados** desplegables. La selección utiliza dropdowns Delta; el de categoría admite búsqueda. El botón **Aplicar filtros** es compacto, junto con **Limpiar**. Chips de filtros activos permiten quitar criterios individualmente. La navegación completa actualiza la URL en filtros, ordenamiento y paginación para conservar resultados al recargar, retroceder o cambiar el tamaño de página. Los valores numéricos inválidos de consulta se ignoran de manera segura. La paginación usa las preferencias del sistema.
 
 ## Precios, historial y cotizaciones
 
