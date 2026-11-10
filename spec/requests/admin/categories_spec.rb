@@ -385,6 +385,7 @@ RSpec.describe 'Admin::Categories', type: :request do
     end
 
     it 'ignores unsupported status values rather than showing a misleading empty catalog' do
+      create(:category, organization:, name: 'Visible category', code: 'visible_category')
       get admin_categories_path(status: 'unsupported')
 
       expect(response).to have_http_status(:ok)

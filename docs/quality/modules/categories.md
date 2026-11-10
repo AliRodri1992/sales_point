@@ -239,3 +239,9 @@ Metodología: AI Dev Suite (impeccable-audit, ui-ux-pro-max y ponytail-engineeri
 - La ejecución anterior #42759712208 incluyó 98 ejemplos, con cuatro fallos fuera de Categorías: tres de Clientes y uno de paginación de Productos. Son contratos de otros módulos y no se borran de la suite para ocultar fallos.
 - SIGUE PENDIENTE: inspección renderizada 320/390/768/1440 y zoom 200 %, navegación real por teclado, lector de pantalla, es/en/ko, contraste de todos los temas, backfill de categorías históricas y validación de constraints NOT VALID.
 - Cierre de Categorías: NO CERRADO hasta verificar el SHA de aceptación con CI global y revisión visual independiente.
+
+### CI y regresión de la segunda pasada — actualización de verificación
+
+- Categories CI #42761881557 ejecutó **102 ejemplos, 6 fallos**: dos nuevos propios (CATEGORIES-021 por sincronización de orden en Chrome y CATEGORIES-024 por fixture vacío en request spec) y cuatro externos (3 Clientes, 1 paginación de Productos). RuboCop pasó: 13 archivos, 0 ofensas.
+- Las dos regresiones propias se atendieron: CATEGORIES-021 también observa cambios de DOM en el Turbo Frame (incluye renders Turbo Stream) y espera de forma explícita la selección actualizada en Chrome; CATEGORIES-024 prepara una categoría del tenant antes de comprobar el filtro desconocido.
+- **Estado:** correcciones publicadas, a la espera de nueva ejecución. No atribuir éxitos que correspondan a un SHA anterior. No cerrar sin verificar CI focalizado y global, y completar revisión visual real.

@@ -41,7 +41,7 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     within('table.categories-table thead') { click_link 'Name' }
 
     expect(page).to have_css('turbo-frame#categories_list a.categories-filter-chip', text: 'Descending', wait: 10)
-    expect(page.evaluate_script("document.getElementById('category_direction').value")).to eq('desc')
+    expect(page).to have_css("select#category_direction option[value='desc']:checked", visible: :all, wait: 10)
   end
 
   scenario 'searches live and renders a removable filter chip' do
