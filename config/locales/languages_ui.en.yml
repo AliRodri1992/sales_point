@@ -18,7 +18,8 @@
           "detail_intro": "Review this language's identity and availability.",
           "actions_for": "Actions for %{name}",
           "no_results_title": "No languages found",
-          "no_results_hint": "Try another search or clear the filters to view registered languages."
+          "no_results_hint": "Try another search or clear the filters to view registered languages.",
+          "close_modal": "Close dialog"
         }
       }
     }

@@ -1,0 +1,22 @@
+<div data-modal-target="panel" role="dialog" aria-modal="true"
+     aria-labelledby="language-modal-title"
+     class="languages-modal-panel relative w-full max-w-xl rounded-2xl border border-slate-200 bg-white shadow-xl">
+  <header class="languages-modal-header">
+    <div class="min-w-0">
+      <p class="catalog-eyebrow"><%= t('admin.catalog_design.localization') %></p>
+      <h2 id="language-modal-title">
+        <%= language.persisted? ? t('admin.languages.edit.title', name: language.name) :
+                                  t('admin.languages.new.title') %>
+      </h2>
+      <p><%= t('admin.catalog_design.language_intro') %></p>
+    </div>
+    <button type="button" data-modal-dismiss data-action="modal#close"
+            class="languages-modal-close" aria-label="<%= t('admin.languages.ui.close_modal') %>">
+      <%= delta_icon('x-mark', class: 'size-5', aria: { hidden: true }) %>
+    </button>
+  </header>
+
+  <div class="languages-modal-body">
+    <%= render 'form', language: language, modal: true %>
+  </div>
+</div>

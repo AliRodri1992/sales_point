@@ -8,8 +8,9 @@
       <p><%= t('admin.languages.index.subtitle') %></p>
     </div>
     <% if policy(Language).create? %>
-      <%= link_to new_admin_language_path, class: 'catalog-button catalog-button-primary languages-new-button',
-                  data: { turbo_frame: '_top' } do %>
+      <%= link_to new_admin_language_path(request.query_parameters),
+                  class: 'catalog-button catalog-button-primary languages-new-button',
+                  data: { turbo_frame: 'language_modal' } do %>
         <%= delta_icon('plus', class: 'size-4', aria: { hidden: true }) %>
         <%= t('admin.languages.index.new') %>
       <% end %>

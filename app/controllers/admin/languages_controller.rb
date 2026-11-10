@@ -43,7 +43,7 @@ module Admin
           end
         end
       else
-        render :new, status: :unprocessable_content
+        render :new, formats: :html, status: :unprocessable_content
       end
     end
 
@@ -60,7 +60,7 @@ module Admin
           end
         end
       else
-        render :edit, status: :unprocessable_content
+        render :edit, formats: :html, status: :unprocessable_content
       end
     end
 

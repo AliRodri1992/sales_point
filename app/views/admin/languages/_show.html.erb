@@ -13,7 +13,7 @@
                 class: 'catalog-button', data: { turbo_frame: '_top' } %>
     <% if policy(Language).update? %>
       <%= link_to edit_admin_language_path(@language), class: 'catalog-button catalog-button-primary',
-                  data: { turbo_frame: '_top' } do %>
+                  data: { turbo_frame: 'language_modal' } do %>
         <%= delta_icon('pencil-square', class: 'size-4', aria: { hidden: true }) %>
         <%= t('admin.languages.index.edit') %>
       <% end %>

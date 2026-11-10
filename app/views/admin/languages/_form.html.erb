@@ -1,9 +1,15 @@
-<%= form_with model: [:admin, language], data: { turbo: false },
+<% modal = local_assigns.fetch(:modal, false) %>
+<% form_url = language.persisted? ? admin_language_path(language, request.query_parameters) :
+                                   admin_languages_path(request.query_parameters) %>
+<%= form_with model: [:admin, language], url: form_url,
+              data: { turbo: modal, turbo_frame: modal ? 'language_modal' : '_top' },
               html: { novalidate: true }, class: 'languages-editor' do |form| %>
   <%= catalog_errors(language) %>
   <section class="catalog-card">
-    <%= catalog_heading(t('admin.catalog_design.language_identity'),
-                        t('admin.catalog_design.language_identity_hint'), icon: 'language') %>
+    <% unless modal %>
+      <%= catalog_heading(t('admin.catalog_design.language_identity'),
+                          t('admin.catalog_design.language_identity_hint'), icon: 'language') %>
+    <% end %>
 
     <div class="catalog-card-body languages-editor__fields">
       <% [:name, :code, :flag_iso].each do |attribute| %>
@@ -52,8 +58,14 @@
   </div>
 
   <footer class="languages-editor__footer">
-    <%= link_to t('admin.catalog_design.cancel'), catalog_back_path(Language),
-                class: 'catalog-button', data: { turbo: false } %>
+    <% if modal %>
+      <button type="button" class="catalog-button" data-modal-dismiss data-action="modal#close">
+        <%= t('admin.catalog_design.cancel') %>
+      </button>
+    <% else %>
+      <%= link_to t('admin.catalog_design.cancel'), catalog_back_path(Language),
+                  class: 'catalog-button', data: { turbo: false } %>
+    <% end %>
     <%= form.submit(language.persisted? ? t('admin.languages.form.update') : t('admin.languages.form.create'),
                     class: 'catalog-button catalog-button-primary') %>
   </footer>

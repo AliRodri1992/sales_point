@@ -18,7 +18,8 @@
           "detail_intro": "Consulta la identidad y disponibilidad de este idioma.",
           "actions_for": "Acciones de %{name}",
           "no_results_title": "No se encontraron idiomas",
-          "no_results_hint": "Prueba otra búsqueda o elimina los filtros para ver los idiomas registrados."
+          "no_results_hint": "Prueba otra búsqueda o elimina los filtros para ver los idiomas registrados.",
+          "close_modal": "Cerrar formulario"
         }
       }
     }

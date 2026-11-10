@@ -6,7 +6,8 @@
     <% end %>
   <% end %>
   <% if policy(Language).update? %>
-    <%= link_to edit_admin_language_path(language), data: { turbo_frame: '_top', tooltip: t('admin.languages.index.edit') },
+    <%= link_to edit_admin_language_path(language, request.query_parameters),
+                data: { turbo_frame: 'language_modal', tooltip: t('admin.languages.index.edit') },
                 class: 'languages-icon-button', aria: { label: t('admin.languages.index.edit') } do %>
       <%= delta_icon('pencil-square', class: 'size-4', aria: { hidden: true }) %>
     <% end %>

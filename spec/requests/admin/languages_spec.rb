@@ -23,6 +23,60 @@ RSpec.describe 'Admin::Languages', type: :request do
     sign_out user
   end
 
+  describe 'modal create/edit contracts' do
+    let(:frame_headers) { { 'Turbo-Frame' => 'language_modal' } }
+
+    it 'renders new and edit forms within the existing dialog frame' do
+      language = create(:language, name: 'French draft', code: 'fr', flag_iso: 'fr', status: 'inactive')
+
+      get new_admin_language_path, headers: frame_headers
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('turbo-frame#language_modal [role="dialog"]')).to be_present
+      expect(document.at_css('form[data-turbo-frame="language_modal"]')).to be_present
+      expect(document.at_css('[data-modal-dismiss]')).to be_present
+
+      get edit_admin_language_path(language), headers: frame_headers
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('turbo-frame#language_modal [role="dialog"]')).to be_present
+      expect(document.at_css('#language_code[readonly]')).to be_present
+    end
+
+    it 'preserves validation messages in the frame on an invalid create' do
+      post admin_languages_path, headers: frame_headers.merge('Accept' => 'text/vnd.turbo-stream.html'),
+                                 params: { language: { name: '', code: '', flag_iso: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('turbo-frame#language_modal [role="dialog"]')).to be_present
+      expect(document.at_css('#language_name_error')).to be_present
+    end
+
+    it 'keeps an invalid edit inside the dialog' do
+      language = create(:language, name: 'French draft', code: 'fr', flag_iso: 'fr', status: 'inactive')
+
+      patch admin_language_path(language),
+            headers: frame_headers.merge('Accept' => 'text/vnd.turbo-stream.html'),
+            params: { language: { name: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('turbo-frame id="language_modal"')
+      expect(language.reload.name).to eq('French draft')
+    end
+
+    it 'closes the modal through a successful Turbo Stream response' do
+      post admin_languages_path,
+           headers: frame_headers.merge('Accept' => 'text/vnd.turbo-stream.html'),
+           params: { language: { name: 'French draft', code: 'fr', flag_iso: 'fr', status: 'inactive' } }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('target="language_modal"')
+      expect(response.body).to include('target="languages_list"')
+      expect(Language.find_by(code: 'fr')).to be_present
+    end
+  end
+
   describe 'GET /admin/languages/new' do
     it 'renders the new language form' do
       get new_admin_language_path

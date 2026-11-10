@@ -64,6 +64,65 @@ RSpec.describe 'Languages administration quality', type: :feature, js: true do
     page.driver.browser.manage.window.resize_to(1280, 900)
   end
 
+  scenario 'creates and validates an inactive language in a centered dialog' do
+    visit admin_languages_path
+    click_link 'New language'
+
+    expect(page).to have_css('#language_modal[aria-hidden="false"] .languages-modal-panel', wait: 10)
+    expect(page).to have_css('#language_modal [role="dialog"][aria-modal="true"]')
+
+    within('#language_modal') do
+      fill_in 'language_name', with: 'French draft'
+      fill_in 'language_code', with: 'fr'
+      fill_in 'language_flag_iso', with: 'fr'
+      click_button 'Create language'
+    end
+
+    expect(page).to have_css('#language_modal #language_code_error', wait: 10)
+    expect(page).to have_css('#language_modal[aria-hidden="false"]')
+
+    within('#language_modal') do
+      find('.catalog-field [data-controller="delta-select"] button[aria-haspopup="listbox"]').click
+      find('[role="option"]', text: 'Inactive').click
+      click_button 'Create language'
+    end
+
+    expect(page).to have_no_css('#language_modal[aria-hidden="false"]', wait: 10)
+    expect(page).to have_css('.languages-name', text: 'French draft', wait: 10)
+    expect(page).to have_current_path(admin_languages_path)
+  end
+
+  scenario 'edits an existing language without navigating away' do
+    create(:language, name: 'French draft', code: 'fr', flag_iso: 'fr', status: 'inactive')
+    visit admin_languages_path
+
+    within('.languages-desktop-table tbody tr', text: 'French draft') do
+      find('a[data-turbo-frame="language_modal"]', match: :first).click
+    end
+
+    expect(page).to have_css('#language_modal[aria-hidden="false"]', wait: 10)
+    within('#language_modal') do
+      expect(page).to have_css('#language_code[readonly]')
+      fill_in 'language_name', with: 'French revised'
+      click_button 'Update language'
+    end
+
+    expect(page).to have_no_css('#language_modal[aria-hidden="false"]', wait: 10)
+    expect(page).to have_css('.languages-name', text: 'French revised', wait: 10)
+    expect(page).to have_current_path(admin_languages_path)
+  end
+
+  scenario 'closes the form using Escape without leaving the listing' do
+    visit admin_languages_path
+    click_link 'New language'
+    expect(page).to have_css('#language_modal[aria-hidden="false"]', wait: 10)
+
+    find('#language_modal input#language_name').send_keys(:escape)
+
+    expect(page).to have_no_css('#language_modal[aria-hidden="false"]', wait: 10)
+    expect(page).to have_current_path(admin_languages_path)
+  end
+
   scenario 'protects persisted identifiers and uses the Delta status dropdown' do
     visit edit_admin_language_path(administrator.language)
 

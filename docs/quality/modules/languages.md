@@ -96,3 +96,25 @@ En el SHA `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`:
 - **IDI-017:** 3 request specs y 2 escenarios de navegador nuevos; **87 ejemplos, 0 fallos**.
 
 **Resumen:** no hay regresiones conocidas dentro de la batería focalizada de Idiomas. El hallazgo de rendimiento N+1 de Clientes sigue en su propio módulo; no modificar Clientes en esta auditoría. Sin revisión manual del renderizado/lector de pantalla, no se certifica WCAG ni se declara cerrado el módulo.
+
+
+## Auditoría de interacción — Crear y editar en modal (2026-11-09)
+
+- **Alcance:** `/admin/languages/new`, `/admin/languages/:id/edit`, guardar con validaciones, accesibilidad del diálogo, preservación de filtros del listado y actualización visual después de editar.
+- **Contexto:** formulario reducido a nombre, código ISO de idioma, bandera y estado. El sistema ya incorpora `language_modal` en el layout, pero sus enlaces conducían a páginas completas; se mantienen las rutas independientes como respaldo sin JavaScript.
+- **Método AI Dev Suite:** `impeccable-audit`, `ui-ux-pro-max` y `ponytail-engineering` aplicados como metodología de inspección de código y pruebas. No se ejecutaron las CLIs externas.
+- **SHA de revisión:** `986e951f79679f9799792690d8d528ec54f019e8`.
+- **Estado:** IMPLEMENTACIÓN PREPARADA, validación y reauditoría pendientes; **NO CERRADO**.
+
+| ID | Prioridad | Evidencia por código | Adecuación | Verificación |
+|---|---|---|---|---|
+| IDI-018 | P2 | Los enlaces de Crear/Editar tienen `data-turbo-frame="_top"` y no usan el diálogo disponible | Dirigir las acciones al frame `language_modal` | Nuevos specs de request y Chrome |
+| IDI-019 | P1 | `_form.html.erb` fija `turbo:false` mientras las respuestas exitosas incluyen `turbo_stream.update "language_modal"` | Enviar formularios de modal mediante Turbo; conservar modo HTML independiente | Crear/editar vía Turbo y fallback sin JS |
+| IDI-020 | P2 | Cancelar navega al listado desde el modal, con riesgo de perder los filtros y contexto | Cancelar cierra el diálogo sin navegación | Browser Escape/cancelar |
+| IDI-021 | P2 | `language_modal` no incluye la acción `modal#trap` que sí existe en otras modales | Trampa de foco, Escape, cierre por fondo y retorno de foco | Chrome + auditoría manual |
+| IDI-022 | P2 | Errores 422 al editar no tienen prueba del flujo dentro del frame | Renderizar 422 HTML con errores individuales dentro del mismo modal | Request y Chrome |
+| IDI-023 | P3 | El formulario pequeño se muestra en un panel más amplio de lo necesario | Diálogo centrado y compacto, adaptable y con título/botón Cerrar | Chrome y revisión manual |
+
+**Contratos protegidos:** Pundit, validaciones del modelo, idioma predeterminado, notificaciones, SweetAlert2, traducciones es/en/ko y rutas HTML normales. En un error 422 no se deben perder los datos introducidos ni cerrar el diálogo. Los cambios realizados con filtros activos deben conservar su contexto. Editar desde detalle debe actualizar la información visible.
+
+**Aceptación:** comprobar el SHA publicado con Languages CI (RSpec, Chrome, RuboCop, I18n/YAML); comprobar el CI global y registrar errores externos sin modificar módulos vecinos. Inspección visual manual, 320/390/768/1440, zoom 200 %, teclado y lector de pantalla pendientes hasta contar con un navegador accesible.
