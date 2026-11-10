@@ -152,6 +152,58 @@ Fuente: [CI #42615013668](https://github.com/AliRodri1992/sales_point/actions/ru
 
 **Dictamen de esta reauditoría integral:** cambios publicados, alcance inspeccionado y riesgos trazados; **VERIFICACIÓN PENDIENTE / NO CERRADO**.
 
+## Auditoría de código completa — 2026-11-10 (SHA `f9e5f648b3b4c8f658780bff9bb3b3c5b3a61dc6`)
+
+**Alcance:** reauditoría sobre el estado real de `feature/fixes`, sin reiniciar los hallazgos `PRODUCTS-001` a `PRODUCTS-022`. Método AI Dev Suite: `impeccable-audit` para estados y accesibilidad, `ui-ux-pro-max` para formularios/listado/responsive, `ponytail-engineering` para dominio, seguridad, permisos y rendimiento. La suite se usó como **metodología de inspección**; no se ejecutaron CLIs de terceros. El análisis se hizo con código de GitHub y logs de GitHub Actions, no con Rails/Docker ni con pruebas interactivas del localhost.
+
+### Matriz de alcance integral y resultado
+
+| Pantalla/flujo propio | Componentes examinados | Dictamen sustentado |
+|---|---|---|
+| Listado, búsqueda, filtros activos, orden y paginación | `index`, `_filters`, `_list`, `ProductsListing`, `ProductsLookup`, `products_search_controller.js`, CSS y request/feature specs | Implementada la disposición compacta y grupos semánticos, autocompletado/búsqueda diferida, enlaces y persistencia de parámetros; **sin interacción visual probada** |
+| Alta y edición | `_panel`, `_form`, `ProductsController`, `ProductFormWriting`, `SaveCatalogEntry`, validaciones del modelo, helper de errores | Validaciones por campo y bloqueo de cambio de precio sin justificación; permanecen casos negativos de referencia y anidamiento pendientes |
+| Identidad comercial | `Product`, `ProductVariant`, `ProductPresentation`, `ProductBarcode`, `ProductCommercialCatalog`, `_commercial_row`, `nested_catalog_controller.js` | Índices case-insensitive implementados **por tabla**, baja lógica de códigos secundarios, referencias por organización; pendiente aislamiento de SKU en concurrencia cruzada |
+| Ver producto y precios | `_show`, `ProductPriceHistory`, `PriceChangeEvent`, `DecidePriceChange`, UI del cotizador | Historial de moneda, permisos y bloqueo de aprobación obsoleta; sin probar navegación de historial, selectores y errores con teclado |
+| Cotización | `ProductPricingPreview`, `Products::Quote`, `product_quote_controller.js` | Validaciones de cantidad, lista, vigencia, segmento, organización, variantes y moneda; respuesta JSON 404 para referencias ausentes; falta prueba de navegador |
+| Imágenes | `ProductImagesController`, `ProductImageAssignment`, `ImageUpload`, `ProductImageValidation`, Uppy y specs | Comprueba permisos, MIME real, 5 MB, firma con propósito/usuario/organización y expiración; falta prueba visual subida/error/reintento |
+| Permisos, eliminación y notificaciones | `ProductPolicy`, `CatalogPolicy`, `ProductsController#destroy`, `CatalogNavigation`, specs de permisos y acceso entre organizaciones | Defensa por acción Pundit, scoping por tenant y retiro lógico con bloqueo de historial; resultados 401/403/404/422 pendientes de ejercicio integral |
+| Rendimiento/idiomas | `_list`, `ProductsListing`, CSS, `catalog_design.{es,en,ko}.yml`, pruebas N+1 | La prueba de N+1 de Productos en CI registró 1 consulta de totales para 1/20/100 productos; i18n y lint pasan en el SHA auditado |
+
+### Hallazgos nuevos — conservar estos IDs
+
+| ID y prioridad | Propiedad / evidencia de código | Impacto, reproducción mínima y prueba solicitada | Estado |
+|---|---|---|---|
+| **PRODUCTS-023 · P1** | **PROPIO / confirmado por lógica de resolución.** `ProductsLookup#find_product_by_id_or_slug` prioriza `find_by(slug: id_param)`; si no hay coincidencia exacta, `find_product_by_code` mezcla `lower(slug)` y `lower(code)` mediante `OR` y toma `.first`. Los índices únicos son independientes para código y slug, así que un código puede coincidir con el slug de otro producto en la misma organización. | Producto A con `code: 'coffee'`, `slug: 'product-a'`; producto B con `slug: 'coffee'`, `code: 'product-b'`: solicitar `/admin/products/coffee` abre B, no A. **La ruta por código es ambigua**; existe riesgo de operar el registro equivocado si se utiliza ese identificador en la URL. Separar semánticamente rutas por código/slug o establecer precedencia inequívoca y probar lectura/edición y variantes de mayúsculas. | **ABIERTO — confirmación de escenario por RSpec pendiente** |
+| **PRODUCTS-024 · P2** | **PROPIO / discrepancia de reglas por confirmar.** `_form` usa `current_organization.categories.available`, pero `Product#valid_catalog_references` valida presencia y pertenencia para `category_id`, **no que la categoría esté activa**; también admite `organization_id: nil` en una categoría. | Un POST manipulado podría asignar una categoría inactiva no seleccionable en el formulario. Confirmar si las categorías globales y las inactivas son legadas válidas o si solo deben retenerse al editar **sin permitir asignaciones nuevas**. Añadir pruebas para alta, cambio y conservación histórica en cada caso. | **HIPÓTESIS DE REGLA — aclarar negocio antes de corregir** |
+| **PRODUCTS-025 · P2** | **PROPIO / confirmado en formulario.** `_commercial_row` genera los selectores de `product_variant_id` y `product_presentation_id` con `@product.*.select(&:persisted?)`. Las variantes y presentaciones recién agregadas en ese formulario no están persistidas. | En un alta que agrega variante nueva y código secundario, el código **no puede asociarse a la variante recién creada** en el mismo formulario; requiere un guardado y una edición posteriores. Definir si se acepta flujo de dos etapas y explicarlo en UX, o soportar referencias temporales y resolverlas transaccionalmente. Probar el escenario con JS y request. | **ABIERTO — decisión UX/flujo pendiente** |
+| **PRODUCTS-026 · P2** | **PROPIO / confirmado por código.** `ProductsListing#apply_price_filter` aplica mínimo y máximo por separado; `_filters` no valida la relación entre ellos ni muestra un error debajo del par. | Solicitar `min_price=200&max_price=100` produce un resultado vacío sin indicar el rango inválido. Implementar validación de cruce en servidor, mensaje localizado en el grupo de precios y control accesible del error; prueba GET y pantalla a 390 px. | **ABIERTO — remediación pendiente** |
+
+**No duplicar causas antiguas:** `PRODUCTS-001` ya tiene índices `LOWER(code)` y `LOWER(sku)` en `db/schema.rb` y migraciones. `PRODUCTS-002` tiene `_destroy` para códigos secundarios; `PRODUCTS-003/004` cuentan con validación del código principal y `aria-describedby` por campo; `PRODUCTS-008` verifica inventarios históricos, movimientos y lotes antes de modificar `tracking_mode`. **PRODUCTS-007 permanece abierto**: la validación cruzada entre `products` y `product_variants` no impide por sí sola escrituras simultáneas en tablas distintas; debe protegerse con una estrategia transaccional demostrable y tests concurrentes.
+
+### Resultado real de controles y atribución
+
+**SHA revisado:** `f9e5f648b3b4c8f658780bff9bb3b3c5b3a61dc6` · [CI #42809388942](https://github.com/AliRodri1992/sales_point/actions/runs/42809388942).
+
+| Control | Resultado confirmado | Propiedad |
+|---|---|---|
+| RuboCop | **PASÓ** | Global |
+| Security scans | **PASÓ** | Global |
+| Rails I18n and YAML audit | **PASÓ** | Global |
+| Fresh migrations and seed data | **PASÓ** | Global; no equivale a prueba concurrente |
+| RSpec, guardia de N+1 | **FALLÓ** | **EXTERNO: Clientes**. `spec/performance/n_plus_one_scaling_spec.rb:51` esperaba al menos una consulta SQL de teléfonos y obtuvo 0. La prueba de Productos en el mismo job mostró **{1=>1, 20=>1, 100=>1}** para agregaciones de existencias, sin crecimiento de N+1 |
+
+El fallo de Clientes **bloquea la aceptación global**, pero no se atribuye a Productos. El RSpec general no es verde y las suites focalizadas de formularios, cotizaciones, concurrencia y navegador **no se han ejecutado en este trabajo**. Las pruebas existentes se inspeccionaron, sin atribuirles aprobación que no consta en los logs.
+
+### Plan de verificación priorizado, sin aprobar anticipadamente
+
+1. **P1 — Identidad y unicidad:** reproducir `PRODUCTS-023` con código/slug homónimos, resolver precedencia, ejecutar RSpec de lectura/edición; proteger `PRODUCTS-007` entre tablas en concurrencia con transacciones paralelas.
+2. **P2 — Alta y edición:** verificar anidamiento de variantes/presentaciones/códigos (`PRODUCTS-025`), catálogos activos e históricos (`PRODUCTS-024`), rollback al fallar nested records, precio con motivo, registro y aprobación concurrente.
+3. **P2 — Listado/UI:** probar precios invertidos (`PRODUCTS-026`), combinación de 8 criterios, chips, historial, ordenación, paginación, cambio de tamaño, carga/vacío/error, dropdowns, teclado, foco, lector y zoom 200 %; resoluciones 320/390/768/1440 px.
+4. **Seguridad:** verificar 401/403/404/422, protección entre organizaciones, URLs por slug y código, rechazo de archivos falsificados/expirados, tokens de imagen y redirecciones seguras.
+5. **CI:** finalizar RSpec focalizado y global, RuboCop, I18n, migraciones y seguridad para **el mismo SHA de aceptación**, más revisión independiente.
+
+**Estado y decisión:** `AUDITADO — NO CERRADO`. Esta reauditoría **no modificó lógica, esquema ni datos**; agrega evidencia y nuevos hallazgos al registro permanente. Faltan pruebas interactivas de navegador real: la única pestaña local accesible en modo de lectura estaba en `/admin/languages`, no en Productos. Ningún resultado de UX/zoom se presenta como observado.
+
 ## Dictamen
 
 **IMPLEMENTADO EN CÓDIGO; VERIFICACIÓN PENDIENTE; NO CERRADO.**
