@@ -703,7 +703,7 @@ end
 
 SeedConsole.track('Productos', Product) do
   organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
-  categories = organization.categories.not_deleted.order(:id).to_a
+  categories = organization.categories.not_deleted.available.order(:id).to_a
   raise 'No hay categorías disponibles para crear productos' if categories.empty?
 
   30.times do |index|

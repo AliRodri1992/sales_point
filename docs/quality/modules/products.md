@@ -204,6 +204,22 @@ El fallo de Clientes **bloquea la aceptación global**, pero no se atribuye a Pr
 
 **Estado y decisión:** `AUDITADO — NO CERRADO`. Esta reauditoría **no modificó lógica, esquema ni datos**; agrega evidencia y nuevos hallazgos al registro permanente. Faltan pruebas interactivas de navegador real: la única pestaña local accesible en modo de lectura estaba en `/admin/languages`, no en Productos. Ningún resultado de UX/zoom se presenta como observado.
 
+## Adecuaciones de hallazgos abiertos — 2026-11-10
+
+**Rama:** `feature/fixes`. Los cambios siguientes se implementaron tras la auditoría anterior y conservan los IDs originales; **implementado no equivale a verificado**.
+
+| Hallazgo | Adecuación efectuada | Evidencia / estado |
+|---|---|---|
+| **PRODUCTS-007 (P1)** | Nuevo registro `product_sku_claims`, índice único por organización y SKU normalizado y callbacks transaccionales en `Product` y `ProductVariant`; migración con revisión de conflictos legados y backfill. Las escrituras a través de los modelos compiten por la misma reserva. | `20261110160000_create_product_sku_claims.rb`, concern `ProductSkuReservation`, `product_sku_claim_spec.rb` incluye prueba concurrente. **IMPLEMENTADO, PENDIENTE DE RSpec/DB**. Los cambios por SQL directo que omitan callbacks requieren seguir el contrato de reservas. |
+| **PRODUCTS-023 (P1)** | Las URLs generadas utilizan ID numérico estable; resolución por slug/código solo devuelve un resultado si hay una coincidencia única. El modelo rechaza nuevos conflictos cruzados de código y slug y evita generar slugs que colisionen con códigos existentes. | `Product`, `ProductsLookup`, specs de modelo, búsqueda y request; casos legados construidos saltando validación deliberadamente. **IMPLEMENTADO, PENDIENTE DE RSpec**. |
+| **PRODUCTS-024 (P2)** | Se rechazan nuevas asignaciones a categorías inactivas, eliminadas y ajenas. Se conserva una categoría histórica inactiva si el campo no cambia. Los datos de demostración seleccionan solamente categorías activas. | `Product#valid_catalog_references`, `db/seeds.rb`, spec del modelo. **IMPLEMENTADO, PENDIENTE DE RSpec/SEEDS**. |
+| **PRODUCTS-025 (P2)** | El editor permite seleccionar variantes y presentaciones creadas en el mismo formulario antes del primer guardado. Claves temporales enlazadas con registros anidados dentro de la validación; el servidor rechaza tokens sin coincidencia. | `_commercial_row`, `nested_catalog_controller.js`, `ProductFormWriting`, `ProductCommercialCatalog`, specs request y feature. **IMPLEMENTADO, PENDIENTE DE RSpec/NAVEGADOR**. |
+| **PRODUCTS-026 (P2)** | Un mínimo mayor que el máximo ya no elimina todos los resultados sin explicación: aparece un error localizado asociado por ARIA a ambos campos y el listado conserva los demás criterios. La búsqueda dinámica sincroniza el error. | `Products::PriceFilter`, `ProductsListing`, `_filters`, JS, CSS, locales `es/en/ko` y request spec. **IMPLEMENTADO, PENDIENTE DE RSpec/NAVEGADOR**. |
+
+**Hallazgo de CI secundario:** un primer CI tras estas adecuaciones indicó 17 ofensas RuboCop y que Brakeman no podía analizar la expresión de ARIA de precios. Se refactorizaron los métodos señalados y se simplificó el ERB en un commit posterior. El mismo primer CI no llegó a ejecutar la suite de RSpec porque las semillas asignaban categorías inactivas a productos; se ajustó `db/seeds.rb`. Revalidar **en el commit final**.
+
+**Aún pendientes para aceptación:** ejecución completa de RSpec, migraciones y seeds sin errores, Brakeman, RuboCop y traducciones en el SHA publicado; navegador real (formulario anidado, filtros, teclado, resoluciones 320/390/768/1440, zoom 200 %); revisión independiente. No se aplicó ningún cambio a la base de datos de desarrollo del usuario desde esta sesión.
+
 ## Dictamen
 
 **IMPLEMENTADO EN CÓDIGO; VERIFICACIÓN PENDIENTE; NO CERRADO.**

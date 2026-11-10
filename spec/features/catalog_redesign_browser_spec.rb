@@ -53,6 +53,26 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     expect(record.product_presentations.sole.units).to eq(6)
   end
 
+  scenario 'lets a new barcode select a new variant or presentation before first save' do
+    visit new_admin_product_path
+    click_button 'Add variant'
+    within('#product-variants [data-nested-catalog-row]') do
+      find('input[name$="[name]"]').set('Fresh variant')
+    end
+    click_button 'Add presentation'
+    within('#product-presentations [data-nested-catalog-row]') do
+      find('input[name$="[name]"]').set('Fresh box')
+    end
+    click_button 'Add barcode'
+
+    within('#product-barcodes [data-nested-catalog-row]') do
+      expect(page).to have_css('select[name$="[product_variant_id]"] option',
+                               text: 'Fresh variant', visible: :all)
+      expect(page).to have_css('select[name$="[product_presentation_id]"] option',
+                               text: 'Fresh box', visible: :all)
+    end
+  end
+
   scenario 'preserves language forms through validation and supports narrow screens without page overflow' do
     page.current_window.resize_to(390, 844)
     visit new_admin_language_path
