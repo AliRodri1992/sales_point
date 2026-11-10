@@ -183,7 +183,13 @@
         "maximum_price": "Maximum price",
         "tracking_mode_locked": "cannot be changed while stock, movements or lot history exist",
         "invalid_price_list": "The selected price list is not currently valid or does not match the customer segment.",
-        "price_currency_unavailable": "No price is configured in this list's currency for the selected product and options."
+        "price_currency_unavailable": "No price is configured in this list's currency for the selected product and options.",
+        "product_filters_title": "Find products",
+        "product_filters_hint": "Find products by identifier, classification and availability.",
+        "product_filters_applied": "%{count} active filters",
+        "product_active_filters": "Active filters",
+        "product_remove_filter": "Remove filter %{filter}",
+        "product_clear_all": "Clear all"
       },
       "breadcrumbs": {
         "controllers": {

@@ -183,7 +183,13 @@
         "maximum_price": "Precio máximo",
         "tracking_mode_locked": "no se puede cambiar cuando hay existencias o historial de movimientos o lotes",
         "invalid_price_list": "La lista de precios no está vigente o no corresponde al segmento indicado.",
-        "price_currency_unavailable": "No existe un precio configurado en la moneda de esta lista para el producto y las opciones seleccionadas."
+        "price_currency_unavailable": "No existe un precio configurado en la moneda de esta lista para el producto y las opciones seleccionadas.",
+        "product_filters_title": "Explorar productos",
+        "product_filters_hint": "Encuentra productos por su identificación, clasificación y existencias.",
+        "product_filters_applied": "%{count} filtros activos",
+        "product_active_filters": "Filtros activos",
+        "product_remove_filter": "Quitar filtro %{filter}",
+        "product_clear_all": "Limpiar todos"
       },
       "breadcrumbs": {
         "controllers": {
