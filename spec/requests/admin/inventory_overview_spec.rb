@@ -83,7 +83,6 @@ RSpec.describe 'Inventory overview and branch operations', type: :request do
     )
   end
 
-
   it 'keeps inventory permissions scoped to the branch granting them' do
     other_branch = create(:branch, organization:)
     visible_product = create(:product, organization:, name: 'ARTICULO AUTORIZADO')

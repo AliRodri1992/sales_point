@@ -9,9 +9,7 @@ class InventoryPolicy < ApplicationPolicy
   def update? = create?
   def adjust? = member? && branch_granted?(%w[inventory.adjust])
 
-  # Select only active grants carrying the requested inventory permission.
-  # A global role applies across the organization; a branch role applies only
-  # to its active branch. Other unrelated branch roles grant no inventory access.
+  # Global grants cover the tenant; branch grants cover only their active branch.
   def self.permitted_roles(user, organization, keys)
     return UserRole.none unless user && organization
 
@@ -25,15 +23,25 @@ class InventoryPolicy < ApplicationPolicy
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      organization = CurrentOrganizationAccess.organization
-      return scope.none unless organization && user
-      return scope.none unless user.organization_memberships.accessible.exists?(organization:)
+      return scope.none unless authorized_member?
 
-      records = scope.where(organization:)
+      records = scope.where(organization: organization)
       return records if user.admin?
 
+      restrict_to_granted_branches(records)
+    end
+
+    private
+
+    def organization = CurrentOrganizationAccess.organization
+
+    def authorized_member?
+      user && organization && user.organization_memberships.accessible.exists?(organization:)
+    end
+
+    def restrict_to_granted_branches(records)
       granted = InventoryPolicy.permitted_roles(user, organization, READ_KEYS)
-      return records if granted.where(branch_id: nil).exists?
+      return records if granted.exists?(branch_id: nil)
 
       records.where(branch_id: granted.where.not(branch_id: nil).select(:branch_id))
     end
@@ -52,6 +60,6 @@ class InventoryPolicy < ApplicationPolicy
     return true if user.admin?
 
     self.class.permitted_roles(user, organization, keys)
-        .where(branch_id: [nil, record.branch_id]).exists?
+        .exists?(branch_id: [nil, record.branch_id])
   end
 end
