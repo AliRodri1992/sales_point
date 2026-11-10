@@ -338,3 +338,14 @@ El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios;
 - Se fortaleció el caso Chrome: espera el cierre de la modal y que la etiqueta de búsqueda siga visible después de crear un registro fuera del filtro.
 - La ejecución focalizada del SHA `2ac8400730b4f89697163b824a1882fff06d0388` alcanzó 109 ejemplos, 7 fallos, ninguno en el nuevo flujo Chrome ni en tests request del rediseño. Tres fallos correspondían a una plantilla de Productos con error sintáctico, tres a permisos de Clientes y uno al test de modelo Categoria con fixture cross-tenant ahora corregido.
 - **Estado:** corrección de fixture y pruebas adicionales implementadas, CI nuevo pendiente. Bloqueos externos no se ocultan ni se atribuyen al módulo.
+
+
+### Evidencia focalizada de adecuaciones (2026-11-10)
+
+- **Categories CI #42813087484**, SHA `7688ce658b90e23725d2b88159002c6ab52a59d4`: **111 ejemplos RSpec/Chrome, 6 fallos**, ninguno en Categorías. Los fallos fueron: **3 de Productos** por `ActionView::SyntaxErrorInTemplate` en `app/views/admin/products/_filters.html.erb:116` (parámetro `inputmode` sin cerrar), y **3 de permisos de Clientes** en show/update/destroy (404). Los nuevos tests de create/update/delete filtrados, orden estable, `aria-sort`, modelo con organización consistente y modal/búsqueda pasaron en esta ejecución.
+- Ese run reportó una ofensa de RuboCop (`Layout/EmptyLines`) en un spec de Categorías, corregida en `43adcf79369178ab7b00570be67906c06d4b86ec`.
+- **Categories CI #42813215996**, SHA `43adcf79369178ab7b00570be67906c06d4b86ec`: **RuboCop focalizado SUCCESS**. El job RSpec/Chrome estaba en ejecución durante esta actualización; verificar su conclusión por SHA.
+- **CATEGORIES-025, 027, 028, 030:** cambios implementados y sin fallos propios en el run focalizado #42813087484. **CATEGORIES-029:** tokens actualizados, falta medición independiente de contraste en todos los temas. **CATEGORIES-026:** pruebas de Chrome en desktop/móvil ya incorporadas y pasaron.
+- Los fallos externos son bloqueos de la **puerta de CI completa**, pero no se corrigen alterando módulos Clientes/Productos desde este expediente. Mantener responsables externos separados y los tests sin excluir.
+- **CATEGORIES-001 / 009:** el CI de base limpia comprueba instalación pero no sustituye prueba de backfill y `VALIDATE CONSTRAINT` sobre copia de datos históricos. No ejecutar conversiones destructivas ni declarar «cerrado» sin evidencia.
+- **Estado:** ADECUACIONES IMPLEMENTADAS, VERIFICACIÓN AUTOMATIZADA FOCALIZADA PARCIAL, CI GLOBAL / ACCESIBILIDAD MANUAL / DATOS LEGADOS PENDIENTES. No fusionar.
