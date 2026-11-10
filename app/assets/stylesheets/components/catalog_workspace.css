@@ -151,3 +151,7 @@
   .products-filters__actions { grid-column:1; justify-content:flex-start; }
   .products-filters__group-fields { grid-template-columns:minmax(0,1fr); }
 }
+
+/* Accessible, inline price-range error state. */
+.products-filters__range-error { clear: both; margin-top: .75rem; color: #be123c; font-size: .75rem; line-height: 1.45; }
+.products-filters__field input[aria-invalid="true"] { border-color: #e11d48; }

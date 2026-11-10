@@ -193,7 +193,8 @@
         "product_filter_request_error": "결과를 새로고침할 수 없습니다. 다시 시도하거나 필터 적용을 눌러주세요.",
         "product_group_classification": "분류",
         "product_group_inventory": "재고",
-        "product_group_price": "가격 범위"
+        "product_group_price": "가격 범위",
+        "product_price_range_invalid": "최소 가격은 최대 가격보다 클 수 없습니다."
       },
       "breadcrumbs": {
         "controllers": {

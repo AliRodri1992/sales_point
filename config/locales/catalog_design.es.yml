@@ -193,7 +193,8 @@
         "product_filter_request_error": "No se pudieron actualizar los resultados. Puedes volver a intentar o aplicar los filtros.",
         "product_group_classification": "Clasificación",
         "product_group_inventory": "Inventario",
-        "product_group_price": "Rango de precios"
+        "product_group_price": "Rango de precios",
+        "product_price_range_invalid": "El precio mínimo no puede ser mayor que el máximo."
       },
       "breadcrumbs": {
         "controllers": {
