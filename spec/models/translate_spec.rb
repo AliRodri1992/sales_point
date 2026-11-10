@@ -103,7 +103,7 @@ RSpec.describe Translate, type: :model do
       file = Tempfile.new(['translations', '.yml'])
       file.write({ 'en' => { 'save' => 'Save' } }.to_yaml)
       file.close
-      translation = instance_double(described_class)
+      translation = instance_double(described_class, persisted?: false, new_record?: true)
 
       allow(described_class).to receive(:column_exists?).with(:language_id).and_return(false)
       expect(described_class).to receive(:find_or_initialize_by)
@@ -111,6 +111,50 @@ RSpec.describe Translate, type: :model do
       expect(translation).to receive(:update!).with(value: 'Save')
 
       described_class.load_from_file(file.path, 'en')
+    ensure
+      file&.unlink
+    end
+
+    it 'keeps a database override when importing the same YAML file again' do
+      language = create(:language, code: 'en')
+      translation = create(:translate, language:, key: 'save', value: 'Custom override')
+      file = Tempfile.new(['translations', '.yml'])
+      file.write({ 'en' => { 'save' => 'Save from YAML', 'new' => 'New entry' } }.to_yaml)
+      file.close
+
+      described_class.load_from_file(file.path, 'en')
+
+      expect(translation.reload.value).to eq('Custom override')
+      expect(described_class.find_translation('new', 'en').value).to eq('New entry')
+    ensure
+      file&.unlink
+    end
+
+    it 'replaces an override only with an explicitly requested overwrite' do
+      language = create(:language, code: 'en')
+      translation = create(:translate, language:, key: 'save', value: 'Custom override')
+      file = Tempfile.new(['translations', '.yml'])
+      file.write({ 'en' => { 'save' => 'Save from YAML' } }.to_yaml)
+      file.close
+
+      described_class.load_from_file(file.path, 'en', overwrite: true)
+
+      expect(translation.reload.value).to eq('Save from YAML')
+    ensure
+      file&.unlink
+    end
+
+    it 'leaves database content untouched during a dry run, including missing keys' do
+      language = create(:language, code: 'en')
+      translation = create(:translate, language:, key: 'save', value: 'Custom override')
+      file = Tempfile.new(['translations', '.yml'])
+      file.write({ 'en' => { 'save' => 'YAML version', 'new' => 'Not written' } }.to_yaml)
+      file.close
+
+      described_class.load_from_file(file.path, 'en', overwrite: true, dry_run: true)
+
+      expect(translation.reload.value).to eq('Custom override')
+      expect(described_class.find_translation('new', 'en')).to be_nil
     ensure
       file&.unlink
     end
@@ -151,6 +195,23 @@ RSpec.describe Translate, type: :model do
       allow(described_class).to receive(:column_exists?).with(:language_id).and_return(false)
 
       expect(translate.locale).to eq('es')
+    end
+  end
+
+  describe 'shared translation revision' do
+    it 'checks a revision published by another process through the shared cache' do
+      shared_cache = ActiveSupport::Cache::MemoryStore.new
+      allow(Rails).to receive(:cache).and_return(shared_cache)
+      described_class.instance_variable_set(:@checked_at, nil)
+      described_class.cache_revision
+
+      shared_cache.write(described_class::CACHE_KEY, 'other-worker-revision')
+      described_class.instance_variable_set(:@checked_at, nil)
+
+      expect(described_class.cache_revision.last).to eq('other-worker-revision')
+    ensure
+      described_class.instance_variable_set(:@checked_at, nil)
+      described_class.instance_variable_set(:@shared_revision, nil)
     end
   end
 

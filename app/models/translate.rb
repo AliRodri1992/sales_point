@@ -59,7 +59,7 @@ class Translate < ApplicationRecord
     find_translation(key, locale)&.value || default
   end
 
-  def self.load_from_file(file_path, locale_code)
+  def self.load_from_file(file_path, locale_code, overwrite: false, dry_run: false)
     return unless File.exist?(file_path)
 
     content = YAML.safe_load_file(file_path)
@@ -79,7 +79,10 @@ class Translate < ApplicationRecord
                     find_or_initialize_by(key: key, locale: locale_code)
                   end
 
-      translate.update!(value: value.to_s)
+      next if !overwrite && translate.persisted?
+      next if dry_run
+
+      translate.update!(value: value.to_s) if translate.new_record? || translate.value != value.to_s
     end
   end
 

@@ -58,6 +58,7 @@ export default class extends Controller {
 
     // Triggered by keydown.esc@window, the X button, or a backdrop click.
     close(event) {
+        if (!this.isOpen) return
         if (event && event.type === "click" && !this.shouldClose(event)) return
         this.hide()
     }
@@ -65,6 +66,7 @@ export default class extends Controller {
     // Backdrop clicks only close when the click lands directly on the overlay
     // (this element) or on a control explicitly marked for dismissal.
     background(event) {
+        if (!this.isOpen) return
         if (event.target === this.element || event.target.closest("[data-modal-dismiss]")) {
             this.hide()
         }

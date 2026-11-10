@@ -91,7 +91,7 @@ module Admin
     end
 
     def redirect_destroy_failure
-      redirect_to admin_languages_path,
+      redirect_to admin_languages_path(request.query_parameters),
                   alert: @language.errors.full_messages.to_sentence,
                   status: :see_other
     end

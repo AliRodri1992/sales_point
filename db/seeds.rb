@@ -434,7 +434,8 @@ end
 def persist_translation(key, value, locale_code, language)
   translation = Translate.find_by(key: key, language: language)
   if translation
-    translation.update!(value: value) if translation.value != value
+    # Never clobber administrator-defined database overrides during db:seed.
+    return translation
   elsif ActiveRecord::Base.connection.column_exists?(:translates, :language_id)
     Translate.create!(key: key, language: language, value: value)
   else

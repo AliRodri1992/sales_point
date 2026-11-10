@@ -211,3 +211,28 @@ En el SHA `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`:
 - **Criterios faltantes:** corregir o justificar IDI-030/031 y la guarda de modal, blindar importaciones/invalidación multi-proceso, añadir pruebas y pasar CI global más revisión visual/teclado/zoom/lector de pantalla. No reconstruir base de datos ni tocar Clientes dentro de Idiomas.
 
 **Estado formal de la auditoría: HALLAZGOS ABIERTOS — NO CERRADO.** Esta reauditoría es diagnóstica: **no se han modificado archivos funcionales ni se ha fusionado ninguna rama**.
+
+## Implementación de los hallazgos IDI-030 a IDI-036 — 2026-11-10
+
+**Rama:** `feature/fixes`. **Alcance:** Idiomas y dependencias directas (controlador compartido de modales y configuración de caché de desarrollo). Se preserva el encabezado: subtítulo y botón «Nuevo idioma» en la misma fila, fuera de filtros.
+
+| ID | Adecuación incorporada | Prueba / condición de aceptación |
+|---|---|---|
+| IDI-030 | La acción DELETE transmite `request.query_parameters`; la respuesta Turbo Stream recupera la lista con filtros/orden/página y `paginate` limita la página efectiva si se elimina su última fila; la redirección en fallos conserva también los filtros. | Request: eliminación con búsqueda/estado/orden y recálculo de página. Browser: desaparición del registro sin perder controles. |
+| IDI-031 | Los enlaces de orden/paginación **solo en Idiomas** usan `data-turbo-frame="_top"`, promoviendo navegación normal Turbo Drive y sincronizando URL, búsqueda y filtros (sin modificar helpers compartidos). | Request: verificar enlaces, Browser: ordenar y volver atrás. |
+| IDI-032 | `modal_controller.js` ignora Escape y clic exterior cuando el modal está cerrado; no vacía marcos ni roba foco de otros componentes. | Browser: Escape en búsqueda cerrada, Cancelar en modal abierto y devolución de foco. |
+| IDI-033 | `config/environments/development.rb` usa `:redis_cache_store` con `REDIS_URL` y namespace exclusivo, aprovechando Redis disponible en `docker-compose.dev.yml`. Rails y Sidekiq comparten el token de revisión de traducciones. | Modelo: lectura de una revisión publicada en caché compartida simulada. **Pendiente:** prueba real entre procesos web/Sidekiq en entorno de desarrollo conectado. |
+| IDI-034 | `Translate.load_from_file` preserva valores existentes; únicamente `overwrite: true` los reemplaza. Permite `dry_run: true`. El Rake task expone `OVERWRITE=1`, `DRY_RUN=1`. Los seeds respetan overrides persistidos. | RSpec: primera importación, override intacto, reemplazo explícito y dry run sin escrituras. |
+| IDI-035 | Selector «Mostrar» y enlaces de paginación se ocultan si hay como máximo el tamaño mínimo de página y solo una página de resultados, manteniéndolos al crecer el catálogo. | Request: catálogo pequeño y página con más registros; Browser responsive. |
+| IDI-036 | Nuevos request specs: permisos denegados, DELETE con filtros, navegación, paginación reducida y pequeña. Chrome: eliminación filtrada, ordenación+historial, Escape/Cancelar con foco y anchos 320/768/1440. | Ejecutar Languages CI completo; contraste visual/lector de pantalla y zoom al 200 % **requieren validación manual**, no sustituidos por specs. |
+
+**Uso de importación:**
+```bash
+bin/rails translations:load                 # Importa claves que aún no existen; conserva personalizaciones
+DRY_RUN=1 bin/rails translations:load       # Recorre los archivos sin escribir en PostgreSQL
+OVERWRITE=1 bin/rails translations:load     # Reemplaza explícitamente los valores existentes con YAML
+```
+
+La importación forzada puede sobrescribir personalizaciones; usar solo después de respaldo y revisión del archivo. El modo sin `OVERWRITE` no modifica los overrides.
+
+**Estado de aceptación:** cambios de código y regresiones preparados para CI en el momento de escribir; **NO declarar aprobados** RSpec, RuboCop, migraciones ni revisión visual antes de verificar los resultados concretos. No tocar la prueba de rendimiento ajena de Clientes ni fusionar ramas hasta cumplir la puerta global.

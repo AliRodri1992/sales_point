@@ -209,8 +209,53 @@ RSpec.describe 'Admin::Languages', type: :request do
     end
   end
 
+  describe 'catalog authorization' do
+    it 'forbids language actions for an authenticated user without catalog permission' do
+      restricted = create(:user, status: 'active')
+      create(:organization_membership, user: restricted)
+      sign_out user
+      sign_in restricted
+
+      get admin_languages_path
+      expect(response).to have_http_status(:forbidden)
+
+      post admin_languages_path,
+           params: { language: { name: 'Unauthorized', code: 'zz', flag_iso: 'zz', status: 'inactive' } }
+      expect(response).to have_http_status(:forbidden)
+      expect(Language.find_by(code: 'zz')).to be_nil
+    end
+  end
+
   describe 'DELETE /admin/languages/:id' do
     let!(:language) { create(:language, name: 'ToDelete', code: 'td', flag_iso: 'td') }
+
+    it 'retains search, status and sorting when a filtered language is deleted' do
+      language.update!(status: 'inactive')
+      create(:language, name: 'Another language', code: 'ot', flag_iso: 'ot', status: 'inactive')
+
+      delete admin_language_path(language, search: 'ToDelete', status: 'inactive', sort: 'code',
+                                           direction: 'desc', per_page: 5, format: :turbo_stream)
+
+      expect(response).to have_http_status(:ok)
+      page = Nokogiri::HTML(response.body)
+      expect(page.at_css('.languages-active-filters')).to be_present
+      expect(page.at_css('.languages-empty')).to be_present
+      expect(page.at_css('.languages-name')).to be_nil
+      expect(response.body).to include('sort=code')
+      expect(language.reload.deleted_at).to be_present
+    end
+
+    it 'clamps the page after deleting the sole record on the last page' do
+      language.update!(status: 'inactive')
+      create_list(:language, [6 - Language.not_deleted.count, 0].max, status: 'inactive')
+
+      delete admin_language_path(language, per_page: 5, page: 2, format: :turbo_stream)
+
+      expect(response).to have_http_status(:ok)
+      page = Nokogiri::HTML(response.body)
+      expect(page.css('.languages-desktop-table tbody tr').size).to eq(5)
+      expect(page.at_css('.languages-page-size')).to be_nil
+    end
 
     it 'sends a "destroyed" notification to the current user' do
       expect do
@@ -285,6 +330,31 @@ RSpec.describe 'Admin::Languages', type: :request do
       get admin_languages_path(sort: 'name', direction: 'desc')
 
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'uses full navigation for sorting and pagination to synchronize filter controls' do
+      get admin_languages_path(search: 'Language', status: 'inactive', per_page: 5, sort: 'name')
+
+      document = Nokogiri::HTML(response.body)
+      sort_link = document.at_css('.languages-desktop-table th:nth-child(2) a')
+      page_link = document.at_css('.languages-pagination-links a')
+
+      expect(sort_link['data-turbo-frame']).to eq('_top')
+      expect(sort_link['href']).to include('search=Language')
+      expect(sort_link['href']).to include('status=inactive')
+      expect(page_link['data-turbo-frame']).to eq('_top') if page_link
+    end
+
+    it 'hides page-size controls for a catalog that cannot fill the smallest page' do
+      Language.not_deleted.find_each do |language|
+        language.update!(deleted_at: Time.current) unless language.code == I18n.default_locale.to_s
+      end
+
+      get admin_languages_path
+
+      page = Nokogiri::HTML(response.body)
+      expect(page.at_css('.languages-page-size')).to be_nil
+      expect(page.at_css('.languages-pagination-links')).to be_nil
     end
 
     it 'sorts by code column' do

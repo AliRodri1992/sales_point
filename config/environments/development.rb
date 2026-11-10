@@ -24,7 +24,11 @@ Rails.application.configure do
     config.action_controller.perform_caching = false
   end
 
-  config.cache_store = :memory_store
+  # Web and Sidekiq must share the i18n revision token across processes.
+  config.cache_store = :redis_cache_store, {
+    url: ENV.fetch('REDIS_URL', 'redis://localhost:6379/0'),
+    namespace: 'delta-pos:development:cache'
+  }
   config.active_storage.service = :local
 
   config.action_mailer.raise_delivery_errors = false

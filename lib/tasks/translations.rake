@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 namespace :translations do
-  desc 'Load all translations from YAML files into database'
+  desc 'Import missing YAML translations (OVERWRITE=1 replaces overrides; DRY_RUN=1 previews)'
   task load: :environment do
+    overwrite = ENV['OVERWRITE'] == '1'
+    dry_run = ENV['DRY_RUN'] == '1'
     puts '🌱 Loading translations from YAML files...'
+    puts "Mode: #{dry_run ? 'DRY RUN' : 'write'}, existing overrides: #{overwrite ? 'replace' : 'preserve'}"
 
     # Support both module.en.yml and en.module.yml naming conventions.
     Rails.root.glob('config/locales/*.yml').sort.each do |file|
@@ -14,7 +17,7 @@ namespace :translations do
                filename[/\.(en|es|ko)\.yml\z/, 1]
       next unless locale
 
-      Translate.load_from_file(file, locale)
+      Translate.load_from_file(file, locale, overwrite: overwrite, dry_run: dry_run)
       puts "✅ Loaded #{filename} (#{locale})"
     end
 

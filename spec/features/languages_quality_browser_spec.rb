@@ -184,6 +184,78 @@ RSpec.describe 'Languages administration quality', type: :feature, js: true do
     expect(page).to have_current_path(admin_languages_path)
   end
 
+  scenario 'preserves the current filters after deleting a language' do
+    create(:language, name: 'French draft', code: 'fr', flag_iso: 'fr', status: 'inactive')
+    visit admin_languages_path(search: 'French', status: 'inactive')
+
+    expect(page).to have_css('.languages-name', text: 'French draft')
+    within('.languages-desktop-table tbody tr', text: 'French draft') do
+      find('button.languages-icon-button--danger').click
+    end
+    find('.delta-confirm-accept', wait: 10).click
+
+    expect(page).to have_css('.languages-active-filters', wait: 10)
+    expect(page).to have_no_css('.languages-name', text: 'French draft', wait: 10)
+    expect(page).to have_field('search', with: 'French')
+    expect(find('#status', visible: :all).value).to eq('inactive')
+  end
+
+  scenario 'keeps search and status in sync after sorting and browser back navigation' do
+    create(:language, name: 'French draft', code: 'fr', flag_iso: 'fr', status: 'inactive')
+    visit admin_languages_path(search: 'French', status: 'inactive')
+    expect(page).to have_css('.languages-name', text: 'French draft')
+
+    find('.languages-desktop-table th:nth-child(2) a').click
+    expect(page).to have_field('search', with: 'French')
+    expect(find('#status', visible: :all).value).to eq('inactive')
+    expect(find('input[name="sort"]', visible: :all).value).to eq('code')
+    expect(URI.parse(current_url).query).to include('sort=code')
+
+    page.go_back
+    expect(page).to have_field('search', with: 'French')
+    expect(page).to have_css('.languages-name', text: 'French draft')
+  end
+
+  scenario 'does not steal focus on Escape when closed and restores it after Cancel' do
+    visit admin_languages_path
+    search = find('#search')
+    search.click
+    search.send_keys(:escape)
+    expect(page.evaluate_script('document.activeElement.id')).to eq('search')
+
+    create_button = find('.languages-new-button')
+    create_button.click
+    expect(page).to have_css('#language_modal[aria-hidden="false"]', wait: 10)
+    within('#language_modal') { click_button 'Cancel' }
+    expect(page).to have_no_css('#language_modal[aria-hidden="false"]', wait: 10)
+    expect(page.evaluate_script('document.activeElement.classList.contains("languages-new-button")')).to be(true)
+  end
+
+  scenario 'keeps the language editor inside the viewport across responsive widths' do
+    [320, 768, 1440].each do |width|
+      page.driver.browser.manage.window.resize_to(width, 900)
+      visit admin_languages_path
+      click_link 'New language'
+      expect(page).to have_css('#language_modal[aria-hidden="false"]', wait: 10)
+
+      bounds = page.evaluate_script(<<~JS)
+        (() => {
+          const panel = document.querySelector('.languages-modal-panel').getBoundingClientRect()
+          return {
+            left: panel.left,
+            right: panel.right,
+            width: window.innerWidth
+          }
+        })()
+      JS
+      expect(bounds.fetch('left')).to be >= 0
+      expect(bounds.fetch('right')).to be <= bounds.fetch('width')
+      within('#language_modal') { click_button 'Cancel' }
+    end
+  ensure
+    page.driver.browser.manage.window.resize_to(1280, 900)
+  end
+
   scenario 'protects persisted identifiers and uses the Delta status dropdown' do
     visit edit_admin_language_path(administrator.language)
 

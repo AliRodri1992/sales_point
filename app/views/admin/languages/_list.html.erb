@@ -43,9 +43,9 @@
       <table>
         <thead>
           <tr>
-            <th scope="col"><%= sort_link('name', t('admin.languages.index.columns.language'), frame: 'languages_list') %></th>
-            <th scope="col"><%= sort_link('code', t('admin.languages.index.columns.code'), frame: 'languages_list') %></th>
-            <th scope="col"><%= sort_link('status', t('admin.languages.index.columns.status'), frame: 'languages_list') %></th>
+            <th scope="col"><%= sort_link('name', t('admin.languages.index.columns.language'), frame: '_top') %></th>
+            <th scope="col"><%= sort_link('code', t('admin.languages.index.columns.code'), frame: '_top') %></th>
+            <th scope="col"><%= sort_link('status', t('admin.languages.index.columns.status'), frame: '_top') %></th>
             <th scope="col" class="languages-actions-heading"><%= t('admin.languages.index.columns.actions') %></th>
           </tr>
         </thead>
@@ -99,8 +99,9 @@
       <% end %>
     </ul>
 
-    <footer class="languages-pagination">
-      <div class="languages-page-size">
+    <% if unfiltered_count > TablePagePreference::OPTIONS.min || total_pages > 1 %>
+      <footer class="languages-pagination">
+        <div class="languages-page-size">
         <%= label_tag :per_page, t('admin.languages.index.pagination.per_page_label') %>
         <div class="relative" data-controller="delta-select">
           <%= select_tag :per_page,
@@ -110,9 +111,10 @@
         </div>
       </div>
       <div class="languages-pagination-links">
-        <%= pagination_links(total_pages, frame: 'languages_list') if total_pages > 1 %>
+        <%= pagination_links(total_pages, frame: '_top') if total_pages > 1 %>
       </div>
-    </footer>
+      </footer>
+    <% end %>
   <% else %>
     <div class="languages-empty">
       <div class="languages-empty__icon"><%= delta_icon('language', class: 'size-7', aria: { hidden: true }) %></div>
