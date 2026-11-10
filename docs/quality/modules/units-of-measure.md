@@ -170,3 +170,10 @@ Mantener **NO CERRADO** hasta que todas las comprobaciones del estándar estén 
 - **Primera ejecución:** [Units of measure CI #42764652312](https://github.com/AliRodri1992/sales_point/actions/runs/42764652312). RuboCop focalizado **PASÓ**. RSpec: **42 ejemplos, 1 fallo** localizado en la expectativa de idioma del nuevo spec HTTP de filtros (esperaba el texto literal inglés `Remove filter`, aunque la respuesta usa el idioma del usuario). Los dos nuevos escenarios reales de Chrome de autoaplicación/chips **PASARON**.
 - **Corrección:** verificar los tres enlaces mediante su atributo accesible `aria-label` y reconocer el filtro SAT por su código, independientemente de idioma; conservar las aserciones de parámetros de URL y preservación de otros criterios. No se relajaron ni retiraron los escenarios de navegador.
 - **Nueva evidencia:** ejecución focalizada del commit de corrección **PENDIENTE**. CI global en el primer SHA reportó además un RuboCop en `spec/requests/admin/products_spec.rb`, ajeno al módulo; no se debe declarar CI global verde sin su verificación en HEAD.
+
+#### UOM-022 · Evidencia de cierre técnico focalizado
+
+- **SHA funcional verificado:** `4a39eef1c00099c7cc0e48042255571e133d5516` en `feature/fixes`.
+- **[Units of measure CI #42765033263](https://github.com/AliRodri1992/sales_point/actions/runs/42765033263): SUCCESS** en ambos jobs. RuboCop del módulo **PASÓ**, y RSpec (modelos, requests, cuatro pruebas de seeds y Chrome) terminó con **42 ejemplos, 0 fallos**. Esto incluye navegación de filtros aplicada automáticamente, sincronización del formulario tras ordenar dentro del frame, etiquetas de filtros activos, eliminación individual de filtro SAT y limpieza total.
+- **UOM-022, cambios automatizados: VERIFICADOS EN CI FOCALIZADO**. El primer intento registró un fallo de expectativa de idioma en el spec request y quedó corregido sin retirar escenarios.
+- **No equivale a aceptación completa del módulo:** CI global verde, validación manual de zoom 200 %, lector de pantalla/contraste, historial de navegación y migración en una base antigua continúan **PENDIENTES**. No se fusionó ninguna rama ni se modificó Productos.
