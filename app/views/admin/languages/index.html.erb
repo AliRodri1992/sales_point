@@ -1,32 +1,81 @@
 <% content_for :title, t('admin.languages.index.title') %>
-<div class="catalog-workspace">
-<header class="catalog-header"><div><p class="catalog-eyebrow"><%= t('admin.catalog_design.localization') %></p><h1><%= t('admin.languages.index.title') %></h1><p><%= t('admin.catalog_design.language_intro') %></p></div><% if policy(Language).create? %><%= link_to new_admin_language_path, class: 'catalog-button catalog-button-primary', data: { turbo_frame: '_top' } do %><%= delta_icon('plus', class: 'size-4') %><%= t('admin.languages.index.new') %><% end %><% end %></header>
-<%= form_with url: admin_languages_path, method: :get, class: 'catalog-filter', data: { turbo_frame: 'languages_list' } do %>
-<div><%= label_tag :search, t('admin.catalog_design.search') %><%= search_field_tag :search, params[:search], placeholder: t('admin.languages.index.search_placeholder') %></div>
-<div><%= label_tag :status, t('admin.catalog_design.status') %><div class="relative" data-controller="delta-select"><%= select_tag :status, options_for_select([[t('admin.catalog_design.all_statuses'), 'all'], *Language.statuses.keys.map { |status| [t("admin.languages.statuses.#{status}"), status] }], params[:status]) %></div></div>
-<%= submit_tag t('admin.catalog_design.filter'), class: 'catalog-button' %><%= link_to t('admin.catalog_design.clear'), admin_languages_path, class: 'catalog-button', data: { turbo_frame: '_top' } %>
-<% end %>
-<%= turbo_stream_from "languages_catalog" %>
 
-<div class="delta-skeleton-region" data-controller="skeleton-loading"
-     data-skeleton-loading-region-value="languages_list" aria-busy="false"
-     data-action="skeleton:begin@document->skeleton-loading#begin skeleton:end@document->skeleton-loading#finish turbo:before-fetch-request@document->skeleton-loading#turboStart turbo:frame-load@document->skeleton-loading#turboFinish turbo:fetch-request-error@document->skeleton-loading#turboError turbo:frame-missing@document->skeleton-loading#turboMissing turbo:before-cache@document->skeleton-loading#clear">
-  <span class="sr-only" role="status" aria-live="polite" hidden data-skeleton-loading-target="status"><%= t('admin.action_loader.processing') %></span>
-  <div class="delta-skeleton-region__progress" data-skeleton-loading-target="indicator" hidden aria-hidden="true"><span></span></div>
-  <div data-skeleton-loading-target="content">
-<%= turbo_frame_tag "languages_list" do %>
-  <%= render "list", languages: @languages %>
-<% end %>
-  </div>
-  <div data-skeleton-loading-target="placeholder" hidden>
-    <%= render Ui::SkeletonComponent.new(variant: :table, rows: 6, columns: 5) %>
-  </div>
-  <div data-skeleton-loading-target="error" hidden role="alert"
-       class="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
-    <span><%= t('admin.skeleton_loading.failed') %></span>
-    <button type="button" data-action="skeleton-loading#retry"
-            class="ml-2 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-rose-600"><%= t('admin.skeleton_loading.retry') %></button>
-  </div>
-</div>
+<div class="catalog-workspace languages-workspace">
+  <header class="catalog-header languages-page-header">
+    <div>
+      <p class="catalog-eyebrow"><%= t('admin.catalog_design.localization') %></p>
+      <h1><%= t('admin.languages.index.title') %></h1>
+      <p><%= t('admin.languages.index.subtitle') %></p>
+    </div>
+    <% if policy(Language).create? %>
+      <%= link_to new_admin_language_path, class: 'catalog-button catalog-button-primary languages-new-button',
+                  data: { turbo_frame: '_top' } do %>
+        <%= delta_icon('plus', class: 'size-4', aria: { hidden: true }) %>
+        <%= t('admin.languages.index.new') %>
+      <% end %>
+    <% end %>
+  </header>
 
+  <section class="languages-filters" aria-label="<%= t('admin.languages.ui.filters_title') %>">
+    <%= form_with url: admin_languages_path, method: :get,
+                  class: 'languages-filter-form',
+                  role: :search,
+                  data: { controller: 'languages-search', turbo_frame: 'languages_list',
+                          turbo_action: 'advance' } do %>
+      <div class="languages-filter-search">
+        <%= label_tag :search, t('admin.catalog_design.search') %>
+        <div class="languages-search-control">
+          <%= delta_icon('magnifying-glass', class: 'size-4', aria: { hidden: true }) %>
+          <%= search_field_tag :search, params[:search], maxlength: 100, autocomplete: 'off',
+                               placeholder: t('admin.languages.index.search_placeholder'),
+                               class: 'languages-search-input',
+                               data: { action: 'input->languages-search#debouncedSubmit compositionstart->languages-search#beginComposition compositionend->languages-search#endComposition' } %>
+        </div>
+      </div>
+      <div class="languages-filter-status">
+        <%= label_tag :status, t('admin.catalog_design.status') %>
+        <div class="relative" data-controller="delta-select">
+          <%= select_tag :status,
+                         options_for_select([[t('admin.catalog_design.all_statuses'), 'all'],
+                                              *Language.statuses.keys.map { |key| [t("admin.languages.statuses.#{key}"), key] }],
+                                             params[:status].presence || 'all'),
+                         data: { action: 'change->languages-search#submitNow' } %>
+        </div>
+      </div>
+      <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
+      <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
+      <%= hidden_field_tag :per_page, params[:per_page] if params[:per_page].present? %>
+      <noscript>
+        <button type="submit" class="catalog-button languages-filter-apply">
+          <%= t('admin.catalog_design.filter') %>
+        </button>
+      </noscript>
+    <% end %>
+    <p class="languages-filters-hint">
+      <%= delta_icon('information-circle', class: 'size-4', aria: { hidden: true }) %>
+      <%= t('admin.languages.ui.automatic_filters') %>
+    </p>
+  </section>
+
+  <%= turbo_stream_from 'languages_catalog' %>
+  <div class="delta-skeleton-region" data-controller="skeleton-loading"
+       data-skeleton-loading-region-value="languages_list" aria-busy="false"
+       data-action="skeleton:begin@document->skeleton-loading#begin skeleton:end@document->skeleton-loading#finish turbo:before-fetch-request@document->skeleton-loading#turboStart turbo:frame-load@document->skeleton-loading#turboFinish turbo:fetch-request-error@document->skeleton-loading#turboError turbo:frame-missing@document->skeleton-loading#turboMissing turbo:before-cache@document->skeleton-loading#clear">
+    <span class="sr-only" role="status" aria-live="polite" hidden data-skeleton-loading-target="status"><%= t('admin.action_loader.processing') %></span>
+    <div class="delta-skeleton-region__progress" data-skeleton-loading-target="indicator" hidden aria-hidden="true"><span></span></div>
+    <div data-skeleton-loading-target="content">
+      <%= turbo_frame_tag 'languages_list' do %>
+        <%= render 'list', languages: @languages %>
+      <% end %>
+    </div>
+    <div data-skeleton-loading-target="placeholder" hidden>
+      <%= render Ui::SkeletonComponent.new(variant: :table, rows: 6, columns: 4) %>
+    </div>
+    <div data-skeleton-loading-target="error" hidden role="alert"
+         class="mt-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+      <span><%= t('admin.skeleton_loading.failed') %></span>
+      <button type="button" data-action="skeleton-loading#retry"
+              class="ml-2 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-rose-600"><%= t('admin.skeleton_loading.retry') %></button>
+    </div>
+  </div>
 </div>

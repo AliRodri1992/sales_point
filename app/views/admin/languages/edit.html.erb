@@ -1,8 +1,11 @@
 <% content_for :title, t('admin.languages.edit.title', name: @language.name) %>
 <% if turbo_frame_request? %>
-  <%= turbo_frame_tag 'language_modal', class: 'catalog-workspace' do %>
-    <div data-modal-target="panel" role="dialog" aria-modal="true" class="w-full max-w-6xl rounded-2xl bg-slate-50 p-5 sm:p-8"><%= render 'panel' %></div>
+  <%= turbo_frame_tag 'language_modal', class: 'catalog-workspace languages-workspace' do %>
+    <div data-modal-target="panel" role="dialog" aria-modal="true" aria-labelledby="language-panel-title"
+         class="w-full max-w-3xl rounded-2xl bg-slate-50 p-5 sm:p-7">
+      <%= render 'panel' %>
+    </div>
   <% end %>
 <% else %>
-  <div class="catalog-workspace"><%= render 'panel' %></div>
+  <div class="catalog-workspace languages-workspace"><%= render 'panel' %></div>
 <% end %>

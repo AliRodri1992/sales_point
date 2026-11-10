@@ -1,6 +1,13 @@
 <% language = @language %>
-<header class="catalog-header">
-  <div><p class="catalog-eyebrow"><%= t('admin.catalog_design.localization') %></p><h1><%= language.persisted? ? t('admin.languages.edit.title', name: language.name) : t('admin.languages.new.title') %></h1><p><%= t('admin.catalog_design.language_intro') %></p></div>
-  <%= link_to t('admin.catalog_design.back'), catalog_back_path(Language), class: 'catalog-button', data: { turbo_frame: '_top' } %>
+<header class="catalog-header languages-page-header">
+  <div>
+    <p class="catalog-eyebrow"><%= t('admin.catalog_design.localization') %></p>
+    <h1 id="language-panel-title">
+      <%= language.persisted? ? t('admin.languages.edit.title', name: language.name) : t('admin.languages.new.title') %>
+    </h1>
+    <p><%= t('admin.catalog_design.language_intro') %></p>
+  </div>
+  <%= link_to t('admin.catalog_design.back'), catalog_back_path(Language),
+              class: 'catalog-button', data: { turbo_frame: '_top' } %>
 </header>
 <%= render 'form', language: language %>

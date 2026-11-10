@@ -1,0 +1,24 @@
+<div class="languages-row-actions" role="group" aria-label="<%= t('admin.languages.ui.actions_for', name: language.name) %>">
+  <% if policy(Language).show? %>
+    <%= link_to admin_language_path(language), data: { turbo_frame: '_top', tooltip: t('admin.languages.show.title') },
+                class: 'languages-icon-button', aria: { label: t('admin.languages.show.title') } do %>
+      <%= delta_icon('eye', class: 'size-4', aria: { hidden: true }) %>
+    <% end %>
+  <% end %>
+  <% if policy(Language).update? %>
+    <%= link_to edit_admin_language_path(language), data: { turbo_frame: '_top', tooltip: t('admin.languages.index.edit') },
+                class: 'languages-icon-button', aria: { label: t('admin.languages.index.edit') } do %>
+      <%= delta_icon('pencil-square', class: 'size-4', aria: { hidden: true }) %>
+    <% end %>
+  <% end %>
+  <% if policy(Language).destroy? && language.code != I18n.default_locale.to_s %>
+    <%= button_to admin_language_path(language), method: :delete,
+                  class: 'languages-icon-button languages-icon-button--danger',
+                  data: { controller: 'swal-confirm', turbo_frame: 'languages_list',
+                          turbo_confirm: t('admin.languages.index.confirm_delete'),
+                          confirm_record: language.name, swal_cancel_text: t('admin.languages.confirm.cancel') },
+                  aria: { label: t('admin.languages.index.delete') } do %>
+      <%= delta_icon('trash', class: 'size-4', aria: { hidden: true }) %>
+    <% end %>
+  <% end %>
+</div>

@@ -1,7 +1,56 @@
-<header class="catalog-header">
-  <div><p class="catalog-eyebrow"><%= t('admin.catalog_design.localization') %></p><div class="flex items-center gap-3"><%= image_tag @language.flag_url, alt: '', class: 'h-9 w-12 rounded-md object-cover' %><h1><%= @language.name %></h1></div><p><%= t('admin.catalog_design.language_intro') %></p></div>
-  <div class="catalog-actions"><%= link_to t('admin.catalog_design.back'), catalog_back_path(Language), class: 'catalog-button', data: { turbo_frame: '_top' } %><% if policy(Language).update? %><%= link_to t('admin.languages.index.edit'), edit_admin_language_path(@language), class: 'catalog-button catalog-button-primary', data: { turbo_frame: '_top' } %><% end %></div>
+<header class="catalog-header languages-page-header">
+  <div>
+    <p class="catalog-eyebrow"><%= t('admin.catalog_design.localization') %></p>
+    <div class="flex items-center gap-3">
+      <%= image_tag @language.flag_url('64x48'), srcset: @language.flag_srcset, alt: '',
+                    class: 'languages-flag' %>
+      <h1 id="language-show-title"><%= @language.name %></h1>
+    </div>
+    <p><%= t('admin.languages.ui.detail_intro') %></p>
+  </div>
+  <div class="catalog-actions">
+    <%= link_to t('admin.catalog_design.back'), catalog_back_path(Language),
+                class: 'catalog-button', data: { turbo_frame: '_top' } %>
+    <% if policy(Language).update? %>
+      <%= link_to edit_admin_language_path(@language), class: 'catalog-button catalog-button-primary',
+                  data: { turbo_frame: '_top' } do %>
+        <%= delta_icon('pencil-square', class: 'size-4', aria: { hidden: true }) %>
+        <%= t('admin.languages.index.edit') %>
+      <% end %>
+    <% end %>
+  </div>
 </header>
-<div class="catalog-layout"><section class="catalog-card"><%= catalog_heading(t('admin.catalog_design.language_identity'), t('admin.catalog_design.language_identity_hint'), icon: 'language') %><dl class="catalog-card-body catalog-definition">
-<% [:name, :code, :flag_iso, :status].each do |attribute| %><div><dt><%= t("admin.languages.form.#{attribute}") %></dt><dd><%= attribute == :status ? catalog_status(@language.active?, scope: 'admin.languages.statuses') : @language.public_send(attribute) %></dd></div><% end %>
-</dl></section><aside class="catalog-card catalog-card-body"><h2 class="font-semibold"><%= t('admin.catalog_design.language_help_title') %></h2><p class="catalog-hint"><%= t('admin.catalog_design.language_status_hint') %></p></aside></div>
+
+<div class="languages-detail">
+  <section class="catalog-card languages-detail__summary">
+    <%= catalog_heading(t('admin.catalog_design.language_identity'),
+                        t('admin.catalog_design.language_identity_hint'), icon: 'language') %>
+    <dl class="catalog-card-body catalog-definition">
+      <div>
+        <dt><%= t('admin.languages.form.name') %></dt>
+        <dd><%= @language.name %></dd>
+      </div>
+      <div>
+        <dt><%= t('admin.languages.form.code') %></dt>
+        <dd><code class="languages-code"><%= @language.code %></code></dd>
+      </div>
+      <div>
+        <dt><%= t('admin.languages.form.flag_iso') %></dt>
+        <dd><code class="languages-code"><%= @language.flag_iso.upcase %></code></dd>
+      </div>
+      <div>
+        <dt><%= t('admin.languages.form.status') %></dt>
+        <dd><%= catalog_status(@language.active?, scope: 'admin.languages.statuses') %></dd>
+      </div>
+    </dl>
+  </section>
+
+  <aside class="languages-detail__note">
+    <h2><%= t('admin.catalog_design.language_help_title') %></h2>
+    <p><%= t('admin.catalog_design.language_help') %></p>
+    <p><%= t('admin.catalog_design.language_status_hint') %></p>
+    <% if @language.code == I18n.default_locale.to_s %>
+      <p class="languages-default-label"><%= t('admin.languages.ui.default_language') %></p>
+    <% end %>
+  </aside>
+</div>

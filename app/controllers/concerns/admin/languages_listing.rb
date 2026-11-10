@@ -5,19 +5,22 @@ module Admin
     private
 
     def load_languages
-      @languages = filter_scope(Language.not_deleted)
+      scope = Language.not_deleted
+      @unfiltered_count = scope.count
+      @languages = filter_scope(scope)
       @total_count = @languages.count
       @languages = apply_sorting(@languages)
       @languages = paginate(@languages)
     end
 
     def filter_scope(scope)
-      if params[:search].present?
+      term = params[:search].to_s.strip[0, 100]
+      if term.present?
         scope = scope.where('name ILIKE :q OR code ILIKE :q',
-                            q: "%#{Language.sanitize_sql_like(params[:search].to_s.strip)}%")
+                            q: "%#{Language.sanitize_sql_like(term)}%")
       end
 
-      return scope unless params[:status].present? && params[:status] != 'all'
+      return scope unless Language.statuses.key?(params[:status])
 
       scope.where(status: params[:status])
     end

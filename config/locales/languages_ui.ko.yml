@@ -1,0 +1,26 @@
+{
+  "ko": {
+    "admin": {
+      "languages": {
+        "ui": {
+          "filters_title": "언어 필터",
+          "automatic_filters": "검색어를 입력하거나 상태를 변경하면 결과가 자동으로 업데이트됩니다.",
+          "active_filters": "적용된 필터",
+          "search_filter": "검색: %{value}",
+          "status_filter": "상태: %{value}",
+          "remove_search": "검색 필터 제거",
+          "remove_status": "상태 필터 제거",
+          "clear_filters": "필터 지우기",
+          "default_language": "기본 언어",
+          "default_status_hint": "기본 언어는 항상 활성 상태여야 합니다.",
+          "form_note_title": "언어와 국기는 서로 다른 설정입니다",
+          "form_note": "언어 코드는 사용 가능한 번역을 식별합니다. 국기는 언어가 아닌 국가를 나타냅니다. 번역이 설정된 언어만 활성화할 수 있습니다.",
+          "detail_intro": "이 언어의 식별 정보와 사용 가능 상태를 확인하세요.",
+          "actions_for": "%{name} 작업",
+          "no_results_title": "검색 결과가 없습니다",
+          "no_results_hint": "다른 검색어를 사용하거나 필터를 지워 등록된 언어를 확인하세요."
+        }
+      }
+    }
+  }
+}

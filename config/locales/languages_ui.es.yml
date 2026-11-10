@@ -1,0 +1,26 @@
+{
+  "es": {
+    "admin": {
+      "languages": {
+        "ui": {
+          "filters_title": "Filtros de idiomas",
+          "automatic_filters": "Los resultados se actualizan automáticamente al buscar o cambiar el estado.",
+          "active_filters": "Filtros activos",
+          "search_filter": "Buscar: %{value}",
+          "status_filter": "Estado: %{value}",
+          "remove_search": "Quitar filtro de búsqueda",
+          "remove_status": "Quitar filtro de estado",
+          "clear_filters": "Limpiar filtros",
+          "default_language": "Idioma predeterminado",
+          "default_status_hint": "El idioma predeterminado debe permanecer activo.",
+          "form_note_title": "Idioma y bandera son datos distintos",
+          "form_note": "El código de idioma identifica las traducciones disponibles. La bandera representa un país, no determina el idioma. Solo los idiomas con traducciones configuradas se pueden activar.",
+          "detail_intro": "Consulta la identidad y disponibilidad de este idioma.",
+          "actions_for": "Acciones de %{name}",
+          "no_results_title": "No se encontraron idiomas",
+          "no_results_hint": "Prueba otra búsqueda o elimina los filtros para ver los idiomas registrados."
+        }
+      }
+    }
+  }
+}

@@ -1,19 +1,37 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Auto-submits the languages search form as the user types, debounced,
-// so results update live without needing to press Enter or click Apply.
+// Search and status share one form. Native GET submission remains available without JS.
 export default class extends Controller {
-  static values = { delay: { type: Number, default: 400 } }
+  static values = { delay: { type: Number, default: 350 } }
 
   connect() {
     this.timeoutId = null
+    this.composing = false
   }
 
-  debouncedSubmit() {
+  beginComposition() {
+    this.composing = true
     clearTimeout(this.timeoutId)
-    this.timeoutId = setTimeout(() => {
-      this.element.requestSubmit()
-    }, this.delayValue)
+  }
+
+  endComposition() {
+    this.composing = false
+    this.schedule()
+  }
+
+  debouncedSubmit(event) {
+    if (this.composing || event?.isComposing) return
+    this.schedule()
+  }
+
+  submitNow() {
+    clearTimeout(this.timeoutId)
+    this.element.requestSubmit()
+  }
+
+  schedule() {
+    clearTimeout(this.timeoutId)
+    this.timeoutId = setTimeout(() => this.element.requestSubmit(), this.delayValue)
   }
 
   disconnect() {

@@ -1,0 +1,26 @@
+{
+  "en": {
+    "admin": {
+      "languages": {
+        "ui": {
+          "filters_title": "Language filters",
+          "automatic_filters": "Results update automatically as you type or change the status.",
+          "active_filters": "Active filters",
+          "search_filter": "Search: %{value}",
+          "status_filter": "Status: %{value}",
+          "remove_search": "Remove search filter",
+          "remove_status": "Remove status filter",
+          "clear_filters": "Clear filters",
+          "default_language": "Default language",
+          "default_status_hint": "The default language must remain active.",
+          "form_note_title": "Language and flag are separate settings",
+          "form_note": "The language code identifies available translations. A flag represents a country, not the language. Only languages with configured translations can be activated.",
+          "detail_intro": "Review this language's identity and availability.",
+          "actions_for": "Actions for %{name}",
+          "no_results_title": "No languages found",
+          "no_results_hint": "Try another search or clear the filters to view registered languages."
+        }
+      }
+    }
+  }
+}

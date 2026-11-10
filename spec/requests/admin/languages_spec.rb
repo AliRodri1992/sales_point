@@ -247,6 +247,36 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(response).to have_http_status(:ok)
     end
 
+    it 'renders compact automatic filters without a wide submit input' do
+      get admin_languages_path
+
+      form = Nokogiri::HTML(response.body).at_css('form.languages-filter-form')
+      expect(form).to be_present
+      expect(form['data-controller']).to eq('languages-search')
+      expect(form.at_css('input[type="submit"]')).to be_nil
+      expect(form.at_css('input#search')['data-action']).to include('debouncedSubmit')
+      expect(form.at_css('select#status')['data-action']).to include('submitNow')
+    end
+
+    it 'differentiates filtered empty results from an empty catalog' do
+      get admin_languages_path(search: 'nothing-matches-this-language')
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t('admin.languages.ui.no_results_title'))
+      expect(response.body).to include('languages-active-filters')
+      expect(response.body).not_to include(I18n.t('admin.languages.index.empty_title'))
+    end
+
+    it 'keeps filter parameters in removable chips' do
+      get admin_languages_path(search: 'Language', status: 'inactive', sort: 'name')
+
+      page = Nokogiri::HTML(response.body)
+      chips = page.css('.languages-filter-chip')
+      expect(chips.size).to eq(2)
+      expect(chips[0]['href']).to include('status=inactive')
+      expect(chips[1]['href']).to include('search=Language')
+    end
+
     it 'filters by status' do
       create(:language, status: 'inactive')
 

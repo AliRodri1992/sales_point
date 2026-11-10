@@ -1,36 +1,60 @@
-<%= form_with model: [:admin, language], data: { turbo: false }, class: 'catalog-layout' do |form| %>
-  <div class="catalog-main">
-    <%= catalog_errors(language) %>
-    <section class="catalog-card">
-      <%= catalog_heading(t('admin.catalog_design.language_identity'), t('admin.catalog_design.language_identity_hint'), icon: 'language') %>
-      <div class="catalog-card-body catalog-fields">
-        <% [:name, :code, :flag_iso].each do |attribute| %>
-          <div class="catalog-field <%= 'catalog-full' if attribute == :name %>">
-            <%= form.label attribute, required_field_label(t("admin.languages.form.#{attribute}")) %>
-            <%= form.text_field attribute, maxlength: attribute == :name ? 100 : 2,
-                readonly: attribute == :code && language.persisted?,
-                autocomplete: 'off', spellcheck: false,
-                aria: { invalid: language.errors[attribute].any?,
-                        describedby: validation_describedby(language, attribute, "language_#{attribute}_hint") },
-                class: form_state_classes(language, attribute) %>
-            <p id="language_<%= attribute %>_hint" class="catalog-hint"><%= t("admin.catalog_design.language_#{attribute}_hint") %></p>
-            <%= error_message_for(language, attribute) %>
-          </div>
-        <% end %>
+<%= form_with model: [:admin, language], data: { turbo: false },
+              html: { novalidate: true }, class: 'languages-editor' do |form| %>
+  <%= catalog_errors(language) %>
+  <section class="catalog-card">
+    <%= catalog_heading(t('admin.catalog_design.language_identity'),
+                        t('admin.catalog_design.language_identity_hint'), icon: 'language') %>
+
+    <div class="catalog-card-body languages-editor__fields">
+      <% [:name, :code, :flag_iso].each do |attribute| %>
         <div class="catalog-field">
-          <%= form.label :status, t('admin.languages.form.status') %>
-          <div class="relative" data-controller="delta-select">
-            <%= form.select :status,
-                  Language.statuses.keys.map { |status| [t("admin.languages.statuses.#{status}"), status] },
-                  {},
-                  aria: { invalid: language.errors[:status].any?,
-                          describedby: validation_describedby(language, :status) } %>
-          </div>
-          <%= error_message_for(language, :status) %>
+          <%= form.label attribute, required_field_label(t("admin.languages.form.#{attribute}")) %>
+          <%= form.text_field attribute,
+                              maxlength: attribute == :name ? 100 : 2,
+                              readonly: attribute == :code && language.persisted?,
+                              autocomplete: 'off', spellcheck: false,
+                              aria: { invalid: language.errors[attribute].any?,
+                                      describedby: validation_describedby(language, attribute,
+                                                                          "language_#{attribute}_hint") },
+                              class: form_state_classes(language, attribute) %>
+          <p id="language_<%= attribute %>_hint" class="catalog-hint">
+            <%= t("admin.catalog_design.language_#{attribute}_hint") %>
+          </p>
+          <%= error_message_for(language, attribute) %>
         </div>
+      <% end %>
+
+      <div class="catalog-field">
+        <%= form.label :status, t('admin.languages.form.status') %>
+        <div class="relative" data-controller="delta-select">
+          <%= form.select :status,
+                          Language.statuses.keys.map { |value| [t("admin.languages.statuses.#{value}"), value] },
+                          {},
+                          disabled: language.persisted? && language.code == I18n.default_locale.to_s,
+                          aria: { invalid: language.errors[:status].any?,
+                                  describedby: validation_describedby(language, :status, 'language_status_hint') } %>
+        </div>
+        <p id="language_status_hint" class="catalog-hint">
+          <%= language.persisted? && language.code == I18n.default_locale.to_s ?
+                t('admin.languages.ui.default_status_hint') : t('admin.catalog_design.language_status_hint') %>
+        </p>
+        <%= error_message_for(language, :status) %>
       </div>
-    </section>
-    <footer class="catalog-footer"><%= link_to t('admin.catalog_design.cancel'), catalog_back_path(Language), class: 'catalog-button', data: { turbo: false } %><%= form.submit language.persisted? ? t('admin.languages.form.update') : t('admin.languages.form.create'), class: 'catalog-button catalog-button-primary' %></footer>
+    </div>
+  </section>
+
+  <div class="languages-editor__note">
+    <%= delta_icon('information-circle', class: 'size-5', aria: { hidden: true }) %>
+    <div>
+      <strong><%= t('admin.languages.ui.form_note_title') %></strong>
+      <p><%= t('admin.languages.ui.form_note') %></p>
+    </div>
   </div>
-  <aside class="catalog-aside"><section class="catalog-card catalog-card-body"><span class="catalog-icon"><%= delta_icon('globe-alt', class: 'size-5') %></span><h2 class="mt-4"><%= t('admin.catalog_design.language_help_title') %></h2><p><%= t('admin.catalog_design.language_help') %></p><p><%= t('admin.catalog_design.language_status_hint') %></p></section></aside>
+
+  <footer class="languages-editor__footer">
+    <%= link_to t('admin.catalog_design.cancel'), catalog_back_path(Language),
+                class: 'catalog-button', data: { turbo: false } %>
+    <%= form.submit(language.persisted? ? t('admin.languages.form.update') : t('admin.languages.form.create'),
+                    class: 'catalog-button catalog-button-primary') %>
+  </footer>
 <% end %>
