@@ -1,0 +1,142 @@
+name: Products CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/fixes
+    paths:
+      - '.github/workflows/products-ci.yml'
+      - 'app/controllers/admin/products_controller.rb'
+      - 'app/controllers/admin/product_images_controller.rb'
+      - 'app/controllers/concerns/admin/product_*'
+      - 'app/controllers/concerns/admin/products_*'
+      - 'app/models/product*.rb'
+      - 'app/models/concerns/product_*'
+      - 'app/services/products/**'
+      - 'app/policies/product_policy.rb'
+      - 'app/views/admin/products/**'
+      - 'app/assets/stylesheets/components/catalog_workspace.css'
+      - 'app/javascript/controllers/product*'
+      - 'app/javascript/controllers/nested_catalog_controller.js'
+      - 'config/locales/catalog_design.*.yml'
+      - 'db/migrate/*product*'
+      - 'db/schema.rb'
+      - 'spec/models/product*'
+      - 'spec/services/products/**'
+      - 'spec/requests/admin/product*'
+      - 'spec/controllers/concerns/admin/product*'
+      - 'spec/features/products_quality_browser_spec.rb'
+      - 'docs/quality/modules/products.md'
+
+permissions:
+  contents: read
+
+env:
+  RAILS_ENV: test
+  POSTGRES_DB_TEST: sale_point_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_HOST: localhost
+  POSTGRES_PORT: 5432
+  REDIS_URL: redis://localhost:6379/0
+
+jobs:
+  products_lint:
+    name: Products module RuboCop
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: .ruby-version
+          bundler-cache: true
+      - name: Lint Products and focused regressions
+        run: |
+          bin/rubocop -f simple \
+            app/controllers/admin/products_controller.rb \
+            app/controllers/admin/product_images_controller.rb \
+            app/controllers/concerns/admin/product_form_writing.rb \
+            app/controllers/concerns/admin/products_listing.rb \
+            app/controllers/concerns/admin/products_lookup.rb \
+            app/models/product.rb app/models/product_variant.rb \
+            app/models/product_presentation.rb app/models/product_barcode.rb \
+            app/models/product_sku_claim.rb app/models/concerns/product_commercial_catalog.rb \
+            app/models/concerns/product_sku_reservation.rb \
+            app/services/products \
+            spec/models/product_spec.rb spec/models/product_sku_claim_spec.rb \
+            spec/requests/admin/products_spec.rb spec/requests/admin/product_tenant_access_spec.rb \
+            spec/controllers/concerns/admin/products_listing_spec.rb \
+            spec/controllers/concerns/admin/products_lookup_spec.rb \
+            spec/features/products_quality_browser_spec.rb
+
+  products_specs:
+    name: Products models, requests, transactions and browser
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sale_point_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d sale_point_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev libvips
+      - name: Install matching Chrome and ChromeDriver
+        id: browser
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
+          install-chromedriver: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version-file: .ruby-version
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Build assets
+        run: |
+          yarn build:js
+          yarn build:css
+      - name: Fresh migrations
+        run: bin/rails db:drop db:create db:migrate
+      - name: Verify models, isolation, requests and commercial transactions
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: |
+          bundle exec rspec \
+            spec/models/product_spec.rb spec/models/product_sku_claim_spec.rb \
+            spec/requests/admin/products_spec.rb \
+            spec/requests/admin/product_tenant_access_spec.rb \
+            spec/controllers/concerns/admin/products_listing_spec.rb \
+            spec/controllers/concerns/admin/products_lookup_spec.rb \
+            spec/services/products
+      - name: Verify real Products browser flows
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: bundle exec rspec spec/features/products_quality_browser_spec.rb
