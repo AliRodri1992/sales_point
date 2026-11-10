@@ -280,3 +280,43 @@ El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios;
 - **Responsive:** a menos de 640 px el formulario vuelve a una columna. El detalle de categoría comparte la nueva anchura sin alterar el layout de lectura.
 - **Regresión agregada:** test Chrome comprueba ancho, alineación de los campos en escritorio y apilamiento sin desborde horizontal en 390 px. Pendiente ejecución del CI del nuevo SHA y revisión manual de zoom 200 %.
 - **Alcance:** solo Categorías; sin cambios en migraciones, validaciones de modelo, roles ni localizaciones.
+
+
+## Reauditoría integral — 2026-11-10 (sin cambios funcionales)
+
+**SHA inicial y auditado:** `9ac9c227f729bbcc8b045ee8604775d083e41511` (`feature/fixes`). **Método:** AI Dev Suite como procedimientos de `impeccable-audit`, `ui-ux-pro-max` y `ponytail-engineering` aplicados mediante inspección GitHub/CI (no se ejecutaron los CLIs externos). **Alcance propio:** `/admin/categories`, `CategoriesController`, `Admin::CategoryMutations`, `Category`, `CategoryPolicy`, vistas Turbo/ERB, CSS/Stimulus, traducciones y specs. Clientes y Productos se contabilizan solo en su contrato externo. No se usó Figma.
+
+### Reapertura de hallazgos y evidencia
+
+- **CATEGORIES-025 · P2 · REABIERTO (fallos en regresiones, no demostrado como rotura visual):** se retiró el acordeón de orden/dirección y se conservaron entradas ocultas. El run [Categories CI #42809388428](https://github.com/AliRodri1992/sales_point/actions/runs/42809388428) informa dos pruebas propias fallidas: `spec/requests/admin/categories_spec.rb:378` no encuentra `th a[href*="sort=name"]`, pero ese escenario no crea filas y la vista solo renderiza la tabla cuando `categories.any?`; `spec/features/categories_quality_browser_spec.rb:67` usa `have_field` para el `input type="hidden"` de dirección, cuya localización depende del selector de Capybara. **No afirmar que el orden se pierde para el usuario** sin inspección de DOM y prueba correcta. Responsable: Categorías. Regresión: preparar categoría del tenant, inspeccionar `input[type=hidden]` explícitamente y comprobar persistencia de orden al buscar/filtrar. Se mantienen los dos fallos abiertos hasta CI verde.
+- **CATEGORIES-026 · P3 · VERIFICADO PARCIALMENTE:** las pruebas Chrome de modal a 1280 px/390 px, dos columnas en escritorio y apilado móvil aparecen entre los ejemplos aprobados de #42809388428. La modal `.categories-modal` tiene `max-width:680px` y altura limitada con scroll. Falta inspección manual 320/768/1440 px, zoom 200%, lector de pantalla y diferentes idiomas/temas.
+
+### Nuevos hallazgos con ID permanente
+
+| ID | Prioridad | Área y estado | Evidencia y comportamiento esperado | Responsable / regresión |
+|---|---|---|---|---|
+| CATEGORIES-027 | P2 | PROPIO · confirmado por código; reproducción pendiente | `Admin::CategoryMutations#category_saved` invoca `load_categories` con los parámetros de POST/PATCH/DELETE. Los enlaces de nueva/editar y el `button_to` de eliminar no transmiten búsqueda/estado/orden de la lista; `create/update/destroy.turbo_stream.erb` reemplazan `categories_list` mientras el formulario de filtros está fuera del frame. **Riesgo:** resultados y chips que ya no coinciden con el texto/estado del filtro hasta una recarga o broadcast. Se debe conservar el estado visible del listado de forma explícita. | Categorías; Chrome con búsqueda/estado activos + crear, editar, eliminar, comprobando inputs, chips y filas al terminar |
+| CATEGORIES-028 | P2 | PROPIO · confirmado por código; reproducción pendiente | `CategoriesController#apply_sorting` aplica solo `scope.order(sort_column => sort_direction)`. `Category` permite nombres repetidos; paginar con `LIMIT/OFFSET` sobre valores de orden no únicos carece de desempate estable por ID. **Riesgo:** duplicados/omisiones entre páginas, especialmente al cambiar datos. | Categorías; ordenar varios registros homónimos por página pequeña y usar segundo criterio estable |
+| CATEGORIES-029 | P2 | PROPIO · confirmado por estilos; contraste visual no medido | `categories_workspace.css` aplica verde esmeralda fijo a `.categories-avatar`, `.categories-status`, `.categories-filter-chip`, `.categories-empty-icon` y hovers, mientras el sistema dispone de colores de marca parametrizados por tema. **Riesgo:** el catálogo no adopta completamente temas distintos y sus contrastes pueden variar. | Categorías/identidad visual; comparar temas soportados y medir contraste, preferir tokens semánticos |
+| CATEGORIES-030 | P2 | PROPIO · confirmado por vistas; pruebas asistivas pendientes | Los encabezados ordenables de `_list.html.erb` son enlaces `sort_link`, pero los `th` carecen de `aria-sort` para indicar a tecnologías asistivas la columna/dirección vigente. | Categorías; ARIA y teclado sobre orden asc/desc, con lector de pantalla y request spec |
+
+### CI real del SHA auditado
+
+- **Categories CI #42809388428:** RuboCop focalizado **SUCCESS**; RSpec + navegador Chrome **104 ejemplos, 6 fallos**: **2 propios** de pruebas de conservación del orden (`categories_spec.rb` y `categories_quality_browser_spec.rb`), **3 externos de permisos de Clientes** (404 en show/update/destroy), **1 externo de paginación de Productos** (etiquetas de página).
+- **CI global #42809388942:** `RuboCop`, `Security scans` y `Rails I18n and YAML audit` **SUCCESS**; `RSpec` **FAILURE**, en job de rendimiento: `spec/performance/n_plus_one_scaling_spec.rb:51` (Clientes, esperaba consultas de teléfonos >=1 y obtuvo 0). `Fresh migrations and seed data` seguía en ejecución en la consulta realizada; no presumir su resultado.
+- **Pruebas no realizadas en esta reauditoría:** navegador local autenticado en `/admin/categories` (las pestañas conectadas solo mostraban Idiomas en localhost), lectores de pantalla, zoom, auditoría de contraste por cada tema y migración/backfill sobre copia de datos históricos reales. No se ejecutaron RSpec/RuboCop en el Mac; los resultados proceden exclusivamente de Actions.
+
+### Riesgos ya registrados, no duplicar
+
+- **CATEGORIES-001 / 009:** falta evidencia sobre migración/aislamiento de datos históricos y validación completa de constraints legados `NOT VALID`; base de pruebas nueva no sustituye un clon de datos existentes.
+- **CATEGORIES-010:** cobertura de flujos y errores; añadir regresiones enfocadas a los hallazgos 027–030, incluidas rutas directas, estados 422 y restauración de foco cuando corresponda.
+- El CI global y el focalizado permanecen rojos, por lo que **no existe SHA de aceptación ni cierre**.
+
+### Dictamen y secuencia de corrección
+
+1. P2: corregir las dos pruebas del contrato de ordenación (CATEGORIES-025), verificar valor oculto y flujo real en Chrome, y reejecutar CI focalizado sin eliminar los escenarios externos.
+2. P2: corregir conservación de filtros tras altas/ediciones/bajas (027), estabilizar la paginación (028), añadir accesibilidad de `aria-sort` (030) y revisar tokens/contraste de temas (029).
+3. Validar Chrome con escenarios reales y locales es/en/ko, 320/390/768/1440 px, zoom 200%, teclado/foco, errores y estado vacío.
+4. Revisar backfill y constraints sobre datos históricos; repetir RSpec, RuboCop, seguridad, I18n y migraciones; pedir revisión independiente y CI global verde antes de cualquier fusión.
+
+**Estado:** REAUDITADO, HALLAZGOS ABIERTOS, NO CERRADO. Esta entrega registra solo auditoría/evidencia, sin cambios en código funcional, datos ni migraciones.
