@@ -1,0 +1,128 @@
+/* Categories | Delta POS catalog interface. All rules are scoped to this module. */
+.categories-workspace {max-width:1440px;margin:0 auto;color:#0f172a}
+.categories-workspace :is(a,button,input,select,summary):focus-visible,
+.categories-modal :is(a,button,input,select,textarea):focus-visible {outline:3px solid var(--brand-on-white,#047857);outline-offset:3px}
+.categories-page-header {display:flex;align-items:center;justify-content:space-between;gap:1.25rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.categories-heading-copy {min-width:0}
+.categories-eyebrow {font-size:.6875rem;font-weight:700;letter-spacing:.13em;color:var(--brand-on-white,#047857);text-transform:uppercase;margin-bottom:.5rem}
+.categories-page-header h1 {font:700 clamp(1.5rem,2.8vw,1.875rem) var(--font-jakarta);letter-spacing:-.035em}
+.categories-subtitle {font-size:.875rem;color:#64748b;line-height:1.6;margin-top:.375rem;max-width:65ch}
+.categories-primary-button,.categories-secondary-button,.categories-apply-button {display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:44px;padding:.625rem 1rem;border-radius:.75rem;font-size:.8125rem;font-weight:650;white-space:nowrap;transition:background .15s ease}
+.categories-primary-button {background:var(--brand,#059669);color:#fff}
+.categories-primary-button:hover {filter:brightness(.91)}
+.categories-secondary-button {background:#fff;color:#334155;border:1px solid #cbd5e1}
+.categories-secondary-button:hover {background:#f8fafc}
+.categories-apply-button {background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;width:auto;align-self:end}
+.categories-apply-button:hover {background:#e2e8f0}
+.categories-filter-panel {background:#fff;border:1px solid #e2e8f0;border-radius:1rem;padding:1.125rem 1.25rem;margin-bottom:.875rem}
+.categories-filter-heading {display:flex;align-items:baseline;flex-wrap:wrap;gap:.5rem 1.25rem;margin-bottom:1rem}
+.categories-filter-heading h2 {font:700 .9375rem var(--font-jakarta)}
+.categories-filter-heading p {font-size:.75rem;color:#64748b}
+.categories-filter-form {display:grid;grid-template-columns:minmax(220px,1fr) minmax(170px,220px) auto;gap:.875rem;align-items:end}
+.categories-filter-field {min-width:0}
+.categories-filter-field label {display:block;font-size:.75rem;color:#475569;font-weight:650;margin-bottom:.375rem}
+.categories-filter-field input,.categories-filter-field select {display:block;width:100%;min-width:0;min-height:44px;background:#fff;border:1px solid #cbd5e1;border-radius:.75rem;padding:.625rem .875rem;color:#334155;font-size:.8125rem}
+.categories-filter-field input[type=search] {padding-left:1rem}
+.categories-filter-field input::placeholder {color:#64748b}
+.categories-filter-field .delta-select-native {display:none}
+.categories-status-field .relative,.categories-filter-field .relative {min-width:0}
+.categories-advanced {grid-column:1/-1;min-width:0;border-top:1px solid #f1f5f9;padding-top:.75rem}
+.categories-advanced summary {display:inline-flex;align-items:center;gap:.5rem;list-style:none;cursor:pointer;min-height:38px;padding:.4rem .5rem;border-radius:.625rem;color:var(--brand-on-white,#047857);font-size:.8125rem;font-weight:650}
+.categories-advanced summary::-webkit-details-marker {display:none}
+.categories-advanced summary:hover {background:#f0fdf4}
+.categories-advanced-caret {font-size:1.125rem;line-height:1;transition:transform .15s}
+.categories-advanced[open] .categories-advanced-caret {transform:rotate(180deg)}
+.categories-advanced-fields {display:grid;grid-template-columns:repeat(2,minmax(0,250px));gap:1rem;margin-top:.75rem;padding:1rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:.75rem}
+.categories-advanced-help {grid-column:1/-1;font-size:.75rem;color:#64748b;line-height:1.5}
+.categories-alert:empty {display:none}
+.categories-alert:not(:empty) {margin-bottom:1rem}
+.categories-filter-chips {display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:.625rem 0 1rem}
+.categories-filter-chips-label {font-size:.75rem;font-weight:650;color:#64748b;margin-right:.125rem}
+.categories-filter-chip {display:inline-flex;align-items:center;gap:.6rem;max-width:100%;min-height:32px;padding:.35rem .75rem;border:1px solid #a7f3d0;border-radius:999px;background:#ecfdf5;color:#065f46;font-size:.75rem;font-weight:650}
+.categories-filter-chip span:first-child {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px}
+.categories-filter-chip:hover {background:#d1fae5}
+.categories-clear-filters {color:var(--brand-on-white,#047857);font-size:.75rem;font-weight:650;padding:.4rem .5rem}
+.categories-directory {border:1px solid #e2e8f0;border-radius:1rem;background:#fff;overflow:hidden}
+.categories-directory-heading {padding:1.125rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.categories-directory-heading h2 {font:700 1rem var(--font-jakarta)}
+.categories-directory-heading p {font-size:.75rem;color:#64748b;margin-top:.25rem}
+.categories-page-count {display:inline-flex;border-radius:999px;background:#f1f5f9;padding:.45rem .85rem;color:#475569;font-size:.75rem;font-weight:600}
+.categories-desktop-table {overflow-x:auto}
+.categories-table {width:100%;border-collapse:collapse;text-align:left;font-size:.8125rem}
+.categories-table th {padding:.75rem 1.5rem;background:#f8fafc;color:#64748b;font-size:.6875rem;font-weight:700;letter-spacing:.045em;text-transform:uppercase;border-block:1px solid #f1f5f9}
+.categories-table th a {font-size:inherit;font-weight:inherit;text-transform:inherit;letter-spacing:inherit}
+.categories-table td {padding:.875rem 1.5rem;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+.categories-table tbody tr:hover td {background:#f8fafc}
+.categories-identity {display:flex;align-items:center;gap:.75rem;min-width:165px}
+.categories-avatar {display:inline-grid;place-items:center;flex-shrink:0;width:36px;height:36px;border-radius:.75rem;background:#ecfdf5;color:#047857;font-size:.875rem;font-weight:750}
+.categories-name {font-weight:650;color:#0f172a;overflow-wrap:anywhere}
+.categories-code {display:inline-block;padding:.25rem .5rem;max-width:100%;border-radius:.45rem;background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:600;overflow-wrap:anywhere;white-space:normal}
+.categories-description {color:#475569;font-size:.78125rem;line-height:1.55;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;max-width:360px}
+.categories-status {display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:.3rem .7rem;background:#ecfdf5;color:#047857;font-size:.6875rem;font-weight:700;white-space:nowrap}
+.categories-status--inactive {background:#f1f5f9;color:#475569}
+.categories-actions-heading {text-align:right}
+.categories-row-actions {display:flex;align-items:center;justify-content:flex-end;gap:.25rem}
+.categories-icon-button {display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;flex-shrink:0;border:1px solid transparent;border-radius:.625rem;color:#475569;background:transparent}
+.categories-icon-button:hover {background:#ecfdf5;color:#047857}
+.categories-icon-button--danger:hover {background:#fff1f2;color:#be123c}
+.categories-icon-button:disabled {opacity:.45;cursor:not-allowed}
+.categories-pagination {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:.85rem 1.25rem}
+.categories-pagination-size {display:flex;align-items:center;gap:.625rem;font-size:.75rem;color:#475569}
+.categories-pagination-size .relative {min-width:90px}
+.categories-pagination-size select {min-height:40px;width:100%;border:1px solid #cbd5e1;border-radius:.625rem;padding:.375rem .625rem;background:#fff;color:#334155}
+.categories-pagination-size .delta-select-native {display:none}
+.categories-mobile-list {display:none}
+.categories-empty-state {display:grid;justify-items:center;gap:.8rem;text-align:center;padding:3.75rem 1.25rem}
+.categories-empty-icon {display:grid;place-items:center;width:64px;height:64px;border-radius:1rem;background:#ecfdf5;color:#047857}
+.categories-empty-state h3 {font:700 1rem var(--font-jakarta)}
+.categories-empty-state p {max-width:48ch;font-size:.8125rem;color:#64748b;line-height:1.65}
+.categories-empty-state :is(.categories-primary-button,.categories-secondary-button) {margin-top:.375rem}
+.categories-modal {width:100%;max-width:560px;max-height:min(90dvh,800px);overflow-y:auto;border:1px solid #e2e8f0;border-radius:1.25rem;background:#fff;box-shadow:0 24px 60px -18px rgb(15 23 42 / .24)}
+.categories-modal-header {display:flex;justify-content:space-between;align-items:start;gap:1rem;padding:1.25rem 1.5rem;border-bottom:1px solid #f1f5f9}
+.categories-modal-header h2 {font:700 1.125rem var(--font-jakarta);color:#0f172a}
+.categories-modal-header p {font-size:.8125rem;line-height:1.6;color:#64748b;margin-top:.25rem}
+.categories-modal-close {display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border-radius:.625rem;color:#64748b}
+.categories-modal-close:hover {background:#f1f5f9;color:#334155}
+.categories-modal-body {padding:1.5rem}
+.categories-modal .categories-form-note {margin-bottom:1.25rem;font-size:.75rem;line-height:1.6;color:#64748b}
+.categories-modal .categories-form-fields {display:grid;gap:1.125rem}
+.categories-modal .categories-form-fields label {margin-bottom:.375rem}
+.categories-modal .categories-form-fields :is(input,select,textarea) {min-height:44px}
+.categories-modal .categories-form-fields textarea {min-height:100px}
+.categories-modal .categories-modal-actions {display:flex;justify-content:flex-end;flex-wrap:wrap;gap:.75rem;padding-top:1.125rem;border-top:1px solid #f1f5f9}
+.categories-detail-list {padding:0 1.5rem}
+.categories-detail-row {display:grid;grid-template-columns:minmax(110px,32%) minmax(0,1fr);gap:1rem;padding:1rem 0;border-bottom:1px solid #f1f5f9}
+.categories-detail-row dt {color:#64748b;font-size:.8125rem;font-weight:650}
+.categories-detail-row dd {min-width:0;text-align:right;color:#0f172a;font-size:.8125rem;overflow-wrap:anywhere}
+.categories-detail-actions {display:flex;justify-content:flex-end;flex-wrap:wrap;gap:.625rem;padding:1rem 1.5rem}
+@media(max-width:1099px){
+  .categories-desktop-table {display:none}
+  .categories-mobile-list {display:grid;list-style:none}
+  .categories-mobile-card {padding:1.125rem 1.25rem;border-top:1px solid #f1f5f9;min-width:0}
+  .categories-mobile-card-heading {display:flex;align-items:center;gap:.75rem;min-width:0}
+  .categories-mobile-identity {display:grid;gap:.375rem;min-width:0;flex:1}
+  .categories-mobile-identity strong {overflow-wrap:anywhere;font-size:.875rem}
+  .categories-mobile-identity .categories-code {justify-self:start}
+  .categories-mobile-description {font-size:.8125rem;line-height:1.65;color:#64748b;margin:.75rem 0;overflow-wrap:anywhere}
+  .categories-mobile-card .categories-row-actions {margin-top:.625rem;padding-top:.5rem;border-top:1px solid #f1f5f9}
+  .categories-mobile-card .categories-row-actions:only-child {margin-top:0}
+}
+@media(max-width:639px){
+  .categories-page-header {align-items:flex-start}
+  .categories-page-header .categories-primary-button {width:100%}
+  .categories-filter-panel {padding:1rem}
+  .categories-filter-form {grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .categories-search-field {grid-column:1/-1}
+  .categories-apply-button {min-width:90px}
+  .categories-advanced-fields {grid-template-columns:minmax(0,1fr)}
+  .categories-page-count {display:none}
+  .categories-directory-heading {padding:1rem}
+  .categories-mobile-card {padding:1rem}
+  .categories-modal {max-height:calc(100dvh - 1.5rem);border-radius:1rem}
+  .categories-modal-header {padding:1rem}
+  .categories-modal-body {padding:1rem}
+  .categories-detail-list {padding:0 1rem}
+  .categories-detail-actions {padding:1rem}
+}
+@media(max-width:380px){.categories-filter-form{grid-template-columns:minmax(0,1fr)}.categories-status-field{grid-column:1/-1}.categories-apply-button{justify-self:start}.categories-mobile-card-heading{flex-wrap:wrap}.categories-mobile-card-heading .categories-status{margin-left:auto}}
+@media(prefers-reduced-motion:reduce){.categories-workspace *, .categories-modal * {transition:none!important;animation:none!important;scroll-behavior:auto!important}}

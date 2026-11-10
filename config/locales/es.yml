@@ -326,8 +326,19 @@ es:
         status: Estado
         update: Actualizar categoría
       index:
+        kicker: "Catálogos / Productos"
+        search_label: "Buscar y filtrar"
+        filter_hint: "Encuentra categorías por nombre, código o estado."
+        advanced_filters: "Filtros avanzados"
+        active_filters: "Filtros activos"
+        clear_search: "Quitar búsqueda"
+        clear_status: "Quitar filtro de estado"
+        clear_sort: "Quitar orden"
+        no_results_hint: "Prueba con otro término o limpia los filtros activos."
+        showing: "Mostrando %{count}"
         card_title: Categorías registradas
         columns:
+          description: "Descripción"
           actions: Acciones
           code: Código
           name: Nombre
@@ -340,6 +351,16 @@ es:
         clear_filters: "Limpiar filtros"
         empty_title: Aún no hay categorías
         filters:
+          sort_by: "Ordenar por"
+          direction: "Dirección"
+          created_at: "Fecha de creación"
+          ascending: "Ascendente"
+          descending: "Descendente"
+          sort_hint: "El orden también se puede cambiar desde los encabezados de la tabla."
+          sort_code: "Código"
+          sort_status: "Estado"
+          sort_created_at: "Fecha de creación"
+          sort_updated_at: "Última actualización"
           all_statuses: Todos los estados
           apply: Aplicar
         new: Nueva categoría

@@ -1,124 +1,145 @@
-<%# total_count / total_pages come from locals when rendered via
-    Turbo::StreamsChannel broadcast (no controller ivars), or fall
-    back to the controller-set instance variables for normal requests. %>
+<%# Count locals are provided for streamed updates, while ordinary requests use controller values. %>
 <% total_count = local_assigns[:total_count] || @total_count || 0 %>
 <% total_pages = local_assigns[:total_pages] || @total_pages || 1 %>
 <% unfiltered_count = local_assigns[:unfiltered_count] || @unfiltered_count || 0 %>
+<% search_filter = params[:search].to_s.strip %>
+<% status_filter = %w[active inactive].include?(params[:status].to_s) ? params[:status].to_s : nil %>
+<% sort_filter = %w[name code status created_at updated_at].include?(params[:sort].to_s) ? params[:sort].to_s : nil %>
+<% has_filters = search_filter.present? || status_filter.present? || (sort_filter.present? && sort_filter != 'name') %>
 
-<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-  <div class="flex items-center justify-between px-6 py-4">
+<% if has_filters %>
+  <nav class="categories-filter-chips" aria-label="<%= t('admin.categories.index.active_filters') %>">
+    <span class="categories-filter-chips-label"><%= t('admin.categories.index.active_filters') %></span>
+    <% if search_filter.present? %>
+      <%= link_to admin_categories_path(request.query_parameters.except('search', 'page')),
+                  class: 'categories-filter-chip', data: { turbo_frame: '_top' },
+                  aria: { label: "#{t('admin.categories.index.clear_search')}: #{search_filter}" } do %>
+        <span><%= t('admin.categories.index.search_label') %>: <%= search_filter %></span>
+        <span aria-hidden="true">×</span>
+      <% end %>
+    <% end %>
+    <% if status_filter.present? %>
+      <%= link_to admin_categories_path(request.query_parameters.except('status', 'page')),
+                  class: 'categories-filter-chip', data: { turbo_frame: '_top' },
+                  aria: { label: t('admin.categories.index.clear_status') } do %>
+        <span><%= t('admin.categories.form.status') %>: <%= t("admin.categories.statuses.#{status_filter}") %></span>
+        <span aria-hidden="true">×</span>
+      <% end %>
+    <% end %>
+    <% if sort_filter.present? && sort_filter != 'name' %>
+      <%= link_to admin_categories_path(request.query_parameters.except('sort', 'direction', 'page')),
+                  class: 'categories-filter-chip', data: { turbo_frame: '_top' },
+                  aria: { label: t('admin.categories.index.clear_sort') } do %>
+        <span><%= t('admin.categories.index.filters.sort_by') %>: <%= t("admin.categories.index.filters.sort_#{sort_filter}") %></span>
+        <span aria-hidden="true">×</span>
+      <% end %>
+    <% end %>
+    <%= link_to t('admin.categories.index.clear_filters'), admin_categories_path,
+                class: 'categories-clear-filters', data: { turbo_frame: '_top' } %>
+  </nav>
+<% end %>
+
+<section class="categories-directory" aria-labelledby="categories-directory-title">
+  <header class="categories-directory-heading">
     <div>
-      <h3 class="font-bold"><%= t('admin.categories.index.card_title') %></h3>
-      <p class="mt-1 text-xs text-slate-400">
-        <%= t('admin.categories.index.total_count', count: total_count) %>
-      </p>
+      <h2 id="categories-directory-title"><%= t('admin.categories.index.card_title') %></h2>
+      <p><%= t('admin.categories.index.total_count', count: total_count) %></p>
     </div>
-  </div>
+    <% if categories.any? %>
+      <span class="categories-page-count"><%= t('admin.categories.index.showing', count: categories.size) %></span>
+    <% end %>
+  </header>
 
   <% if categories.any? %>
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
+    <div class="categories-desktop-table">
+      <table class="categories-table">
         <thead>
-          <tr class="border-y border-slate-100 text-xs text-slate-400">
-            <th class="px-6 py-3 text-left font-medium">
-              <%= sort_link('name', t('admin.categories.index.columns.name'), frame: 'categories_list') %>
-            </th>
-            <th class="px-6 py-3 text-left font-medium">
-              <%= sort_link('code', t('admin.categories.index.columns.code'), frame: 'categories_list') %>
-            </th>
-            <th class="px-6 py-3 text-center font-medium">
-              <%= t('admin.categories.index.columns.status') %>
-            </th>
-            <th class="px-6 py-3 text-center font-medium">
-              <%= t('admin.categories.index.columns.actions') %>
-            </th>
+          <tr>
+            <th scope="col"><%= sort_link('name', t('admin.categories.index.columns.name'), frame: 'categories_list') %></th>
+            <th scope="col"><%= sort_link('code', t('admin.categories.index.columns.code'), frame: 'categories_list') %></th>
+            <th scope="col"><%= t('admin.categories.index.columns.description') %></th>
+            <th scope="col"><%= t('admin.categories.index.columns.status') %></th>
+            <th scope="col" class="categories-actions-heading"><%= t('admin.categories.index.columns.actions') %></th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
+        <tbody>
           <% categories.each do |category| %>
-            <tr class="hover:bg-slate-50">
-              <td class="px-6 py-4 font-semibold">
-                <%= category.name %>
+            <tr>
+              <td>
+                <span class="categories-identity">
+                  <span class="categories-avatar" aria-hidden="true"><%= category.name.to_s.first.upcase %></span>
+                  <span class="categories-name"><%= category.name %></span>
+                </span>
               </td>
-              <td class="px-6 py-4">
-                <code class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600"><%= category.code %></code>
-              </td>
-              <td class="px-6 py-4 text-center">
-                <span class="inline-flex items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold
-                  <%= category.active? ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' %>">
+              <td><code class="categories-code"><%= category.code %></code></td>
+              <td><span class="categories-description"><%= category.description.presence || '—' %></span></td>
+              <td>
+                <span class="categories-status <%= 'categories-status--inactive' unless category.active? %>">
                   <%= t("admin.categories.statuses.#{category.status}") %>
                 </span>
               </td>
-              <td class="px-6 py-4 text-center">
-                <div class="flex items-center justify-center gap-1">
-                  <% if policy(Category).show? %>
-<%= link_to admin_category_path(category),
-                              data: { turbo_frame: 'category_modal', tooltip: t('admin.categories.show.title') },
-                              class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
-                              aria: { label: t('admin.categories.show.title') } do %>
-                    <%= delta_icon('eye', class: 'size-4') %>
-                  <% end %>
-<% end %>
-                  <% if policy(Category).update? %>
-<%= link_to edit_admin_category_path(category),
-                              data: { turbo_frame: 'category_modal', tooltip: t('admin.categories.index.edit') },
-                              class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
-                              aria: { label: t('admin.categories.index.edit') } do %>
-                    <%= delta_icon('pencil-square', class: 'size-4') %>
-                  <% end %>
-<% end %>
-                  <% if policy(Category).destroy? %>
-<%= button_to admin_category_path(category),
-                                method: :delete,
-                                class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600',
-                                data: {
-                                  controller: 'swal-confirm',
-                                  turbo_frame: 'categories_list',
-                                  turbo_confirm: t('admin.categories.index.confirm_delete'),
-                                  swal_cancel_text: t('admin.categories.confirm.cancel')
-                                },
-                                aria: { label: t('admin.categories.index.delete') } do %>
-                    <%= delta_icon('trash', class: 'size-4') %>
-                  <% end %>
-<% end %>
-                </div>
-              </td>
+              <td><%= render 'actions', category: category %></td>
             </tr>
           <% end %>
         </tbody>
       </table>
     </div>
 
-    <% if total_count > 0 %>
-      <div class="flex items-center justify-between gap-4 border-t border-slate-100 px-6 py-4"
->
-        <div class="flex items-center gap-2 text-sm text-slate-600">
-          <span><%= t('admin.categories.index.pagination.per_page_label') %>:</span>
-          <div class="relative min-w-20" data-controller="delta-select">
-          <%= select_tag :per_page,
-                options_for_select(TablePagePreference::OPTIONS, @per_page || TablePagePreference::DEFAULT),
-                data: { controller: 'table-page-size', table_page_size_key_value: 'categories',
-                        action: 'change->table-page-size#apply' },
-                class: 'w-full rounded-lg border border-slate-300 px-2 py-2 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500' %>
+    <ul class="categories-mobile-list" aria-label="<%= t('admin.categories.index.card_title') %>">
+      <% categories.each do |category| %>
+        <li class="categories-mobile-card">
+          <div class="categories-mobile-card-heading">
+            <span class="categories-avatar" aria-hidden="true"><%= category.name.to_s.first.upcase %></span>
+            <div class="categories-mobile-identity">
+              <strong><%= category.name %></strong>
+              <code class="categories-code"><%= category.code %></code>
+            </div>
+            <span class="categories-status <%= 'categories-status--inactive' unless category.active? %>">
+              <%= t("admin.categories.statuses.#{category.status}") %>
+            </span>
+          </div>
+          <% if category.description.present? %>
+            <p class="categories-mobile-description"><%= category.description %></p>
+          <% end %>
+          <%= render 'actions', category: category %>
+        </li>
+      <% end %>
+    </ul>
+
+    <% if total_count.positive? %>
+      <footer class="categories-pagination">
+        <div class="categories-pagination-size">
+          <label for="categories_per_page"><%= t('admin.categories.index.pagination.per_page_label') %></label>
+          <div class="relative" data-controller="delta-select">
+            <%= select_tag :per_page,
+                  options_for_select(TablePagePreference::OPTIONS, @per_page || TablePagePreference::DEFAULT),
+                  id: 'categories_per_page',
+                  data: { controller: 'table-page-size', table_page_size_key_value: 'categories',
+                          action: 'change->table-page-size#apply' } %>
           </div>
         </div>
-        <div class="flex items-center gap-1">
-          <%= pagination_links(total_pages, frame: 'categories_list') if total_pages > 1 %>
-        </div>
-      </div>
+        <%= pagination_links(total_pages, frame: 'categories_list') if total_pages > 1 %>
+      </footer>
     <% end %>
   <% else %>
-    <div class="flex flex-col items-center gap-2 p-12 text-center">
-      <%= delta_icon('cog', class: 'size-8 text-slate-300') %>
+    <div class="categories-empty-state">
+      <div class="categories-empty-icon" aria-hidden="true"><%= delta_icon('funnel', class: 'size-7') %></div>
       <% if unfiltered_count.positive? %>
-        <p class="text-sm font-semibold text-slate-600"><%= t('admin.categories.index.no_results') %></p>
+        <h3><%= t('admin.categories.index.no_results') %></h3>
+        <p><%= t('admin.categories.index.no_results_hint') %></p>
         <%= link_to t('admin.categories.index.clear_filters'), admin_categories_path,
-                    data: { turbo_frame: '_top' },
-                    class: 'mt-2 inline-flex min-h-11 items-center rounded-xl border border-slate-200 px-4 text-sm font-semibold text-blue-700 hover:bg-slate-50' %>
+                    data: { turbo_frame: '_top' }, class: 'categories-secondary-button' %>
       <% else %>
-        <p class="text-sm font-semibold text-slate-500"><%= t('admin.categories.index.empty_title') %></p>
-        <p class="text-xs text-slate-400"><%= t('admin.categories.index.empty_subtitle') %></p>
+        <h3><%= t('admin.categories.index.empty_title') %></h3>
+        <p><%= t('admin.categories.index.empty_subtitle') %></p>
+        <% if policy(Category).create? %>
+          <%= link_to new_admin_category_path,
+                      data: { turbo_frame: 'category_modal' }, class: 'categories-primary-button' do %>
+            <%= delta_icon('plus', class: 'size-4', aria: { hidden: true }) %>
+            <%= t('admin.categories.index.new') %>
+          <% end %>
+        <% end %>
       <% end %>
     </div>
   <% end %>
-</div>
+</section>

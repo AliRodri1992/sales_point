@@ -325,8 +325,19 @@ en:
         status: Status
         update: Update category
       index:
+        kicker: "Catalogs / Products"
+        search_label: "Search and filter"
+        filter_hint: "Find categories by name, code or status."
+        advanced_filters: "Advanced filters"
+        active_filters: "Active filters"
+        clear_search: "Remove search"
+        clear_status: "Remove status filter"
+        clear_sort: "Remove sorting"
+        no_results_hint: "Try a different term or clear the active filters."
+        showing: "Showing %{count}"
         card_title: Registered categories
         columns:
+          description: "Description"
           actions: Actions
           code: Code
           name: Name
@@ -339,6 +350,16 @@ en:
         clear_filters: "Clear filters"
         empty_title: No categories yet
         filters:
+          sort_by: "Sort by"
+          direction: "Direction"
+          created_at: "Created date"
+          ascending: "Ascending"
+          descending: "Descending"
+          sort_hint: "You can also sort using the table headers."
+          sort_code: "Code"
+          sort_status: "Status"
+          sort_created_at: "Created date"
+          sort_updated_at: "Last updated"
           all_statuses: All statuses
           apply: Apply
         new: New category

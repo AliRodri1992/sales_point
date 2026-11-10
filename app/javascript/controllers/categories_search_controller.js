@@ -1,7 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Auto-submits the categories search form as the user types, debounced,
-// so results update live without needing to press Enter or click Apply.
+// Keep the search responsive without submitting the form on every keystroke.
 export default class extends Controller {
   static values = { delay: { type: Number, default: 400 } }
 
@@ -11,9 +10,12 @@ export default class extends Controller {
 
   debouncedSubmit() {
     clearTimeout(this.timeoutId)
-    this.timeoutId = setTimeout(() => {
-      this.element.requestSubmit()
-    }, this.delayValue)
+    this.timeoutId = setTimeout(() => this.submitNow(), this.delayValue)
+  }
+
+  submitNow() {
+    clearTimeout(this.timeoutId)
+    this.element.requestSubmit()
   }
 
   disconnect() {

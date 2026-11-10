@@ -1,0 +1,32 @@
+<div class="categories-row-actions" aria-label="<%= t('admin.categories.index.columns.actions') %>">
+  <% if policy(Category).show? %>
+    <%= link_to admin_category_path(category),
+                data: { turbo_frame: 'category_modal', tooltip: t('admin.categories.show.title') },
+                class: 'categories-icon-button',
+                aria: { label: "#{t('admin.categories.show.title')}: #{category.name}" } do %>
+      <%= delta_icon('eye', class: 'size-4', aria: { hidden: true }) %>
+    <% end %>
+  <% end %>
+  <% if policy(Category).update? %>
+    <%= link_to edit_admin_category_path(category),
+                data: { turbo_frame: 'category_modal', tooltip: t('admin.categories.index.edit') },
+                class: 'categories-icon-button',
+                aria: { label: "#{t('admin.categories.index.edit')}: #{category.name}" } do %>
+      <%= delta_icon('pencil-square', class: 'size-4', aria: { hidden: true }) %>
+    <% end %>
+  <% end %>
+  <% if policy(Category).destroy? %>
+    <%= button_to admin_category_path(category),
+                  method: :delete,
+                  class: 'categories-icon-button categories-icon-button--danger',
+                  data: {
+                    controller: 'swal-confirm',
+                    turbo_frame: 'categories_list',
+                    turbo_confirm: t('admin.categories.index.confirm_delete'),
+                    swal_cancel_text: t('admin.categories.confirm.cancel')
+                  },
+                  aria: { label: "#{t('admin.categories.index.delete')}: #{category.name}" } do %>
+      <%= delta_icon('trash', class: 'size-4', aria: { hidden: true }) %>
+    <% end %>
+  <% end %>
+</div>
