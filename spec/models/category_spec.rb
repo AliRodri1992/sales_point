@@ -61,9 +61,11 @@ RSpec.describe Category, type: :model do
       expect(build(:category, code: 'retired_code')).to be_valid
     end
 
-    it 'recognizes active product references' do
-      category = create(:category)
-      create(:product, organization: create(:organization), category:)
+    it 'recognizes product references within the category organization' do
+      organization = create(:organization)
+      category = create(:category, organization:)
+      create(:product, organization:, category:)
+
       expect(category.in_use?).to be(true)
     end
   end

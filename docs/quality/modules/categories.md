@@ -330,3 +330,11 @@ El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios;
 - **CATEGORIES-030 · lector de pantalla:** los encabezados ordenables de Nombre/Código incorporan `aria-sort` únicamente cuando representan la columna activa; request spec nuevo para orden descendente. **IMPLEMENTADO; lector de pantalla físico pendiente**.
 - **Cobertura nueva:** escenarios Chrome de búsqueda activa + alta; request con enlaces y formularios que retienen parámetros y persistencia de orden en paginación. Sin migraciones ni cambios de permisos.
 - **Bloqueos de cierre externos:** RSpec global en Clientes (rendimiento de teléfonos), permisos granulares Clientes y paginación Productos siguen clasificados como EXTERNOS; se requieren correcciones independientes y CI global verde para cierre. Verificar migración histórica/constraints con una copia de datos reales antes de declarar CATEGORIES-001 / 009 cerrados.
+
+### Verificación adicional de integridad por organización y CRUD (2026-11-10)
+
+- Se adecuó el spec preexistente de `Category#in_use?` para crear producto y categoría en **la misma organización**, coherente con las reglas multitenant del modelo. Antes creaba organizaciones distintas y fallaba con `Category is invalid`; no se relajaron validaciones.
+- Dos nuevos casos request comprueban conservación de filtros tras **actualización** y **baja** en Turbo Stream (el caso de creación ya existe).
+- Se fortaleció el caso Chrome: espera el cierre de la modal y que la etiqueta de búsqueda siga visible después de crear un registro fuera del filtro.
+- La ejecución focalizada del SHA `2ac8400730b4f89697163b824a1882fff06d0388` alcanzó 109 ejemplos, 7 fallos, ninguno en el nuevo flujo Chrome ni en tests request del rediseño. Tres fallos correspondían a una plantilla de Productos con error sintáctico, tres a permisos de Clientes y uno al test de modelo Categoria con fixture cross-tenant ahora corregido.
+- **Estado:** corrección de fixture y pruebas adicionales implementadas, CI nuevo pendiente. Bloqueos externos no se ocultan ni se atribuyen al módulo.

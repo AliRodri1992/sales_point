@@ -91,6 +91,8 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     click_button 'Create category'
 
     expect(page).to have_field('category_search', with: 'groceries', wait: 10)
+    expect(page).to have_no_css('turbo-frame#category_modal [role="dialog"]', wait: 10)
+    expect(page).to have_css('turbo-frame#categories_list .categories-filter-chip', text: 'groceries', wait: 10)
     expect(page).to have_css('turbo-frame#categories_list', text: 'Groceries', wait: 10)
     expect(page).to have_no_css('turbo-frame#categories_list a.categories-name-link', text: 'Cleaning')
     expect(organization.categories.find_by!(code: 'new_unrelated')).to be_present

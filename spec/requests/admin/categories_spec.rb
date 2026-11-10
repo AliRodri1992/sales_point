@@ -418,6 +418,30 @@ RSpec.describe 'Admin::Categories', type: :request do
       expect(content).not_to include('categories-name-link">Cleaning')
     end
 
+
+    it 'keeps a filtered listing after editing another category with Turbo' do
+      create(:category, organization:, name: 'Groceries', code: 'groceries')
+      other = create(:category, organization:, name: 'Cleaning', code: 'cleaning')
+
+      patch admin_category_path(other, search: 'groceries', status: 'active', format: :turbo_stream),
+            params: { category: { name: 'Cleaning updated' } }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Groceries', 'search=groceries')
+      expect(response.body).not_to include('categories-name-link">Cleaning updated')
+    end
+
+    it 'keeps a filtered listing after deleting another category with Turbo' do
+      create(:category, organization:, name: 'Groceries', code: 'groceries')
+      other = create(:category, organization:, name: 'Cleaning', code: 'cleaning')
+
+      delete admin_category_path(other, search: 'groceries', status: 'active', format: :turbo_stream)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Groceries', 'search=groceries')
+      expect(other.reload.deleted_at).to be_present
+    end
+
     it 'provides mobile cards retaining the category description' do
       create(:category, organization:, name: 'Personal Care', code: 'personal_care',
                         description: 'Daily hygiene essentials')
