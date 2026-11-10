@@ -80,8 +80,8 @@ module Admin
     end
 
     def redirect_inventory(action)
-      redirect_to admin_branch_inventories_path(@branch), status: :see_other,
-                  flash: { swal_message: t("admin.inventory.messages.#{action}") }
+      flash[:swal_message] = t("admin.inventory.messages.#{action}")
+      redirect_to admin_branch_inventories_path(@branch), status: :see_other
     end
 
     def render_inventory_errors

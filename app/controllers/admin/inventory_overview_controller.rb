@@ -38,6 +38,10 @@ module Admin
       @filters = FILTERS.index_with { |key| params[key].to_s.strip }
       @filters['search'] = @filters['search'].first(120)
       @filters['branch_id'] = '' unless @branches.exists?(id: @filters['branch_id'])
+      normalize_filter_options
+    end
+
+    def normalize_filter_options
       @filters['status'] = '' unless Inventories::Directory::STOCK_STATUSES.include?(@filters['status'])
       @filters['tracking'] = '' unless Inventories::Directory::TRACKING_MODES.include?(@filters['tracking'])
       @filters['sort'] = 'product' unless SORTS.include?(@filters['sort'])
