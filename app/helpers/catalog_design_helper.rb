@@ -64,49 +64,7 @@ module CatalogDesignHelper
 
   def product_money(amount, currency: nil)
     code = currency.presence || product_currency_code
-    unit = { 'MXN' => '
-
-  def product_currency_code
-    return 'MXN' unless current_organization
-
-    settings = current_organization.organization_settings.active_records.first
-    @product_currency_code ||= settings&.base_currency&.code || 'MXN'
-  end
-
-  def product_image_form_token(product)
-    return unless product.image.attached? && product.image.blob.persisted?
-    return product.image.blob.signed_id if product.persisted? && product.attachment_changes['image'].nil?
-
-    Products::ImageUpload.token(product.image.blob, organization: current_organization, user: current_user)
-  end
-
-  def catalog_status(active, scope: 'admin.products.statuses')
-    content_tag(:span, t("#{scope}.#{active ? 'active' : 'inactive'}"),
-                class: "catalog-status #{'catalog-status-inactive' unless active}")
-  end
-end
-, 'USD' => '
-
-  def product_currency_code
-    return 'MXN' unless current_organization
-
-    settings = current_organization.organization_settings.active_records.first
-    @product_currency_code ||= settings&.base_currency&.code || 'MXN'
-  end
-
-  def product_image_form_token(product)
-    return unless product.image.attached? && product.image.blob.persisted?
-    return product.image.blob.signed_id if product.persisted? && product.attachment_changes['image'].nil?
-
-    Products::ImageUpload.token(product.image.blob, organization: current_organization, user: current_user)
-  end
-
-  def catalog_status(active, scope: 'admin.products.statuses')
-    content_tag(:span, t("#{scope}.#{active ? 'active' : 'inactive'}"),
-                class: "catalog-status #{'catalog-status-inactive' unless active}")
-  end
-end
-, 'EUR' => '€', 'KRW' => '₩' }.fetch(code, '')
+    unit = { 'MXN' => '$', 'USD' => '$', 'EUR' => '€', 'KRW' => '₩' }.fetch(code, '')
     "#{number_to_currency(amount, unit:)} #{code}"
   end
 
