@@ -349,3 +349,38 @@ El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios;
 - Los fallos externos son bloqueos de la **puerta de CI completa**, pero no se corrigen alterando módulos Clientes/Productos desde este expediente. Mantener responsables externos separados y los tests sin excluir.
 - **CATEGORIES-001 / 009:** el CI de base limpia comprueba instalación pero no sustituye prueba de backfill y `VALIDATE CONSTRAINT` sobre copia de datos históricos. No ejecutar conversiones destructivas ni declarar «cerrado» sin evidencia.
 - **Estado:** ADECUACIONES IMPLEMENTADAS, VERIFICACIÓN AUTOMATIZADA FOCALIZADA PARCIAL, CI GLOBAL / ACCESIBILIDAD MANUAL / DATOS LEGADOS PENDIENTES. No fusionar.
+
+
+## Reauditoría independiente de cambios — 2026-11-10 (tercera pasada)
+
+**SHA auditado:** `1fb86a4a9f2001a78c2a7c5269346f519e2017d6`, rama `feature/fixes`. **Herramientas:** inspección de código y GitHub Actions con procedimientos de AI Dev Suite (`impeccable-audit` y `ui-ux-pro-max`). No se ejecutó el CLI original de Impeccable ni se inspeccionó una pantalla local autenticada de Categorías. **Alcance:** controlador, modelo, permisos, modales, catálogo, paginación, Turbo/Stimulus, vistas móvil/escritorio, estilos y specs, más contratos de frontera con Clientes/Productos.
+
+### Estado de hallazgos preexistentes
+
+| Hallazgo | Resultado en el SHA auditado | Estado |
+|---|---|---|
+| CATEGORIES-025 | Desplegable avanzado retirado; orden mediante encabezados de tabla y campos ocultos. Su regresión request + Chrome aprobó en Categories CI #42814087630. | Verificado **automáticamente**; móvil bajo nueva observación 031 |
+| CATEGORIES-026 | Modal de 680 px; pruebas Chrome confirman dos columnas a 1280 px y apilamiento a 390 px. | Verificado **automáticamente**; revisión manual 320/768/1440 px, zoom 200 %, foco, lector de pantalla pendientes |
+| CATEGORIES-027 | Filtros transportados a URLs de alta/edición/baja y sincronización Stimulus; casos request y Chrome propios sin fallos en #42814087630. | Verificado **automáticamente** en escenarios cubiertos; nuevo riesgo 032 |
+| CATEGORIES-028 | `CategoriesController#apply_sorting` aplica `id ASC` como desempate; spec con nombres repetidos y 2 páginas pasó. | Verificado automáticamente |
+| CATEGORIES-029 | Colores decorativos reemplazados por `--brand-light` y `--brand-on-white`; estatus operativo permanece con verde semántico. | Implementado; pendiente contraste real en cada tema y modo accesible |
+| CATEGORIES-030 | Encabezados de Nombre y Código emiten `aria-sort` al ordenar y la prueba request pasó. | Verificado automáticamente; lector de pantalla manual pendiente |
+| CATEGORIES-001/009/010 | Falta comprobar migración histórica, constraints heredadas y ciertas rutas manuales de error/teclado. | Abiertos según registro previo; sin renumerarlos |
+
+### Hallazgos nuevos
+
+| ID | Prioridad | Confirmación | Evidencia, consecuencia y corrección requerida |
+|---|---|---|---|
+| **CATEGORIES-031** | **P2 UX / accesibilidad móvil** | **Confirmado por código; navegador móvil manual pendiente** | La vista a `max-width:1099px` oculta `.categories-desktop-table`, que contiene los únicos enlaces visibles para ordenar por Nombre/Código. Tras retirar `details.categories-advanced`, `categories-mobile-list` no proporciona un control propio para cambiar el orden. **Esperado:** conservar alguna opción compacta y accesible para ordenar desde móvil sin reinstalar un falso panel «avanzado». Responsable: Categorías. Regresión: Chrome a 390 y 768 px + teclado. |
+| **CATEGORIES-032** | **P2 coherencia de filtros/paginación** | **Confirmado por flujo de código; falta reproducción Chrome** | `categories_search_controller.js#filteredUrl` modifica `search/status/sort/direction` pero preserva `page` de `window.location.href`; el `form_with` de búsqueda/estado no incluye `page`, así que al aplicar un filtro desde `?page=3` el servidor muestra la primera página, mientras `history.replaceState` puede dejar `page=3` en la barra. Una actualización por `broadcast_refresh_to` podría cargar de nuevo la página 3. **Esperado:** quitar `page` cuando cambia búsqueda/estado/orden o sincronizarlo con la página efectivamente renderizada, pero conservarlo en navegación de paginación explícita. Responsable: Categorías. Regresión: Chrome en página 3 -> buscar/filtrar -> URL/página 1 -> broadcast. |
+| **CATEGORIES-033** | **P2 actualización entre sesiones con permisos granulares** | **Confirmado por código; caso multiusuario no ejecutado** | `Admin::CategoryMutations#category_saved` ejecuta `return if redirect_without_catalog_listing(@category, action)` **antes** de `broadcast_categories_update`. En un usuario autorizado a crear/editar/eliminar pero no a listar, la mutación puede guardarse y redirigir sin emitir el refresco para otras sesiones de su organización. **Esperado:** notificar los cambios guardados a espectadores autorizados independientemente del permiso `index?` del actor. Responsable: Categorías; spec de permisos granulares + expectativa de broadcast. |
+
+### Ejecuciones y alcance de evidencia
+
+- **Categories CI #42814087630:** SHA `41afb15dbcb4`, **RuboCop focalizado SUCCESS**; **111 ejemplos / 6 fallos**, **ninguno propio de Categorías**. Los seis fallos externos: 3 permisos granulares de **Clientes** (404 en consultar/actualizar/eliminar) y 3 **Productos** (2 paginación y 1 catálogo bajo permisos, con `ActionView::SyntaxErrorInTemplate` en `app/views/admin/products/_filters.html.erb:118`). Los escenarios propios de Categorías en ese run finalizaron sin errores. No atribuir esos fallos al módulo ni excluir los tests.
+- **CI global #42814668387** del SHA `1fb86a4a9f2001a78c2a7c5269346f519e2017d6`: **RuboCop, Security scans, Rails I18n/YAML y Fresh migrations and seed data SUCCESS**. Al registrar esta auditoría, **RSpec seguía en ejecución**; el resultado del run no es todavía verde.
+- **Limitaciones:** sin Mac/localhost autenticado, sin prueba visual manual 320/390/768/1440, zoom 200 %, todos los temas, `es/en/ko`, lector de pantalla o restauración de foco en errores; sin ensayo del backfill en copia histórica real ni `VALIDATE CONSTRAINT` legacy. Los resultados CI verifican solo sus escenarios, no todas las combinaciones.
+
+### Dictamen
+
+**REAUDITADO · CÓDIGO PREVIO VERIFICADO AUTOMÁTICAMENTE EN SU ALCANCE · 3 NUEVOS P2 ABIERTOS · NO CERRADO.** Se recomienda resolver 031–033, aumentar pruebas de interacción reales y completar las comprobaciones de datos históricos y accesibilidad. Esta pasada es documental: no modifica comportamiento, migraciones ni datos de producción; sin fusión de ramas.
