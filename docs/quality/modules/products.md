@@ -228,6 +228,14 @@ Se actualizaron las expectativas sin alterar el comportamiento correcto de produ
 
 **Estado:** correcciones de regresión publicadas; aceptación condicionada a repetir el CI focalizado completo, incluidas las pruebas de navegador en esta misma rama.
 
+## PRODUCTS-027 — Selección de opciones nuevas en navegador (2026-11-10)
+
+**P1 · Interfaz de alta / impacto real demostrado.** [Products CI #42818044846](https://github.com/AliRodri1992/sales_point/actions/runs/42818044846) pasó modelos, requests, SQL, concurrencia y paginación, pero **falló** una prueba real de navegador: al guardar un código de barras para una variante nueva, el código se persistió **sin** `product_variant_id`. [Products CI #42818823533](https://github.com/AliRodri1992/sales_point/actions/runs/42818823533) aisló la causa: inmediatamente antes del envío el `select` nativo contenía `value=""` aunque la opción `new:1794315018704` estaba disponible y el `client_key` existía en el formulario. `nested_catalog_controller.js#refreshLinks` destruía y recreaba todos los `option` dinámicos ante **cada evento input**, invalidando la selección del navegador.
+
+**Corrección:** actualizar las opciones de forma incremental (crear nuevas, actualizar etiquetas y retirar únicamente las desaparecidas) sin desmontar la opción seleccionada; recuperar el valor temporal únicamente al restaurar errores del formulario. La prueba de navegador `spec/features/products_quality_browser_spec.rb` ahora exige selección real y persistencia de las asociaciones tras modificar otro campo.
+
+**Estado:** CORREGIDO EN CÓDIGO; verificar en CI y navegador antes de marcar CERRADO. No hay modificaciones de datos locales.
+
 ## Dictamen
 
 **IMPLEMENTADO EN CÓDIGO; VERIFICACIÓN PENDIENTE; NO CERRADO.**

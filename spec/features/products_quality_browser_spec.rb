@@ -54,6 +54,11 @@ RSpec.describe 'Products module browser flows', type: :feature, js: true do
     expect(variant_select.value).to eq("new:#{variant_key}")
     expect(presentation_select.value).to eq("new:#{presentation_key}")
 
+    # Editing another field must never clear already-selected temporary options.
+    fill_in 'product_description', with: 'Selections survive unrelated typing'
+    expect(variant_select.value).to eq("new:#{variant_key}")
+    expect(presentation_select.value).to eq("new:#{presentation_key}")
+
     click_button 'Create product'
     expect(page).to have_current_path(admin_products_path, ignore_query: true)
 

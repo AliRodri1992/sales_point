@@ -38,18 +38,30 @@ export default class extends Controller {
 
       const selectors = this.element.querySelectorAll(`[data-nested-catalog-kind="barcodes"] select[name$="[${target}]"]`)
       for (const select of selectors) {
-        const prior = select.value
-        const restore = select.closest("[data-nested-catalog-pending-value]")?.dataset.nestedCatalogPendingValue
-        select.querySelectorAll("option[data-nested-catalog-generated]").forEach((option) => option.remove())
-        pending.forEach((item) => {
+        // Keep existing options mounted: removing a selected <option> during
+        // another input event resets native select values in real browsers.
+        const available = new Map(pending.map((item) => [`new:${item.key}`, item.name]))
+        select.querySelectorAll("option[data-nested-catalog-generated]").forEach((option) => {
+          if (!available.has(option.value)) {
+            option.remove()
+            return
+          }
+          const name = available.get(option.value)
+          if (option.textContent !== name) option.textContent = name
+          available.delete(option.value)
+        })
+        available.forEach((name, value) => {
           const option = document.createElement("option")
-          option.value = `new:${item.key}`
-          option.textContent = item.name
+          option.value = value
+          option.textContent = name
           option.dataset.nestedCatalogGenerated = "true"
           select.add(option)
         })
-        const desired = prior || (restore ? `new:${restore}` : "")
-        if ([...select.options].some((option) => option.value === desired)) select.value = desired
+        const restore = select.closest("[data-nested-catalog-pending-value]")?.dataset.nestedCatalogPendingValue
+        const savedValue = restore && `new:${restore}`
+        if (!select.value && savedValue && [...select.options].some((option) => option.value === savedValue)) {
+          select.value = savedValue
+        }
       }
     }
   }
