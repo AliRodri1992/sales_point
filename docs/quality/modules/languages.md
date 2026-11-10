@@ -64,7 +64,10 @@ En el SHA `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`:
 - **Método:** procedimientos AI Dev Suite `impeccable-audit`, `ui-ux-pro-max` y `ponytail-engineering`, por inspección de Rails/ERB/Stimulus/CSS y preparación de pruebas. **No se ejecutaron** las CLIs externas de Impeccable, UI UX Pro Max ni Ponytail.
 - **Base de inspección:** rama `feature/fixes`, SHA `8d0a2b65b6a19e8cec68948adcbb0ebd014921fd`.
 - **Evidencia visual:** el navegador conectado solo ofrecía una pestaña de Productos; no hubo navegación autenticada a Idiomas ni capturas previas. Los hallazgos son **confirmados en código**, no reproducidos visualmente.
-- **Estado:** cambios preparados para implementación/verificación, **NO CERRADO**. **SHA de aceptación:** PENDIENTE.
+- **Estado:** REDISEÑO IMPLEMENTADO y pruebas focalizadas **PASARON**; inspección visual completa y aceptación global **PENDIENTES**. **NO CERRADO**.
+- **SHA del rediseño:** `653c67beb39a454fc470cc49b994cecdadcf3f42`.
+- **Evidencia focalizada:** [Languages CI #42756958104](https://github.com/AliRodri1992/sales_point/actions/runs/42756958104), **PASÓ** (87 RSpec, 0 fallos, Chrome, RuboCop e I18n).
+- **Evidencia global:** [CI #42756958439](https://github.com/AliRodri1992/sales_point/actions/runs/42756958439): **FALLÓ** solo RSpec (prueba N+1 de Clientes `spec/performance/n_plus_one_scaling_spec.rb:51`); RuboCop, seguridad, I18n y migraciones limpias con semillas **PASARON**. Fallo **EXTERNO** a Idiomas, no cerrado.
 
 | ID | Prioridad | Evidencia / causa raíz | Adecuación prevista | Validación |
 |---|---|---|---|---|
@@ -80,3 +83,16 @@ En el SHA `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`:
 **Criterio de cierre:** ejecutar los nuevos escenarios con Chrome y RSpec, RuboCop, I18n/YAML y CI global sobre el SHA publicado; recorrer manualmente 320/390/768/1440 px, foco, teclado, contraste y zoom 200%; revisión independiente. Mantener el estándar de formularios (errores individuales por modelo, sin duplicados ni `required` HTML5).
 
 **Frontera:** las tareas de normalización global de YAML, permisos, onboarding y otros catálogos pertenecen a sus propios expedientes. No se modifican en este rediseño.
+
+### Reauditoría de los hallazgos nuevos
+
+- **IDI-010:** eliminado el `submit_tag` ancho. La búsqueda/estatus se aplican automáticamente; el fallback `<noscript>` usa un botón compacto. Request spec **PASÓ**.
+- **IDI-011:** Stimulus con debounce de 350 ms, cambio de estado inmediato y soporte de composición de texto. Browser spec **PASÓ**.
+- **IDI-012:** etiquetas activas eliminables, limpiar filtros y distinción entre catálogo vacío/sin coincidencias. Requests y browser specs **PASARON**.
+- **IDI-013:** tabla de cuatro columnas y tarjetas móviles. Browser spec a 390px **PASÓ**; 320/768/1440 y zoom 200% requieren recorrido visual manual.
+- **IDI-014:** formulario compacto y detalle más legible. Render y comportamiento cubiertos indirectamente por specs; **aceptación visual manual pendiente**.
+- **IDI-015:** control de estatus bloqueado visualmente para el idioma predeterminado (el modelo ya lo protege). Verificar con teclado en aceptación visual.
+- **IDI-016:** estado validado contra enum; búsqueda limitada a 100 caracteres. Revisado en código.
+- **IDI-017:** 3 request specs y 2 escenarios de navegador nuevos; **87 ejemplos, 0 fallos**.
+
+**Resumen:** no hay regresiones conocidas dentro de la batería focalizada de Idiomas. El hallazgo de rendimiento N+1 de Clientes sigue en su propio módulo; no modificar Clientes en esta auditoría. Sin revisión manual del renderizado/lector de pantalla, no se certifica WCAG ni se declara cerrado el módulo.
