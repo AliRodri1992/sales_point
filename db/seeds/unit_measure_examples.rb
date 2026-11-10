@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
-
 # Common, tenant-owned units for the Delta POS demonstration organization.
 # SAT codes are a separate fiscal catalog and never imply a Product association.
 module UnitMeasureExamples
@@ -65,35 +63,41 @@ module UnitMeasureExamples
   ].freeze
 
   def self.seed!(organization:)
-    sat_codes = DATA.map { |attributes| attributes.fetch(:sat) }.uniq
+    sat_codes = DATA.map { |entry| entry.fetch(:sat) }
     sat_keys = SatUnitKey.current.where(code: sat_codes).index_by(&:code)
-    existing = UnitOfMeasure.with_deleted.where(organization:).pluck(:code).map(&:upcase).to_set
-    missing_sat_codes = Set.new
+    existing_codes = UnitOfMeasure.with_deleted.where(organization:).pluck(:code).to_set(&:upcase)
+    missing = []
 
     UnitOfMeasure.transaction do
-      DATA.each do |attributes|
-        code = attributes.fetch(:code)
-        next if existing.include?(code)
+      DATA.each { |entry| seed_unit!(organization:, entry:, sat_keys:, existing_codes:, missing:) }
+    end
+    report_missing_sat_keys(missing)
+  end
 
-        fiscal_key = sat_keys[attributes.fetch(:sat)]
-        unless fiscal_key
-          missing_sat_codes.add(attributes.fetch(:sat))
-          next
-        end
+  def self.seed_unit!(organization:, entry:, sat_keys:, existing_codes:, missing:)
+    code = entry.fetch(:code)
+    return if existing_codes.include?(code)
 
-        UnitOfMeasure.create!(
-          organization:, sat_unit_key: fiscal_key, code:,
-          name: attributes.fetch(:name), abbreviation: attributes.fetch(:abbreviation),
-          description: attributes.fetch(:description), decimal_precision: attributes.fetch(:precision),
-          status: :active
-        )
-        existing.add(code)
-      end
+    sat_key = sat_keys[entry.fetch(:sat)]
+    unless sat_key
+      missing << entry.fetch(:sat)
+      return
     end
 
-    return if missing_sat_codes.empty?
+    UnitOfMeasure.create!(
+      organization:, code:, sat_unit_key: sat_key, name: entry.fetch(:name),
+      abbreviation: entry.fetch(:abbreviation), description: entry.fetch(:description),
+      decimal_precision: entry.fetch(:precision), status: :active
+    )
+    existing_codes.add(code)
+  end
 
-    codes = missing_sat_codes.to_a.sort.join(', ')
+  def self.report_missing_sat_keys(missing)
+    return if missing.empty?
+
+    codes = missing.uniq.sort.join(', ')
     $stdout.puts "[SEEDS][UNIDADES][ADVERTENCIA] Claves SAT no vigentes o ausentes: #{codes}"
   end
+
+  private_class_method :seed_unit!, :report_missing_sat_keys
 end

@@ -62,7 +62,6 @@ jobs:
             db/seeds/sat_catalog_extra_data.rb \
             db/seeds/unit_measure_examples.rb \
             spec/seeds/unit_measure_examples_spec.rb \
-            spec/seeds/unit_measure_examples_spec.rb \
             spec/models/unit_of_measure_spec.rb \
             spec/requests/admin/units_of_measure_spec.rb \
             spec/features/units_of_measure_browser_spec.rb
@@ -125,6 +124,7 @@ jobs:
           CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
         run: |
           bundle exec rspec \
+            spec/seeds/unit_measure_examples_spec.rb \
             spec/models/unit_of_measure_spec.rb \
             spec/requests/admin/units_of_measure_spec.rb \
             spec/features/units_of_measure_browser_spec.rb
