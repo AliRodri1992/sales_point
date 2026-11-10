@@ -245,3 +245,22 @@ Metodología: AI Dev Suite (impeccable-audit, ui-ux-pro-max y ponytail-engineeri
 - Categories CI #42761881557 ejecutó **102 ejemplos, 6 fallos**: dos nuevos propios (CATEGORIES-021 por sincronización de orden en Chrome y CATEGORIES-024 por fixture vacío en request spec) y cuatro externos (3 Clientes, 1 paginación de Productos). RuboCop pasó: 13 archivos, 0 ofensas.
 - Las dos regresiones propias se atendieron: CATEGORIES-021 también observa cambios de DOM en el Turbo Frame (incluye renders Turbo Stream) y espera de forma explícita la selección actualizada en Chrome; CATEGORIES-024 prepara una categoría del tenant antes de comprobar el filtro desconocido.
 - **Estado:** correcciones publicadas, a la espera de nueva ejecución. No atribuir éxitos que correspondan a un SHA anterior. No cerrar sin verificar CI focalizado y global, y completar revisión visual real.
+
+### Verificación de las correcciones CATEGORIES-020 a CATEGORIES-024
+
+**SHA de código verificado:** a821593f3a43751fccce8ea1c8ccef0856cbd2b2. **Ejecución:** Categories CI #42762227534 (2026-11-09 hora local; registros UTC 2026-11-10).
+
+| Comprobación | Resultado observado |
+| --- | --- |
+| RuboCop focalizado (13 archivos) | SUCCESS, cero ofensas |
+| Preparación de PostgreSQL y migraciones de prueba | SUCCESS, condición previa al RSpec |
+| RSpec y Chrome del workflow focalizado | 102 ejemplos, 98 aprobados, 4 fallos externos |
+| Flujos de Categorías (alta, descripción, aislamiento, filtros, orden, navegación, Chrome) | Sin fallos en el reporte de ejecución |
+| Contratos compartidos de Clientes | 3 fallos en permisos show/update/delete, HTTP 404; EXTERNO |
+| Contrato compartido de Productos | 1 fallo en etiquetas de paginación; EXTERNO |
+
+En particular, los fallos propios de CATEGORIES-021 (sincronización de orden) y CATEGORIES-024 (fixture de estado inválido) detectados en #42761881557 ya no aparecen en #42762227534. Se conservaron todas las pruebas originales y añadidas.
+
+El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios; RuboCop global aún falla y los demás jobs estaban ejecutándose al registrar la evidencia. El contrato de calidad exige CI global completamente verde para el SHA final.
+
+**Dictamen actualizado:** regresiones automatizadas propias del rediseño VERIFICADAS en CI focalizado; problemas externos de Clientes y Productos abiertos; revisión manual de UI (320/390/768/1440, 200 % zoom, teclado, lector de pantalla y temas) y migración/backfill legados pendientes. Categorías NO CERRADO; no fusionar hasta superar las puertas de aceptación.
