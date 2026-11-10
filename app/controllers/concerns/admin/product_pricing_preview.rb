@@ -8,6 +8,8 @@ module Admin
       result = product_quote
       render json: { unit_price: result.unit_price.to_s('F'), discount: result.discount.to_s('F'),
                      total: result.total.to_s('F'), currency: result.currency, promotion: result.promotion&.name }
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: t('admin.catalog_design.invalid_quote') }, status: :not_found
     rescue ArgumentError => e
       message_key = case e.message
                     when 'Invalid price list' then 'admin.catalog_design.invalid_price_list'

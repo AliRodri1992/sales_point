@@ -4,7 +4,7 @@
 <% total_count = local_assigns[:total_count] || @total_count || 0 %>
 <% total_pages = local_assigns[:total_pages] || @total_pages || 1 %>
 <% product_rows = products.to_a %>
-<% stock_totals = Inventory.where(product_id: product_rows.map(&:id)).group(:product_id).sum(:stock) %>
+<% stock_totals = Inventory.where(organization_id: current_organization&.id, product_id: product_rows.map(&:id)).group(:product_id).sum(:stock) %>
 
 <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
   <div class="flex items-center justify-between px-6 py-4">

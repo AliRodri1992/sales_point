@@ -659,6 +659,14 @@ RSpec.describe 'Admin::Products', type: :request do
       ids.each { |id| expect(document.at_css("##{id}")).to be_present }
     end
 
+    it 'displays historical prices with the event currency rather than the page locale currency' do
+      product = create(:product, organization:, price: 85)
+      get admin_product_path(product)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('MXN')
+      expect(response.body).not_to include('€ MXN')
+    end
+
     it 'explains a segment-mismatched price list in the quote response' do
       product = create(:product, organization:)
       attributes = { name: 'Wholesale', code: 'WHS-QUO', currency: 'MXN',

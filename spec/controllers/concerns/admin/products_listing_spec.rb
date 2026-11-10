@@ -25,6 +25,14 @@ RSpec.describe Admin::ProductsListing do
       expect(host.send(:filter_scope, scope).to_sql).to eq(scope.to_sql)
     end
 
+    it 'bounds the server-side search term independently of the HTML maxlength' do
+      host.params = ActionController::Parameters.new(search: 'Z' * 200)
+
+      query = host.send(:filter_scope, scope).to_sql
+      expect(query).to include('Z' * 100)
+      expect(query).not_to include('Z' * 101)
+    end
+
     it 'filters products by search term' do
       host.params = ActionController::Parameters.new(search: 'coffee')
 

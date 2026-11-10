@@ -41,7 +41,7 @@ module Admin
     def apply_search_filter(scope)
       return scope if params[:search].blank?
 
-      query = "%#{Product.sanitize_sql_like(params[:search].to_s.strip)}%"
+      query = "%#{Product.sanitize_sql_like(params[:search].to_s.strip.first(100))}%"
       alternate_codes = ProductBarcode.where('value ILIKE ?', query).select(:product_id)
       variants = ProductVariant.where('sku ILIKE :q OR name ILIKE :q', q: query).select(:product_id)
       scope.where('name ILIKE :q OR code ILIKE :q OR sku ILIKE :q OR barcode ILIKE :q', q: query)

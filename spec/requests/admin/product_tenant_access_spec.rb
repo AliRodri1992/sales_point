@@ -33,6 +33,29 @@ RSpec.describe 'Organization-owned product isolation', type: :request do
     expect(response).to redirect_to(admin_products_path)
   end
 
+  it 'rejects a foreign organization category even if the form is forged' do
+    foreign_category = create(:category, organization: create(:organization))
+    params = attributes_for(:product).merge(category_id: foreign_category.id)
+
+    expect do
+      post admin_products_path, params: { product: params }
+    end.not_to change(Product, :count)
+    expect(response).to have_http_status(:unprocessable_content)
+  end
+
+  it 'returns a JSON error rather than redirecting for foreign quote options' do
+    product = create(:product, organization:)
+    foreign = create(:product, organization: create(:organization))
+    variant = foreign.product_variants.create!(name: 'Foreign variant')
+
+    get quote_admin_product_path(product), params: { variant_id: variant.id },
+                                           headers: { 'ACCEPT' => 'application/json' }
+
+    expect(response).to have_http_status(:not_found)
+    expect(response.media_type).to eq('application/json')
+    expect(response.parsed_body['error']).to be_present
+  end
+
   it 'assigns the active organization to newly created products' do
     attributes = attributes_for(:product)
     post admin_products_path, params: { product: attributes }
