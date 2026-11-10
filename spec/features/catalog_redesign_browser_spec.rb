@@ -69,6 +69,35 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     expect(page).to have_css('turbo-frame#languages_list', text: 'French')
     expect(Language.find_by!(code: 'fr').name).to eq('French')
   end
+  scenario 'applies advanced product filters on mobile and restores the active URL' do
+    first_category = create(:category, organization:, name: 'Beverages')
+    second_category = create(:category, organization:, name: 'Office supplies')
+    create(:product, organization:, category: first_category, name: 'Catalog orange tea')
+    create(:product, organization:, category: second_category, name: 'Catalog printer paper')
+
+    page.current_window.resize_to(390, 844)
+    visit admin_products_path
+
+    find('details.products-filters__advanced summary').click
+    select = find('#products_category', visible: :all)
+    wrapper = select.find(:xpath, '..')
+    wrapper.find('button[aria-haspopup="listbox"]').click
+    wrapper.find('[role="option"]', text: 'Beverages', exact_text: true).click
+
+    click_button 'Apply filters'
+    expect(page).to have_current_path(/category_id=#{first_category.id}/)
+    expect(page).to have_css('details.products-filters__advanced[open]')
+    expect(page).to have_css('#admin_products_list', text: 'Catalog orange tea')
+    expect(page).to have_no_css('#admin_products_list', text: 'Catalog printer paper')
+    expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
+
+    within('nav.products-filter-chips') do
+      find('a.products-filter-chip', text: 'Beverages').click
+    end
+    expect(page.current_url).not_to include('category_id=')
+    expect(page).to have_css('#admin_products_list', text: 'Catalog printer paper')
+  end
+
   scenario 'keeps branch and user pages usable on mobile and retains clear desktop navigation' do
     branch = create(:branch, organization:, name: 'Central branch')
     member = create(:user, :english, username: 'catalog_member')

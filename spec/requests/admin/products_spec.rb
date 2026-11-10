@@ -393,6 +393,64 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(response.body).not_to include(foreign.name)
     end
 
+    it 'keeps the filter form, sorting and pagination on full-page navigations' do
+      create_list(:product, 12, organization:, featured: true)
+
+      get admin_products_path, params: { featured: 'true' }
+
+      document = Nokogiri::HTML(response.body)
+      form = document.at_css('form.products-filters')
+      expect(form['data-turbo-frame']).to eq('_top')
+      expect(form['data-controller']).to include('products-search')
+      expect(document.at_css('#products_search')['data-action']).to include('debouncedSubmit')
+      expect(document.css('#admin_products_list th a[data-turbo-frame="_top"]')).to be_present
+      expect(document.css('#admin_products_list a[data-turbo-frame="_top"]')).to be_present
+    end
+
+    it 'renders removable, accessible chips and restores advanced selections from the query' do
+      category = create(:category, organization:)
+      get admin_products_path, params: { status: 'active', category_id: category.id,
+                                         featured: 'false', tracking_mode: 'none' }
+
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('details.products-filters__advanced')['open']).to eq('open')
+      chips = document.css('nav.products-filter-chips a.products-filter-chip')
+      expect(chips.size).to eq(4)
+      expect(chips.map(&:text).join).to include(category.name)
+      expect(chips.map { |chip| chip['aria-label'] }).to all(be_present)
+
+      category_chip = chips.find { |chip| chip.text.include?(category.name) }
+      query = Rack::Utils.parse_query(URI.parse(category_chip['href']).query)
+      expect(query).not_to have_key('category_id')
+      expect(query['featured']).to eq('false')
+      expect(query['status']).to eq('active')
+    end
+
+    it 'offers branded, searchable category choices and leaves Apply as a compact button' do
+      get admin_products_path
+
+      document = Nokogiri::HTML(response.body)
+      category = document.at_css('#products_category')
+      expect(category.parent['data-controller']).to include('delta-select')
+      expect(category.parent['data-searchable']).to eq('true')
+      button = document.at_css('button.products-filters__apply')
+      expect(button['class']).to include('products-filters__apply')
+      expect(button['type']).to eq('submit')
+    end
+
+    it 'offers to clear filters when no products match' do
+      create(:product, organization:, name: 'An unrelated product')
+
+      get admin_products_path, params: { search: 'THIS-DOES-NOT-EXIST' }
+
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('#admin_products_list').text).to include(
+        I18n.t('admin.catalog_design.no_results')
+      )
+      expect(document.at_css('#admin_products_list a[href="/admin/products"]')).to be_present
+    end
+
     it 'filters available, depleted and low-stock products using tenant inventories' do
       branch = create(:branch, organization:)
       available = create(:product, organization:, name: 'Low quantity item')
