@@ -34,21 +34,26 @@ module ProductCommercialCatalog
     product_barcodes.each do |barcode|
       next if barcode.marked_for_destruction?
 
-      { product_variant: product_variants, product_presentation: product_presentations }.each do |association, records|
-        key = barcode.public_send("#{association}_client_key")
-        next if key.blank?
-
-        match = records.find { |record| record.new_record? && !record.marked_for_destruction? &&
-                                         record.client_key.present? && record.client_key == key }
-        if match
-          match.organization ||= organization
-          match.product = self
-          barcode.public_send("#{association}=", match)
-        else
-          errors.add(:product_barcodes, :invalid)
-        end
-      end
+      resolve_pending_option(barcode, :product_variant, product_variants)
+      resolve_pending_option(barcode, :product_presentation, product_presentations)
     end
+  end
+
+  def resolve_pending_option(barcode, association, records)
+    key = barcode.public_send("#{association}_client_key")
+    return if key.blank?
+
+    match = records.find do |record|
+      record.new_record? && record.client_key == key && !record.marked_for_destruction?
+    end
+    unless match
+      errors.add(:product_barcodes, :invalid)
+      return
+    end
+
+    match.organization ||= organization
+    match.product = self
+    barcode.public_send("#{association}=", match)
   end
 
   def retire_commercial_options

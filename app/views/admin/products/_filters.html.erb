@@ -108,16 +108,17 @@
             </div>
           </fieldset>
           <% invalid_range = Products::PriceFilter.inverted?(params[:min_price], params[:max_price]) %>
+          <% range_error_id = invalid_range ? 'products_price_range_error' : nil %>
           <fieldset class="products-filters__group">
             <legend><%= t('admin.catalog_design.product_group_price') %> <span class="products-filters__currency"><%= product_currency_code %></span></legend>
             <div class="products-filters__group-fields">
               <div class="products-filters__field">
                 <%= label_tag :products_min_price, t('admin.catalog_design.minimum_price') %>
-                <%= number_field_tag :min_price, params[:min_price], id: 'products_min_price', min: 0, step: '0.01', inputmode: 'decimal, aria: (invalid_range ? { invalid: true, describedby: 'products_price_range_error' } : {}) %>
+                <%= number_field_tag :min_price, params[:min_price], id: 'products_min_price', min: 0, step: '0.01', inputmode: 'decimal, aria: { invalid: invalid_range, describedby: range_error_id } %>
               </div>
               <div class="products-filters__field">
                 <%= label_tag :products_max_price, t('admin.catalog_design.maximum_price') %>
-                <%= number_field_tag :max_price, params[:max_price], id: 'products_max_price', min: 0, step: '0.01', inputmode: 'decimal, aria: (invalid_range ? { invalid: true, describedby: 'products_price_range_error' } : {}) %>
+                <%= number_field_tag :max_price, params[:max_price], id: 'products_max_price', min: 0, step: '0.01', inputmode: 'decimal, aria: { invalid: invalid_range, describedby: range_error_id } %>
               </div>
             </div>
             <% if invalid_range %>

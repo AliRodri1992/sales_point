@@ -2,6 +2,8 @@
 
 module Admin
   module ProductFormWriting
+    TEMPORARY_ASSOCIATIONS = %i[product_variant product_presentation].freeze
+
     private
 
     def save_product
@@ -48,7 +50,7 @@ module Admin
 
       rows = nested.respond_to?(:each_pair) ? nested.values : nested
       rows.each do |row|
-        %i[product_variant product_presentation].each do |association|
+        TEMPORARY_ASSOCIATIONS.each do |association|
           id_field = :"#{association}_id"
           token = row[id_field].to_s
           next unless token.start_with?('new:')

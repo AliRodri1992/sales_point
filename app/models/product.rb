@@ -106,20 +106,31 @@ class Product < ApplicationRecord
       attribute = "#{association}_id"
       next unless will_save_change_to_attribute?(attribute) && public_send(attribute).present?
 
-      reference = public_send(association)
-      if reference.nil? || (association == :category && (reference.organization_id != organization_id ||
-                                                      !reference.active? || reference.deleted_at.present?))
-        errors.add(attribute, :invalid)
-      end
+      errors.add(attribute, :invalid) unless valid_catalog_reference?(association)
     end
+  end
+
+  def valid_catalog_reference?(association)
+    reference = public_send(association)
+    return false unless reference
+    return true unless association == :category
+
+    reference.organization_id == organization_id && reference.active? && reference.deleted_at.nil?
   end
 
   def code_slug_namespace_available
     return unless organization_id && (will_save_change_to_code? || will_save_change_to_slug?)
 
     others = self.class.where(organization_id:).where.not(id:)
-    errors.add(:code, :taken) if code.present? && others.where('LOWER(slug) = LOWER(?)', code).exists?
-    errors.add(:slug, :taken) if slug.present? && others.where('LOWER(code) = LOWER(?)', slug).exists?
+    validate_shadowed_identifier(others, :code, :slug)
+    validate_shadowed_identifier(others, :slug, :code)
+  end
+
+  def validate_shadowed_identifier(scope, source, target)
+    value = public_send(source)
+    return if value.blank?
+
+    errors.add(source, :taken) if scope.exists?(["LOWER(#{target}) = LOWER(?)", value])
   end
 
   def set_defaults
@@ -134,9 +145,11 @@ class Product < ApplicationRecord
 
     base = name.to_s.parameterize(separator: '-')
     base = code.to_s.parameterize if base.blank?
-    self.slug = base
-    matches = self.class.where(organization_id:).where.not(id:)
-                        .where('LOWER(slug) = LOWER(:value) OR LOWER(code) = LOWER(:value)', value: base)
-    self.slug = "#{base}-#{SecureRandom.hex(4)}" if matches.exists?
+    self.slug = slug_collision?(base) ? "#{base}-#{SecureRandom.hex(4)}" : base
+  end
+
+  def slug_collision?(value)
+    others = self.class.where(organization_id:).where.not(id:)
+    others.exists?(['LOWER(slug) = LOWER(?) OR LOWER(code) = LOWER(?)', value, value])
   end
 end
