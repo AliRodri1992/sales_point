@@ -29,12 +29,12 @@ module Admin
       sort_column = Admin::LanguagesController::SORTABLE_COLUMNS.include?(params[:sort]) ? params[:sort] : 'name'
       sort_direction = %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
 
-      scope.order(sort_column => sort_direction)
+      scope.order(sort_column => sort_direction, id: :asc)
     end
 
     def paginate(scope)
-      page = params[:page].to_s.to_i
-      page = 1 if page < 1
+      requested_page = params[:page].to_s.to_i
+      page = [requested_page, 1].max
       per_page = per_page_param
       @per_page = per_page
 
@@ -43,6 +43,7 @@ module Admin
       page = @total_pages if page > @total_pages
 
       @current_page = page
+      @page_clamped = params[:page].present? && requested_page != page
       scope.limit(per_page).offset((page - 1) * per_page)
     end
 

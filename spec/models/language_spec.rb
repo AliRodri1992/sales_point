@@ -93,6 +93,36 @@ RSpec.describe Language, type: :model do
     end
   end
 
+  describe '.restore_retired' do
+    it 'keeps the original language and translation identifiers' do
+      archived = create(:language, name: 'French draft', code: 'fr', flag_iso: 'fr', status: 'inactive')
+      translation = create(:translate, language: archived, key: 'custom.welcome', value: 'Bonjour')
+      archived.update!(deleted_at: Time.current)
+      candidate = build(:language, name: 'French restored', code: 'fr', flag_iso: 'ca', status: 'inactive')
+
+      restored = described_class.restore_retired(candidate)
+
+      expect(restored.id).to eq(archived.id)
+      expect(restored.reload.deleted_at).to be_nil
+      expect(restored.name).to eq('French restored')
+      expect(translation.reload.language_id).to eq(archived.id)
+    end
+
+    it 'returns nil when no archived language uses the requested code' do
+      candidate = build(:language, code: 'fr', status: 'inactive')
+
+      expect(described_class.restore_retired(candidate)).to be_nil
+    end
+
+    it 'keeps the uniqueness protection for active languages' do
+      create(:language, name: 'French active draft', code: 'fr', flag_iso: 'fr', status: 'inactive')
+      candidate = build(:language, name: 'Other French', code: 'fr', flag_iso: 'ca', status: 'inactive')
+
+      expect(candidate).not_to be_valid
+      expect(candidate.errors[:code]).to be_present
+    end
+  end
+
   describe 'flag URLs' do
     let(:language) { build(:language, flag_iso: 'mx') }
 

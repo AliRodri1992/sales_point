@@ -289,3 +289,25 @@ El flujo `.github/workflows/languages-ci.yml` ahora escucha también cambios en 
 - No se ejecutaron nuevas specs en esta reauditoría; las cifras citadas corresponden a ejecuciones verificadas de GitHub Actions. Tampoco se validó lector de pantalla o zoom 200 %, ni una sesión operativa web/Sidekiq real. No se modificaron modelos, vistas, migraciones ni datos durante la auditoría.
 
 **Estado de esta reauditoría: IMPLEMENTACIONES ANTERIORES REVALIDADAS EN CÓDIGO, SEIS HALLAZGOS NUEVOS ABIERTOS (IDI-037–042) Y ACEPTACIÓN GLOBAL PENDIENTE. NO CERRADO.**
+
+
+## Implementación correctiva — IDI-037 a IDI-042 (2026-11-10)
+
+**Alcance:** Delta POS, rama `feature/fixes`, cambios de código y pruebas focalizadas sin fusionar ramas. Se conserva sin cambios la disposición del encabezado: «Administra los idiomas disponibles en Delta POS.» y «Nuevo idioma» en la misma fila y fuera de filtros.
+
+| ID | Adecuación realizada | Aceptación automatizada |
+|---|---|---|
+| **IDI-037** | Migración `20261110170000_add_yaml_value_to_translates` añade la columna opcional `translates.yaml_value` como referencia de la última versión YAML. La importación y `db:seed` comparten `Translate.load_from_file`: si `value == yaml_value` (entrada sin personalizar), las actualizaciones de YAML modifican ambos; en caso contrario, solo actualizan la referencia de origen y **preservan la personalización**. `OVERWRITE=1` sustituye explícitamente el valor y el origen, `DRY_RUN=1` no escribe. Las filas históricas con `yaml_value = NULL` no se sobrescriben en su primera sincronización para evitar pérdidas irreversibles: se establece el origen y se requiere revisión manual si divergen. | RSpec de primera importación, actualización de base, override, legado y dry-run. Carga de semillas usa exactamente el mismo importador. |
+| **IDI-038** | El footer de tamaño de página se muestra según `total_count` efectivo (tras filtros), no `unfiltered_count`. | Request spec: un catálogo grande filtrado a un resultado no muestra el selector. |
+| **IDI-039** | El `ORDER BY` de Idiomas utiliza `id ASC` como desempate para todo ordenamiento. | Request spec: compara los códigos paginados con consulta determinista ante estados repetidos. |
+| **IDI-040** | Si «Nuevo idioma» usa un código previamente retirado, la operación **reactiva el registro histórico** y conserva su ID, `translates`, referencias y auditoría; permite actualizar nombre, bandera y estado. Se conserva validación y autorización existentes; el modelo ignora bajas lógicas en unicidad activa. Se bloquea reactivación con datos inválidos. | Model/request specs: reactivación con traducciones y protección frente a duplicados/invalidaciones. No hay borrado masivo ni reclasificación silenciosa de claves. |
+| **IDI-041** | El input oculto para enviar `per_page` usa ID exclusivo `languages_filter_per_page`, mientras el selector visible conserva `id=per_page` y su label. | Request spec: IDs únicos y label asociado al campo correcto con `per_page=5`. |
+| **IDI-042** | Al limitar `page` después de eliminar la última fila, la respuesta renderiza `languages-page-state` con URL canónica. Stimulus actualiza `history.replaceState` sin recargar la lista; funciona también con URLs de página fuera de rango en GET. La URL usa una lista blanca de origen y pathname y elimina `page` anterior antes de reconstruirlo. | Request spec del URL canónico y Chrome de eliminación en última página con URL/paginación sincronizadas. |
+
+### Condiciones de seguridad y datos
+
+**La migración no modifica contenidos existentes.** Las filas previas sin `yaml_value` se tratan de manera conservadora hasta su primer paso por el importador: *no hay manera fiable de distinguir una traducción previamente importada de una modificación manual si no existe una referencia histórica*. Se puede forzar sustitución únicamente mediante `OVERWRITE=1 bin/rails translations:load` después de revisar respaldos, y el comando `DRY_RUN=1 bin/rails translations:load` sigue siendo solo lectura.
+
+La baja lógica de `languages` no purga traducciones. La reactivación por un alta del mismo código utiliza el ID antiguo; no duplica registros ni modifica `users.language_id`. La reactivación necesita las mismas comprobaciones Pundit del alta.
+
+**Punto de aceptación:** resultados del CI focalizado, CI global, migraciones en base limpia, pruebas de Chrome, inspección visual/teclado/zoom 200 % y lector de pantalla deben verificarse y registrarse antes de dar cierre definitivo. No afirmar que las últimas puertas pasaron antes de consultar los runs correspondientes.

@@ -77,16 +77,25 @@ class Translate < ApplicationRecord
   end
 
   def self.import_translation_entry(key, value, language, locale_code, options)
-    return if options[:dry_run] || value.is_a?(Hash)
+    return if options[:dry_run] || value.blank? || value.is_a?(Hash)
 
     lookup = column_exists?(:language_id) ? { key:, language: } : { key:, locale: locale_code }
     translation = find_or_initialize_by(**lookup)
-    return if translation.persisted? && !options[:overwrite]
+    source = value.to_s
 
-    translation.update!(value: value.to_s) if translation.new_record? || translation.value != value.to_s
+    changes = { yaml_value: source }
+    changes[:value] = source if sync_yaml_translation?(translation, options)
+    return if translation.persisted? && changes.all? { |field, value| translation.public_send(field) == value }
+
+    translation.update!(changes)
   end
   private_class_method :import_translation_entry
 
+  def self.sync_yaml_translation?(translation, options)
+    translation.new_record? || options[:overwrite] ||
+      (!translation.yaml_value.nil? && translation.value == translation.yaml_value)
+  end
+  private_class_method :sync_yaml_translation?
   def self.flatten_hash(hash, prefix = '')
     result = {}
     hash.each do |key, value|

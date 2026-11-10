@@ -12,7 +12,7 @@ class Language < ApplicationRecord
 
   validates :code,
             presence: true,
-            uniqueness: { case_sensitive: false },
+            uniqueness: { case_sensitive: false, conditions: -> { where(deleted_at: nil) } },
             format: { with: /\A[a-z]{2}\z/ },
             length: { maximum: 2 }
 
@@ -49,6 +49,24 @@ class Language < ApplicationRecord
   scope :not_deleted, lambda {
     where(deleted_at: nil)
   }
+
+  # Restore the archived row rather than creating another language ID.
+  # Keeping the ID preserves its translations and references from other tables.
+  def self.restore_retired(candidate)
+    transaction do
+      archived = where(code: candidate.code).where.not(deleted_at: nil).order(:id).lock.first
+      next unless archived
+
+      archived.assign_attributes(name: candidate.name, flag_iso: candidate.flag_iso,
+                                 status: candidate.status, deleted_at: nil)
+      if archived.save
+        archived
+      else
+        candidate.errors.merge!(archived.errors)
+        false
+      end
+    end
+  end
 
   def flag_url(_size = '64x48')
     path = "flags/#{flag_iso.to_s.downcase}.svg"

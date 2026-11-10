@@ -93,6 +93,7 @@ RSpec.describe Translate, type: :model do
 
       expect(described_class.find_translation('dashboard.title', 'en').value).to eq('Dashboard')
       expect(described_class.find_translation('save', 'en').value).to eq('Save')
+      expect(described_class.find_translation('save', 'en').yaml_value).to eq('Save')
       expect(language).to be_persisted
     ensure
       file&.unlink
@@ -108,9 +109,77 @@ RSpec.describe Translate, type: :model do
       allow(described_class).to receive(:column_exists?).with(:language_id).and_return(false)
       expect(described_class).to receive(:find_or_initialize_by)
         .with(key: 'save', locale: 'en').and_return(translation)
-      expect(translation).to receive(:update!).with(value: 'Save')
+      expect(translation).to receive(:update!).with(yaml_value: 'Save', value: 'Save')
 
       described_class.load_from_file(file.path, 'en')
+    ensure
+      file&.unlink
+    end
+
+    it 'updates an imported baseline when YAML changes without overwriting a custom value' do
+      language = create(:language, code: 'en')
+      file = Tempfile.new(['translations', '.yml'])
+      file.close
+      File.write(file.path, { 'en' => { 'dashboard' => { 'title' => 'Original' } } }.to_yaml)
+
+      described_class.load_from_file(file.path, 'en')
+      translation = described_class.find_translation('dashboard.title', 'en')
+      expect(translation.yaml_value).to eq('Original')
+
+      File.write(file.path, { 'en' => { 'dashboard' => { 'title' => 'Updated YAML' } } }.to_yaml)
+      described_class.load_from_file(file.path, 'en')
+
+      expect(translation.reload.value).to eq('Updated YAML')
+      expect(translation.yaml_value).to eq('Updated YAML')
+      expect(language).to be_persisted
+    ensure
+      file&.unlink
+    end
+
+    it 'preserves an administrator override while advancing the YAML baseline' do
+      create(:language, code: 'en')
+      file = Tempfile.new(['translations', '.yml'])
+      file.close
+      File.write(file.path, { 'en' => { 'save' => 'Original YAML' } }.to_yaml)
+
+      described_class.load_from_file(file.path, 'en')
+      translation = described_class.find_translation('save', 'en')
+      translation.update!(value: 'Custom override')
+
+      File.write(file.path, { 'en' => { 'save' => 'Updated YAML' } }.to_yaml)
+      described_class.load_from_file(file.path, 'en')
+
+      expect(translation.reload.value).to eq('Custom override')
+      expect(translation.yaml_value).to eq('Updated YAML')
+    ensure
+      file&.unlink
+    end
+
+    it 'conservatively preserves unknown legacy values on their first YAML sync' do
+      language = create(:language, code: 'en')
+      translation = create(:translate, language:, key: 'save', value: 'Unknown legacy value', yaml_value: nil)
+      file = Tempfile.new(['translations', '.yml'])
+      file.write({ 'en' => { 'save' => 'Current YAML' } }.to_yaml)
+      file.close
+
+      described_class.load_from_file(file.path, 'en')
+
+      expect(translation.reload.value).to eq('Unknown legacy value')
+      expect(translation.yaml_value).to eq('Current YAML')
+    ensure
+      file&.unlink
+    end
+
+    it 'skips blank YAML values instead of raising on validation' do
+      create(:language, code: 'en')
+      file = Tempfile.new(['translations', '.yml'])
+      file.write({ 'en' => { 'empty' => '', 'real' => 'Translation' } }.to_yaml)
+      file.close
+
+      described_class.load_from_file(file.path, 'en')
+
+      expect(described_class.find_translation('empty', 'en')).to be_nil
+      expect(described_class.find_translation('real', 'en').value).to eq('Translation')
     ensure
       file&.unlink
     end
@@ -125,6 +194,7 @@ RSpec.describe Translate, type: :model do
       described_class.load_from_file(file.path, 'en')
 
       expect(translation.reload.value).to eq('Custom override')
+      expect(translation.yaml_value).to eq('Save from YAML')
       expect(described_class.find_translation('new', 'en').value).to eq('New entry')
     ensure
       file&.unlink
@@ -140,6 +210,7 @@ RSpec.describe Translate, type: :model do
       described_class.load_from_file(file.path, 'en', overwrite: true)
 
       expect(translation.reload.value).to eq('Save from YAML')
+      expect(translation.yaml_value).to eq('Save from YAML')
     ensure
       file&.unlink
     end

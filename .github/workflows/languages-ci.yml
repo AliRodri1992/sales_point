@@ -19,6 +19,8 @@ on:
       - 'app/components/authentication/language_selector_component.*'
       - 'app/javascript/controllers/language_selector_controller.js'
       - 'app/javascript/controllers/languages_search_controller.js'
+      - 'app/javascript/controllers/languages_page_state_controller.js'
+      - 'app/javascript/controllers/index.js'
       - 'app/javascript/controllers/modal_controller.js'
       - 'config/environments/development.rb'
       - 'app/assets/stylesheets/components/languages_workspace.css'
@@ -27,6 +29,7 @@ on:
       - 'lib/tasks/translations.rake'
       - 'db/seeds.rb'
       - 'db/schema.rb'
+      - 'db/migrate/*yaml_value_to_translates.rb'
       - 'spec/models/language_spec.rb'
       - 'spec/models/translate_spec.rb'
       - 'spec/requests/admin/languages*'
@@ -68,6 +71,7 @@ jobs:
             app/models/language.rb app/models/translate.rb \
             app/policies/language_policy.rb lib/tasks/translations.rake \
             db/seeds.rb config/environments/development.rb \
+            db/migrate/20261110170000_add_yaml_value_to_translates.rb \
             spec/models/language_spec.rb spec/models/translate_spec.rb \
             spec/requests/admin/languages_spec.rb \
             spec/requests/admin/languages_diagnostic_spec.rb \

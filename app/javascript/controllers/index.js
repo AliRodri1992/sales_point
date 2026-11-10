@@ -40,6 +40,9 @@ application.register("languages", LanguagesController)
 import LanguagesSearchController from "./languages_search_controller"
 application.register("languages-search", LanguagesSearchController)
 
+import LanguagesPageStateController from "./languages_page_state_controller"
+application.register("languages-page-state", LanguagesPageStateController)
+
 import TestimonialsCarouselController from "./testimonials_carousel_controller"
 application.register("testimonials-carousel", TestimonialsCarouselController)
 

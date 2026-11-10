@@ -31,7 +31,7 @@ module Admin
     def create
       @language = Language.new(language_params)
 
-      if @language.save
+      if persist_new_language
         load_languages
         notify_language(current_user, @language, 'created')
         return if redirect_without_catalog_listing(@language, :created)
@@ -98,6 +98,17 @@ module Admin
 
     def language_params
       params.expect(language: %i[name code flag_iso status])
+    end
+
+    def persist_new_language
+      return false unless @language.valid?
+
+      restored = Language.restore_retired(@language)
+      return @language.save if restored.nil?
+      return false unless restored
+
+      @language = restored
+      true
     end
 
     def notify_language(user, language, action)

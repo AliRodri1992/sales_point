@@ -200,6 +200,19 @@ RSpec.describe 'Languages administration quality', type: :feature, js: true do
     expect(find('#status', visible: :all).value).to eq('inactive')
   end
 
+  scenario 'updates the address bar after deleting the final language on page two' do
+    create_list(:language, [6 - Language.not_deleted.count, 0].max, status: 'inactive')
+    visit admin_languages_path(per_page: 5, page: 2, sort: 'code')
+
+    expect(page).to have_css('.languages-desktop-table tbody tr', count: 1)
+    within('.languages-desktop-table tbody tr') { find('button.languages-icon-button--danger').click }
+    find('.delta-confirm-accept', wait: 10).click
+
+    expect(page).to have_css('.languages-desktop-table tbody tr', count: 5, wait: 10)
+    expect(URI.parse(current_url).query).to include('per_page=5')
+    expect(URI.parse(current_url).query).not_to include('page=2')
+  end
+
   scenario 'keeps search and status in sync after sorting and browser back navigation' do
     create(:language, name: 'French draft', code: 'fr', flag_iso: 'fr', status: 'inactive')
     visit admin_languages_path(search: 'French', status: 'inactive')

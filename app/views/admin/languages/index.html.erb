@@ -50,7 +50,7 @@
       </div>
       <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
       <%= hidden_field_tag :direction, params[:direction] if params[:direction].present? %>
-      <%= hidden_field_tag :per_page, params[:per_page] if params[:per_page].present? %>
+      <%= hidden_field_tag :per_page, params[:per_page], id: 'languages_filter_per_page' if params[:per_page].present? %>
       <noscript>
         <button type="submit" class="catalog-button languages-filter-apply">
           <%= t('admin.catalog_design.filter') %>

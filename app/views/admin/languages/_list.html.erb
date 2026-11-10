@@ -30,7 +30,11 @@
   </nav>
 <% end %>
 
-<section class="languages-results" aria-label="<%= t('admin.languages.index.card_title') %>">
+<section class="languages-results" aria-label="<%= t('admin.languages.index.card_title') %>"
+         <% if @page_clamped %>
+           data-controller="languages-page-state"
+           data-languages-page-state-url-value="<%= admin_languages_path(request.query_parameters.except('page').merge(@current_page > 1 ? { page: @current_page } : {})) %>"
+         <% end %>>
   <header class="languages-results__header">
     <div>
       <h2><%= t('admin.languages.index.card_title') %></h2>
@@ -99,7 +103,7 @@
       <% end %>
     </ul>
 
-    <% if unfiltered_count > TablePagePreference::OPTIONS.min || total_pages > 1 %>
+    <% if total_count > TablePagePreference::OPTIONS.min || total_pages > 1 %>
       <footer class="languages-pagination">
         <div class="languages-page-size">
         <%= label_tag :per_page, t('admin.languages.index.pagination.per_page_label') %>

@@ -134,6 +134,35 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
+    it 'restores an archived locale with the same ID and all its translations' do
+      language = create(:language, name: 'French draft', code: 'fr', flag_iso: 'fr', status: 'inactive')
+      translation = create(:translate, language:, key: 'custom.headline', value: 'Custom wording')
+      delete admin_language_path(language, format: :turbo_stream)
+      expect(language.reload.deleted_at).to be_present
+
+      post admin_languages_path(format: :turbo_stream),
+           params: { language: { name: 'French restored', code: 'FR', flag_iso: 'ca', status: 'inactive' } }
+
+      expect(response).to have_http_status(:ok)
+      expect(Language.where(code: 'fr').count).to eq(1)
+      expect(language.reload.deleted_at).to be_nil
+      expect(language.name).to eq('French restored')
+      expect(language.flag_iso).to eq('ca')
+      expect(translation.reload.language_id).to eq(language.id)
+      expect(translation.value).to eq('Custom wording')
+    end
+
+    it 'does not restore an archived locale with invalid form values' do
+      archived = create(:language, name: 'French draft', code: 'fr', flag_iso: 'fr', status: 'inactive')
+      archived.update!(deleted_at: Time.current)
+
+      post admin_languages_path,
+           params: { language: { name: '', code: 'fr', flag_iso: 'fr', status: 'inactive' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(archived.reload.deleted_at).to be_present
+    end
+
     it 'redirects after an HTML create and sets a notice' do
       post admin_languages_path,
            params: { language: { name: 'HTML Language', code: 'hl', flag_iso: 'hl', status: 'inactive' } }
@@ -255,6 +284,10 @@ RSpec.describe 'Admin::Languages', type: :request do
       page = Nokogiri::HTML(response.body)
       expect(page.css('.languages-desktop-table tbody tr').size).to eq(5)
       expect(page.at_css('.languages-page-size')).to be_nil
+      canonical = page.at_css('.languages-results[data-controller="languages-page-state"]')
+      expect(canonical).to be_present
+      expect(canonical['data-languages-page-state-url-value']).to include('per_page=5')
+      expect(canonical['data-languages-page-state-url-value']).not_to include('page=2')
     end
 
     it 'sends a "destroyed" notification to the current user' do
@@ -355,6 +388,46 @@ RSpec.describe 'Admin::Languages', type: :request do
       page = Nokogiri::HTML(response.body)
       expect(page.at_css('.languages-page-size')).to be_nil
       expect(page.at_css('.languages-pagination-links')).to be_nil
+    end
+
+    it 'uses stable identifier order for tied statuses across pagination' do
+      get admin_languages_path(sort: 'status', direction: 'asc', per_page: 5)
+
+      actual = Nokogiri::HTML(response.body).css('.languages-desktop-table tbody .languages-code')
+                               .map { |element| element.text.strip }
+      expected = Language.not_deleted.order(status: :asc, id: :asc).limit(5).pluck(:code)
+
+      expect(actual).to eq(expected)
+    end
+
+    it 'omits size controls when a large catalog is narrowed to one result' do
+      create(:language, code: 'zz', flag_iso: 'zz', name: 'Unique filtered result', status: 'inactive')
+
+      get admin_languages_path(search: 'Unique filtered result', per_page: 5)
+
+      document = Nokogiri::HTML(response.body)
+      expect(document.css('.languages-desktop-table tbody tr').size).to eq(1)
+      expect(document.at_css('.languages-page-size')).to be_nil
+      expect(document.at_css('.languages-pagination')).to be_nil
+    end
+
+    it 'uses distinct IDs for hidden page size and visible page-size selector' do
+      get admin_languages_path(per_page: 5)
+
+      document = Nokogiri::HTML(response.body)
+      expect(document.css('#per_page').size).to eq(1)
+      expect(document.at_css('#languages_filter_per_page')['value']).to eq('5')
+      expect(document.at_css('label[for="per_page"]')).to be_present
+    end
+
+    it 'exposes a canonical URL for out-of-range page requests' do
+      get admin_languages_path(page: 999, per_page: 5)
+
+      document = Nokogiri::HTML(response.body)
+      result = document.at_css('.languages-results[data-controller="languages-page-state"]')
+      expect(result).to be_present
+      expect(result['data-languages-page-state-url-value']).to include('per_page=5')
+      expect(result['data-languages-page-state-url-value']).not_to include('page=999')
     end
 
     it 'sorts by code column' do

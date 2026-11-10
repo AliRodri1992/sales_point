@@ -416,45 +416,8 @@ unless defined?(DEFAULT_PERMISSIONS)
 end
 
 def load_translations_from_file(file_path, locale_code)
-  return unless File.exist?(file_path)
-
-  content = YAML.safe_load_file(file_path)
-  locale_hash = content[locale_code.to_s]
-  language = Language.find_by(code: locale_code)
-  return unless locale_hash && language
-
-  flatten_hash(locale_hash, '').each do |key, value|
-    next if value.is_a?(Hash)
-    next if value.blank? || value.to_s.strip.empty?
-
-    persist_translation(key, value.to_s, locale_code, language)
-  end
-end
-
-def persist_translation(key, value, locale_code, language)
-  translation = Translate.find_by(key: key, language: language)
-  if translation
-    # Never clobber administrator-defined database overrides during db:seed.
-    translation
-  elsif ActiveRecord::Base.connection.column_exists?(:translates, :language_id)
-    Translate.create!(key: key, language: language, value: value)
-  else
-    # Fallback: use locale column if language_id doesn't exist yet
-    Translate.create!(key: key, locale: locale_code, value: value)
-  end
-end
-
-def flatten_hash(hash, prefix = '')
-  result = {}
-  hash.each do |key, value|
-    current_key = prefix.empty? ? key.to_s : "#{prefix}.#{key}"
-    if value.is_a?(Hash)
-      result.merge!(flatten_hash(value, current_key))
-    else
-      result[current_key] = value
-    end
-  end
-  result
+  # Shared importer tracks YAML baselines without overwriting administrator edits.
+  Translate.load_from_file(file_path, locale_code)
 end
 
 def seed_permissions
