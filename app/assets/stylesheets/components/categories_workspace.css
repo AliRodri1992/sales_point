@@ -8,13 +8,13 @@
 .categories-page-header h1 {font:700 clamp(1.5rem,2.8vw,1.875rem) var(--font-jakarta);letter-spacing:-.035em}
 .categories-subtitle {font-size:.875rem;color:#64748b;line-height:1.6;margin-top:.375rem;max-width:65ch}
 .categories-primary-button,.categories-secondary-button,.categories-apply-button {display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:44px;padding:.625rem 1rem;border-radius:.75rem;font-size:.8125rem;font-weight:650;white-space:nowrap;transition:background .15s ease}
-.categories-primary-button {background:var(--brand,#059669);color:#fff}
-.categories-primary-button:hover {filter:brightness(.91)}
+.categories-primary-button {background:var(--brand-on-white,#047857);color:#fff}
+.categories-primary-button:hover {filter:brightness(.9);box-shadow:0 5px 16px -10px rgba(15,23,42,.5)}
 .categories-secondary-button {background:#fff;color:#334155;border:1px solid #cbd5e1}
 .categories-secondary-button:hover {background:#f8fafc}
 .categories-apply-button {background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;width:auto;align-self:end}
 .categories-apply-button:hover {background:#e2e8f0}
-.categories-filter-panel {background:#fff;border:1px solid #e2e8f0;border-radius:1rem;padding:1.125rem 1.25rem;margin-bottom:.875rem}
+.categories-filter-panel {background:#fff;border:1px solid #e2e8f0;border-radius:1rem;padding:1.125rem 1.25rem;margin-bottom:.875rem;box-shadow:0 7px 24px -23px rgba(15,23,42,.45)}
 .categories-filter-heading {display:flex;align-items:baseline;flex-wrap:wrap;gap:.5rem 1.25rem;margin-bottom:1rem}
 .categories-filter-heading h2 {font:700 .9375rem var(--font-jakarta)}
 .categories-filter-heading p {font-size:.75rem;color:#64748b}
@@ -27,7 +27,7 @@
 .categories-filter-field .delta-select-native {display:none}
 .categories-status-field .relative,.categories-filter-field .relative {min-width:0}
 .categories-advanced {grid-column:1/-1;min-width:0;border-top:1px solid #f1f5f9;padding-top:.75rem}
-.categories-advanced summary {display:inline-flex;align-items:center;gap:.5rem;list-style:none;cursor:pointer;min-height:38px;padding:.4rem .5rem;border-radius:.625rem;color:var(--brand-on-white,#047857);font-size:.8125rem;font-weight:650}
+.categories-advanced summary {display:inline-flex;align-items:center;gap:.5rem;list-style:none;cursor:pointer;min-height:44px;padding:.4rem .5rem;border-radius:.625rem;color:var(--brand-on-white,#047857);font-size:.8125rem;font-weight:650}
 .categories-advanced summary::-webkit-details-marker {display:none}
 .categories-advanced summary:hover {background:#f0fdf4}
 .categories-advanced-caret {font-size:1.125rem;line-height:1;transition:transform .15s}
@@ -38,11 +38,11 @@
 .categories-alert:not(:empty) {margin-bottom:1rem}
 .categories-filter-chips {display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:.625rem 0 1rem}
 .categories-filter-chips-label {font-size:.75rem;font-weight:650;color:#64748b;margin-right:.125rem}
-.categories-filter-chip {display:inline-flex;align-items:center;gap:.6rem;max-width:100%;min-height:32px;padding:.35rem .75rem;border:1px solid #a7f3d0;border-radius:999px;background:#ecfdf5;color:#065f46;font-size:.75rem;font-weight:650}
+.categories-filter-chip {display:inline-flex;align-items:center;gap:.6rem;max-width:100%;min-height:40px;padding:.35rem .75rem;border:1px solid #a7f3d0;border-radius:999px;background:#ecfdf5;color:#065f46;font-size:.75rem;font-weight:650}
 .categories-filter-chip span:first-child {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px}
 .categories-filter-chip:hover {background:#d1fae5}
-.categories-clear-filters {color:var(--brand-on-white,#047857);font-size:.75rem;font-weight:650;padding:.4rem .5rem}
-.categories-directory {border:1px solid #e2e8f0;border-radius:1rem;background:#fff;overflow:hidden}
+.categories-clear-filters {display:inline-flex;align-items:center;min-height:40px;color:var(--brand-on-white,#047857);font-size:.75rem;font-weight:650;padding:.4rem .5rem}
+.categories-directory {border:1px solid #e2e8f0;border-radius:1rem;background:#fff;overflow:hidden;box-shadow:0 12px 30px -28px rgba(15,23,42,.5)}
 .categories-directory-heading {padding:1.125rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
 .categories-directory-heading h2 {font:700 1rem var(--font-jakarta)}
 .categories-directory-heading p {font-size:.75rem;color:#64748b;margin-top:.25rem}
@@ -56,13 +56,15 @@
 .categories-identity {display:flex;align-items:center;gap:.75rem;min-width:165px}
 .categories-avatar {display:inline-grid;place-items:center;flex-shrink:0;width:36px;height:36px;border-radius:.75rem;background:#ecfdf5;color:#047857;font-size:.875rem;font-weight:750}
 .categories-name {font-weight:650;color:#0f172a;overflow-wrap:anywhere}
+.categories-name-link {color:inherit;text-decoration:none;text-underline-offset:3px}
+.categories-name-link:hover {color:var(--brand-on-white,#047857);text-decoration:underline}
 .categories-code {display:inline-block;padding:.25rem .5rem;max-width:100%;border-radius:.45rem;background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:600;overflow-wrap:anywhere;white-space:normal}
 .categories-description {color:#475569;font-size:.78125rem;line-height:1.55;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;max-width:360px}
 .categories-status {display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:.3rem .7rem;background:#ecfdf5;color:#047857;font-size:.6875rem;font-weight:700;white-space:nowrap}
 .categories-status--inactive {background:#f1f5f9;color:#475569}
 .categories-actions-heading {text-align:right}
 .categories-row-actions {display:flex;align-items:center;justify-content:flex-end;gap:.25rem}
-.categories-icon-button {display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;flex-shrink:0;border:1px solid transparent;border-radius:.625rem;color:#475569;background:transparent}
+.categories-icon-button {display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;flex-shrink:0;border:1px solid transparent;border-radius:.625rem;color:#475569;background:transparent}
 .categories-icon-button:hover {background:#ecfdf5;color:#047857}
 .categories-icon-button--danger:hover {background:#fff1f2;color:#be123c}
 .categories-icon-button:disabled {opacity:.45;cursor:not-allowed}

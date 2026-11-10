@@ -78,7 +78,7 @@ module Admin
         scope = scope.where('name ILIKE :q OR code ILIKE :q', q:)
       end
 
-      return scope unless params[:status].present? && params[:status] != 'all'
+      return scope unless Category.statuses.key?(params[:status].to_s)
 
       scope.where(status: params[:status])
     end

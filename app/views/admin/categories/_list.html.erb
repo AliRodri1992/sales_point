@@ -5,7 +5,9 @@
 <% search_filter = params[:search].to_s.strip %>
 <% status_filter = %w[active inactive].include?(params[:status].to_s) ? params[:status].to_s : nil %>
 <% sort_filter = %w[name code status created_at updated_at].include?(params[:sort].to_s) ? params[:sort].to_s : nil %>
-<% has_filters = search_filter.present? || status_filter.present? || (sort_filter.present? && sort_filter != 'name') %>
+<% sort_direction = params[:direction].to_s == 'desc' ? 'desc' : 'asc' %>
+<% sort_is_custom = (sort_filter.present? && sort_filter != 'name') || sort_direction == 'desc' %>
+<% has_filters = search_filter.present? || status_filter.present? || sort_is_custom %>
 
 <% if has_filters %>
   <nav class="categories-filter-chips" aria-label="<%= t('admin.categories.index.active_filters') %>">
@@ -26,11 +28,12 @@
         <span aria-hidden="true">×</span>
       <% end %>
     <% end %>
-    <% if sort_filter.present? && sort_filter != 'name' %>
+    <% if sort_is_custom %>
+      <% sort_label = sort_filter.blank? || sort_filter == 'name' ? t('admin.categories.index.columns.name') : t("admin.categories.index.filters.sort_#{sort_filter}") %>
       <%= link_to admin_categories_path(request.query_parameters.except('sort', 'direction', 'page')),
                   class: 'categories-filter-chip', data: { turbo_frame: '_top' },
                   aria: { label: t('admin.categories.index.clear_sort') } do %>
-        <span><%= t('admin.categories.index.filters.sort_by') %>: <%= t("admin.categories.index.filters.sort_#{sort_filter}") %></span>
+        <span><%= t('admin.categories.index.filters.sort_by') %>: <%= sort_label %> · <%= t("admin.categories.index.filters.#{sort_direction == 'desc' ? 'descending' : 'ascending'}") %></span>
         <span aria-hidden="true">×</span>
       <% end %>
     <% end %>
@@ -39,7 +42,9 @@
   </nav>
 <% end %>
 
-<section class="categories-directory" aria-labelledby="categories-directory-title">
+<section class="categories-directory" aria-labelledby="categories-directory-title"
+         data-categories-current-sort="<%= sort_filter || 'name' %>"
+         data-categories-current-direction="<%= sort_direction %>">
   <header class="categories-directory-heading">
     <div>
       <h2 id="categories-directory-title"><%= t('admin.categories.index.card_title') %></h2>
@@ -68,7 +73,14 @@
               <td>
                 <span class="categories-identity">
                   <span class="categories-avatar" aria-hidden="true"><%= category.name.to_s[0].to_s.upcase %></span>
-                  <span class="categories-name"><%= category.name %></span>
+                  <span class="categories-name">
+                    <% if policy(Category).show? %>
+                      <%= link_to category.name, admin_category_path(category),
+                                  data: { turbo_frame: 'category_modal' }, class: 'categories-name-link' %>
+                    <% else %>
+                      <%= category.name %>
+                    <% end %>
+                  </span>
                 </span>
               </td>
               <td><code class="categories-code"><%= category.code %></code></td>
@@ -91,7 +103,14 @@
           <div class="categories-mobile-card-heading">
             <span class="categories-avatar" aria-hidden="true"><%= category.name.to_s[0].to_s.upcase %></span>
             <div class="categories-mobile-identity">
-              <strong><%= category.name %></strong>
+              <strong>
+                <% if policy(Category).show? %>
+                  <%= link_to category.name, admin_category_path(category),
+                              data: { turbo_frame: 'category_modal' }, class: 'categories-name-link' %>
+                <% else %>
+                  <%= category.name %>
+                <% end %>
+              </strong>
               <code class="categories-code"><%= category.code %></code>
             </div>
             <span class="categories-status <%= 'categories-status--inactive' unless category.active? %>">
@@ -132,7 +151,6 @@
       <% else %>
         <h3><%= t('admin.categories.index.empty_title') %></h3>
         <p><%= t('admin.categories.index.empty_subtitle') %></p>
-
       <% end %>
     </div>
   <% end %>

@@ -1,4 +1,4 @@
-<div class="categories-row-actions" aria-label="<%= t('admin.categories.index.columns.actions') %>">
+<div class="categories-row-actions" role="group" aria-label="<%= t('admin.categories.index.columns.actions') %>">
   <% if policy(Category).show? %>
     <%= link_to admin_category_path(category),
                 data: { turbo_frame: 'category_modal', tooltip: t('admin.categories.show.title') },

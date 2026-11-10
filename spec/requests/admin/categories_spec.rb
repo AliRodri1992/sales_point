@@ -373,6 +373,38 @@ RSpec.describe 'Admin::Categories', type: :request do
       expect(document.css('.categories-mobile-card').map(&:text).join).to include('Daily hygiene essentials')
     end
 
+
+    it 'shows descending name order as a removable sorting chip' do
+      get admin_categories_path(sort: 'name', direction: 'desc')
+
+      document = Nokogiri::HTML(response.body)
+      expect(document.css('a.categories-filter-chip').size).to eq(1)
+      expect(document.at_css('a.categories-filter-chip').text).to include(
+        I18n.t('admin.categories.index.filters.descending')
+      )
+      expect(document.at_css('.categories-directory')['data-categories-current-direction']).to eq('desc')
+    end
+
+    it 'ignores unsupported status values rather than showing a misleading empty catalog' do
+      get admin_categories_path(status: 'unsupported')
+
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      expect(document.css('table.categories-table tbody tr')).not_to be_empty
+      expect(document.at_css('a.categories-filter-chip')).to be_nil
+    end
+
+    it 'links category names to an authorized modal on desktop and mobile' do
+      category = create(:category, organization:, name: 'Wellness', code: 'wellness')
+
+      get admin_categories_path
+
+      document = Nokogiri::HTML(response.body)
+      links = document.css("a.categories-name-link[href='/admin/categories/#{category.id}']")
+      expect(links.size).to eq(2)
+      expect(links.all? { |link| link['data-turbo-frame'] == 'category_modal' }).to be(true)
+    end
+
     it 'shows individual removable search and status chips' do
       create(:category, organization:, name: 'Clothing', code: 'clothing')
 
