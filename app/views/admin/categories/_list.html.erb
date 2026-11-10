@@ -67,7 +67,7 @@
             <tr>
               <td>
                 <span class="categories-identity">
-                  <span class="categories-avatar" aria-hidden="true"><%= category.name.to_s.first.upcase %></span>
+                  <span class="categories-avatar" aria-hidden="true"><%= category.name.to_s[0].to_s.upcase %></span>
                   <span class="categories-name"><%= category.name %></span>
                 </span>
               </td>
@@ -89,7 +89,7 @@
       <% categories.each do |category| %>
         <li class="categories-mobile-card">
           <div class="categories-mobile-card-heading">
-            <span class="categories-avatar" aria-hidden="true"><%= category.name.to_s.first.upcase %></span>
+            <span class="categories-avatar" aria-hidden="true"><%= category.name.to_s[0].to_s.upcase %></span>
             <div class="categories-mobile-identity">
               <strong><%= category.name %></strong>
               <code class="categories-code"><%= category.code %></code>

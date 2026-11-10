@@ -194,3 +194,28 @@ IDs permanentes de esta primera auditoría. **Confirmado por código** significa
 - **CATEGORIES-010 (cobertura):** suite focalizada y escenario Chrome verificados. No se realizó inspección manual independiente de viewport 320/390/768/1440, zoom 200 %, todos los lectores de pantalla ni todos los estados 401/422 en navegador.
 - **Bloqueos de cierre:** no hay evidencia de **CI global verde del SHA de aceptación**, ni revisión independiente completa del UI; el run global del SHA `e553a5f` fue cancelado por nuevas publicaciones concurrentes en `feature/fixes`. Se mantiene **NO CERRADO**, sin fusionar ramas.
 - **Atención a commits posteriores:** cualquier cambio que modifique contratos o estilos debe revalidarse en el nuevo SHA. Actualizar aquí los resultados de la ejecución específica correspondiente.
+
+
+## Reauditoría visual de Categorías — 2026-11-09
+
+Metodología: AI Dev Suite (impeccable-audit, ui-ux-pro-max y ponytail-engineering), estándar visual Delta POS. Inspección de /admin/categories en feature/fixes y de su CI. No se usó Figma.
+
+### Nuevos hallazgos con IDs permanentes
+
+| ID | Prioridad | Evidencia inicial | Adecuación y verificación |
+| --- | --- | --- | --- |
+| CATEGORIES-014 | P2 | Encabezado agrupaba CTA, búsqueda y selectores en un espacio reducido | Encabezado independiente, filtro compacto, opciones avanzadas plegables; IMPLEMENTADO, sin verificación visual independiente |
+| CATEGORIES-015 | P2 | No existían etiquetas visibles para cada filtro activo | Chips removibles de búsqueda, estado y orden; IMPLEMENTADO, pendiente prueba manual |
+| CATEGORIES-016 | P2 | Únicamente tabla con scroll horizontal en móvil | Tarjetas móviles con identidad, descripción, estado y acciones; IMPLEMENTADO, sin viewport real verificado |
+| CATEGORIES-017 | P2 | Descripción ausente del listado aunque disponible en modelo y formulario | Columna Descripción y skeleton de cinco columnas; IMPLEMENTADO, pendiente comprobación visual |
+| CATEGORIES-018 | P2 | Doble acción Nueva categoría tras el primer rediseño en catálogo vacío | Reproducido en Chrome/Capybara CI, se elimina el CTA duplicado en el estado vacío; CORREGIDO, pendiente CI actualizado |
+| CATEGORIES-019 | P2 | Cierre de modal pequeño y espaciado irregular en consulta/edición | Botón cerrar de 44 px, cabecera/pie coherentes y límite de scroll de la modal; IMPLEMENTADO, pendiente validación de foco y lectores |
+
+### Evidencia de ejecución y alcance
+
+- Ejecución Categories CI #42758883558 sobre 4d2eaf3c1b0bf24d1152d98c7677d964a1dbaa9a: RuboCop focalizado aprobó. RSpec ejecutó 94 ejemplos y reportó cuatro fallos: uno de Categorías por el doble CTA y tres de permisos de Clientes.
+- Los tres casos de Clientes (consultar, actualizar y eliminar) recibieron 404 en la suite compartida granular_catalog_permissions_spec.rb. Se clasifican como EXTERNOS, sin cambiar código ni ocultar tests de Clientes.
+- Las mejoras visuales no modifican el aislamiento de organizaciones, autorización Pundit, reglas de borrado en uso, esquemas ni migraciones.
+- Nuevos escenarios request/Chrome cubren filtros, descripciones y tarjetas; se deben ejecutar en el SHA de aceptación.
+- Se mantienen pendientes la prueba de migración de datos históricos, validación de restricciones NOT VALID, CI global verde y revisión visual manual en 320, 390, 768 y 1440 px, zoom 200 %, teclado, es/en/ko y lector de pantalla.
+- Estado del módulo: IMPLEMENTADO Y EN REAUDITORÍA; NO CERRADO.

@@ -381,9 +381,8 @@ RSpec.describe 'Admin::Categories', type: :request do
       document = Nokogiri::HTML(response.body)
       chips = document.css('a.categories-filter-chip')
       expect(chips.size).to eq(2)
-      expect(chips.map { |link| link['href'] }.join).to include('status=active', 'search=clothing')
+      expect(chips.map { |link| link.attribute('href').value }.join).to include('status=active', 'search=clothing')
       expect(document.at_css('a.categories-clear-filters')).to be_present
     end
   end
-
 end

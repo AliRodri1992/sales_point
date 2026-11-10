@@ -43,5 +43,4 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     expect(page).to have_css('turbo-frame#categories_list .categories-filter-chip', text: 'groceries', wait: 10)
     expect(page).to have_css('.categories-mobile-card', text: 'Groceries', visible: :all)
   end
-
 end
