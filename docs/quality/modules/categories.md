@@ -272,3 +272,11 @@ El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios;
 - **Continuidad funcional:** se conservan `sort` y `direction` como entradas ocultas del formulario, sincronizadas al ordenar desde un encabezado con Turbo Frame; evita perder el orden al buscar o cambiar el estado. Las etiquetas removibles de filtros/orden y los parámetros de URL continúan funcionando.
 - **Regresiones:** request spec confirma ausencia del panel avanzado y presencia de campos ocultos; Chrome comprueba orden descendente y sincronización sin el panel.
 - **Estado:** IMPLEMENTADO, pendiente CI del nuevo SHA y revisión visual manual. No se modificaron reglas de negocio ni migraciones. Este ajuste no cierra las incidencias históricas ajenas de Clientes y Productos.
+
+## Ajuste de ancho y densidad visual de modal — 2026-11-10 (CATEGORIES-026)
+
+- **CATEGORIES-026 · P3 · UX:** la modal de crear/editar Categorías estaba limitada a 560 px y distribuía código, nombre, descripción y estatus en una sola columna, aumentando innecesariamente su altura.
+- **Adecuación aplicada:** ancho máximo moderado de **680 px**; código y nombre en dos columnas a partir de 640 px; descripción a todo el ancho; estatus mantiene espacio propio en edición. Se conserva scroll vertical cuando la ventana es baja, botones y validaciones individuales.
+- **Responsive:** a menos de 640 px el formulario vuelve a una columna. El detalle de categoría comparte la nueva anchura sin alterar el layout de lectura.
+- **Regresión agregada:** test Chrome comprueba ancho, alineación de los campos en escritorio y apilamiento sin desborde horizontal en 390 px. Pendiente ejecución del CI del nuevo SHA y revisión manual de zoom 200 %.
+- **Alcance:** solo Categorías; sin cambios en migraciones, validaciones de modelo, roles ni localizaciones.

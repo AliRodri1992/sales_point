@@ -26,7 +26,7 @@
                           placeholder: t('admin.categories.form.name_placeholder') %>
       <%= error_message_for(category, :name) %>
     </div>
-    <div>
+    <div class="categories-field--description">
       <%= form.label :description, t('admin.categories.form.description'),
                      class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.text_area :description, rows: 3, maxlength: 500,
