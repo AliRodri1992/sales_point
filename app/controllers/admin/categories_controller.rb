@@ -99,6 +99,7 @@ module Admin
       @total_pages = (scope.count / per_page.to_f).ceil
       @total_pages = 1 if @total_pages < 1
       page = @total_pages if page > @total_pages
+      @current_page = page
 
       scope.limit(per_page).offset((page - 1) * per_page)
     end

@@ -98,6 +98,42 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     expect(organization.categories.find_by!(code: 'new_unrelated')).to be_present
   end
 
+  scenario 'offers responsive sorting without restoring advanced filters' do
+    create(:category, organization:, name: 'Groceries', code: 'groceries')
+    create(:category, organization:, name: 'Cleaning', code: 'cleaning')
+
+    page.driver.browser.manage.window.resize_to(390, 844)
+    visit admin_categories_path
+
+    expect(page).to have_css('.categories-mobile-sort-field', visible: true)
+    expect(page).to have_no_css('details.categories-advanced')
+    within('.categories-mobile-sort-field') do
+      find('button[aria-haspopup="listbox"]').click
+      find('[role="option"]', text: 'Code · Descending').click
+    end
+
+    expect(page).to have_css('input#category_sort[value="code"]', visible: :all, wait: 10)
+    expect(page).to have_css('input#category_direction[value="desc"]', visible: :all, wait: 10)
+    expect(page).to have_css('turbo-frame#categories_list .categories-filter-chip', text: 'Descending', wait: 10)
+
+    page.driver.browser.manage.window.resize_to(768, 900)
+    expect(page).to have_css('.categories-mobile-sort-field', visible: true)
+  end
+
+  scenario 'resets an outdated page query when changing filters within a Turbo Frame' do
+    create_list(:category, 25, organization:)
+    create(:category, organization:, name: 'Groceries', code: 'groceries')
+
+    visit admin_categories_path(page: 3)
+    expect(page).to have_css('.categories-directory[data-categories-current-page="3"]')
+
+    fill_in 'category_search', with: 'Groceries'
+    expect(page).to have_css('.categories-directory[data-categories-current-page="1"]', wait: 10)
+    expect(page).to have_css('turbo-frame#categories_list a.categories-name-link', text: 'Groceries', wait: 10)
+    expect(page.evaluate_script('new URL(window.location.href).searchParams.get("page")')).to be_nil
+    expect(page.evaluate_script('new URL(window.location.href).searchParams.get("search")')).to eq('Groceries')
+  end
+
   scenario 'searches live and renders a removable filter chip' do
     create(:category, organization:, name: 'Groceries', code: 'groceries')
 

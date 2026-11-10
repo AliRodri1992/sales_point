@@ -44,7 +44,8 @@
 
 <section class="categories-directory" aria-labelledby="categories-directory-title"
          data-categories-current-sort="<%= sort_filter || 'name' %>"
-         data-categories-current-direction="<%= sort_direction %>">
+         data-categories-current-direction="<%= sort_direction %>"
+         data-categories-current-page="<%= @current_page || 1 %>">
   <header class="categories-directory-heading">
     <div>
       <h2 id="categories-directory-title"><%= t('admin.categories.index.card_title') %></h2>

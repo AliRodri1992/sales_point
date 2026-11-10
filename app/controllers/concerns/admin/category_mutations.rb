@@ -46,9 +46,8 @@ module Admin
     def category_saved(action)
       load_categories
       notify_category(current_user, @category, action.to_s)
-      return if redirect_without_catalog_listing(@category, action)
-
       broadcast_categories_update
+      return if redirect_without_catalog_listing(@category, action)
       respond_to do |format|
         format.turbo_stream { @swal_message = t("admin.categories.#{action}") }
         format.html do

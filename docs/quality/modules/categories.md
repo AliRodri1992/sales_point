@@ -384,3 +384,17 @@ El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios;
 ### Dictamen
 
 **REAUDITADO · CÓDIGO PREVIO VERIFICADO AUTOMÁTICAMENTE EN SU ALCANCE · 3 NUEVOS P2 ABIERTOS · NO CERRADO.** Se recomienda resolver 031–033, aumentar pruebas de interacción reales y completar las comprobaciones de datos históricos y accesibilidad. Esta pasada es documental: no modifica comportamiento, migraciones ni datos de producción; sin fusión de ramas.
+
+## Adecuaciones de la tercera reauditoría — 2026-11-10 (CATEGORIES-031–033)
+
+**Rama:** `feature/fixes`. Alcance limitado al catálogo Categorías, su controlador, Stimulus, CSS, pruebas y este expediente. **No se fusionan ramas ni se modifican migraciones**.
+
+| ID | Cambio aplicado | Regresión añadida | Estado |
+|---|---|---|---|
+| CATEGORIES-031 | Selector compacto de orden visible solo cuando la tabla se sustituye por tarjetas (≤1099 px). Mantiene nombres/códigos y otros órdenes compatibles mediante etiquetas ya traducidas es/en/ko, utilizando el dropdown visual estándar. El panel «Filtros avanzados» permanece eliminado. | Chrome a 390 y 768 px: dropdown, cambio a Código descendente, estado oculto y chip activo; request verifica selector sin `name` para no alterar la búsqueda. | Implementado; CI del SHA pendiente |
+| CATEGORIES-032 | `paginate` publica `@current_page` real, renderizado en `data-categories-current-page`; `categories-search#syncResults` alinea la URL con esa página después de un Turbo Frame/Stream. Buscar o cambiar estado desde `?page=3` elimina `page` cuando el servidor muestra la primera. Navegación explícita a otra página mantiene el estado. | Request compara páginas 3 y 1; Chrome parte de `?page=3`, filtra y verifica DOM y query string. | Implementado; CI del SHA pendiente |
+| CATEGORIES-033 | `broadcast_categories_update` se emite inmediatamente después de notificar una mutación guardada y **antes** de la redirección por ausencia de `index?`. No se envían resultados a quien carece del permiso de consulta: solo se publica señal de actualización acotada por organización. | Request con permiso granular sin `categories.index`: GET 403, altas/ediciones/bajas exitosas y tres broadcasts a la organización autorizada. | Implementado; CI del SHA pendiente |
+
+**Puertas abiertas preexistentes:** CATEGORIES-001/009 requieren validar backfill y constraints sobre copia de datos históricos; CATEGORIES-029 requiere contraste real por temas; CATEGORIES-010, foco de modal, zoom 200 % y lector de pantalla requieren verificación manual independiente. Los fallos de Clientes y Productos en suites compartidas se registran EXTERNOS y no se omiten.
+
+**Dictamen provisional:** ADECUACIONES IMPLEMENTADAS; NO CERRADO hasta resultado focalizado y CI global del SHA, más revisión de accesibilidad/datos históricos.

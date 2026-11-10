@@ -21,6 +21,21 @@
       <h2 id="categories-filter-title"><%= t('admin.categories.index.search_label') %></h2>
       <p><%= t('admin.categories.index.filter_hint') %></p>
     </div>
+    <% sort_labels = {
+      'name' => t('admin.categories.index.columns.name'),
+      'code' => t('admin.categories.index.columns.code'),
+      'status' => t('admin.categories.index.columns.status'),
+      'created_at' => t('admin.categories.index.filters.sort_created_at'),
+      'updated_at' => t('admin.categories.index.filters.sort_updated_at')
+    } %>
+    <% mobile_sort_options = sort_labels.flat_map do |column, label|
+      %w[asc desc].map do |direction|
+        direction_label = t("admin.categories.index.filters.#{direction == 'asc' ? 'ascending' : 'descending'}")
+        ["#{label} · #{direction_label}", "#{column}:#{direction}"]
+      end
+    end %>
+    <% selected_sort = sort_labels.key?(params[:sort]) ? params[:sort] : 'name' %>
+    <% selected_direction = params[:direction] == 'desc' ? 'desc' : 'asc' %>
     <%= form_with url: admin_categories_path, method: :get,
                   data: { turbo_frame: 'categories_list', controller: 'categories-search' },
                   class: 'categories-filter-form' do %>
@@ -44,6 +59,14 @@
                 ], params[:status].presence || 'all'),
                 id: 'category_status',
                 data: { action: 'change->categories-search#submitNow' } %>
+        </div>
+      </div>
+      <div class="categories-filter-field categories-mobile-sort-field">
+        <%= label_tag :category_mobile_sort, t('admin.categories.index.filters.sort_by') %>
+        <div class="relative" data-controller="delta-select">
+          <select id="category_mobile_sort" data-action="change->categories-search#changeSort">
+            <%= options_for_select(mobile_sort_options, "#{selected_sort}:#{selected_direction}") %>
+          </select>
         </div>
       </div>
       <button type="submit" class="categories-apply-button">

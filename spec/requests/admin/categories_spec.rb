@@ -357,6 +357,8 @@ RSpec.describe 'Admin::Categories', type: :request do
       expect(document.at_css('section.categories-filter-panel')).to be_present
       expect(document.at_css('input#category_search')).to be_present
       expect(document.at_css('select#category_status')).to be_present
+      expect(document.at_css('select#category_mobile_sort')).to be_present
+      expect(document.at_css('select#category_mobile_sort')['name']).to be_nil
       expect(document.at_css('details.categories-advanced')).to be_nil
       expect(document.at_css('input#category_sort[type="hidden"]')).to be_present
       expect(document.at_css('input#category_direction[type="hidden"]')).to be_present
@@ -439,6 +441,40 @@ RSpec.describe 'Admin::Categories', type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Groceries', 'search=groceries')
       expect(other.reload.deleted_at).to be_present
+    end
+
+    it 'publishes the actual page after a filtered catalog changes the result count' do
+      create_list(:category, 25, organization:)
+      get admin_categories_path(page: 3)
+
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('.categories-directory')['data-categories-current-page']).to eq('3')
+
+      get admin_categories_path(search: 'no-match-unique')
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('.categories-directory')['data-categories-current-page']).to eq('1')
+    end
+
+    it 'broadcasts creates, updates and deletions without index permission' do
+      category = create(:category, organization:, name: 'Before', code: 'before')
+      index_permission = Permission.find_by!(code: 'categories.index')
+      SystemRolePermission.where(system_role: role, permission: index_permission).delete_all
+
+      get admin_categories_path
+      expect(response).to have_http_status(:forbidden)
+
+      expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_to)
+        .with("categories_catalog_#{organization.id}").exactly(3).times
+
+      post admin_categories_path, params: { category: { name: 'Created', code: 'created_category' } }
+      expect(response).to have_http_status(:see_other)
+
+      patch admin_category_path(category), params: { category: { name: 'Updated' } }
+      expect(response).to have_http_status(:see_other)
+
+      delete admin_category_path(category)
+      expect(response).to have_http_status(:see_other)
+      expect(category.reload.deleted_at).to be_present
     end
 
     it 'provides mobile cards retaining the category description' do

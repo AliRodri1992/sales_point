@@ -38,6 +38,18 @@ export default class extends Controller {
     this.element.requestSubmit()
   }
 
+  changeSort(event) {
+    if (this.syncingSort) return
+
+    const [sort, direction] = event.target.value.split(":")
+    if (!["name", "code", "status", "created_at", "updated_at"].includes(sort)) return
+    if (!["asc", "desc"].includes(direction)) return
+
+    this.element.querySelector("#category_sort").value = sort
+    this.element.querySelector("#category_direction").value = direction
+    this.submitNow()
+  }
+
   filterEntries() {
     const data = new FormData(this.element)
     const state = {}
@@ -79,8 +91,24 @@ export default class extends Controller {
       if (input && value && input.value !== value) input.value = value
     }
 
-    // Broadcast refreshes use the page URL; keep it aligned with Turbo Frame filters.
+    const mobileSort = this.element.querySelector("#category_mobile_sort")
+    const sortValue = `${state.category_sort}:${state.category_direction}`
+    if (mobileSort && mobileSort.value !== sortValue &&
+        [...mobileSort.options].some((option) => option.value === sortValue)) {
+      this.syncingSort = true
+      mobileSort.value = sortValue
+      mobileSort.dispatchEvent(new Event("change", { bubbles: true }))
+      this.syncingSort = false
+    }
+
+    // Turbo Frame pagination and filtering must share the actual page with the address bar.
+    // A filter submission resets to page 1; explicit pagination keeps its requested page.
     const url = this.filteredUrl(window.location.href)
+    const page = Number(directory.dataset.categoriesCurrentPage)
+    if (Number.isInteger(page) && page >= 1) {
+      if (page === 1) url.searchParams.delete("page")
+      else url.searchParams.set("page", String(page))
+    }
     if (url.href !== window.location.href) {
       window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash)
     }
