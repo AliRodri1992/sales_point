@@ -23,7 +23,9 @@
     <% end %>
   </div>
   <%= form_with url: admin_products_path, method: :get,
-                class: 'products-filters', data: { turbo_frame: '_top', controller: 'products-search' } do %>
+                class: 'products-filters',
+                data: { turbo_frame: '_top', controller: 'products-search',
+                        action: 'submit->products-search#cancelSearch' } do %>
     <div class="products-filters__primary">
       <div class="products-filters__field products-filters__search">
         <%= label_tag :products_search, t('admin.catalog_design.search') %>
@@ -95,6 +97,9 @@
       <% end %>
       <%= link_to t('admin.catalog_design.clear'), admin_products_path, class: 'products-filters__clear', data: { turbo_frame: '_top' } %>
     </div>
+    <p class="products-filters__error" data-products-search-target="error" role="alert" hidden>
+      <%= t('admin.catalog_design.product_filter_request_error') %>
+    </p>
   <% end %>
 
   <% if active_filters.any? %>
