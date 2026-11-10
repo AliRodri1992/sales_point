@@ -164,3 +164,9 @@ Mantener **NO CERRADO** hasta que todas las comprobaciones del estándar estén 
 - **Pruebas agregadas:** request de eliminación individual y preservación de consulta, browser de selección automática, ordenación conservada, dos filtros sucesivos y limpieza total; browser de eliminación aislada de clave SAT manteniendo otros criterios.
 - **Sin cambios:** relaciones con Productos, modelos, migraciones, semillas, esquema, políticas Pundit y operaciones de baja lógica.
 - **Verificación:** nuevo CI focalizado (RSpec + Chrome + RuboCop), CI global y aceptación visual independiente **PENDIENTES** hasta consultar su resultado. Mantener abierto el expediente modular mientras falten las puertas anteriores.
+
+#### UOM-022 · Validación focalizada y corrección de regresión
+
+- **Primera ejecución:** [Units of measure CI #42764652312](https://github.com/AliRodri1992/sales_point/actions/runs/42764652312). RuboCop focalizado **PASÓ**. RSpec: **42 ejemplos, 1 fallo** localizado en la expectativa de idioma del nuevo spec HTTP de filtros (esperaba el texto literal inglés `Remove filter`, aunque la respuesta usa el idioma del usuario). Los dos nuevos escenarios reales de Chrome de autoaplicación/chips **PASARON**.
+- **Corrección:** verificar los tres enlaces mediante su atributo accesible `aria-label` y reconocer el filtro SAT por su código, independientemente de idioma; conservar las aserciones de parámetros de URL y preservación de otros criterios. No se relajaron ni retiraron los escenarios de navegador.
+- **Nueva evidencia:** ejecución focalizada del commit de corrección **PENDIENTE**. CI global en el primer SHA reportó además un RuboCop en `spec/requests/admin/products_spec.rb`, ajeno al módulo; no se debe declarar CI global verde sin su verificación en HEAD.

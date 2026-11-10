@@ -51,9 +51,10 @@ RSpec.describe 'Admin::UnitsOfMeasure', type: :request do
     document = Nokogiri::HTML(response.body)
     chips = document.at_css('#units_of_measure_active_filters')
     expect(chips).to be_present
-    expect(chips.css('a[aria-label*="Remove filter"]').size).to eq(3)
+    removable = chips.css('a[aria-label]')
+    expect(removable.size).to eq(3)
 
-    sat_link = chips.at_css('a[aria-label*="SAT code:"]')
+    sat_link = removable.find { |link| link.text.include?(sat.code) }
     expect(sat_link).to be_present
     query = Rack::Utils.parse_nested_query(URI.parse(sat_link['href']).query)
     expect(query).to include('fractional' => 'yes', 'sat_health' => 'current')
