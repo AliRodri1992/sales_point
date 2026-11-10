@@ -99,7 +99,7 @@
 
 /* Compact create/edit dialog; keep scrolling on the overlay so custom menus can escape. */
 .language-modal { align-items: safe center; }
-.language-modal-panel { width: min(100%, 42rem); max-width: 42rem; flex: none; margin-block: auto; }
+.languages-modal-panel { width: min(100%, 42rem); max-width: 42rem; flex: none; margin-block: auto; }
 .languages-modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; }
 .languages-modal-header .catalog-eyebrow { margin-bottom: .3rem; }
 .languages-modal-header h2 { font-family: var(--font-jakarta); font-size: 1.125rem; font-weight: 750; line-height: 1.4; letter-spacing: -.025em; overflow-wrap: anywhere; }

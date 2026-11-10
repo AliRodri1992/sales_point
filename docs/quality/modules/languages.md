@@ -147,7 +147,8 @@ En el SHA `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`:
 | IDI-024 | P3 | El panel tiene `max-w-xl` y `width: min(100%, 36rem)`; en escritorio limita el espacio disponible | Ampliar a `max-w-2xl` y `42rem`, manteniendo ancho adaptable a móvil | Chrome mide el ancho real a 1280 px |
 | IDI-025 | P3 | `.languages-editor__fields > :first-child` ocupa toda la fila, generando tres filas de cuatro campos dentro del modal | Usar cuadrícula de dos columnas y dos filas para formulario modal en escritorio; una columna debajo de 640 px | Chrome comprueba columnas a 1280 y 390 px |
 | IDI-026 | P3 | «Nuevo idioma» está alineado con el encabezado principal, visualmente separado de la búsqueda | Colocar la acción dentro del panel de filtros, junto a su encabezado; conservar autorización y `language_modal` | Requests verifican ubicación y Turbo Frame; Chrome verifica botón visible |
+| IDI-027 | P3 | CSS usaba `.language-modal-panel` pero el panel real es `.languages-modal-panel`; la regla de ancho podía quedar inactiva | Unificar el selector CSS con la clase real del modal | Chrome mide ancho y columnas reales |
 
 **Criterios de aceptación:** sin doble botón, sin desbordamiento horizontal del modal a 390 px, controles accesibles y espaciado consistente con Delta POS. La altura se reduce por distribución de filas; no se garantiza un número de píxeles de alto sin medición. Las rutas, la validación y las traducciones del modal permanecen intactas.
 
-**Estado:** modificaciones preparadas en `feature/fixes`; **pendiente** de publicación, GitHub Actions, revisión de accesibilidad y aceptación visual manual. **NO CERRADO**.
+**Estado:** implementación publicada en `feature/fixes` (commit inicial `4f6bdf897115f26d2aadd5fc4f1314205f3fc69e`), con corrección del selector CSS y reauditoría; **pendiente** de GitHub Actions, revisión de accesibilidad y aceptación visual manual. **NO CERRADO**.
