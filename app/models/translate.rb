@@ -18,7 +18,7 @@ class Translate < ApplicationRecord
   # immediately invalidates the current process even with a null cache in tests.
   def self.cache_revision
     now = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    if !defined?(@checked_at) || now - @checked_at >= 1
+    if @checked_at.nil? || now - @checked_at >= 1
       @shared_revision = Rails.cache.read(CACHE_KEY)
       @checked_at = now
     end
@@ -71,20 +71,20 @@ class Translate < ApplicationRecord
     return unless language
 
     flatten_hash(locale_hash, '').each do |key, value|
-      next if value.is_a?(Hash)
-
-      translate = if column_exists?(:language_id)
-                    find_or_initialize_by(key: key, language: language)
-                  else
-                    find_or_initialize_by(key: key, locale: locale_code)
-                  end
-
-      next if !overwrite && translate.persisted?
-      next if dry_run
-
-      translate.update!(value: value.to_s) if translate.new_record? || translate.value != value.to_s
+      import_translation_entry(key, value, language, locale_code, overwrite:, dry_run:)
     end
   end
+
+  def self.import_translation_entry(key, value, language, locale_code, overwrite:, dry_run:)
+    return if dry_run || value.is_a?(Hash)
+
+    lookup = column_exists?(:language_id) ? { key:, language: } : { key:, locale: locale_code }
+    translation = find_or_initialize_by(**lookup)
+    return if translation.persisted? && !overwrite
+
+    translation.update!(value: value.to_s) if translation.new_record? || translation.value != value.to_s
+  end
+  private_class_method :import_translation_entry
 
   def self.flatten_hash(hash, prefix = '')
     result = {}
