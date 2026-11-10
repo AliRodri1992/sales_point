@@ -418,7 +418,6 @@ RSpec.describe 'Admin::Categories', type: :request do
       expect(content).not_to include('categories-name-link">Cleaning')
     end
 
-
     it 'keeps a filtered listing after editing another category with Turbo' do
       create(:category, organization:, name: 'Groceries', code: 'groceries')
       other = create(:category, organization:, name: 'Cleaning', code: 'cleaning')
