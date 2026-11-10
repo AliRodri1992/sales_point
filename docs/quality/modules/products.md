@@ -1,10 +1,10 @@
 # Registro de calidad — Productos y catálogo
 
 - **Módulo:** Productos — `/admin/products`, `/admin/products/:id/quote`, `/admin/product_images`.
-- **Rama / SHA de inspección:** `feature/fixes` / `0481ca54046b633aa5b84667455fd134ba3139a4`.
+- **Rama / SHA de inspección original:** `feature/fixes` / `0481ca54046b633aa5b84667455fd134ba3139a4`. **Reauditoría integral de código:** `feature/fixes` / `4a39eef1c00099c7cc0e48042255571e133d5516`.
 - **Auditoría:** 2026-11-09; AI Dev Suite (impeccable-audit, ui-ux-pro-max, ponytail-engineering).
 - **Estado:** **IMPLEMENTADO, PENDIENTE DE VERIFICACIÓN — cierre bloqueado por CI y pruebas de navegador**.
-- **SHA de implementación más reciente:** `d4c575b3a323ab4ad6871c9c1d8d0fd6e96d8432`. **SHA de aceptación:** PENDIENTE. **Revisión independiente:** PENDIENTE.
+- **Rediseño y endurecimiento recientes:** `8bf0d5b`, `f40bf16`; corrección RuboCop registrada en este cambio. **SHA de aceptación:** PENDIENTE. **Revisión independiente:** PENDIENTE.
 
 ## Alcance y responsabilidad
 
@@ -114,6 +114,43 @@ Fuente: [CI #42615013668](https://github.com/AliRodri1992/sales_point/actions/ru
 - **Listas/Promociones:** verificar únicamente lista ofrecida → respuesta de cotización → mensaje de error en Productos.
 - **Categorías/SAT/Proveedores:** validar referencias seleccionables/archivadas y feedback desde el formulario de Productos; no extender la auditoría al CRUD vecino.
 - **CI global:** requiere corregir bloqueos transversales en los módulos propietarios, sin imputarlos a Productos.
+
+## Auditoría integral de Productos y adecuaciones — 2026-11-09 (revisión de código)
+
+**Método:** AI Dev Suite, `impeccable-audit` (pantallas y estados), `ui-ux-pro-max` (diseño y accesibilidad), `ponytail-engineering` (integridad, cambios acotados y regresión). **Revisión estática** de las rutas de Productos y sus contratos visibles. El acceso a una pestaña `localhost:3000/admin/products` permitió leer contenido, pero **no ejecutar clics ni pruebas visuales de navegador**; no se certifica la apariencia final.
+
+### Cobertura comprobada de código
+
+| Flujo | Revisión y evidencia | Riesgo / límite |
+|---|---|---|
+| Listado, filtros, orden, paginación | `index`, `_filters`, `_list`, `ProductsListing`, `ProductsLookup`, Stimulus, `spec/requests/admin/products_spec.rb` y `spec/controllers/concerns/admin/products_listing_spec.rb` | Rediseño por grupos y acciones compactas; interacciones móviles/zoom no verificadas |
+| Crear, actualizar y cancelar | `ProductsController`, `ProductFormWriting`, `SaveCatalogEntry`, `_form`, `Product` y validaciones por campo | Validar visualmente errores 422 anidados, reintentos e historial de precio |
+| Variantes, presentaciones y códigos de barras | `ProductCommercialCatalog`, `ProductVariant`, `ProductPresentation`, `ProductBarcode`, `_commercial_row` y `nested_catalog_controller.js` | Unicidad entre tablas de SKU (`PRODUCTS-007`) permanece abierta a concurrencia |
+| Detalle, historial y cotización | `_show`, `ProductPriceHistory`, `ProductPricingPreview`, `Products::Quote`, `DecidePriceChange`, `product_quote_controller.js` | Validar en ejecución errores JSON 404, segmentos, listas y movimientos de precios |
+| Imágenes | `ProductImagesController`, `ProductImageAssignment`, `ProductImageValidation`, `ImageUpload`, `product_upload_controller.js` | Token con propósito por usuario/organización, MIME real y límite 5 MB presentes en código; completar pruebas funcionales |
+| Bajas y permisos | `ProductPolicy`/`CatalogPolicy`, `ProductsController#destroy`, borrado lógico, `granular_catalog_permissions_spec.rb`, `product_tenant_access_spec.rb` | Verificar respuestas 401/403/404 y dependencias con Inventario/Compras; no cambiar políticas de módulos vecinos |
+| Traducciones/UX | `catalog_workspace.css`, parciales de listado/detalle/formulario y `catalog_design.{es,en,ko}.yml` | Traducciones de grupos añadidas; zoom 200 % y navegación teclado requieren navegador |
+
+### Seguimiento incremental: IDs permanentes
+
+| ID | Prioridad y ámbito | Evidencia precisa (inspección estática, salvo CI señalado) | Remediación / prueba | Estado |
+|---|---|---|---|---|
+| **PRODUCTS-018** | **P2 · Productos / UX** | `_filters.html.erb` distribuía categoría, destacado, modalidad de seguimiento, stock y precios en una grilla plana; las acciones estaban al pie del desplegable, desconectadas de búsqueda/estado. | Grupos semánticos **Clasificación**, **Inventario** y **Rango de precios**, con `fieldset`/`legend`, barra principal alineada, búsqueda con lupa y botón Aplicar compacto. Traducciones `es/en/ko`. Requests y navegador móvil añadidos en `8bf0d5b`. | IMPLEMENTADO; NO VERIFICADO EN NAVEGADOR |
+| **PRODUCTS-019** | **P2 · Productos / respuesta API** | `ProductPricingPreview#quote_option` usa `scope.find` y `ProductsController` redirige por `RecordNotFound`, incluso si la solicitud de cotización AJAX esperaba JSON. | Se devuelve 404 JSON localizado para opción no accesible. Regresión de variante de otra organización. `f40bf16`. | IMPLEMENTADO; RSpec PENDIENTE |
+| **PRODUCTS-020** | **P2 · Productos / presentación y consultas** | `_show` formateaba eventos con `number_to_currency` predeterminado del locale y podía mostrar símbolo ajeno a la divisa del evento; `_list` no incluía explícitamente la organización al sumar existencias, aunque consultaba IDs filtrados. | Historial usa `product_money(..., currency: event.currency)` y total del listado se acota por `organization_id`. `f40bf16`. | IMPLEMENTADO; RSpec PENDIENTE |
+| **PRODUCTS-021** | **P2 · Productos / rendimiento y entradas** | `ProductsListing#apply_search_filter` solo dependía de `maxlength=100` en HTML; el servidor aceptaba búsquedas de longitud ilimitada por GET, amplificando filtros `ILIKE`. | Límite server-side a 100 caracteres y prueba de query en `products_listing_spec.rb`. `f40bf16`. | IMPLEMENTADO; RSpec PENDIENTE |
+| **PRODUCTS-022** | **P1 · Productos / CI** | En [CI #42764751462](https://github.com/AliRodri1992/sales_point/actions/runs/42764751462), RuboCop reportó `Rails/Pluck` en `spec/requests/admin/products_spec.rb:420`; **1 infracción de 1165 archivos**, causada por `chips.map { ... }`. | Sustituido por `chips.pluck('aria-label')` en esta adecuación. No afirmar éxito hasta la siguiente ejecución en el SHA publicado. | IMPLEMENTADO; CI PENDIENTE |
+
+**No se duplican hallazgos** `PRODUCTS-001`–`PRODUCTS-017`; se mantienen sus IDs, causas y estados. En particular `PRODUCTS-007` sigue abierto a escritura concurrente entre tablas, a pesar de las validaciones cruzadas e índices independientes. El manejo de inventario histórico del `PRODUCTS-008` requiere regresión con movimientos, lotes y números de serie.
+
+### Evidencias efectivas de CI y puertas pendientes
+
+- [CI #42762512143](https://github.com/AliRodri1992/sales_point/actions/runs/42762512143) sobre `1276798`: **migraciones, Seguridad e I18n PASARON**; **RSpec falló** en escalamiento de teléfonos de Clientes (`spec/performance/n_plus_one_scaling_spec.rb:51`, ámbito **externo a Productos**); **RuboCop falló** por una infracción de `products_spec.rb` (propia; corregida aquí).
+- [CI #42764751462](https://github.com/AliRodri1992/sales_point/actions/runs/42764751462) sobre `f40bf16`: Seguridad e I18n **PASARON**; RuboCop **FALLÓ** por la misma infracción. Las demás etapas no tenían resultado final completo en la última consulta.
+- Los specs escritos **no son evidencia de ejecución aprobada**; la revisión móvil **no** se ha ejecutado. No se han alterado datos ni ejecutado comandos Rails/Docker sobre el equipo del usuario.
+- Puertas de aceptación restantes: RSpec del módulo y completo, RuboCop, migraciones, Seguridad, traducciones, navegador (320/390/768/1440 px, zoom 200 %, teclado, dropdowns y botón), concurrencia SKU, y revisión independiente del expediente en el mismo SHA.
+
+**Dictamen de esta reauditoría integral:** cambios publicados, alcance inspeccionado y riesgos trazados; **VERIFICACIÓN PENDIENTE / NO CERRADO**.
 
 ## Dictamen
 

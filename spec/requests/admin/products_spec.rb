@@ -417,7 +417,7 @@ RSpec.describe 'Admin::Products', type: :request do
       chips = document.css('nav.products-filter-chips a.products-filter-chip')
       expect(chips.size).to eq(4)
       expect(chips.map(&:text).join).to include(category.name)
-      expect(chips.map { |chip| chip['aria-label'] }).to all(be_present)
+      expect(chips.pluck('aria-label')).to all(be_present)
 
       category_chip = chips.find { |chip| chip.text.include?(category.name) }
       query = Rack::Utils.parse_query(URI.parse(category_chip['href']).query)
