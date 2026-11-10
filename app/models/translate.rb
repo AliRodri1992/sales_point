@@ -70,17 +70,18 @@ class Translate < ApplicationRecord
     language = Language.find_by(code: locale_code)
     return unless language
 
+    options = { overwrite:, dry_run: }
     flatten_hash(locale_hash, '').each do |key, value|
-      import_translation_entry(key, value, language, locale_code, overwrite:, dry_run:)
+      import_translation_entry(key, value, language, locale_code, options)
     end
   end
 
-  def self.import_translation_entry(key, value, language, locale_code, overwrite:, dry_run:)
-    return if dry_run || value.is_a?(Hash)
+  def self.import_translation_entry(key, value, language, locale_code, options)
+    return if options[:dry_run] || value.is_a?(Hash)
 
     lookup = column_exists?(:language_id) ? { key:, language: } : { key:, locale: locale_code }
     translation = find_or_initialize_by(**lookup)
-    return if translation.persisted? && !overwrite
+    return if translation.persisted? && !options[:overwrite]
 
     translation.update!(value: value.to_s) if translation.new_record? || translation.value != value.to_s
   end
