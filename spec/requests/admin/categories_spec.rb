@@ -40,6 +40,21 @@ RSpec.describe 'Admin::Categories', type: :request do
       create_list(:category, 15)
     end
 
+    it 'renders the units of measure sidebar link as a collection route without an id' do
+      %w[units_of_measure.access units_of_measure.index].each do |code|
+        permission = Permission.find_by!(code:)
+        SystemRolePermission.find_or_create_by!(system_role: role, permission:)
+      end
+
+      get admin_categories_path
+
+      expect(response).to have_http_status(:ok)
+      sidebar = Nokogiri::HTML(response.body)
+      unit_link = sidebar.at_css('a[href="/admin/units_of_measure"]')
+      expect(unit_link).to be_present
+      expect(unit_link['aria-label']).to eq(I18n.t('admin.units_of_measure.index.title'))
+    end
+
     it 'returns a paginated list with at least 10 items per page' do
       get admin_categories_path
 

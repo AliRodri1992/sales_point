@@ -136,3 +136,11 @@ Mantener **NO CERRADO** hasta que todas las comprobaciones del estándar estén 
 - **Cierre global NO ACREDITADO:** faltan revisión visual independiente, zoom 200 %, contraste/lector de pantalla, migración comprobada desde una base histórica existente y CI global satisfactoria. No se fusionaron ramas ni se relacionaron Productos.
 
 **Estado de seguimiento:** los defectos UOM-019 y los escenarios automatizados UOM-017/UOM-018 se atendieron con evidencia focalizada; el módulo completo permanece **NO CERRADO** hasta superar las puertas generales.
+
+### UOM-020 · P1 · Error de ruta al renderizar el sidebar en Categorías — 2026-11-09
+
+- **Síntoma recibido:** `ActionController::UrlGenerationError` desde `app/views/admin/shared/_sidebar.html.erb:200` durante `Admin::Categories#index`. El helper `admin_units_of_measure_path` intentó generar una acción `show` sin `:id`.
+- **Diagnóstico del código:** `resources :units_of_measure` usa la inflexión especial `unit_of_measure → units_of_measure` definida en `config/initializers/inflections.rb`. Si el servidor Puma estaba iniciado antes de cargar esa regla, conserva las rutas antiguas; esta hipótesis requiere comprobar `bin/rails routes -g units_of_measure` dentro del contenedor que sirve la página. No se ha demostrado un defecto nuevo en `CategoriesController`.
+- **Medida operativa recomendada:** reiniciar solo el servicio Rails con `docker compose -f docker-compose.dev.yml restart web`, sin borrar bases de datos. Confirmar que `admin_units_of_measure` apunta a `index` sin `:id` y `admin_unit_of_measure` a `show` con `:id`.
+- **Regresiones añadidas:** prueba de solicitud real a `/admin/categories` con permiso de Unidades de Medida, verificando que el sidebar enlace al listado; prueba del router Rails que reconoce `index` frente a `show`. Las verificaciones automatizadas del nuevo commit quedan **PENDIENTES DE CI** y no sustituyen reiniciar el proceso que reportó el error.
+- **Alcance:** sin cambios en Productos, base de datos ni reglas de permisos. El expediente sigue **NO CERRADO** hasta validar el servidor real y completar las puertas anteriores.

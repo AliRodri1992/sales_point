@@ -27,6 +27,15 @@ RSpec.describe 'Admin::UnitsOfMeasure', type: :request do
     expect(admin_unit_of_measure_path(unit)).to eq("/admin/units_of_measure/#{unit.id}")
   end
 
+  it 'recognizes the collection as index and a member as show' do
+    unit = create(:unit_of_measure, organization:, sat_unit_key: sat)
+
+    expect(Rails.application.routes.recognize_path('/admin/units_of_measure', method: :get))
+      .to include(controller: 'admin/units_of_measure', action: 'index')
+    expect(Rails.application.routes.recognize_path(admin_unit_of_measure_path(unit), method: :get))
+      .to include(controller: 'admin/units_of_measure', action: 'show', id: unit.id.to_s)
+  end
+
   it 'shows the list, modal trigger and translated labels' do
     get admin_units_of_measure_path
     expect(response).to have_http_status(:ok)
