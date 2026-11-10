@@ -84,6 +84,7 @@ class Product < ApplicationRecord
   before_validation :set_defaults, if: :new_record?
   before_validation :set_slug, if: -> { name.present? && slug.blank? }
   validate :valid_catalog_references
+  validate :code_slug_namespace_available
 
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :available, -> { where(status: :active) }
@@ -94,7 +95,8 @@ class Product < ApplicationRecord
 
   def increment_view_count! = update!(view_count: view_count.to_i + 1)
 
-  def to_param = slug.presence || id&.to_s
+  # Generated links always use IDs; legacy slugs and codes remain readable when unambiguous.
+  def to_param = id&.to_s
 
   private
 
@@ -104,11 +106,19 @@ class Product < ApplicationRecord
       next unless will_save_change_to_attribute?(attribute) && public_send(attribute).present?
 
       reference = public_send(association)
-      if reference.nil? || (association == :category && reference.organization_id.present? &&
-                            reference.organization_id != organization_id)
+      if reference.nil? || (association == :category && (reference.organization_id != organization_id ||
+                                                      !reference.active? || reference.deleted_at.present?))
         errors.add(attribute, :invalid)
       end
     end
+  end
+
+  def code_slug_namespace_available
+    return unless organization_id && (will_save_change_to_code? || will_save_change_to_slug?)
+
+    others = self.class.where(organization_id:).where.not(id:)
+    errors.add(:code, :taken) if code.present? && others.where('LOWER(slug) = LOWER(?)', code).exists?
+    errors.add(:slug, :taken) if slug.present? && others.where('LOWER(code) = LOWER(?)', slug).exists?
   end
 
   def set_defaults
@@ -124,7 +134,8 @@ class Product < ApplicationRecord
     base = name.to_s.parameterize(separator: '-')
     base = code.to_s.parameterize if base.blank?
     self.slug = base
-    self.slug = "#{base}-#{SecureRandom.hex(4)}" if self.class.where(organization_id:,
-                                                                     slug: base).where.not(id:).exists?
+    matches = self.class.where(organization_id:).where.not(id:)
+                        .where('LOWER(slug) = LOWER(:value) OR LOWER(code) = LOWER(:value)', value: base)
+    self.slug = "#{base}-#{SecureRandom.hex(4)}" if matches.exists?
   end
 end

@@ -20,15 +20,15 @@ module Admin
     def find_product_by_id_or_slug(id_param)
       return accessible_products.find_by(id: id_param) if id_param.to_s.match?(/\A\d+\z/)
 
-      accessible_products.find_by(slug: id_param) || find_product_by_code(id_param)
+      find_product_by_code(id_param)
     end
 
     def find_product_by_code(id_param)
-      search_term = CGI.unescape(id_param)
-      accessible_products
-        .where('lower(slug) = lower(?)', search_term)
-        .or(accessible_products.where('lower(code) = lower(?)', search_term))
-        .first
+      value = CGI.unescape(id_param.to_s)
+      matches = accessible_products
+                .where('LOWER(slug) = LOWER(:value) OR LOWER(code) = LOWER(:value)', value:)
+                .limit(2).to_a
+      matches.first if matches.one?
     end
 
     def product_not_found(exception = nil)

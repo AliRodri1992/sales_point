@@ -107,6 +107,15 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(response.body).to include('Product By Slug')
     end
 
+    it 'refuses ambiguous legacy product routes rather than opening the wrong record' do
+      create(:product, organization:, code: 'COFFEE', slug: 'first-product')
+      create(:product, organization:, code: 'SECOND-CODE', slug: 'coffee')
+      get admin_product_path('coffee')
+
+      expect(response).to redirect_to(admin_products_path)
+      expect(flash[:alert]).to eq(I18n.t('admin.products.index.not_found'))
+    end
+
     it 'finds a product by code when the slug does not match' do
       product = create(:product, organization:, name: 'Product By Code', code: 'LOOKUP-CODE')
 

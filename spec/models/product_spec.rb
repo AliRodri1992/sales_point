@@ -234,6 +234,37 @@ RSpec.describe Product, type: :model do
       expect(product.slug).to eq('custom-slug')
     end
   end
+  describe 'category assignment and product identifier namespace' do
+    let(:organization) { create(:organization) }
+
+    it 'blocks assigning inactive categories but retains an already assigned inactive category' do
+      category = create(:category, organization:, status: :active)
+      existing = create(:product, organization:, category:)
+      category.update!(status: :inactive)
+      expect(build(:product, organization:, category:)).not_to be_valid
+      expect(existing.update(name: 'Preserved historical category')).to be(true)
+    end
+
+    it 'rejects categories belonging to another organization' do
+      category = create(:category, organization: create(:organization))
+      expect(build(:product, organization:, category:)).not_to be_valid
+    end
+
+    it 'rejects a new code that shadows another product slug' do
+      create(:product, organization:, code: 'FIRST-CODE', slug: 'shared-code')
+      candidate = build(:product, organization:, code: 'SHARED-CODE', slug: 'second-product')
+      expect(candidate).not_to be_valid
+      expect(candidate.errors[:code]).to be_present
+    end
+
+    it 'avoids generating a slug that collides with an existing product code' do
+      create(:product, organization:, code: 'COFFEE', slug: 'first')
+      candidate = build(:product, organization:, name: 'Coffee', slug: nil)
+      expect(candidate).to be_valid
+      expect(candidate.slug).not_to eq('coffee')
+    end
+  end
+
   describe 'catalog identifiers and historical tracking' do
     let(:organization) { create(:organization) }
 

@@ -35,6 +35,19 @@ RSpec.describe Admin::ProductsLookup do
       expect(host.send(:find_product_by_id_or_slug, 'UNIQUE-ITEM')).to eq(product)
     end
 
+    it 'never selects an arbitrary product when a legacy code conflicts with another slug' do
+      organization = create(:organization)
+      create(:product, organization:, code: 'COFFEE', slug: 'first-product')
+      create(:product, organization:, code: 'SECOND-CODE', slug: 'coffee')
+
+      expect(host.send(:find_product_by_id_or_slug, 'coffee')).to be_nil
+    end
+
+    it 'generates canonical numeric links even when a product has a slug' do
+      product = create(:product, slug: 'first-product')
+      expect(product.to_param).to eq(product.id.to_s)
+    end
+
     it 'does not find a soft-deleted product' do
       product = create(:product, slug: 'retired-item', deleted_at: Time.current)
 
