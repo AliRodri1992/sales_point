@@ -426,6 +426,19 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(query['status']).to eq('active')
     end
 
+    it 'groups advanced filters semantically and places actions alongside primary filters' do
+      get admin_products_path
+
+      document = Nokogiri::HTML(response.body)
+      primary = document.at_css('form.products-filters .products-filters__primary')
+      expect(primary.at_css('.products-filters__actions button.products-filters__apply')).to be_present
+      groups = document.css('details.products-filters__advanced fieldset.products-filters__group')
+      expect(groups.size).to eq(3)
+      expect(groups.map { |group| group.css('select, input').size }).to eq([2, 2, 2])
+      expect(groups.last.at_css('.products-filters__currency').text).to eq('MXN')
+      expect(groups.map { |group| group.at_css('legend').text }).to all(be_present)
+    end
+
     it 'offers branded, searchable category choices and leaves Apply as a compact button' do
       get admin_products_path
 

@@ -190,7 +190,10 @@
         "product_active_filters": "Filtros activos",
         "product_remove_filter": "Quitar filtro %{filter}",
         "product_clear_all": "Limpiar todos",
-        "product_filter_request_error": "No se pudieron actualizar los resultados. Puedes volver a intentar o aplicar los filtros."
+        "product_filter_request_error": "No se pudieron actualizar los resultados. Puedes volver a intentar o aplicar los filtros.",
+        "product_group_classification": "Clasificación",
+        "product_group_inventory": "Inventario",
+        "product_group_price": "Rango de precios"
       },
       "breadcrumbs": {
         "controllers": {

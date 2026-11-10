@@ -104,6 +104,17 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     expect(page.evaluate_script('document.activeElement.id')).to eq('products_search')
   end
 
+  scenario 'keeps product advanced filters compact and grouped on a narrow screen' do
+    page.current_window.resize_to(390, 844)
+    visit admin_products_path
+
+    expect(page).to have_css('.products-filters__primary .products-filters__actions')
+    expect(page).to have_css('details.products-filters__advanced:not([open])')
+    find('details.products-filters__advanced summary').click
+    expect(page).to have_css('fieldset.products-filters__group', count: 3)
+    expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
+  end
+
   scenario 'preserves sort and page size when applying advanced filters' do
     category = create(:category, organization:, name: 'Drinkware')
     create(:product, organization:, category:, name: 'Insulated cup', price: 35)
