@@ -9,17 +9,20 @@
     </div>
   </header>
 
-  <section class="languages-filters" aria-label="<%= t('admin.languages.ui.filters_title') %>">
-    <div class="languages-filters__toolbar">
-      <h2><%= t('admin.languages.ui.filters_title') %></h2>
-    <% if policy(Language).create? %>
+  <% if policy(Language).create? %>
+    <div class="languages-actions-bar">
       <%= link_to new_admin_language_path(request.query_parameters),
                   class: 'catalog-button catalog-button-primary languages-new-button',
                   data: { turbo_frame: 'language_modal' } do %>
         <%= delta_icon('plus', class: 'size-4', aria: { hidden: true }) %>
         <%= t('admin.languages.index.new') %>
       <% end %>
-    <% end %>
+    </div>
+  <% end %>
+
+  <section class="languages-filters" aria-label="<%= t('admin.languages.ui.filters_title') %>">
+    <div class="languages-filters__toolbar">
+      <h2><%= t('admin.languages.ui.filters_title') %></h2>
     </div>
     <%= form_with url: admin_languages_path, method: :get,
                   class: 'languages-filter-form',

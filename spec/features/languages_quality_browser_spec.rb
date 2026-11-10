@@ -92,13 +92,26 @@ RSpec.describe 'Languages administration quality', type: :feature, js: true do
     expect(page).to have_current_path(admin_languages_path)
   end
 
-  scenario 'places New language next to filters and shortens the wider dialog on desktop' do
+  scenario 'places New language just above filters and preserves the wider dialog' do
     page.driver.browser.manage.window.resize_to(1280, 900)
     visit admin_languages_path
 
-    expect(page).to have_css('.languages-filters__toolbar .languages-new-button', visible: true)
+    expect(page).to have_css('.languages-actions-bar .languages-new-button', visible: true)
+    expect(page).to have_no_css('.languages-filters .languages-new-button')
     expect(page).to have_no_css('.languages-page-header .languages-new-button')
-    within('.languages-filters__toolbar') { click_link 'New language' }
+    positioning = page.evaluate_script(<<~JS)
+      (() => {
+        const button = document.querySelector('.languages-actions-bar .languages-new-button')
+        const filters = document.querySelector('.languages-filters')
+        return {
+          gap: filters.getBoundingClientRect().top - button.getBoundingClientRect().bottom,
+          rightGap: Math.abs(button.getBoundingClientRect().right - filters.getBoundingClientRect().right)
+        }
+      })()
+    JS
+    expect(positioning.fetch('gap')).to be_between(0, 16)
+    expect(positioning.fetch('rightGap')).to be <= 2
+    within('.languages-actions-bar') { click_link 'New language' }
 
     expect(page).to have_css('#language_modal[aria-hidden="false"] .languages-modal-panel', wait: 10)
     dimensions = page.evaluate_script(<<~JS)

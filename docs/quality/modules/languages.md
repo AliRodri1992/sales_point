@@ -152,3 +152,16 @@ En el SHA `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`:
 **Criterios de aceptación:** sin doble botón, sin desbordamiento horizontal del modal a 390 px, controles accesibles y espaciado consistente con Delta POS. La altura se reduce por distribución de filas; no se garantiza un número de píxeles de alto sin medición. Las rutas, la validación y las traducciones del modal permanecen intactas.
 
 **Estado:** adecuaciones implementadas y CI focalizado **APROBADO** sobre `04e0c07bb69bb6cf28d700b4e9169ad907c5408b`; **96 ejemplos RSpec, 0 fallos**, incluidas pruebas con Chrome a 1280/390 px. RuboCop e integridad I18n también **APROBARON**. [Languages CI #42759737811](https://github.com/AliRodri1992/sales_point/actions/runs/42759737811). CI global del commit **CANCELADO** por commits concurrentes en la misma rama; inspección visual manual de accesibilidad/zoom todavía **PENDIENTE**. **NO CERRADO FORMALMENTE**.
+
+
+## Auditoría correctiva de proximidad — IDI-028 (2026-11-09)
+
+**Alcance:** exclusivamente la posición del botón «Nuevo idioma» respecto al panel de filtros en `/admin/languages`.
+
+| ID | Prioridad | Hallazgo confirmado | Corrección | Aceptación |
+|---|---|---|---|---|
+| IDI-028 | P3 (UX) | La adecuación anterior IDI-026 colocó por error «Nuevo idioma» **dentro** del panel `.languages-filters`, aunque se había pedido ubicarlo **un poco arriba** del panel. | Acción en `.languages-actions-bar` como hermana anterior inmediata de `section.languages-filters`, alineada a la derecha con margen inferior de `0.625rem` (10 px). El encabezado del panel conserva solamente «Filtros de idiomas». | Request spec verifica DOM exterior, botón único y destino Turbo; Chrome verifica que el botón quede 0–16 px encima del panel y alineado con su borde derecho. |
+
+**Invariantes:** el botón sigue protegido por `policy(Language).create?`; el destino continúa siendo el Turbo Frame `language_modal`; no se alteran rutas, controladores, modelo, textos ni las modales de creación/edición. El formulario de filtros mantiene su comportamiento automático y accesible.
+
+**Método:** auditoría del código con criterios de AI Dev Suite (`impeccable-audit`, `ui-ux-pro-max`); no se ejecutaron sus CLIs externas. **Estado:** corrección preparada; pruebas y verificación CI **PENDIENTES**. El expediente permanece **NO CERRADO** hasta comprobar resultado focalizado y revisión visual/manual.

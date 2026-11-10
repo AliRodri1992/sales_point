@@ -3,6 +3,7 @@
 .languages-page-header { align-items: center; margin-bottom: .875rem; }
 .languages-page-header .catalog-eyebrow { margin-bottom: .4rem; }
 .languages-new-button { flex-shrink: 0; white-space: nowrap; }
+.languages-actions-bar { display: flex; justify-content: flex-end; align-items: center; margin-bottom: .625rem; }
 .languages-filters__toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem; margin-bottom: .875rem; }
 .languages-filters__toolbar h2 { font-family: var(--font-jakarta); font-size: .875rem; font-weight: 700; color: #334155; }
 .languages-filters { padding: 1rem 1.25rem; margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 1rem; background: #fff; }
