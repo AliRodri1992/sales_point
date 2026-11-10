@@ -42,16 +42,37 @@ module Admin
       attributes.delete(:image) if image.blank? || unchanged
     end
 
+    def normalize_temporary_option_ids(attributes)
+      nested = attributes[:product_barcodes_attributes]
+      return unless nested
+
+      rows = nested.respond_to?(:each_pair) ? nested.values : nested
+      rows.each do |row|
+        %i[product_variant product_presentation].each do |association|
+          id_field = :"#{association}_id"
+          token = row[id_field].to_s
+          next unless token.start_with?('new:')
+
+          row[:"#{association}_client_key"] = token.delete_prefix('new:')
+          row[id_field] = nil
+        end
+      end
+    end
+
     def product_params
       params.expect(product: [
                       :code, :name, :description, :price, :cost, :barcode, :sku, :category_id,
                       :sat_unit_key_id, :sat_tax_id, :tracking_mode, :status, :image, :image_signed_id,
                       :position, :featured, :price_change_reason,
-                      { product_variants_attributes: [%i[id name sku status size color model]],
-                        product_presentations_attributes: [%i[id name units status]],
+                      { product_variants_attributes: [%i[id name sku status size color model client_key]],
+                        product_presentations_attributes: [%i[id name units status client_key]],
                         product_barcodes_attributes: [%i[id _destroy value symbology product_variant_id
-                                                         product_presentation_id]] }
-                    ]).tap { |attributes| normalize_image_parameters(attributes) }
+                                                         product_presentation_id product_variant_client_key
+                                                         product_presentation_client_key]] }
+                    ]).tap do |attributes|
+        normalize_image_parameters(attributes)
+        normalize_temporary_option_ids(attributes)
+      end
     end
   end
 end

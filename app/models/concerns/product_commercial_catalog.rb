@@ -13,6 +13,7 @@ module ProductCommercialCatalog
                                   reject_if: :all_blank, limit: 50
     accepts_nested_attributes_for :product_barcodes, reject_if: :all_blank, limit: 50, allow_destroy: true
     normalizes :barcode, with: ->(value) { value.strip.presence }
+    before_validation :resolve_pending_commercial_links
     validate :barcode_available_in_organization
     validate :preserve_primary_barcode
     after_save :synchronize_primary_barcode, if: :saved_change_to_barcode?
@@ -28,6 +29,27 @@ module ProductCommercialCatalog
   end
 
   private
+
+  def resolve_pending_commercial_links
+    product_barcodes.each do |barcode|
+      next if barcode.marked_for_destruction?
+
+      { product_variant: product_variants, product_presentation: product_presentations }.each do |association, records|
+        key = barcode.public_send("#{association}_client_key")
+        next if key.blank?
+
+        match = records.find { |record| record.new_record? && !record.marked_for_destruction? &&
+                                         record.client_key.present? && record.client_key == key }
+        if match
+          match.organization ||= organization
+          match.product = self
+          barcode.public_send("#{association}=", match)
+        else
+          errors.add(:product_barcodes, :invalid)
+        end
+      end
+    end
+  end
 
   def retire_commercial_options
     [product_variants, product_presentations, product_barcodes].each do |records|

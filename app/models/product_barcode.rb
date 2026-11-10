@@ -3,6 +3,8 @@
 class ProductBarcode < ApplicationRecord
   include CommercialTenant
 
+  attr_accessor :product_variant_client_key, :product_presentation_client_key
+
   belongs_to :product, inverse_of: :product_barcodes
   belongs_to :product_variant, optional: true
   belongs_to :product_presentation, optional: true

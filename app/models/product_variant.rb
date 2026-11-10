@@ -4,6 +4,8 @@ class ProductVariant < ApplicationRecord
   include CommercialTenant
   include ProductSkuReservation
 
+  attr_accessor :client_key
+
   belongs_to :product, inverse_of: :product_variants
   has_many :product_barcodes, dependent: :restrict_with_error
   has_many :price_list_items, dependent: :restrict_with_error
