@@ -398,3 +398,11 @@ El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios;
 **Puertas abiertas preexistentes:** CATEGORIES-001/009 requieren validar backfill y constraints sobre copia de datos históricos; CATEGORIES-029 requiere contraste real por temas; CATEGORIES-010, foco de modal, zoom 200 % y lector de pantalla requieren verificación manual independiente. Los fallos de Clientes y Productos en suites compartidas se registran EXTERNOS y no se omiten.
 
 **Dictamen provisional:** ADECUACIONES IMPLEMENTADAS; NO CERRADO hasta resultado focalizado y CI global del SHA, más revisión de accesibilidad/datos históricos.
+
+### Revalidación de CATEGORIES-031–033 y último ajuste de CI (2026-11-10)
+
+- **Categories CI #42817747418**, SHA `f55a86bfe318cc177e8fb9fb0d0d160cb329a95c`: **115 ejemplos, 111 aprobados y cuatro fallos EXTERNOS**. Los fallos son tres de contratos de permisos de **Clientes** (HTTP 404 en show/update/delete) y uno de paginación de **Productos**. **Ninguna prueba propia de Categorías falló**: las nuevas pruebas Chrome de selector de orden a 390/768 px, transición de `page=3` a página 1, y la request de broadcast con permisos de escritura sin `index` aprobaron.
+- RuboCop focalizado del mismo SHA detectó una sola ofensa `Layout/EmptyLineAfterGuardClause` en `Admin::CategoryMutations#category_saved`; se agregó el espacio requerido **sin cambiar funcionalidad**.
+- Se añadió un escenario Chrome adicional de **paginación explícita a página 2 por Turbo Frame**, que verifica que la URL mantiene `page=2`; se debe ejecutar en CI del commit correspondiente. Con ello se cubren ambos caminos del hallazgo 032 (reiniciar página al filtrar y conservar página al navegar).
+- **Estado CATEGORIES-031/032/033:** implementados y **verificados automáticamente en los escenarios originales del CI #42817747418**; la regresión adicional de paginación explícita y RuboCop final esperan nuevo CI. No están formalmente cerrados por existir bloqueos externos y pruebas manuales pendientes.
+- **Sin cambios** en productos/clientes, migraciones, base de datos ni ramas de integración. Mantener abiertos los hallazgos históricos de verificación de backfill/constraints, contraste por tema y accesibilidad visual/asistiva hasta obtener evidencias independientes.

@@ -134,6 +134,16 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     expect(page.evaluate_script('new URL(window.location.href).searchParams.get("search")')).to eq('Groceries')
   end
 
+  scenario 'tracks explicit pagination in the URL after a Turbo Frame navigation' do
+    create_list(:category, 25, organization:)
+
+    visit admin_categories_path
+    within('turbo-frame#categories_list') { click_link '2' }
+
+    expect(page).to have_css('.categories-directory[data-categories-current-page="2"]', wait: 10)
+    expect(page.evaluate_script('new URL(window.location.href).searchParams.get("page")')).to eq('2')
+  end
+
   scenario 'searches live and renders a removable filter chip' do
     create(:category, organization:, name: 'Groceries', code: 'groceries')
 
