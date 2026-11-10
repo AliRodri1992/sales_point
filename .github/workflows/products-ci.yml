@@ -125,6 +125,11 @@ jobs:
           yarn build:css
       - name: Fresh migrations
         run: bin/rails db:drop db:create db:migrate
+      - name: Verify real Products browser flows
+        env:
+          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
+          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
+        run: bundle exec rspec spec/features/products_quality_browser_spec.rb
       - name: Verify models, isolation, requests and commercial transactions
         env:
           CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
@@ -138,8 +143,3 @@ jobs:
             spec/controllers/concerns/admin/products_listing_spec.rb \
             spec/controllers/concerns/admin/products_lookup_spec.rb \
             spec/services/products
-      - name: Verify real Products browser flows
-        env:
-          CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
-          CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
-        run: bundle exec rspec spec/features/products_quality_browser_spec.rb

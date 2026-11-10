@@ -37,12 +37,17 @@ RSpec.describe 'Products module browser flows', type: :feature, js: true do
     end
 
     click_button 'Add barcode'
+    selected_immediately = {}
     within('#product-barcodes [data-nested-catalog-row]') do
       find('input[name$="[value]"]').set('LARGE-BOX-42')
-      find('select[name$="[product_variant_id]"]', visible: :all)
-        .find('option', text: 'Large', visible: :all).select_option
-      find('select[name$="[product_presentation_id]"]', visible: :all)
-        .find('option', text: 'Box', visible: :all).select_option
+      variant_field = find('select[name$="[product_variant_id]"]', visible: :all)
+      variant_field.find('option', text: 'Large', visible: :all).select_option
+      selected_immediately[:variant] = variant_field.value
+
+      presentation_field = find('select[name$="[product_presentation_id]"]', visible: :all)
+      presentation_field.find('option', text: 'Box', visible: :all).select_option
+      selected_immediately[:presentation] = presentation_field.value
+      selected_immediately[:variant_after_presentation] = variant_field.value
     end
 
     # The actual browser form must send the temporary association keys.
@@ -51,6 +56,11 @@ RSpec.describe 'Products module browser flows', type: :feature, js: true do
     variant_key = find('#product-variants [data-nested-catalog-rows] input[name$="[client_key]"]', visible: :all).value
     presentation_key = find('#product-presentations [data-nested-catalog-rows] input[name$="[client_key]"]',
                             visible: :all).value
+    RSpec.configuration.reporter.message(
+      "Products browser nested select values: #{selected_immediately.inspect}, " \
+      "final_variant=#{variant_select.value.inspect}, final_presentation=#{presentation_select.value.inspect}, " \
+      "key_variant=#{variant_key.inspect}, key_presentation=#{presentation_key.inspect}"
+    )
     expect(variant_select.value).to eq("new:#{variant_key}")
     expect(presentation_select.value).to eq("new:#{presentation_key}")
 
