@@ -38,7 +38,10 @@ RSpec.describe Admin::ProductsLookup do
     it 'never selects an arbitrary product when a legacy code conflicts with another slug' do
       organization = create(:organization)
       create(:product, organization:, code: 'COFFEE', slug: 'first-product')
-      create(:product, organization:, code: 'SECOND-CODE', slug: 'coffee')
+      legacy = create(:product, organization:, code: 'SECOND-CODE', slug: 'second-product')
+      # Legacy collision prior to validation rollout.
+      # rubocop:disable-next Rails/SkipsModelValidations
+      legacy.update_columns(slug: 'coffee')
 
       expect(host.send(:find_product_by_id_or_slug, 'coffee')).to be_nil
     end

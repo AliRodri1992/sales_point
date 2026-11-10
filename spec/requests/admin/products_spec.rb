@@ -109,7 +109,10 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'refuses ambiguous legacy product routes rather than opening the wrong record' do
       create(:product, organization:, code: 'COFFEE', slug: 'first-product')
-      create(:product, organization:, code: 'SECOND-CODE', slug: 'coffee')
+      legacy = create(:product, organization:, code: 'SECOND-CODE', slug: 'second-product')
+      # Legacy collision prior to validation rollout.
+      # rubocop:disable-next Rails/SkipsModelValidations
+      legacy.update_columns(slug: 'coffee')
       get admin_product_path('coffee')
 
       expect(response).to redirect_to(admin_products_path)
@@ -518,6 +521,20 @@ RSpec.describe 'Admin::Products', type: :request do
       get admin_products_path(stock_status: 'out')
       expect(response.body).to include(depleted.name)
       expect(response.body).not_to include(available.name)
+    end
+
+    it 'shows a localized error and retains results when the price range is inverted' do
+      item = create(:product, organization:, name: 'Product within visible list', price: 60)
+      get admin_products_path(min_price: '200', max_price: '100')
+
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('#admin_products_list').text).to include(item.name)
+      expect(document.at_css('#products_price_range_error').text).to eq(
+        I18n.t('admin.catalog_design.product_price_range_invalid')
+      )
+      expect(document.at_css('#products_min_price')['aria-invalid']).to eq('true')
+      expect(document.at_css('#products_max_price')['aria-describedby']).to eq('products_price_range_error')
     end
 
     it 'ignores invalid negative or nonnumeric price filters' do

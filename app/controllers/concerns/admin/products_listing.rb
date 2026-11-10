@@ -61,18 +61,12 @@ module Admin
     end
 
     def apply_price_filter(scope)
-      min_price = filter_price(params[:min_price])
-      max_price = filter_price(params[:max_price])
+      min_price = Products::PriceFilter.parse(params[:min_price])
+      max_price = Products::PriceFilter.parse(params[:max_price])
+      return scope if min_price && max_price && min_price > max_price
       scope = scope.where(products: { price: min_price.. }) if min_price
       scope = scope.where(products: { price: ..max_price }) if max_price
       scope
-    end
-
-    def filter_price(value)
-      return if value.blank?
-
-      number = BigDecimal(value.to_s, exception: false)
-      number if number&.finite? && number >= 0
     end
 
     def apply_stock_filter(scope)

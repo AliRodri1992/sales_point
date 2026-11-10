@@ -77,6 +77,7 @@ export default class extends Controller {
       // the frame's navigation lifecycle and the surrounding loading state.
       currentResults.replaceChildren(...nextResults.childNodes)
       this.syncBadges(page)
+      this.syncPriceRangeError(page)
       window.history.replaceState(window.history.state, "", url)
     } catch (error) {
       if (error.name !== "AbortError" && sequence === this.sequence && this.hasErrorTarget) {
@@ -84,6 +85,26 @@ export default class extends Controller {
       }
     } finally {
       if (sequence === this.sequence) this.element.removeAttribute("aria-busy")
+    }
+  }
+
+  syncPriceRangeError(page) {
+    const group = this.element.querySelector(".products-filters__groups fieldset:last-child")
+    const error = page.querySelector("#products_price_range_error")
+    if (!group) return
+    group.querySelector("#products_price_range_error")?.remove()
+    if (error) group.append(error)
+
+    for (const id of ["products_min_price", "products_max_price"]) {
+      const input = this.element.querySelector(`#${id}`)
+      if (!input) continue
+      if (error) {
+        input.setAttribute("aria-invalid", "true")
+        input.setAttribute("aria-describedby", "products_price_range_error")
+      } else {
+        input.removeAttribute("aria-invalid")
+        input.removeAttribute("aria-describedby")
+      }
     }
   }
 
