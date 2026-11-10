@@ -1,8 +1,9 @@
 <%= form_with model: [:admin, category], html: { novalidate: true },
-              class: 'space-y-6',
+              class: 'categories-form space-y-6',
               data: { turbo_frame: (local_assigns[:standalone] ? '_top' : 'category_modal'),
                       turbo: !local_assigns[:standalone] } do |form| %>
-  <div class="space-y-5">
+  <p class="categories-form-note text-xs text-slate-500"><%= t('admin.categories.form.instructions') %></p>
+  <div class="categories-form-fields space-y-5">
     <div>
       <%= form.label :code, required_field_label(t('admin.categories.form.code')),
                      class: 'mb-2 block text-sm font-semibold text-slate-700' %>
@@ -54,7 +55,7 @@
       </div>
     <% end %>
   </div>
-  <div class="flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-5">
+  <div class="categories-modal-actions flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-5">
     <% if local_assigns[:standalone] %>
       <%= link_to t('admin.categories.form.cancel'), catalog_back_path(Category),
                   class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50' %>

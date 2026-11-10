@@ -313,6 +313,7 @@ ko:
         subtitle: 카테고리 정보를 업데이트합니다.
         title: "%{name} 수정"
       form:
+        instructions: "* 표시된 항목은 필수 입력입니다."
         cancel: 취소
         code: 코드
         code_hint: 카테고리 코드 (소문자, 숫자 및 밑줄).

@@ -313,6 +313,7 @@ en:
         subtitle: Update the category details.
         title: Edit %{name}
       form:
+        instructions: "Fields marked with * are required."
         cancel: Cancel
         code: Code
         code_hint: Unique category code (lowercase, numbers and underscore).

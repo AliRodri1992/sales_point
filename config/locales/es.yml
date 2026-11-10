@@ -314,6 +314,7 @@ es:
         subtitle: Actualiza los datos de la categoría.
         title: Editar %{name}
       form:
+        instructions: "Los campos marcados con * son obligatorios."
         cancel: Cancelar
         code: Código
         code_hint: Código único de la categoría (minúsculas, números y guion bajo).

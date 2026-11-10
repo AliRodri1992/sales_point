@@ -342,4 +342,48 @@ RSpec.describe 'Admin::Categories', type: :request do
       expect(notification.params[:action]).to eq('destroyed')
     end
   end
+
+  describe 'Category catalog redesign regressions' do
+    let(:organization) { user.organization_memberships.first.organization }
+
+    it 'renders accessible filter controls and five desktop columns' do
+      create(:category, organization:, name: 'Groceries', code: 'groceries',
+                        description: 'Food and pantry products')
+
+      get admin_categories_path
+
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('section.categories-filter-panel')).to be_present
+      expect(document.at_css('input#category_search')).to be_present
+      expect(document.at_css('select#category_status')).to be_present
+      expect(document.at_css('details.categories-advanced')).to be_present
+      expect(document.css('table.categories-table thead th').size).to eq(5)
+      expect(document.css('table.categories-table tbody').text).to include('Food and pantry products')
+    end
+
+    it 'provides mobile cards retaining the category description' do
+      create(:category, organization:, name: 'Personal Care', code: 'personal_care',
+                        description: 'Daily hygiene essentials')
+
+      get admin_categories_path
+
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('ul.categories-mobile-list')).to be_present
+      expect(document.css('.categories-mobile-card').map(&:text).join).to include('Daily hygiene essentials')
+    end
+
+    it 'shows individual removable search and status chips' do
+      create(:category, organization:, name: 'Clothing', code: 'clothing')
+
+      get admin_categories_path(search: 'clothing', status: 'active')
+
+      document = Nokogiri::HTML(response.body)
+      chips = document.css('a.categories-filter-chip')
+      expect(chips.size).to eq(2)
+      expect(chips.map { |link| link['href'] }.join).to include('status=active', 'search=clothing')
+      expect(document.at_css('a.categories-clear-filters')).to be_present
+    end
+  end
+
 end

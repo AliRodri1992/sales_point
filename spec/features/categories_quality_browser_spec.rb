@@ -33,4 +33,15 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     expect(page).to have_css('turbo-frame#categories_list', text: 'Browser category', wait: 10)
     expect(organization.categories.find_by!(code: 'browser_category').description).to eq('Browser verified description')
   end
+
+  scenario 'searches live and renders a removable filter chip' do
+    create(:category, organization:, name: 'Groceries', code: 'groceries')
+
+    visit admin_categories_path
+    fill_in 'category_search', with: 'groceries'
+
+    expect(page).to have_css('turbo-frame#categories_list .categories-filter-chip', text: 'groceries', wait: 10)
+    expect(page).to have_css('.categories-mobile-card', text: 'Groceries', visible: :all)
+  end
+
 end
