@@ -78,7 +78,6 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     expect(page).to have_css('turbo-frame#categories_list a.categories-filter-chip', text: 'Descending', wait: 10)
   end
 
-
   scenario 'preserves an active search after creating an unrelated category' do
     create(:category, organization:, name: 'Groceries', code: 'groceries')
 
