@@ -667,6 +667,44 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(document.at_css("##{field['aria-describedby']}")).to be_present
     end
 
+    it 'saves a new variant, presentation and their barcode association in a single request' do
+      attributes = {
+        name: 'Single transaction bundle', code: 'BUNDLE-CATALOG', price: 50,
+        product_variants_attributes: {
+          '0' => { name: 'Large', sku: 'BUNDLE-LARGE', client_key: 'variant-a' }
+        },
+        product_presentations_attributes: {
+          '0' => { name: 'Box', units: 6, client_key: 'presentation-a' }
+        },
+        product_barcodes_attributes: {
+          '0' => { value: 'BUNDLE-LARGE-BOX', symbology: 'code128',
+                   product_variant_id: 'new:variant-a', product_presentation_id: 'new:presentation-a' }
+        }
+      }
+      post admin_products_path, params: { product: attributes }
+
+      expect(response).to have_http_status(:redirect)
+      created = Product.find_by!(code: 'BUNDLE-CATALOG')
+      barcode = created.product_barcodes.find_by!(value: 'BUNDLE-LARGE-BOX')
+      expect(barcode.product_variant.name).to eq('Large')
+      expect(barcode.product_presentation.name).to eq('Box')
+      expect(barcode.product_variant.product).to eq(created)
+      expect(barcode.product_presentation.product).to eq(created)
+    end
+
+    it 'rejects a forged temporary reference and does not persist the product' do
+      expect do
+        post admin_products_path,
+             params: { product: { name: 'Invalid option', code: 'BAD-PENDING-OPTION', price: 20,
+                                  product_barcodes_attributes: {
+                                    '0' => { value: 'BAD-PENDING', symbology: 'code128',
+                                             product_variant_id: 'new:unrecognized-option' }
+                                  } } }
+      end.not_to change(Product, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it 'gives each invalid nested variant a distinct, associated error element' do
       post admin_products_path,
            params: { product: { name: 'Nested errors', code: 'BAD-NEST-01', price: 20,
