@@ -182,7 +182,7 @@ Fuente: [CI #42615013668](https://github.com/AliRodri1992/sales_point/actions/ru
 
 ### Resultado real de controles y atribución
 
-**SHA revisado:** `f9e5f648b3b4c8f658780bff9bb3b3c5b3a61dc6` · [CI #42809388942](https://github.com/AliRodri1992/sales_point/actions/runs/42809388942).
+**SHA del código auditado y del CI:** `9ac9c227f729bbcc8b045ee8604775d083e41511` · [CI #42809388942](https://github.com/AliRodri1992/sales_point/actions/runs/42809388942). El SHA inicial de esta sección (`f9e5f64`) únicamente añadió documentación al expediente de Categorías; los archivos inspeccionados de Productos no cambiaron entre ambos SHA.
 
 | Control | Resultado confirmado | Propiedad |
 |---|---|---|
