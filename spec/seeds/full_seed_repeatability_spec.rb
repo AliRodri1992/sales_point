@@ -16,7 +16,7 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
       ActiveStorage::Attachment, ActiveStorage::Blob, SatFiscalRegime, SatBank,
       SatCfdiUse, SatCountry, SatCurrency, SatExportType, SatFactorType,
       SatPaymentMethod, SatPaymentMethodType, SatPeriodicity, SatRelationshipType,
-      SatTaxCode, SatTaxObject, SatUnitKey, SatVoucherType
+      SatTaxCode, SatTaxObject, SatUnitKey, SatVoucherType, UnitOfMeasure
     ]
   end
 
@@ -80,6 +80,8 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     expect(organization.purchase_orders.count).to be >= 20
     expect(organization.supplier_invoices.draft.count).to be >= 20
     expect(organization.payment_integrations.pending.count).to eq(2)
+    expect(organization.units_of_measure.count).to eq(UnitMeasureExamples::DATA.size)
+    expect(organization.units_of_measure.find_by!(code: 'KILO').sat_unit_key.code).to eq('KGM')
     expect(organization.inventories.select(:branch_id).distinct.count).to be >= 3
     expect(InventoryMovement.where(organization:).count).to be_positive
   end

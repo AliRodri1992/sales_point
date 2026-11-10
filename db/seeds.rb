@@ -632,6 +632,12 @@ SeedConsole.track('Organización Delta POS', Organization) do
 end
 SeedConsole.report('Proveedores', Supplier)
 SeedConsole.report('Regímenes fiscales SAT', SatFiscalRegime)
+
+require_relative 'seeds/unit_measure_examples'
+SeedConsole.track('Unidades de medida de Delta POS', UnitOfMeasure) do
+  organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+  UnitMeasureExamples.seed!(organization:)
+end
 SeedConsole.report('Contactos', Contact)
 SeedConsole.report('Membresías', OrganizationMembership)
 

@@ -75,3 +75,33 @@ el conjunto verificado y completo.
 **IMPORTANTE:** que los `seeds` terminen no prueba la vigencia fiscal del
 conjunto importado; antes de emitir CFDI hay que verificar fecha de actualización
 del SAT, hashes de origen, claves y reglas del Anexo 20.
+
+## Semillas prácticas de unidades SAT y unidades internas
+
+Además del importador de CSV completos, `db:seed` carga una **selección no exhaustiva**
+de claves verificables del catálogo `c_ClaveUnidad` (véase
+`db/seeds/sat_catalog_extra_data.rb`). La carga solo incorpora claves faltantes;
+no restaura claves SAT archivadas ni sobrescribe descripciones, símbolos o vigencias
+preexistentes. El conjunto completo requiere el CSV oficial actualizado
+`sat_unit_keys.csv` y su verificación de procedencia y vigencia.
+
+Después de crear la organización de demostración **Delta POS**, el mismo
+`db:seed` carga `db/seeds/unit_measure_examples.rb` con unidades propias
+de ejemplo para ese **único tenant**: pieza, caja, paquete, kilo, litro, hora,
+servicio y otras. Cada registro guarda `sat_unit_key_id`, precisión decimal,
+código interno y abreviatura. Las claves internas no son claves SAT y
+**no se asocian a Productos**.
+
+La carga es idempotente: conserva unidades existentes, los cambios manuales
+y las bajas lógicas. Si una clave SAT necesaria está ausente, caducada o archivada,
+se omite esa unidad nueva y se informa el código; nunca se reactiva la clave.
+
+Ejecutar en desarrollo (sin borrar la base de datos):
+
+```bash
+docker compose -f docker-compose.dev.yml exec web bin/rails db:seed
+```
+
+El catálogo SAT es global; las unidades de ejemplo no se crean automáticamente
+en otras organizaciones. Las organizaciones reales administran sus propias
+unidades desde el módulo correspondiente.
