@@ -44,6 +44,37 @@ RSpec.describe 'Shared product and variant SKU reservations' do
       .to eq(first.id)
   end
 
+  it 'blocks concurrent SKU assignments across Product and ProductVariant', :concurrent_db do
+    parent = create(:product, organization:)
+    product = build(:product, organization:, sku: 'CROSS-TABLE-RACE')
+    variant = parent.product_variants.build(name: 'Racing variant', sku: 'CROSS-TABLE-RACE')
+
+    ready = Queue.new
+    go = Queue.new
+    results = Queue.new
+    workers = [product, variant].map do |record|
+      Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection do
+          ready << true
+          go.pop
+          begin
+            record.save!
+            results << :created
+          rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid
+            results << :conflict
+          end
+        end
+      end
+    end
+
+    2.times { ready.pop }
+    2.times { go << true }
+    workers.each(&:join)
+
+    expect([results.pop, results.pop].sort).to eq(%i[conflict created])
+    expect(ProductSkuClaim.where(organization:, normalized_sku: 'cross-table-race').count).to eq(1)
+  end
+
   it 'serializes two concurrent claimant inserts', :concurrent_db do
     organization
     first = create(:product, organization:)

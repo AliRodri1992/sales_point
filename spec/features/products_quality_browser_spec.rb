@@ -45,6 +45,15 @@ RSpec.describe 'Products module browser flows', type: :feature, js: true do
         .find('option', text: 'Box', visible: :all).select_option
     end
 
+    # The actual browser form must send the temporary association keys.
+    variant_select = find('#product-barcodes select[name$="[product_variant_id]"]', visible: :all)
+    presentation_select = find('#product-barcodes select[name$="[product_presentation_id]"]', visible: :all)
+    variant_key = find('#product-variants [data-nested-catalog-rows] input[name$="[client_key]"]', visible: :all).value
+    presentation_key = find('#product-presentations [data-nested-catalog-rows] input[name$="[client_key]"]',
+                            visible: :all).value
+    expect(variant_select.value).to eq("new:#{variant_key}")
+    expect(presentation_select.value).to eq("new:#{presentation_key}")
+
     click_button 'Create product'
     expect(page).to have_current_path(admin_products_path, ignore_query: true)
 

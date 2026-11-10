@@ -50,7 +50,7 @@ RSpec.describe 'N+1 query scaling for administrative catalogs', type: :request, 
 
   it 'does not multiply phone queries across 1, 20, and 100 clients' do
     counts = query_counts_for([1, 20, 100], admin_clients_path, /FROM\s+"?phones"?/i) do |_index|
-      create(:client)
+      create(:client, organization:)
     end
 
     expect_bounded_query_growth(counts, limit: 2)
