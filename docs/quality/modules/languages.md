@@ -104,7 +104,11 @@ En el SHA `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`:
 - **Contexto:** formulario reducido a nombre, código ISO de idioma, bandera y estado. El sistema ya incorpora `language_modal` en el layout, pero sus enlaces conducían a páginas completas; se mantienen las rutas independientes como respaldo sin JavaScript.
 - **Método AI Dev Suite:** `impeccable-audit`, `ui-ux-pro-max` y `ponytail-engineering` aplicados como metodología de inspección de código y pruebas. No se ejecutaron las CLIs externas.
 - **SHA de revisión:** `986e951f79679f9799792690d8d528ec54f019e8`.
-- **Estado:** IMPLEMENTACIÓN PREPARADA, validación y reauditoría pendientes; **NO CERRADO**.
+- **Estado:** IMPLEMENTADO y VERIFICADO EN PRUEBAS FOCALIZADAS; **NO CERRADO** por verificación visual manual y puerta de CI global.
+- **Commit de implementación:** `4de529d5f1a93522f2a5bba83830b27eeca7b52a`.
+- **Languages CI:** [ejecución #42758496663](https://github.com/AliRodri1992/sales_point/actions/runs/42758496663) **PASÓ**; 94 ejemplos RSpec (Chrome, requests, modelos), 0 fallos, RuboCop e integridad de traducciones aprobados.
+- **CI global:** [ejecución #42758496722](https://github.com/AliRodri1992/sales_point/actions/runs/42758496722) con escaneo de seguridad e I18n aprobados a la fecha de registro; comprobación global restante en proceso.
+- **Puerta visual:** **PENDIENTE** de revisión manual 320/390/768/1440, teclado, zoom 200 % y lector de pantalla.
 
 | ID | Prioridad | Evidencia por código | Adecuación | Verificación |
 |---|---|---|---|---|
@@ -118,3 +122,16 @@ En el SHA `b9a6d576920bab9d2cfb4d8955205a792f7fafbe`:
 **Contratos protegidos:** Pundit, validaciones del modelo, idioma predeterminado, notificaciones, SweetAlert2, traducciones es/en/ko y rutas HTML normales. En un error 422 no se deben perder los datos introducidos ni cerrar el diálogo. Los cambios realizados con filtros activos deben conservar su contexto. Editar desde detalle debe actualizar la información visible.
 
 **Aceptación:** comprobar el SHA publicado con Languages CI (RSpec, Chrome, RuboCop, I18n/YAML); comprobar el CI global y registrar errores externos sin modificar módulos vecinos. Inspección visual manual, 320/390/768/1440, zoom 200 %, teclado y lector de pantalla pendientes hasta contar con un navegador accesible.
+
+### Reauditoría de modal — Evidencia y límites
+
+- **IDI-018**: links Crear/Editar usan el frame `language_modal` desde listado y detalle; requests y navegador **PASARON**.
+- **IDI-019**: el formulario dentro del modal usa Turbo; el formulario de página independiente conserva envío HTML. Creación y actualización dentro del diálogo **PASARON**.
+- **IDI-020**: Cancelar es botón de cierre del modal, no enlace de navegación; Chrome verificó cierre mediante Escape sin abandonar el listado. Clic específico en Cancelar pendiente de inspección manual.
+- **IDI-021**: se habilitó trampa de foco `keydown.tab->modal#trap` como en otras pantallas del sistema. Chrome probó Escape; comprobación con lector de pantalla y recorrido completo de Tab **PENDIENTE**.
+- **IDI-022**: errores HTTP 422 se devuelven en HTML dentro del mismo frame; solicitudes y Chrome **PASARON** sin descartar datos.
+- **IDI-023**: ancho máximo 36rem con botón Cerrar, título, ayuda contextual y scroll del overlay. Validación funcional en Chrome **PASÓ**; inspección estética visual manual **PENDIENTE**.
+- **Integridad adicional:** el detalle puede actualizar su información visible tras editar gracias al Turbo Stream `language_detail_panel`, sin afectar el listado cuando el destino no existe.
+- **Frontera:** auditoría exclusivamente de Idiomas y su integración modal. Hallazgos externos del CI global se registrarán con sus propietarios, no se corregirán en este expediente.
+
+**No se declara el módulo cerrado** hasta contar con la puerta global, accesibilidad verificable y revisión visual manual. Las pruebas focalizadas sí acreditan el flujo funcional de los nuevos modales en el SHA de implementación.
