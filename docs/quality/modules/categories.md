@@ -406,3 +406,13 @@ El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios;
 - Se añadió un escenario Chrome adicional de **paginación explícita a página 2 por Turbo Frame**, que verifica que la URL mantiene `page=2`; se debe ejecutar en CI del commit correspondiente. Con ello se cubren ambos caminos del hallazgo 032 (reiniciar página al filtrar y conservar página al navegar).
 - **Estado CATEGORIES-031/032/033:** implementados y **verificados automáticamente en los escenarios originales del CI #42817747418**; la regresión adicional de paginación explícita y RuboCop final esperan nuevo CI. No están formalmente cerrados por existir bloqueos externos y pruebas manuales pendientes.
 - **Sin cambios** en productos/clientes, migraciones, base de datos ni ramas de integración. Mantener abiertos los hallazgos históricos de verificación de backfill/constraints, contraste por tema y accesibilidad visual/asistiva hasta obtener evidencias independientes.
+
+
+### Resultado final de las pruebas de CATEGORIES-031–033 (2026-11-10)
+
+**SHA de código verificado:** `8ee4b938f77d959bdcddc7a889391332823a7c5b`.
+
+- **Categories CI #42818336850**: **116 ejemplos en RSpec/Chrome, 113 aprobados y 3 fallos EXTERNOS**. Los tres fallos restantes son permisos granulares de **Clientes** (404 en show/update/destroy), en `spec/requests/admin/granular_catalog_permissions_spec.rb`. **0 fallos en pruebas de Categorías**, incluida la nueva regresión Chrome de paginación explícita página 2, filtrado desde página 3, selector responsive y broadcast sin permiso de índice.
+- **RuboCop focalizado: SUCCESS, cero ofensas**. Los 3 hallazgos **CATEGORIES-031, CATEGORIES-032 y CATEGORIES-033** quedan **VERIFICADOS AUTOMÁTICAMENTE** en los escenarios incluidos en este CI; la implementación no modifica Products, Clients, reglas de validación ni datos.
+- **CI global #42818336929** del mismo SHA: Rails I18n/YAML **SUCCESS**, Security scans **SUCCESS**, RuboCop global **FAILURE** por cuatro ofensas ajenas a Categorías (método `paginate` en `Admin::LanguagesListing`, dos métricas de `Translate#import_translation_entry`, formato en `spec/requests/admin/languages_spec.rb`). Migraciones y RSpec global quedaron cancelados por ejecuciones posteriores, así que no se infiere aprobación.
+- **Cierre formal todavía bloqueado:** revisar UI en 320/390/768/1440 con zoom 200 %, lector de pantalla/contraste por tema (incluido CATEGORIES-029) y probar migración legada/constraints con una copia histórica (CATEGORIES-001/009), además de resolver bloqueos externos de CI. **No fusionar** hasta completar las puertas del estándar modular.
