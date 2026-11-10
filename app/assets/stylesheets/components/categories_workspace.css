@@ -26,14 +26,6 @@
 .categories-filter-field input::placeholder {color:#64748b}
 .categories-filter-field .delta-select-native {display:none}
 .categories-status-field .relative,.categories-filter-field .relative {min-width:0}
-.categories-advanced {grid-column:1/-1;min-width:0;border-top:1px solid #f1f5f9;padding-top:.75rem}
-.categories-advanced summary {display:inline-flex;align-items:center;gap:.5rem;list-style:none;cursor:pointer;min-height:44px;padding:.4rem .5rem;border-radius:.625rem;color:var(--brand-on-white,#047857);font-size:.8125rem;font-weight:650}
-.categories-advanced summary::-webkit-details-marker {display:none}
-.categories-advanced summary:hover {background:#f0fdf4}
-.categories-advanced-caret {font-size:1.125rem;line-height:1;transition:transform .15s}
-.categories-advanced[open] .categories-advanced-caret {transform:rotate(180deg)}
-.categories-advanced-fields {display:grid;grid-template-columns:repeat(2,minmax(0,250px));gap:1rem;margin-top:.75rem;padding:1rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:.75rem}
-.categories-advanced-help {grid-column:1/-1;font-size:.75rem;color:#64748b;line-height:1.5}
 .categories-alert:empty {display:none}
 .categories-alert:not(:empty) {margin-bottom:1rem}
 .categories-filter-chips {display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:.625rem 0 1rem}
@@ -116,7 +108,6 @@
   .categories-filter-form {grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   .categories-search-field {grid-column:1/-1}
   .categories-apply-button {min-width:90px}
-  .categories-advanced-fields {grid-template-columns:minmax(0,1fr)}
   .categories-page-count {display:none}
   .categories-directory-heading {padding:1rem}
   .categories-mobile-card {padding:1rem}

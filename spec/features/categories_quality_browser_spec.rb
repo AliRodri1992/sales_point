@@ -34,14 +34,15 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     expect(organization.categories.find_by!(code: 'browser_category').description).to eq('Browser verified description')
   end
 
-  scenario 'synchronizes sort selectors after sorting by a table header' do
+  scenario 'retains sorting after a table header click without advanced filters' do
     create(:category, organization:, name: 'Groceries', code: 'groceries')
 
     visit admin_categories_path
     within('table.categories-table thead') { click_link 'Name' }
 
     expect(page).to have_css('turbo-frame#categories_list a.categories-filter-chip', text: 'Descending', wait: 10)
-    expect(page).to have_css("select#category_direction option[value='desc']:checked", visible: :all, wait: 10)
+    expect(page).to have_no_css('details.categories-advanced')
+    expect(page).to have_css('input#category_direction[type="hidden"][value="desc"]', visible: :all, wait: 10)
   end
 
   scenario 'searches live and renders a removable filter chip' do

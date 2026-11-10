@@ -264,3 +264,11 @@ En particular, los fallos propios de CATEGORIES-021 (sincronización de orden) y
 El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios; RuboCop global aún falla y los demás jobs estaban ejecutándose al registrar la evidencia. El contrato de calidad exige CI global completamente verde para el SHA final.
 
 **Dictamen actualizado:** regresiones automatizadas propias del rediseño VERIFICADAS en CI focalizado; problemas externos de Clientes y Productos abiertos; revisión manual de UI (320/390/768/1440, 200 % zoom, teclado, lector de pantalla y temas) y migración/backfill legados pendientes. Categorías NO CERRADO; no fusionar hasta superar las puertas de aceptación.
+
+## Simplificación de filtros — 2026-11-09 (CATEGORIES-025)
+
+- **CATEGORIES-025 · P3 · UX (confirmado):** el apartado denominado «Filtros avanzados» solo contenía **ordenar por** y **dirección**, sin criterios adicionales de filtrado; añadía complejidad visual injustificada.
+- **Adecuación:** eliminado el bloque desplegable y sus estilos exclusivos en `/admin/categories`. Se conservan la búsqueda automática y el filtro principal por estado; el ordenamiento continúa disponible mediante los encabezados de la tabla.
+- **Continuidad funcional:** se conservan `sort` y `direction` como entradas ocultas del formulario, sincronizadas al ordenar desde un encabezado con Turbo Frame; evita perder el orden al buscar o cambiar el estado. Las etiquetas removibles de filtros/orden y los parámetros de URL continúan funcionando.
+- **Regresiones:** request spec confirma ausencia del panel avanzado y presencia de campos ocultos; Chrome comprueba orden descendente y sincronización sin el panel.
+- **Estado:** IMPLEMENTADO, pendiente CI del nuevo SHA y revisión visual manual. No se modificaron reglas de negocio ni migraciones. Este ajuste no cierra las incidencias históricas ajenas de Clientes y Productos.

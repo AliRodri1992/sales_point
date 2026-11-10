@@ -23,6 +23,8 @@
     <%= form_with url: admin_categories_path, method: :get,
                   data: { turbo_frame: 'categories_list', controller: 'categories-search' },
                   class: 'categories-filter-form' do %>
+      <%= hidden_field_tag :sort, params[:sort].presence || 'name', id: 'category_sort' %>
+      <%= hidden_field_tag :direction, params[:direction].presence || 'asc', id: 'category_direction' %>
       <div class="categories-filter-field categories-search-field">
         <%= label_tag :category_search, t('admin.categories.index.search_label') %>
         <%= search_field_tag :search, params[:search], id: 'category_search',
@@ -47,40 +49,7 @@
         <%= delta_icon('funnel', class: 'size-4', aria: { hidden: true }) %>
         <%= t('admin.categories.index.filters.apply') %>
       </button>
-      <details class="categories-advanced">
-        <summary>
-          <%= delta_icon('funnel', class: 'size-4', aria: { hidden: true }) %>
-          <span><%= t('admin.categories.index.advanced_filters') %></span>
-          <span class="categories-advanced-caret" aria-hidden="true">⌄</span>
-        </summary>
-        <div class="categories-advanced-fields">
-          <div class="categories-filter-field">
-            <%= label_tag :category_sort, t('admin.categories.index.filters.sort_by') %>
-            <div class="relative" data-controller="delta-select">
-              <%= select_tag :sort,
-                    options_for_select([
-                      [t('admin.categories.index.columns.name'), 'name'],
-                      [t('admin.categories.index.columns.code'), 'code'],
-                      [t('admin.categories.index.columns.status'), 'status'],
-                      [t('admin.categories.index.filters.created_at'), 'created_at']
-                    ], params[:sort].presence || 'name'),
-                    id: 'category_sort' %>
-            </div>
-          </div>
-          <div class="categories-filter-field">
-            <%= label_tag :category_direction, t('admin.categories.index.filters.direction') %>
-            <div class="relative" data-controller="delta-select">
-              <%= select_tag :direction,
-                    options_for_select([
-                      [t('admin.categories.index.filters.ascending'), 'asc'],
-                      [t('admin.categories.index.filters.descending'), 'desc']
-                    ], params[:direction].presence || 'asc'),
-                    id: 'category_direction' %>
-            </div>
-          </div>
-          <p class="categories-advanced-help"><%= t('admin.categories.index.filters.sort_hint') %></p>
-        </div>
-      </details>
+
     <% end %>
   </section>
 

@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Keep filter controls aligned with results refreshed by Turbo Frames or Streams.
+// Preserve header sorting when the search or status form refreshes Turbo results.
 export default class extends Controller {
   static values = { delay: { type: Number, default: 400 } }
 
@@ -38,12 +38,8 @@ export default class extends Controller {
     }
 
     Object.entries(state).forEach(([id, value]) => {
-      const select = this.element.querySelector("#" + id)
-      if (!select || !value || select.value === value) return
-      if (![...select.options].some((option) => option.value === value)) return
-
-      select.value = value
-      select.dispatchEvent(new Event("change", { bubbles: true }))
+      const input = this.element.querySelector("#" + id)
+      if (input && value && input.value !== value) input.value = value
     })
   }
 

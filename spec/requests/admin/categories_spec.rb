@@ -357,7 +357,9 @@ RSpec.describe 'Admin::Categories', type: :request do
       expect(document.at_css('section.categories-filter-panel')).to be_present
       expect(document.at_css('input#category_search')).to be_present
       expect(document.at_css('select#category_status')).to be_present
-      expect(document.at_css('details.categories-advanced')).to be_present
+      expect(document.at_css('details.categories-advanced')).to be_nil
+      expect(document.at_css('input#category_sort[type="hidden"]')).to be_present
+      expect(document.at_css('input#category_direction[type="hidden"]')).to be_present
       expect(document.css('table.categories-table thead th').size).to eq(5)
       expect(document.css('table.categories-table tbody').text).to include('Food and pantry products')
     end
@@ -371,6 +373,16 @@ RSpec.describe 'Admin::Categories', type: :request do
       document = Nokogiri::HTML(response.body)
       expect(document.at_css('ul.categories-mobile-list')).to be_present
       expect(document.css('.categories-mobile-card').map(&:text).join).to include('Daily hygiene essentials')
+    end
+
+    it 'keeps the table-header sort available without advanced filters' do
+      get admin_categories_path(sort: 'name', direction: 'desc')
+
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('details.categories-advanced')).to be_nil
+      expect(document.at_css('input#category_sort')['value']).to eq('name')
+      expect(document.at_css('input#category_direction')['value']).to eq('desc')
+      expect(document.at_css('th a[href*="sort=name"]')).to be_present
     end
 
     it 'shows descending name order as a removable sorting chip' do
