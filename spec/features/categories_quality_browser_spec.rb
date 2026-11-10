@@ -42,7 +42,10 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
 
     expect(page).to have_css('turbo-frame#categories_list a.categories-filter-chip', text: 'Descending', wait: 10)
     expect(page).to have_no_css('details.categories-advanced')
-    expect(page).to have_css('input#category_direction[type="hidden"][value="desc"]', visible: :all, wait: 10)
+    expect(page).to have_field('category_direction', with: 'desc', visible: :all, wait: 10)
+
+    fill_in 'category_search', with: 'groceries'
+    expect(page).to have_css('turbo-frame#categories_list a.categories-filter-chip', text: 'Descending', wait: 10)
   end
 
   scenario 'searches live and renders a removable filter chip' do
