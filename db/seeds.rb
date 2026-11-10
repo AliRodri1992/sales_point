@@ -559,7 +559,7 @@ SeedConsole.track('Idiomas', Language) do
     # Respect manually retired locales; seeds must never create a second ID.
     next if Language.only_deleted.exists?(code: lang_attrs[:code])
 
-    Language.find_or_create_by(code: lang_attrs[:code]) do |language|
+    Language.find_or_create_by!(code: lang_attrs[:code]) do |language|
       language.assign_attributes(lang_attrs)
     end
   end
