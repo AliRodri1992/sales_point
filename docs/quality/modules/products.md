@@ -236,6 +236,19 @@ Se actualizaron las expectativas sin alterar el comportamiento correcto de produ
 
 **Estado:** CORREGIDO EN CÓDIGO; verificar en CI y navegador antes de marcar CERRADO. No hay modificaciones de datos locales.
 
+
+## Adecuaciones adicionales de la revisión completa — 2026-11-11
+
+| Hallazgo | Corrección adicional | Verificación |
+|---|---|---|
+| **PRODUCTS-002** | El retiro de un código secundario ahora asigna `deleted_at` dentro del guardado del producto; la asociación y las búsquedas solo incluyen códigos activos, el índice parcial y la validación liberan el valor retirado para reutilización. El código principal se mantiene protegido contra retiro anidado. | Requests añadidos para conservar historial, reutilizar el valor y bloquear el retiro del principal. **Pendiente de CI**. |
+| **PRODUCTS-027** | La regresión de navegador ahora selecciona las variantes/presentaciones mediante el dropdown visual Delta, no manipulando directamente el `select` nativo oculto. | **Products CI #43014643648 PASÓ** (RuboCop y dos flujos de navegador); incluye el cambio de prueba del dropdown real. |
+| **PRODUCTS-019** | La expectativa de opción comercial ajena se ajustó al contrato de seguridad existente: 404 JSON localizado, sin redirección HTML. | Request spec actualizado; pendiente de CI actual. |
+
+**CI actual tras el retiro lógico:** Products CI #43015071259 detectó una única infracción de formato RuboCop en `product_barcode.rb`; se corrigió en el commit siguiente. La suite focalizada estaba ejecutándose al actualizar este registro. El CI general previo #42821578997 registró 133 fallos globales; los fallos de Productos identificados fueron la selección de opción nueva y expectativas de sincronización URL en specs de navegador. El resto pertenece a otros módulos y no se atribuye a Productos.
+
+**No cerrar aún:** PRODUCTS-001–027 permanecen sujetos a los controles del mismo SHA final, en particular la prueba completa de códigos retirados, concurrencia SKU, cotizador, tracking con inventario existente, filtros y navegación real. Los hallazgos ya implementados no se marcan como verificados solo por tener código o specs añadidos.
+
 ## Dictamen
 
 **IMPLEMENTADO EN CÓDIGO; VERIFICACIÓN PENDIENTE; NO CERRADO.**

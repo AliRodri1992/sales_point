@@ -9,7 +9,7 @@ El catálogo se administra en `/admin/products`, con acciones de listado, búsqu
 - **Identificación:** código obligatorio (máximo 50 caracteres, único por organización ignorando mayúsculas/minúsculas), nombre obligatorio (máximo 100), SKU opcional (máximo 50), código de barras principal opcional (máximo 100, caracteres imprimibles Code 128), descripción (máximo 500).
 - **Precios:** precio base por unidad obligatorio y no negativo; costo de adquisición opcional. El precio base se registra inicialmente y sus cambios posteriores requieren motivo y, para usuarios no administradores, autorización.
 - **Clasificación y fiscal:** categoría, unidad SAT y impuesto SAT son referencias opcionales; se validan en el servidor.
-- **Opciones comerciales:** variantes (`ProductVariant`), presentaciones con conversiones a unidades base (`ProductPresentation`) y códigos de barras adicionales (`ProductBarcode`). Las variantes pueden distinguir talla, color y modelo. Los códigos adicionales persistidos se retiran mediante baja lógica; el principal se gestiona desde el campo del producto.
+- **Opciones comerciales:** variantes (`ProductVariant`), presentaciones con conversiones a unidades base (`ProductPresentation`) y códigos de barras adicionales (`ProductBarcode`). Las variantes pueden distinguir talla, color y modelo. Los códigos adicionales persistidos se retiran mediante baja lógica (`deleted_at`), conservando el registro histórico y liberando su valor para reutilización; el código principal no puede retirarse por esta vía y se gestiona desde el campo del producto.
 - **Disponibilidad:** estado activo/inactivo, destacado, posición, slug y `deleted_at` de baja lógica.
 - **Imágenes:** Active Storage y Uppy local, exclusivamente JPEG/PNG/WebP hasta 5 MB con verificación en servidor, firma por usuario y organización y vencimiento temporal.
 - **Rastreo de existencias:** `tracking_mode` con valores `none`, `lot` y `serial`. No se permite cambiar el modo una vez que existan existencias o historial de lotes/movimientos.
@@ -34,7 +34,7 @@ El formulario ofrece búsqueda automática (debounce), estado siempre visible y 
 
 `ProductPolicy` y `accessible_products` impiden ver o modificar productos de otras organizaciones. Los adjuntos firmados incluyen organización y usuario. `acts_as_paranoid` preserva registros retirados; el historial operativo impide retiradas incompatibles. La base de datos incorpora índices únicos parciales por organización para códigos de productos, SKU y códigos de barras sin distinguir mayúsculas/minúsculas.
 
-Para evitar conflictos entre SKU base y SKU de variante también existen validaciones de modelo en ambos sentidos. **Pendiente:** certificar mediante pruebas concurrentes su garantía transaccional conjunta entre tablas.
+Para evitar conflictos entre SKU base y SKU de variante, ambos modelos reservan el identificador normalizado en `product_sku_claims`, con índice único por organización. La reserva se sincroniza dentro de la transacción de guardado y existe una regresión concurrente entre tablas en `spec/models/product_sku_claim_spec.rb`.
 
 ## Pruebas y seguimiento
 
