@@ -159,7 +159,7 @@ RSpec.describe 'Commercial catalog administration', type: :request do
     } }
 
     expect(response).to have_http_status(:redirect)
-    expect(ProductBarcode.with_deleted.find(secondary.id).deleted_at).to be_present
+    expect(ProductBarcode.find(secondary.id).deleted_at).to be_present
     expect(product.reload.product_barcodes).not_to include(secondary)
     replacement = create(:product, organization:).product_barcodes.create!(
       organization:, value: 'SECONDARY-RETIRED', symbology: 'code128'
