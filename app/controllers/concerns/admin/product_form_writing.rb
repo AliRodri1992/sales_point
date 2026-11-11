@@ -9,7 +9,7 @@ module Admin
     def save_product
       attributes = product_params
       unless valid_image_assignment?(attributes)
-        @product.assign_attributes(attributes.except(:image))
+        @product.assign_attributes(attributes.except(:image, :retire_barcode_ids))
         return false
       end
       normalize_uploaded_image(attributes)
