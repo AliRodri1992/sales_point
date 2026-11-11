@@ -79,3 +79,13 @@ Consulta primero el [estándar de calidad modular](../module-quality-standard.md
 | Sucursales | [Implementado, pendiente de verificación](branches.md) |
 | Restantes | Inventariados, no verificados |
 | Cierres técnicos certificados por este trabajo | 0 |
+
+## Última reauditoría registrada — 2026-11-11
+
+| Módulo | Resultado | Seguimiento |
+|---|---|---|
+| Categorías | Reauditoría AI Dev Suite sobre `feature/fixes` SHA `c060555d`. CATEGORIES-031–033 verificados automáticamente; CATEGORIES-034–037 abiertos. **No cerrado.** | [Expediente de Categorías](categories.md) |
+| Integración Promociones | PROMOTIONS-001: referencias a categorías globales legadas/retiradas no rechazadas en `PromotionCondition`. | [Expediente de Promociones](promotions.md) |
+| Integración Productos | PRODUCTS-028: falta bloqueo común para impedir asociación concurrente a categoría retirada. | [Expediente de Productos](products.md) |
+
+Esta actualización no certifica el cierre de ningún módulo vecino; sus hallazgos se limitan a contratos observados desde Categorías.

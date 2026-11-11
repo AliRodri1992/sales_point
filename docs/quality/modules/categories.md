@@ -4,11 +4,11 @@
 - **Rutas y acciones propias:** `index`, `show`, `new`, `create`, `edit`, `update`, `destroy`; respuestas HTML y Turbo Stream.
 - **Fuera de alcance:** interior de Productos, Promociones, Inventario, roles globales y componentes compartidos; solo se auditan sus contratos visibles desde Categorías.
 - **Contratos externos:** Productos y condiciones de Promociones referencian `category_id`; Noticed y Turbo notifican cambios; Pundit autoriza acciones; preferencias de paginación.
-- **SHA auditado:** `0481ca54046b633aa5b84667455fd134ba3139a4` (rama `feature/fixes`, 2026-11-09).
+- **SHA auditado inicialmente:** `0481ca54046b633aa5b84667455fd134ba3139a4` (2026-11-09). **Última reauditoría:** `c060555d780639140790119643085f010a1fa9fc` (2026-11-11, `feature/fixes`).
 - **SHA de aceptación:** PENDIENTE. **Responsable de las correcciones y revisor independiente:** POR ASIGNAR.
 - **Estado inicial de auditoría:** **AUDITADO POR INSPECCIÓN ESTÁTICA; NO VERIFICADO EN EJECUCIÓN; NO CERRADO**. **Estado actual:** implementado y verificado en CI focalizado; cierre global aún pendiente.
 - **Método:** AI Dev Suite — `impeccable-audit` + `ui-ux-pro-max` + `ponytail-engineering`; estándar `docs/quality/module-quality-standard.md`.
-- **Última revisión:** 2026-11-09. Se revisó código disponible en GitHub y estados de CI del SHA auditado. Esa fue la revisión inicial; las adecuaciones posteriores sí modificaron código y pruebas, como se documenta al final.
+- **Última revisión:** 2026-11-11. Revisión de código GitHub, historial comparado y GitHub Actions sobre `c060555d780639140790119643085f010a1fa9fc`. AI Dev Suite aplicado como metodología (`impeccable-audit`, `ui-ux-pro-max`, `ponytail-engineering`); sin CLI de terceros ni acceso local al navegador.
 
 ## Mapa de alcance y cobertura
 
@@ -416,3 +416,43 @@ El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios;
 - **RuboCop focalizado: SUCCESS, cero ofensas**. Los 3 hallazgos **CATEGORIES-031, CATEGORIES-032 y CATEGORIES-033** quedan **VERIFICADOS AUTOMÁTICAMENTE** en los escenarios incluidos en este CI; la implementación no modifica Products, Clients, reglas de validación ni datos.
 - **CI global #42818336929** del mismo SHA: Rails I18n/YAML **SUCCESS**, Security scans **SUCCESS**, RuboCop global **FAILURE** por cuatro ofensas ajenas a Categorías (método `paginate` en `Admin::LanguagesListing`, dos métricas de `Translate#import_translation_entry`, formato en `spec/requests/admin/languages_spec.rb`). Migraciones y RSpec global quedaron cancelados por ejecuciones posteriores, así que no se infiere aprobación.
 - **Cierre formal todavía bloqueado:** revisar UI en 320/390/768/1440 con zoom 200 %, lector de pantalla/contraste por tema (incluido CATEGORIES-029) y probar migración legada/constraints con una copia histórica (CATEGORIES-001/009), además de resolver bloqueos externos de CI. **No fusionar** hasta completar las puertas del estándar modular.
+
+## Reauditoría AI Dev Suite — 2026-11-11
+
+**SHA revisado:** `c060555d780639140790119643085f010a1fa9fc` en `feature/fixes`. El compare desde el SHA probado por Categories CI (`609cf9c0a2b46845928caac965a31139aee067ea`) muestra ocho commits posteriores y **ningún archivo de Categorías modificado**. Por ello, la última prueba focalizada sigue aplicando al código del módulo en este SHA.
+
+### Revalidación de hallazgos previos
+
+| Hallazgo | Resultado de esta pasada |
+|---|---|
+| CATEGORIES-025–030 | Las adecuaciones siguen presentes. Orden estable, filtros, modal de 680 px, tokens de marca y `aria-sort` para Nombre/Código permanecen en el código. La medición manual de contraste y tecnologías asistivas sigue pendiente. |
+| CATEGORIES-031 | Selector compacto de ordenación responsive: verificado en Chrome por la suite focalizada. |
+| CATEGORIES-032 | Filtro desde página 3 y navegación explícita a página 2: pruebas Chrome pasadas en el SHA `8ee4b938`. **No cubren el historial atrás/adelante**; nuevo hallazgo 035. |
+| CATEGORIES-033 | Broadcast tras altas/ediciones/bajas sin permiso `index?`: request spec pasado en la suite focalizada. |
+
+### Nuevos hallazgos
+
+| ID | Prioridad / clase | Evidencia y causa raíz | Corrección y prueba requerida | Estado |
+|---|---|---|---|---|
+| **CATEGORIES-034** | **P2 · INTEGRACIÓN (Promociones)** | `app/models/promotion_condition.rb:25-28`, `same_organization`, solo rechaza una categoría si su `organization_id` está presente y es distinto. La migración `20261110043000_scope_categories_to_organizations.rb:75-78` deja las categorías globales legadas con `organization_id IS NULL` y retiradas; además, el validador no comprueba `deleted_at`. `Admin::PromotionsController#record_params` permite `category_id`. Por tanto, una condición de promoción puede enlazar una categoría global legada o una categoría retirada de la misma organización. Productos sí comprueba organización, estado y baja lógica. | En Promociones, exigir organización coincidente y categoría no retirada en la validación de dominio; probar referencia global `organization_id: nil`, categoría retirada de la misma organización y categoría ajena. Seguimiento propietario: `PROMOTIONS-001`. | **ABIERTO · confirmado por código; regresión no ejecutada** |
+| **CATEGORIES-035** | **P2 · PROPIO / navegación** | `app/javascript/controllers/categories_search_controller.js:107-114` sincroniza el URL con `history.replaceState` para toda actualización, incluidas páginas explícitas. `app/helpers/pagination_helper.rb:79` crea enlaces Turbo Frame sin `data-turbo-action="advance"`. La URL cambia, pero el historial no agrega una entrada para la página 2; Atrás no restaura la página anterior. | Usar navegación `advance`/historial para paginación explícita y conservar `replaceState` para búsqueda incremental. Prueba Chrome: página 1 → 2 → Atrás → 1 → Adelante → 2, incluyendo filtros activos. | **ABIERTO · confirmado por código; reproducción navegador pendiente** |
+| **CATEGORIES-036** | **P2 · PROPIO / accesibilidad** | `index.html.erb:27-35` ofrece orden por `status`, `created_at` y `updated_at`; sin embargo, `_list.html.erb:64-67` solo asigna `aria-sort` a Nombre/Código y el encabezado Estado no anuncia el orden cuando `sort=status`. Si se cambia de móvil a escritorio con ese orden, la tabla queda ordenada por Estado sin indicar la columna activa a lectores de pantalla. | Anunciar `aria-sort` en Estado cuando corresponda y definir una representación accesible para órdenes de fecha, o retirar opciones que no tengan columna representable. Probar cada valor permitido con ARIA y teclado. | **ABIERTO · confirmado por código** |
+| **CATEGORIES-037** | **P2 · INTEGRACIÓN / concurrencia (Productos y Promociones)** | `app/controllers/concerns/admin/category_mutations.rb:23-29` bloquea la fila de Categoría y comprueba `in_use?` antes de marcarla retirada. El contrato de escritura de Productos (`app/models/product.rb:113-119`) consulta estado/baja de la categoría sin adquirir el mismo bloqueo; `PromotionCondition#same_organization` tampoco bloquea. Una escritura concurrente puede validar una categoría activa antes de la baja y persistir la referencia después: la baja lógica conserva la fila y no hace fallar la FK. | Acordar un bloqueo transaccional compartido en las escrituras que asignan `category_id` y en la baja; añadir pruebas concurrentes que garanticen que nunca queda un producto/condición activa apuntando a una categoría retirada. Seguimiento Productos: `PRODUCTS-028`. | **RIESGO CONFIRMADO POR SECUENCIA DE CÓDIGO; reproducción concurrente pendiente** |
+
+### Hallazgos previos que siguen abiertos
+
+- **CATEGORIES-001 / CATEGORIES-009 — constraints y datos históricos:** `20261110042000_harden_category_data_constraints.rb` agrega tres restricciones con `validate: false`; el esquema aún las declara `NOT VALID` y no se encontró migración posterior que ejecute `validate_check_constraint`. La comprobación de filas legadas activas no demuestra que todas las filas históricas, incluidas las retiradas, estén validadas. Se requiere copia representativa, backfill comprobado y plan de validación/limpieza.
+- **CATEGORIES-010 — accesibilidad de modal y errores:** el controlador implementa foco inicial, trampa de Tab y restauración, pero faltan pruebas reales de teclado, Escape, lector de pantalla y foco después de respuestas 422.
+- **CATEGORIES-029 — tema/contraste:** tokens y estados semánticos están presentes; falta medir contraste real en cada tema y modo.
+- **CATEGORIES-026 — responsive:** pruebas automáticas cubren 390, 768 y 1280 px; faltan 320/1440 px, zoom 200 % y revisión visual real.
+
+### Ejecuciones y alcance de evidencia
+
+- **Categories CI #42819051702**, SHA `609cf9c0a2b46845928caac965a31139aee067ea`: RuboCop focalizado **SUCCESS**; RSpec/Chrome **116 ejemplos, 3 fallos**. Los tres son de `Granular catalog authorization customers` (404 en show/update/destroy); **cero fallos en specs propios de Categorías**, incluidas las pruebas de 031–033. [Ejecución focalizada](https://github.com/AliRodri1992/sales_point/actions/runs/42819051702).
+- El compare de GitHub confirma que los ocho commits desde ese SHA hasta el actual no modificaron archivos de Categorías.
+- **CI global #42821578997**, SHA actual: Security, migraciones/semillas limpias, I18n/YAML y RuboCop **SUCCESS**; RSpec **5,074 ejemplos / 133 fallos globales**. Entre los fallos externos está `spec/requests/admin/catalog_lifecycle_spec.rb:136`, que intenta asignar una categoría ya inactiva a un producto nuevo y choca con la validación de Productos. No es un fallo de la suite de Categorías; requiere alinear la fixture/expectativa del contrato de Productos. [Ejecución global](https://github.com/AliRodri1992/sales_point/actions/runs/42821578997).
+- **Limitaciones:** no se ejecutó el CLI original de Impeccable ni Rails/Docker local; no hubo sesión visual autenticada. Contraste, lectores de pantalla, zoom y reproducción de concurrencia quedan explícitamente sin ejecutar.
+
+### Dictamen
+
+**REAUDITORÍA COMPLETADA · CATEGORIES-031–033 VERIFICADOS AUTOMÁTICAMENTE · CATEGORIES-034–037 ABIERTOS · CATEGORIES-001/009/010/026/029 PENDIENTES · MÓDULO NO CERRADO.** Esta pasada es documental: no modifica lógica, migraciones ni datos. Mantener todo en `feature/fixes`; no fusionar ramas.

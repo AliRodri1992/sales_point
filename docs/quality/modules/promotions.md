@@ -36,7 +36,7 @@ No se han trasladado ni inventado hallazgos en esta apertura. **Esto no signific
 
 | ID | Prioridad | Clase | Evidencia/causa raíz | Prueba | Estado |
 |---|---|---|---|---|---|
-| — | — | — | Registro inicial; pendiente de auditoría | NO EJECUTADA | PENDIENTE |
+| **PROMOTIONS-001** | **P2** | **INTEGRACIÓN detectada desde auditoría de Categorías** | `PromotionCondition#same_organization` permite `category.organization_id == nil` y no rechaza `category.deleted_at.present?`; la migración de Categorías conserva filas globales retiradas con `organization_id NULL`. `Admin::PromotionsController#record_params` acepta `category_id`, por lo que un POST manipulado puede enlazar una categoría global legada o retirada. | Requests/model spec: categoría global legada, retirada de la misma organización y ajena; deben rechazarse sin guardar la condición. | **ABIERTO · no es auditoría integral de Promociones** |
 
 ## Verificaciones y dictamen
 
@@ -49,3 +49,7 @@ No se han trasladado ni inventado hallazgos en esta apertura. **Esto no signific
 - **Dictamen:** NO CERRADO. Al auditar, agregar comandos, fecha, resultados reales y enlaces de ejecución.
 
 Política: [Estándar modular](../module-quality-standard.md) · [Plantilla ampliada](../module-audit-template.md).
+
+### Seguimiento de integración — reauditoría de Categorías (2026-11-11)
+
+Este registro incorpora **PROMOTIONS-001** como defecto de frontera observado desde Categorías; no representa una auditoría completa de Promociones. La corrección corresponde al dominio `PromotionCondition`: requerir una categoría no retirada y de la misma organización de la promoción. No modificar ni seleccionar categorías legadas globales con `organization_id NULL`.

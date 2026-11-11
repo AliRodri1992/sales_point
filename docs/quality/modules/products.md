@@ -258,3 +258,11 @@ Hay **2 hallazgos P1 propios basados en el código**, **1 riesgo P1 de integraci
 Puertas restantes: corregir P1 y P2 o aceptar riesgos según el estándar, añadir regresiones, ejecutar RSpec/RuboCop/security/I18n y revisión de navegador real, comprobar **GitHub Actions verde en el SHA de aceptación** y obtener revisión independiente. No fusionar ramas en estado rojo.
 
 Política: [Estándar modular](../module-quality-standard.md) · [Plantilla](../module-audit-template.md).
+
+### Riesgo de integración detectado desde Categorías — PRODUCTS-028 (2026-11-11)
+
+| ID | Prioridad / clase | Evidencia y causa raíz | Corrección / prueba | Estado |
+|---|---|---|---|---|
+| **PRODUCTS-028** | **P2 · INTEGRACIÓN con Categorías** | La baja de Categoría usa `with_lock` y verifica referencias, pero `Product#valid_catalog_reference?` (líneas 113–119) solo consulta `organization_id`, `active?` y `deleted_at`; no bloquea la fila de Categoría. Una creación/actualización concurrente puede validar antes de la baja y persistir `category_id` después de que Categorías marque la fila como retirada. | Usar el mismo bloqueo transaccional al asignar/modificar `category_id` y en la baja lógica; spec concurrente con dos transacciones y aserción de que no se crea referencia activa a categoría retirada. Coordinar con Categorías y Promociones. | **ABIERTO · riesgo confirmado por secuencia de código; concurrencia no reproducida** |
+
+Detectado por la reauditoría de Categorías del 2026-11-11. Este apunte cubre únicamente el contrato de asignación de categoría; no amplía el alcance a una nueva auditoría integral de Productos.
