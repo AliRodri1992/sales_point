@@ -114,13 +114,14 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     within('nav.products-filter-chips') do
       find('a.products-filter-chip', text: 'Beverages').click
     end
+    expect(page).to have_current_path(/admin\/products(?:\?|$)/)
     expect(page.current_url).not_to include('category_id=')
     expect(page).to have_css('#admin_products_list', text: 'Catalog printer paper')
 
     fill_in 'products_search', with: 'orange tea'
     expect(page).to have_css('#admin_products_list', text: 'Catalog orange tea')
     expect(page).to have_no_css('#admin_products_list', text: 'Catalog printer paper')
-    expect(page.current_url).to include('search=orange')
+    expect(page).to have_current_path(/search=orange/)
     expect(page.evaluate_script('document.activeElement.id')).to eq('products_search')
   end
 
@@ -153,7 +154,8 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
 
     fill_in 'products_search', with: 'Insulated'
     expect(page).to have_css('#admin_products_list', text: 'Insulated cup')
-    expect(page.current_url).to include('search=Insulated', 'sort=products.price', 'per_page=5')
+    expect(page).to have_current_path(/search=Insulated/)
+    expect(page.current_url).to include('sort=products.price', 'per_page=5')
     expect(page.evaluate_script('document.activeElement.id')).to eq('products_search')
   end
 

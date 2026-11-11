@@ -114,7 +114,8 @@ RSpec.describe 'Commercial catalog administration', type: :request do
     expect(response).to have_http_status(:unprocessable_content)
     foreign = create(:product).product_presentations.create!(name: 'Other', units: 12)
     get quote_admin_product_path(product), params: { presentation_id: foreign.id }
-    expect(response).to have_http_status(:redirect)
+    expect(response).to have_http_status(:not_found)
+    expect(response.parsed_body).to include('error' => I18n.t('admin.catalog_design.invalid_quote'))
   end
 
   it 'does not permit a nested row to move from another product or tenant' do

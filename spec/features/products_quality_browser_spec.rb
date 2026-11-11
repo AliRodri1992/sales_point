@@ -41,11 +41,16 @@ RSpec.describe 'Products module browser flows', type: :feature, js: true do
     within('#product-barcodes [data-nested-catalog-row]') do
       find('input[name$="[value]"]').set('LARGE-BOX-42')
       variant_field = find('select[name$="[product_variant_id]"]', visible: :all)
-      variant_field.find('option', text: 'Large', visible: :all).select_option
+      variant_select = variant_field.find(:xpath, '..')
+      expect(variant_select).to have_css('button[aria-haspopup="listbox"]')
+      variant_select.find('button[aria-haspopup="listbox"]').click
+      variant_select.find('[role="option"]', text: 'Large', exact_text: true).click
       selected_immediately[:variant] = variant_field.value
 
       presentation_field = find('select[name$="[product_presentation_id]"]', visible: :all)
-      presentation_field.find('option', text: 'Box', visible: :all).select_option
+      presentation_select = presentation_field.find(:xpath, '..')
+      presentation_select.find('button[aria-haspopup="listbox"]').click
+      presentation_select.find('[role="option"]', text: 'Box', exact_text: true).click
       selected_immediately[:presentation] = presentation_field.value
       selected_immediately[:variant_after_presentation] = variant_field.value
     end
