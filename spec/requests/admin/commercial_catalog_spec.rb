@@ -147,6 +147,39 @@ RSpec.describe 'Commercial catalog administration', type: :request do
     expect(response.body).to include('12 · 3 / 3')
   end
 
+  it 'retires secondary barcodes logically and allows their values to be reused' do
+    product.update!(barcode: 'PRIMARY-RETAINED')
+    secondary = product.product_barcodes.create!(organization:, value: 'SECONDARY-RETIRED',
+                                                  symbology: 'code128', primary: false)
+
+    patch admin_product_path(product), params: { product: {
+      product_barcodes_attributes: {
+        '0' => { id: secondary.id, _destroy: '1' }
+      }
+    } }
+
+    expect(response).to have_http_status(:redirect)
+    expect(ProductBarcode.with_deleted.find(secondary.id).deleted_at).to be_present
+    expect(product.reload.product_barcodes).not_to include(secondary)
+    replacement = create(:product, organization:).product_barcodes.create!(
+      organization:, value: 'SECONDARY-RETIRED', symbology: 'code128'
+    )
+    expect(replacement).to be_persisted
+  end
+
+  it 'does not allow the primary barcode to be retired through nested attributes' do
+    product.update!(barcode: 'PRIMARY-PROTECTED')
+    primary = product.product_barcodes.find_by!(primary: true)
+
+    patch admin_product_path(product), params: { product: {
+      product_barcodes_attributes: { '0' => { id: primary.id, _destroy: '1' } }
+    } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(primary.reload).to be_primary
+    expect(primary.deleted_at).to be_nil
+  end
+
   it 'keeps the primary scanner code synchronized when nested parameters attempt to change it' do
     product.update!(barcode: 'PRIMARY-CODE')
     code = product.product_barcodes.find_by!(primary: true)

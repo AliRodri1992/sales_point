@@ -61,6 +61,23 @@ module Admin
       end
     end
 
+    def normalize_retired_barcodes(attributes)
+      nested = attributes[:product_barcodes_attributes]
+      return unless nested
+
+      rows = nested.respond_to?(:each_pair) ? nested.values : nested
+      rows.each do |row|
+        next unless ActiveModel::Type::Boolean.new.cast(row[:_destroy]) && row[:id].present?
+
+        barcode = @product.product_barcodes.find_by(id: row[:id])
+        next unless barcode && !barcode.primary?
+
+        barcode.deleted_at = Time.current
+        row.except!(:_destroy, :value, :symbology, :product_variant_id, :product_presentation_id,
+                    :product_variant_client_key, :product_presentation_client_key)
+      end
+    end
+
     def product_params
       params.expect(product: [
                       :code, :name, :description, :price, :cost, :barcode, :sku, :category_id,
@@ -74,6 +91,7 @@ module Admin
                     ]).tap do |attributes|
         normalize_image_parameters(attributes)
         normalize_temporary_option_ids(attributes)
+        normalize_retired_barcodes(attributes)
       end
     end
   end

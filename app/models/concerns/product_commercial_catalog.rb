@@ -6,7 +6,7 @@ module ProductCommercialCatalog
   included do
     has_many :product_variants, inverse_of: :product, dependent: :restrict_with_error
     has_many :product_presentations, inverse_of: :product, dependent: :restrict_with_error
-    has_many :product_barcodes, inverse_of: :product, dependent: :restrict_with_error
+    has_many :product_barcodes, -> { where(deleted_at: nil) }, inverse_of: :product, dependent: :restrict_with_error
     has_many :price_list_items, dependent: :restrict_with_error
     has_many :price_change_events, dependent: :restrict_with_error
     accepts_nested_attributes_for :product_variants, :product_presentations,
@@ -72,7 +72,7 @@ module ProductCommercialCatalog
 
   def barcode_available_in_organization
     return if barcode.blank?
-    return unless ProductBarcode.where(organization_id:).where('lower(value) = lower(?)', barcode)
+    return unless ProductBarcode.where(organization_id:, deleted_at: nil).where('lower(value) = lower(?)', barcode)
                                 .where.not(product_id: id).exists?
 
     errors.add(:barcode, :taken)
