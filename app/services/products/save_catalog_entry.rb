@@ -64,7 +64,7 @@ module Products
     def save_catalog_changes!
       @product.save!
       retire_secondary_barcodes!
-      true
+      @product
     end
 
     def retire_secondary_barcodes!
