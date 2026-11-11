@@ -2,6 +2,10 @@
 
 module Admin
   module ProductFormWriting
+    RETIRED_BARCODE_ATTRIBUTES = %i[
+      _destroy value symbology product_variant_id product_presentation_id
+      product_variant_client_key product_presentation_client_key
+    ].freeze
     TEMPORARY_ASSOCIATIONS = %i[product_variant product_presentation].freeze
 
     private
@@ -73,8 +77,7 @@ module Admin
         next unless barcode && !barcode.primary?
 
         barcode.deleted_at = Time.current
-        %i[_destroy value symbology product_variant_id product_presentation_id
-           product_variant_client_key product_presentation_client_key].each { |key| row.delete(key) }
+        RETIRED_BARCODE_ATTRIBUTES.each { |key| row.delete(key) }
       end
     end
 
