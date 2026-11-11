@@ -7,6 +7,7 @@ module Products
     def initialize(product:, actor:, attributes:)
       @product = product
       @actor = actor
+      @retire_barcode_ids = attributes.delete(:retire_barcode_ids) || []
       @attributes = attributes
       @pending = false
     end
@@ -47,7 +48,7 @@ module Products
     def update_existing?
       previous = @product.price
       @product.assign_attributes(@attributes)
-      return @product.save unless @product.will_save_change_to_price? && @product.price != previous
+      return persist_catalog_changes unless @product.will_save_change_to_price? && @product.price != previous
       return missing_reason? if @product.price_change_reason.blank?
       return false unless @product.valid?
 
@@ -55,8 +56,22 @@ module Products
       @pending = !@actor.admin?
       @product.price = previous if @pending
       @product.save!
+      retire_secondary_barcodes!
       record_event(previous, requested, @product.price_change_reason, approved: !@pending)
       true
+    end
+
+    def persist_catalog_changes
+      @product.save!
+      retire_secondary_barcodes!
+      true
+    end
+
+    def retire_secondary_barcodes!
+      return if @retire_barcode_ids.blank?
+
+      @product.product_barcodes.where(id: @retire_barcode_ids, primary: false)
+              .update_all(deleted_at: Time.current, updated_at: Time.current)
     end
 
     def missing_reason?

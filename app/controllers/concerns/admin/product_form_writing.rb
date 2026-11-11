@@ -2,10 +2,6 @@
 
 module Admin
   module ProductFormWriting
-    RETIRED_BARCODE_ATTRIBUTES = %i[
-      _destroy value symbology product_variant_id product_presentation_id
-      product_variant_client_key product_presentation_client_key
-    ].freeze
     TEMPORARY_ASSOCIATIONS = %i[product_variant product_presentation].freeze
 
     private
@@ -69,18 +65,17 @@ module Admin
       nested = attributes[:product_barcodes_attributes]
       return unless nested
 
-      rows = nested.respond_to?(:each_pair) ? nested.values : nested
-      rows.each { |row| retire_secondary_barcode(row) }
-    end
+      retired_ids = []
+      nested.each_pair do |index, row|
+        next unless ActiveModel::Type::Boolean.new.cast(row[:_destroy]) && row[:id].present?
 
-    def retire_secondary_barcode(row)
-      return unless ActiveModel::Type::Boolean.new.cast(row[:_destroy]) && row[:id].present?
+        barcode = @product.product_barcodes.find_by(id: row[:id])
+        next if barcode.nil? || barcode.primary?
 
-      barcode = @product.product_barcodes.find_by(id: row[:id])
-      return if barcode.nil? || barcode.primary?
-
-      barcode.deleted_at = Time.current
-      RETIRED_BARCODE_ATTRIBUTES.each { |key| row.delete(key) }
+        retired_ids << barcode.id
+        nested.delete(index)
+      end
+      attributes[:retire_barcode_ids] = retired_ids if retired_ids.any?
     end
 
     def product_params
