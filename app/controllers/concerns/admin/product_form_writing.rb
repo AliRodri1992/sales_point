@@ -73,8 +73,8 @@ module Admin
         next unless barcode && !barcode.primary?
 
         barcode.deleted_at = Time.current
-        row.except!(:_destroy, :value, :symbology, :product_variant_id, :product_presentation_id,
-                    :product_variant_client_key, :product_presentation_client_key)
+        %i[_destroy value symbology product_variant_id product_presentation_id
+           product_variant_client_key product_presentation_client_key].each { |key| row.delete(key) }
       end
     end
 
