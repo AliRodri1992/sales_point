@@ -48,7 +48,7 @@ module Products
     def update_existing?
       previous = @product.price
       @product.assign_attributes(@attributes)
-      return persist_catalog_changes! unless @product.will_save_change_to_price? && @product.price != previous
+      return save_catalog_changes!! unless @product.will_save_change_to_price? && @product.price != previous
       return missing_reason? if @product.price_change_reason.blank?
       return false unless @product.valid?
 
@@ -61,7 +61,7 @@ module Products
       true
     end
 
-    def persist_catalog_changes
+    def save_catalog_changes!
       @product.save!
       retire_secondary_barcodes!
       true
