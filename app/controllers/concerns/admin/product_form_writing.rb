@@ -65,17 +65,26 @@ module Admin
       nested = attributes[:product_barcodes_attributes]
       return unless nested
 
+      entries = nested.respond_to?(:each_pair) ? nested.to_a : nested.each_with_index.map { |row, index| [index, row] }
       retired_ids = []
-      nested.each_pair do |index, row|
-        next unless ActiveModel::Type::Boolean.new.cast(row[:_destroy]) && row[:id].present?
-
-        barcode = @product.product_barcodes.find_by(id: row[:id])
-        next if barcode.nil? || barcode.primary?
-
-        retired_ids << barcode.id
-        nested.delete(index)
+      retained = {}
+      entries.each do |index, row|
+        barcode = barcode_marked_for_retirement(row)
+        if barcode
+          retired_ids << barcode.id
+        else
+          retained[index.to_s] = row
+        end
       end
+      attributes[:product_barcodes_attributes] = retained
       attributes[:retire_barcode_ids] = retired_ids if retired_ids.any?
+    end
+
+    def barcode_marked_for_retirement(row)
+      return unless ActiveModel::Type::Boolean.new.cast(row[:_destroy]) && row[:id].present?
+
+      barcode = @product.product_barcodes.find_by(id: row[:id])
+      barcode unless barcode.nil? || barcode.primary?
     end
 
     def product_params
