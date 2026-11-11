@@ -48,7 +48,7 @@ module Products
     def update_existing?
       previous = @product.price
       @product.assign_attributes(@attributes)
-      return persist_catalog_changes unless @product.will_save_change_to_price? && @product.price != previous
+      return persist_catalog_changes! unless @product.will_save_change_to_price? && @product.price != previous
       return missing_reason? if @product.price_change_reason.blank?
       return false unless @product.valid?
 
@@ -71,7 +71,7 @@ module Products
       return if @retire_barcode_ids.blank?
 
       @product.product_barcodes.where(id: @retire_barcode_ids, primary: false)
-              .update_all(deleted_at: Time.current, updated_at: Time.current)
+              .find_each { |barcode| barcode.update!(deleted_at: Time.current) }
     end
 
     def missing_reason?
