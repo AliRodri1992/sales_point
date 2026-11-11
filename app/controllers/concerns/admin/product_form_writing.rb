@@ -70,15 +70,17 @@ module Admin
       return unless nested
 
       rows = nested.respond_to?(:each_pair) ? nested.values : nested
-      rows.each do |row|
-        next unless ActiveModel::Type::Boolean.new.cast(row[:_destroy]) && row[:id].present?
+      rows.each { |row| retire_secondary_barcode(row) }
+    end
 
-        barcode = @product.product_barcodes.find_by(id: row[:id])
-        next unless barcode && !barcode.primary?
+    def retire_secondary_barcode(row)
+      return unless ActiveModel::Type::Boolean.new.cast(row[:_destroy]) && row[:id].present?
 
-        barcode.deleted_at = Time.current
-        RETIRED_BARCODE_ATTRIBUTES.each { |key| row.delete(key) }
-      end
+      barcode = @product.product_barcodes.find_by(id: row[:id])
+      return if barcode.nil? || barcode.primary?
+
+      barcode.deleted_at = Time.current
+      RETIRED_BARCODE_ATTRIBUTES.each { |key| row.delete(key) }
     end
 
     def product_params

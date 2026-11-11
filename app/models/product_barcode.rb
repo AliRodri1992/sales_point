@@ -11,7 +11,7 @@ class ProductBarcode < ApplicationRecord
   normalizes :value, with: ->(value) { value.strip }
   validates :value, presence: true, length: { maximum: 100 },
                     uniqueness: { scope: :organization_id, case_sensitive: false,
-                                   conditions: -> { where(deleted_at: nil) }
+                                   conditions: -> { where(deleted_at: nil) } }
   validates :symbology, inclusion: { in: %w[code128 ean13 ean8 upca qr] }
   before_validation :inherit_organization
   validate :same_product
