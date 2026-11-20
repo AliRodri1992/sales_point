@@ -6,6 +6,9 @@ on:
     branches:
       - feature/fixes
     paths:
+      - 'Gemfile.lock'
+      - 'spec/requests/admin/granular_catalog_permissions_spec.rb'
+      - 'spec/requests/admin/catalog_pagination_spec.rb'
       - '.github/workflows/categories-ci.yml'
       - 'app/controllers/admin/categories_controller.rb'
       - 'app/controllers/concerns/admin/category_mutations.rb'

@@ -31,7 +31,7 @@ RSpec.describe 'Granular catalog authorization', type: :request do
   { language: 'languages', product: 'products', client: 'customers', category: 'categories' }.each do |model, prefix|
     context prefix do
       let(:record) do
-        attributes = %i[product client].include?(model) ? { organization: } : {}
+        attributes = model == :product || model == :client ? { organization: } : {}
         create(model, **attributes)
       end
       let(:collection_path) { public_send("admin_#{model.to_s.pluralize}_path") }

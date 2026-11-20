@@ -6,6 +6,7 @@ on:
     branches:
       - feature/fixes
     paths:
+      - 'Gemfile.lock'
       - '.github/workflows/languages-ci.yml'
       - 'docs/quality/modules/languages.md'
       - 'app/controllers/admin/languages_controller.rb'
