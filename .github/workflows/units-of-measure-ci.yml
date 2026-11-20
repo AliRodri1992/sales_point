@@ -41,7 +41,7 @@ env:
 jobs:
   units_lint:
     name: Units of measure RuboCop
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Install native dependencies
@@ -68,7 +68,7 @@ jobs:
 
   units_specs:
     name: Units of measure model and request regressions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:16

@@ -53,7 +53,7 @@ env:
 jobs:
   languages_lint:
     name: Languages module RuboCop
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Install native dependencies
@@ -97,7 +97,7 @@ jobs:
 
   languages_specs:
     name: Languages requests, models and browser
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:16

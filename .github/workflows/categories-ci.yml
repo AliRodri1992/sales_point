@@ -45,7 +45,7 @@ env:
 jobs:
   categories_lint:
     name: Categories module RuboCop
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Install native dependencies
@@ -69,7 +69,7 @@ jobs:
 
   categories_specs:
     name: Categories models, tenant requests and browser flows
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:16

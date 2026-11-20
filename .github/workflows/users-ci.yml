@@ -71,14 +71,14 @@ env:
 jobs:
   users_lint:
     name: Users module RuboCop
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Install native dependencies
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version-file: .ruby-version
+          ruby-version: .ruby-version
           bundler-cache: true
       - name: Lint user administration and access control
         run: |
@@ -108,7 +108,7 @@ jobs:
 
   users_specs:
     name: Users module RSpec and browser flows
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:16
@@ -144,7 +144,7 @@ jobs:
           install-chromedriver: true
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version-file: .ruby-version
+          ruby-version: .ruby-version
           bundler-cache: true
       - uses: actions/setup-node@v4
         with:
