@@ -4,7 +4,8 @@ Estas instrucciones se aplican a todo este repositorio y a cualquier agente de I
 
 ## Contexto y límites
 - Proyecto: Delta POS, Ruby on Rails 8.1, PostgreSQL, Sidekiq/Redis, Hotwire/Stimulus, Tailwind CSS, RSpec, RuboCop, Brakeman, SimpleCov y Overcommit.
-- Rama autorizada de trabajo actual: `feature/fixes`. **No modificar `development`, `master` ni otras ramas protegidas** salvo indicación expresa.
+- Rama de trabajo: usar la **rama activa autorizada para la tarea**, sin fijar nombres de ramas en estas instrucciones. Antes de escribir, comprobar `git branch --show-current` y `git status --short` en un checkout local, o confirmar explícitamente el ref de trabajo en GitHub. Si la rama activa no puede identificarse de forma fiable, pedir confirmación; nunca asumir la rama predeterminada.
+- **No modificar `development`, `master` ni otras ramas protegidas** sin autorización expresa. Si la rama activa es protegida, detener las escrituras y solicitar una rama de trabajo. No cambiar de rama automáticamente ni forzar pushes.
 - Mantener componentes, identidad visual y traducciones en español, inglés y coreano; no introducir CDN.
 - Aplicar validaciones de permisos (Pundit), aislamiento organizacional, protección de datos bancarios y consistencia de operaciones financieras al tocar proveedores o facturación.
 
@@ -55,4 +56,9 @@ El hook de Overcommit se instala con `bundle exec overcommit --install` y se fir
 ## Verificaciones específicas del proyecto
 - Para RSpec local ejecutar manualmente `bash bin/overcommit-rspec` (contenedor temporal). Con contenedores activos, ejecutar RuboCop y Brakeman mediante `docker compose -f docker-compose.dev.yml exec web bundle exec rubocop` y `docker compose -f docker-compose.dev.yml exec web bundle exec brakeman --no-pager`.
 - Ejecutar las pruebas/coberturas requeridas por la tarea; no afirmar porcentajes sin el reporte actual de SimpleCov.
-- Validar el estado final de los flujos de GitHub Actions de `feature/fixes` tras cada push.
+- Validar el estado final de los flujos de GitHub Actions de la rama activa autorizada y del SHA publicado tras cada push.
+
+## Skills y diseño de iconografía
+- Consultar las skills relevantes en `.agents/skills/*/SKILL.md` según el alcance; no activar todas indiscriminadamente.
+- Para interfaces, utilizar SVG **inline** escrito en HTML/ERB (o generado por parciales/ViewComponent), con trazados originales, `viewBox`, `currentColor` y atributos accesibles. No introducir Lucide, paquetes de iconos, fuentes de iconos ni CDN.
+- Las reglas de rama activa de este archivo prevalecen sobre cualquier ejemplo de rama escrito en una skill.
