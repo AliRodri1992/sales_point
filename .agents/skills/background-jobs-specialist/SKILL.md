@@ -39,3 +39,11 @@ Determinar backend de jobs realmente usado; diseñar idempotencia, límites de r
 - Resumen del cambio o auditoría y justificación.
 - Pruebas ejecutadas, pendientes y resultados.
 - Riesgos residuales y referencias a archivos o documentación.
+
+## Referencias del proyecto
+- [rails-conventions.md](../../references/rails-conventions.md)
+- [testing-strategy.md](../../references/testing-strategy.md)
+- [Flujo y activación de skills](../../../../docs/architecture/agent-workflows.md)
+- [Estándar de calidad modular](../../../../docs/quality/module-quality-standard.md)
+
+Aplicar estas referencias al código real del módulo; las referencias no sustituyen inspección ni pruebas.
