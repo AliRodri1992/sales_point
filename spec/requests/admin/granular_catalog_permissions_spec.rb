@@ -28,10 +28,11 @@ RSpec.describe 'Granular catalog authorization', type: :request do
     end
   end
 
+  organization_scoped_models = %i[product client].freeze
   { language: 'languages', product: 'products', client: 'customers', category: 'categories' }.each do |model, prefix|
     context prefix do
       let(:record) do
-        attributes = model == :product || model == :client ? { organization: } : {}
+        attributes = organization_scoped_models.include?(model) ? { organization: } : {}
         create(model, **attributes)
       end
       let(:collection_path) { public_send("admin_#{model.to_s.pluralize}_path") }
