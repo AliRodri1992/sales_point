@@ -100,8 +100,9 @@ export default class extends Controller {
         if (!this.hasPanelTarget) return
 
         const focusable =
+            this.panelTarget.querySelector("[aria-invalid=\"true\"]:not([aria-hidden=\"true\"])") ||
             this.panelTarget.querySelector("[data-autofocus]") ||
-            this.panelTarget.querySelector("input, select, textarea, button")
+            this.panelTarget.querySelector("input:not([readonly]):not([disabled]), textarea, button")
 
         focusable?.focus()
     }
