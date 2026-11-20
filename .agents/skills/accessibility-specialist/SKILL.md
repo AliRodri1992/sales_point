@@ -25,3 +25,11 @@ Usar para formularios, navegación y componentes. Leer antes `AGENTS.md` y el es
 
 ## Entregables
 Cambios justificados, evidencia de verificaciones, referencias a archivos y pendientes claros.
+
+## Referencias del proyecto
+- [ui-components.md](../../references/ui-components.md)
+- [testing-strategy.md](../../references/testing-strategy.md)
+- [Flujo y activación de skills](../../../../docs/architecture/agent-workflows.md)
+- [Estándar de calidad modular](../../../../docs/quality/module-quality-standard.md)
+
+Aplicar estas referencias al código real del módulo; las referencias no sustituyen inspección ni pruebas.
