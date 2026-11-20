@@ -62,3 +62,8 @@ El hook de Overcommit se instala con `bundle exec overcommit --install` y se fir
 - Consultar las skills relevantes en `.agents/skills/*/SKILL.md` según el alcance; no activar todas indiscriminadamente.
 - Para interfaces, utilizar SVG **inline** escrito en HTML/ERB (o generado por parciales/ViewComponent), con trazados originales, `viewBox`, `currentColor` y atributos accesibles. No introducir Lucide, paquetes de iconos, fuentes de iconos ni CDN.
 - Las reglas de rama activa de este archivo prevalecen sobre cualquier ejemplo de rama escrito en una skill.
+
+## Identidad visual Delta Emerald
+- Todas las pantallas deben respetar la identidad visual **Delta Emerald**, verificando primero los tokens, tipografías, componentes y patrones existentes del repositorio. No inventar ni reemplazar su paleta.
+- Diseño profesional, actual, elegante, sobrio, consistente, responsive y accesible; contemplar estados de carga, vacío, error, éxito, hover, foco y deshabilitado.
+- Iconografía original mediante código SVG inline en HTML/ERB; sin Lucide ni otras librerías de iconos.
