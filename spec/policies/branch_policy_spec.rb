@@ -151,9 +151,13 @@ RSpec.describe BranchPolicy, type: :policy do
 
       it 'returns only assigned active branches' do
         deleted_branch = create(:branch, organization:, operational_state: 'preparing', name: 'Deleted branch')
-        create(:user_role, user:, system_role: branch_role, branch: deleted_branch)
-        # Historical assignments can point to a branch archived before the lifecycle checks existed.
-        deleted_branch.update_column(:deleted_at, Time.current)
+        deleted_branch.update!(deleted_at: Time.current)
+        # Load a historical assignment that predates the archive guard.
+        assignment = { user_id: user.id, organization_id: organization.id, system_role_id: branch_role.id,
+                       branch_id: deleted_branch.id, created_at: Time.current, updated_at: Time.current }
+        UserRole.connection_pool.with_connection do |connection|
+          connection.insert_fixture(assignment.stringify_keys, UserRole.table_name)
+        end
 
         expect(scope).to contain_exactly(branch)
       end
