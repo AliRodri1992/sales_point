@@ -25,3 +25,12 @@ Usar para tokens, componentes e iconografía. Leer antes `AGENTS.md` y el están
 
 ## Entregables
 Cambios justificados, evidencia de verificaciones, referencias a archivos y pendientes claros.
+
+## Referencias del proyecto
+- [delta-emerald.md](../../references/delta-emerald.md)
+- [ui-components.md](../../references/ui-components.md)
+- [svg-iconography.md](../../references/svg-iconography.md)
+- [Flujo y activación de skills](../../../../docs/architecture/agent-workflows.md)
+- [Estándar de calidad modular](../../../../docs/quality/module-quality-standard.md)
+
+Aplicar estas referencias al código real del módulo; las referencias no sustituyen inspección ni pruebas.
