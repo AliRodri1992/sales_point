@@ -7,6 +7,7 @@ RSpec.describe 'Admin demo requests', type: :request do
   let(:demo_request) { create(:demo_request) }
 
   before do
+    create(:organization_membership, user: admin)
     role = create(:system_role, :system, code: 'administrator')
     create(:user_role, user: admin, system_role: role)
     sign_in admin

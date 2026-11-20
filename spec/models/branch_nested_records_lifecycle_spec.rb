@@ -38,13 +38,13 @@ RSpec.describe 'Branch-owned inventory and receipt records', type: :model do
       organization:, inventory:, code: 'LOT-SERIAL-CLOSED', quantity: 0, status: :available
     )
     serial = InventorySerial.create!(
-      organization:, inventory_lot: lot, serial_number: 'SERIAL-TEST-001', status: :available
+      organization:, inventory_lot: lot, serial_number: 'SERIAL-TEST-001', status: :sold
     )
     close_branch!
 
-    expect { serial.update!(status: :sold) }.to raise_error(ActiveRecord::RecordInvalid)
+    expect { serial.update!(status: :available) }.to raise_error(ActiveRecord::RecordInvalid)
     expect(serial.errors[:base]).to be_present
-    expect(serial.reload).to be_available
+    expect(serial.reload).to be_sold
   end
 
   it 'rejects receipt-item writes belonging to a closed branch' do

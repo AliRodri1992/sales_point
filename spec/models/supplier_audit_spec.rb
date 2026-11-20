@@ -19,8 +19,7 @@ RSpec.describe 'Supplier audit versions' do
   end
 
   it 'does not version addresses belonging to other resource types' do
-    branch = create(:branch)
-    address = branch.address
+    address = create(:address, addressable: create(:client))
 
     address.update!(street: 'Different street')
 

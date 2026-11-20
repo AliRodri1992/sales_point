@@ -2,6 +2,18 @@ ko:
   admin:
     system_roles:
       permissions:
+        email_setting_audits_view:
+          name: "이메일 설정 변경 이력 보기"
+          description: "이메일 발신자와 브랜드 디자인의 변경 내역을 조회합니다."
+        inventory_view:
+          name: "재고 조회"
+          description: "권한이 있는 지점의 재고 수량을 조회합니다."
+        inventory_manage:
+          name: "재고 관리"
+          description: "지점별 상품과 재고 한도를 관리합니다."
+        inventory_adjust:
+          name: "재고 조정"
+          description: "재고 조정 내역을 감사 기록에 남깁니다."
         email_templates_access:
           name: "템플릿 조회"
           description: "템플릿 조회"

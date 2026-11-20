@@ -16,14 +16,20 @@ RSpec.describe 'Catalog lifecycle safeguards', type: :request do
     branch = create(:branch, organization:)
     inventory = create(:inventory, organization:, branch:, product:, stock: 10)
     delete admin_branch_path(branch)
-    expect(response).to redirect_to(admin_branch_path(branch))
+    expect(response).to have_http_status(:forbidden)
     expect(branch.reload.deleted_at).to be_nil
     delete admin_product_path(product)
     expect(response).to redirect_to(admin_product_path(product))
     expect(product.reload.deleted_at).to be_nil
     expect(inventory.reload.stock).to eq(10)
-    patch admin_branch_path(branch), params: { branch: { status: false } }
-    expect(branch.reload.status).to be(false)
+    patch transition_status_admin_branch_path(branch), params: { to_status: 'closed', reason: 'Branch retirement' }
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include(I18n.t('admin.branch_lifecycle.errors.outstanding_stock', locale: :en))
+    expect(branch.reload).to be_active
+    patch transition_status_admin_branch_path(branch), params: { to_status: 'suspended', reason: 'Temporary closure' }
+    expect(response).to redirect_to(admin_branch_path(branch))
+    expect(branch.reload).to be_suspended
+    expect(branch.status).to be(false)
     patch admin_product_path(product), params: { product: { status: 'inactive' } }
     expect(product.reload).to be_inactive
   end
@@ -71,7 +77,11 @@ RSpec.describe 'Catalog lifecycle safeguards', type: :request do
 
   it 'rejects unsupported and inactive locale switching without changing the user preference' do
     original = administrator.language
-    create(:language, code: 'fr', name: 'French', flag_iso: 'fr')
+    # Reproduce an active catalog row whose translations were subsequently removed.
+    RSpec::Mocks.with_temporary_scope do
+      allow(I18n).to receive(:available_locales).and_return(I18n.available_locales + [:fr])
+      create(:language, code: 'fr', name: 'French', flag_iso: 'fr')
+    end
     patch '/language', params: { language: 'fr' }
     expect(response).to have_http_status(:unprocessable_content)
     expect(administrator.reload.language).to eq(original)
@@ -134,8 +144,9 @@ RSpec.describe 'Catalog lifecycle safeguards', type: :request do
     end
   end
   it 'retains the saved classification when its category is no longer selectable' do
-    category = create(:category, name: 'Archived category', status: 'inactive')
+    category = create(:category, organization:, name: 'Archived category')
     product.update!(category:)
+    category.update!(status: :inactive)
     get edit_admin_product_path(product)
     option = Nokogiri::HTML(response.body).at_css("#product_category_id option[value='#{category.id}']")
     expect(option['selected']).not_to be_nil

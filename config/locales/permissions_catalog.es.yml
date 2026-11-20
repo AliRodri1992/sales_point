@@ -2,6 +2,18 @@ es:
   admin:
     system_roles:
       permissions:
+        email_setting_audits_view:
+          name: "Ver historial de configuración de correo"
+          description: "Consulta los cambios en los remitentes y la identidad visual del correo."
+        inventory_view:
+          name: "Ver inventario"
+          description: "Consulta las existencias de las sucursales autorizadas."
+        inventory_manage:
+          name: "Administrar inventario"
+          description: "Administra los productos y los límites de existencias por sucursal."
+        inventory_adjust:
+          name: "Ajustar inventario"
+          description: "Registra ajustes de existencias con un historial de auditoría."
         email_templates_access:
           name: "Consultar plantillas"
           description: "Consultar plantillas"

@@ -68,9 +68,12 @@ RSpec.describe Note, type: :model do
   end
 
   it 'supports the same note relationship for records without an organization' do
-    client = create(:client, notes: 'Client note')
+    client = create(:client)
+    # Existing clients without a reconciled tenant can still own historical notes.
+    Client.connection.execute("UPDATE clients SET organization_id = NULL WHERE id = #{client.id}")
+    client.reload.note_entries.create!(kind: 'general', body: 'Client note')
 
-    expect(client.note_entries.general.first).to have_attributes(
+    expect(client.note_entries.general.sole).to have_attributes(
       notable: client, organization: nil, body: 'Client note'
     )
   end

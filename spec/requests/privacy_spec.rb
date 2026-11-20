@@ -56,8 +56,8 @@ RSpec.describe 'Privacy page', type: :request do
   end
 
   it 'falls back to an active language when a public cookie references an inactive locale' do
-    create(:language, code: 'es', name: 'Español', flag_iso: 'mx', status: 'inactive')
-    cookies[:terminal_language] = 'es'
+    create(:language, code: 'ko', name: 'Korean', flag_iso: 'kr', status: 'inactive')
+    cookies[:terminal_language] = 'ko'
     get privacy_path
 
     expect(response).to have_http_status(:ok)

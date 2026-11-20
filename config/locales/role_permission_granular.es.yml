@@ -23,6 +23,26 @@ es:
           name: Eliminar / archivar · Idiomas
           description: Permite dar de baja registros mediante el flujo de eliminación
             del módulo.
+        units_of_measure_access:
+          name: Acceder · Unidades de medida
+          description: Habilita el módulo. Cada operación requiere además su permiso
+            individual.
+        units_of_measure_index:
+          name: Listar · Unidades de medida
+          description: Permite consultar y buscar en la lista de registros.
+        units_of_measure_show:
+          name: Mostrar · Unidades de medida
+          description: Permite consultar el detalle de un registro.
+        units_of_measure_create:
+          name: Crear · Unidades de medida
+          description: Permite registrar nuevos elementos.
+        units_of_measure_update:
+          name: Actualizar · Unidades de medida
+          description: Permite actualizar los datos de registros existentes.
+        units_of_measure_destroy:
+          name: Eliminar / archivar · Unidades de medida
+          description: Permite dar de baja registros mediante el flujo de eliminación
+            del módulo.
         products_access:
           name: Acceder · Productos
           description: Habilita el módulo. Cada operación requiere además su permiso

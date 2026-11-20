@@ -83,11 +83,15 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     expect(page).to have_css('[role="alert"]')
     expect(page).to have_field('language_name', with: 'French')
     fill_in 'language_code', with: 'fr'
+    within(find_by_id('language_status', visible: :all).find(:xpath, '..')) do
+      find('button[aria-haspopup="listbox"]').click
+      find('[role="option"]', text: 'Inactive', exact_text: true).click
+    end
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
     click_button 'Create language'
     expect(page).to have_current_path(admin_languages_path, ignore_query: true)
     expect(page).to have_css('turbo-frame#languages_list', text: 'French')
-    expect(Language.find_by!(code: 'fr').name).to eq('French')
+    expect(Language.find_by!(code: 'fr')).to have_attributes(name: 'French', status: 'inactive')
   end
   scenario 'applies advanced product filters on mobile and restores the active URL' do
     first_category = create(:category, organization:, name: 'Beverages')
@@ -114,8 +118,8 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     within('nav.products-filter-chips') do
       find('a.products-filter-chip', text: 'Beverages').click
     end
-    expect(page).to have_current_path(%r{admin/products(?:\?|$)})
-    expect(page.current_url).not_to include('category_id=')
+    expect(page).to have_current_path(admin_products_path, ignore_query: true)
+    expect(page).to have_no_current_path(/category_id=/)
     expect(page).to have_css('#admin_products_list', text: 'Catalog printer paper')
 
     fill_in 'products_search', with: 'orange tea'

@@ -57,6 +57,8 @@ export default class extends Controller {
     const url = this.searchUrl()
     if (this.hasErrorTarget) this.errorTarget.hidden = true
     this.element.setAttribute("aria-busy", "true")
+    const detail = { region: "admin_products_list", requestId: sequence }
+    document.dispatchEvent(new CustomEvent("skeleton:begin", { detail }))
 
     try {
       const response = await fetch(url, {
@@ -84,6 +86,7 @@ export default class extends Controller {
         this.errorTarget.hidden = false
       }
     } finally {
+      document.dispatchEvent(new CustomEvent("skeleton:end", { detail }))
       if (sequence === this.sequence) this.element.removeAttribute("aria-busy")
     }
   }

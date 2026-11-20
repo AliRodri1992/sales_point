@@ -5,7 +5,9 @@ require 'rails_helper'
 RSpec.describe 'Return and approval boundary decisions', type: :service do
   describe Purchases::ProcessReturn do
     def locked_return(draft:, items:)
-      goods = double
+      branch = instance_double(Branch)
+      allow(branch).to receive(:with_lock).and_yield
+      goods = instance_double(GoodsReceipt, branch:)
       allow(goods).to receive(:with_lock).and_yield
       record = double(goods_receipt: goods, draft?: draft, purchase_return_items: items)
       allow(record).to receive(:with_lock).and_yield

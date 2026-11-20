@@ -21,6 +21,24 @@ en:
         languages_destroy:
           name: Delete / archive · Languages
           description: Allows removing records through the module’s deletion workflow.
+        units_of_measure_access:
+          name: Access · Units of measure
+          description: Enables the module. Each operation also requires its own permission.
+        units_of_measure_index:
+          name: List · Units of measure
+          description: Allows viewing and searching the record list.
+        units_of_measure_show:
+          name: Show · Units of measure
+          description: Allows viewing an individual record.
+        units_of_measure_create:
+          name: Create · Units of measure
+          description: Allows creating new records.
+        units_of_measure_update:
+          name: Update · Units of measure
+          description: Allows updating existing records.
+        units_of_measure_destroy:
+          name: Delete / archive · Units of measure
+          description: Allows removing records through the module’s deletion workflow.
         products_access:
           name: Access · Products
           description: Enables the module. Each operation also requires its own permission.

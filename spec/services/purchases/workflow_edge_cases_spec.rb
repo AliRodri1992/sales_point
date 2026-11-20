@@ -76,7 +76,8 @@ RSpec.describe 'Purchase workflow and idempotency edge cases', type: :service do
   end
 
   describe Purchases::Receive do
-    let(:order) { double(organization: double, id: 5, receivable?: true) }
+    let(:branch) { instance_double(Branch, operationally_active?: true) }
+    let(:order) { double(organization: double, branch:, id: 5, receivable?: true) }
 
     def receiver(key: 'key', entries: [{ purchase_order_item_id: 3 }])
       described_class.new(order:, user: double, idempotency_key: key,

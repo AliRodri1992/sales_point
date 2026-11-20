@@ -3,19 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe 'FEFO inventory selection and serialized stock branches' do
-  def inventory(stock: 5)
-    double(stock:, with_lock: nil)
-  end
-
-  def lot_collection(lots)
-    relation = double
-    allow(relation).to receive(:saleable).and_return(relation)
-    allow(relation).to receive(:lock).and_return(lots)
-    relation
-  end
-
   def allocator(quantity: 2, stock: 5, lots: [])
-    inv = double(stock:, inventory_lots: lot_collection(lots))
+    branch = instance_double(Branch)
+    allow(branch).to receive(:with_lock).and_yield
+    inv = double(stock:, branch:, inventory_lots: double(saleable: lots))
     allow(inv).to receive(:with_lock).and_yield
     Inventories::FefoAllocator.new(
       inventory: inv, quantity:, user: nil, kind: 'sale', options: {}

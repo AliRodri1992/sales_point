@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Onboarding nested-state changes and completion validation', type: :service do
-  let(:organization) { double('Organization') }
+  let(:organization) { create(:organization) }
   let(:updater) { Onboarding::StepUpdater.new(organization, 5, {}, double) }
 
   it 'recognizes no changes when before and after data are equal' do

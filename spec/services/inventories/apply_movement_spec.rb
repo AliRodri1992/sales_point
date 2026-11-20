@@ -30,8 +30,8 @@ RSpec.describe Inventories::ApplyMovement do
   end
 
   it 'requires a lot for changes to lot-tracked merchandise' do
-    inventory = create(:inventory, stock: 3)
-    inventory.product.update!(tracking_mode: :lot)
+    product = create(:product, tracking_mode: 'lot')
+    inventory = create(:inventory, product:, organization: product.organization, stock: 3)
 
     expect do
       described_class.call(inventory:, quantity: 2, kind: 'adjustment')
@@ -57,8 +57,8 @@ RSpec.describe Inventories::ApplyMovement do
   end
 
   it 'updates tracked lot and aggregate stock together for an adjustment' do
-    inventory = create(:inventory, stock: 5)
-    inventory.product.update!(tracking_mode: 'lot')
+    product = create(:product, tracking_mode: 'lot')
+    inventory = create(:inventory, product:, organization: product.organization, stock: 5)
     lot = InventoryLot.create!(
       inventory:, organization: inventory.organization,
       code: 'ADJUST-LOT-001', quantity: 5, status: :available
@@ -74,8 +74,8 @@ RSpec.describe Inventories::ApplyMovement do
   end
 
   it 'rejects an adjustment that would make a tracked lot negative' do
-    inventory = create(:inventory, stock: 5)
-    inventory.product.update!(tracking_mode: 'lot')
+    product = create(:product, tracking_mode: 'lot')
+    inventory = create(:inventory, product:, organization: product.organization, stock: 5)
     lot = InventoryLot.create!(
       inventory:, organization: inventory.organization,
       code: 'ADJUST-LOT-002', quantity: 1, status: :available
@@ -89,8 +89,8 @@ RSpec.describe Inventories::ApplyMovement do
   end
 
   it 'prevents a quarantined lot from being reconciled as available stock' do
-    inventory = create(:inventory, stock: 0)
-    inventory.product.update!(tracking_mode: 'lot')
+    product = create(:product, tracking_mode: 'lot')
+    inventory = create(:inventory, product:, organization: product.organization, stock: 0)
     lot = InventoryLot.create!(
       inventory:, organization: inventory.organization,
       code: 'QUARANTINED-LOT', quantity: 2, status: :quarantined
@@ -104,8 +104,8 @@ RSpec.describe Inventories::ApplyMovement do
   end
 
   it 'requires serial-level reconciliation for serialized stock adjustments' do
-    inventory = create(:inventory, stock: 1)
-    inventory.product.update!(tracking_mode: 'serial')
+    product = create(:product, tracking_mode: 'serial')
+    inventory = create(:inventory, product:, organization: product.organization, stock: 1)
     lot = InventoryLot.create!(
       inventory:, organization: inventory.organization,
       code: 'SERIAL-RECONCILE', quantity: 1, status: :available

@@ -21,6 +21,24 @@ ko:
         languages_destroy:
           name: 삭제 / 보관 · 언어
           description: 모듈의 삭제 절차를 통해 항목을 삭제하거나 보관할 수 있습니다.
+        units_of_measure_access:
+          name: 접근 · 측정 단위
+          description: 모듈을 활성화합니다. 각 작업에는 해당 작업 권한도 필요합니다.
+        units_of_measure_index:
+          name: 목록 · 측정 단위
+          description: 등록 목록을 조회하고 검색할 수 있습니다.
+        units_of_measure_show:
+          name: 상세 보기 · 측정 단위
+          description: 개별 항목의 상세 정보를 조회할 수 있습니다.
+        units_of_measure_create:
+          name: 생성 · 측정 단위
+          description: 새 항목을 등록할 수 있습니다.
+        units_of_measure_update:
+          name: 업데이트 · 측정 단위
+          description: 기존 항목을 업데이트할 수 있습니다.
+        units_of_measure_destroy:
+          name: 삭제 / 보관 · 측정 단위
+          description: 모듈의 삭제 절차를 통해 항목을 삭제하거나 보관할 수 있습니다.
         products_access:
           name: 접근 · 상품
           description: 모듈을 활성화합니다. 각 작업에는 해당 작업 권한도 필요합니다.

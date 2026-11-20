@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :address do
-    association :addressable, factory: %i[branch without_address]
+    association :addressable, factory: %i[branch registration_placeholder]
     street { 'Av. Reforma' }
     exterior_number { '100' }
     interior_number { '446' }

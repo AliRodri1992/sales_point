@@ -90,6 +90,8 @@ RSpec.describe BranchPolicy, type: :policy do
   end
 
   describe '#destroy?' do
+    let(:branch) { create(:branch, organization:, operational_state: 'preparing') }
+
     context 'when the user is a system administrator' do
       let(:user) { create(:user, system_roles: [system_admin_role]) }
 
@@ -133,7 +135,9 @@ RSpec.describe BranchPolicy, type: :policy do
       let(:user) { create(:user, system_roles: [system_admin_role]) }
 
       it 'returns branches only in accessible organizations' do
-        deleted_branch = create(:branch, organization:, name: 'Deleted branch', deleted_at: Time.current)
+        deleted_branch = create(:branch, organization:, operational_state: 'preparing', name: 'Deleted branch')
+        deleted_branch.update!(deleted_at: Time.current)
+        create(:branch, name: 'Other organization branch')
 
         expect(scope).to contain_exactly(branch, other_branch)
         expect(scope).not_to include(deleted_branch)
@@ -146,8 +150,10 @@ RSpec.describe BranchPolicy, type: :policy do
       before { create(:user_role, user:, system_role: branch_role, branch:) }
 
       it 'returns only assigned active branches' do
-        deleted_branch = create(:branch, organization:, name: 'Deleted branch', deleted_at: Time.current)
+        deleted_branch = create(:branch, organization:, operational_state: 'preparing', name: 'Deleted branch')
         create(:user_role, user:, system_role: branch_role, branch: deleted_branch)
+        # Historical assignments can point to a branch archived before the lifecycle checks existed.
+        deleted_branch.update_column(:deleted_at, Time.current)
 
         expect(scope).to contain_exactly(branch)
       end

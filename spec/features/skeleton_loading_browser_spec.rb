@@ -79,10 +79,25 @@ RSpec.describe 'Scoped skeleton loading', type: :feature, js: true do
   end
 
   scenario 'targets product searches to their own Turbo Frame' do
+    create(:product, organization:, name: 'Ground coffee')
+    create(:product, organization:, name: 'Herbal tea')
     visit admin_products_path
 
-    expect(page).to have_css('form[data-turbo-frame="admin_products_list"]')
-    expect(page).to have_css('[data-skeleton-loading-region-value="admin_products_list"]')
-    expect(page).to have_css('[data-skeleton-loading-region-value="admin_products_list"][aria-busy="false"]')
+    region = '[data-skeleton-loading-region-value="admin_products_list"]'
+    expect(page).to have_css("#{region} turbo-frame#admin_products_list", text: 'Herbal tea')
+    page.execute_script(<<~JS)
+      document.addEventListener('skeleton:begin', (event) => {
+        const region = document.querySelector('[data-skeleton-loading-region-value="admin_products_list"]')
+        if (event.detail.region === 'admin_products_list' && region.getAttribute('aria-busy') === 'true') {
+          region.dataset.observedLoading = 'true'
+        }
+      }, { once: true })
+    JS
+    fill_in 'products_search', with: 'coffee'
+
+    expect(page).to have_css("#{region}[data-observed-loading=true][aria-busy=false]")
+    expect(page).to have_css('#admin_products_list', text: 'Ground coffee')
+    expect(page).to have_no_css('#admin_products_list', text: 'Herbal tea')
+    expect(page.evaluate_script('document.activeElement.id')).to eq('products_search')
   end
 end

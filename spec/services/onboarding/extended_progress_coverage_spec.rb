@@ -50,7 +50,7 @@ RSpec.describe 'Extended organization onboarding progress branches', type: :serv
   it 'checks active terminal existence' do
     branches = double
     allow(branches).to receive(:not_deleted).and_return(branches)
-    allow(branches).to receive(:where).with(status: true).and_return(branches)
+    allow(branches).to receive(:where).with(operational_status: %w[preparing active]).and_return(branches)
     allow(branches).to receive(:joins).and_return(branches)
     allow(branches).to receive(:merge).and_return(branches)
     allow(branches).to receive(:exists?).and_return(false, true)

@@ -10,7 +10,8 @@ RSpec.describe 'Supplier access after membership deactivation', type: :request d
   before do
     create(:organization_membership, user:, organization: archived_membership_organization, status: :inactive)
     create(:organization_membership, user:, organization: active_organization, status: :active)
-    create(:user_role, user:, system_role: create(:system_role, :system, code: 'administrator'))
+    role = create(:system_role, :system, code: 'administrator')
+    create(:user_role, user:, organization: active_organization, system_role: role)
     sign_in user
   end
 

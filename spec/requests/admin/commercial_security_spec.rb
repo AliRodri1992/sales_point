@@ -71,13 +71,15 @@ RSpec.describe 'Commercial request security', type: :request do
     unassigned = create(:user, :english, system_roles: administrator.system_roles)
     sign_in unassigned
     patch admin_price_change_event_path(event), params: { decision: 'approved' }
-    expect(response).to have_http_status(:not_found)
+    expect(response).to have_http_status(:forbidden)
+    expect(event.reload).to be_pending
+    expect(product.reload.price).to eq(100)
     sign_in unassigned
     get admin_price_lists_path
     expect(response).to have_http_status(:not_found)
     sign_in unassigned
     get admin_product_path(product)
-    expect(response).to redirect_to(admin_products_path)
+    expect(response).to have_http_status(:forbidden)
     sign_in unassigned
     post admin_product_images_path
     expect(response).to have_http_status(:not_found)

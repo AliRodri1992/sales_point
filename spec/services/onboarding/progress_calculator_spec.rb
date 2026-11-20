@@ -35,7 +35,7 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
 
   it 'reports partial configuration as in progress' do
     organization = create(:organization)
-    create(:branch, organization:, without_address: true)
+    create(:branch, :registration_placeholder, organization:)
 
     progress = described_class.call(organization)
 
@@ -52,7 +52,7 @@ RSpec.describe Onboarding::ProgressCalculator, type: :service do
 
   it 'reports a missing branch address as incomplete' do
     organization = create(:organization)
-    create(:branch, organization:, without_address: true)
+    create(:branch, :registration_placeholder, organization:)
 
     progress = described_class.call(organization)
     section = progress[:sections].find { |item| item[:key] == :branches }

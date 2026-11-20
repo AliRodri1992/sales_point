@@ -4,10 +4,11 @@ require 'rails_helper'
 require Rails.root.join('db/migrate/20261103223000_add_granular_catalog_permissions')
 
 RSpec.describe GranularPermissionCatalog do
-  it 'provides every CRUD action in all five modules and is idempotent' do
+  it 'provides every CRUD action in all catalog modules and is idempotent' do
     described_class.sync!
-    codes = described_class::MODULES.keys.product(described_class::ACTIONS).map { |parts| parts.join('.') }
-    expect(Permission.where(code: codes).count).to eq(30)
+    modules = %w[languages products customers users categories units_of_measure]
+    codes = modules.product(%w[access index show create update destroy]).map { |parts| parts.join('.') }
+    expect(Permission.where(code: codes).pluck(:code)).to match_array(codes)
     expect { described_class.sync! }.not_to change(Permission, :count)
   end
 

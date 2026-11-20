@@ -66,8 +66,8 @@ RSpec.describe 'Inventory overview and branch operations', type: :request do
     get admin_branch_inventories_path(branch), params: { search: 'Tuerca', status: 'low' }
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include('Tuerca especial')
-    expect(response.body).not_to include('Tornillo normal')
+    rows = Nokogiri::HTML(response.body).css('[aria-labelledby="branch-inventory-results"] tbody tr')
+    expect(rows.map { |row| row.at_css('td span').text }).to eq(['Tuerca especial'])
   end
 
   it 'records manual adjustment references without allowing direct stock updates' do
@@ -84,7 +84,7 @@ RSpec.describe 'Inventory overview and branch operations', type: :request do
   end
 
   it 'keeps inventory permissions scoped to the branch granting them' do
-    other_branch = create(:branch, organization:)
+    other_branch = create(:branch, organization:, name: 'Sucursal Norte')
     visible_product = create(:product, organization:, name: 'ARTICULO AUTORIZADO')
     hidden_product = create(:product, organization:, name: 'ARTICULO RESTRINGIDO')
     create(:inventory, organization:, branch:, product: visible_product)

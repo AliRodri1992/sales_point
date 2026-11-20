@@ -20,6 +20,15 @@ FactoryBot.define do
       to_create { |record| record.save!(validate: false) }
     end
 
+    trait :registration_placeholder do
+      transient do
+        without_address { true }
+        operational_state { 'preparing' }
+      end
+
+      registration_bootstrap { true }
+    end
+
     after(:build) do |branch, evaluator|
       branch.operational_status = evaluator.operational_state || (branch.status ? 'active' : 'suspended')
       unless evaluator.without_address || branch.address

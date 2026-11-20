@@ -6,6 +6,7 @@ RSpec.describe 'Admin sidebar', type: :request do
   let(:user) { create(:user) }
 
   before do
+    create(:organization_membership, user:)
     role = create(:system_role, :system, name: 'ZZZ Catalog reader', code: 'catalog_reader')
     create(:user_role, user:, system_role: role)
     %w[products.access products.index].each do |code|

@@ -2,6 +2,18 @@ en:
   admin:
     system_roles:
       permissions:
+        email_setting_audits_view:
+          name: "View email settings history"
+          description: "View changes to email senders and branding."
+        inventory_view:
+          name: "View inventory"
+          description: "View stock levels at authorized branches."
+        inventory_manage:
+          name: "Manage inventory"
+          description: "Manage products and stock limits by branch."
+        inventory_adjust:
+          name: "Adjust inventory"
+          description: "Record audited stock adjustments."
         email_templates_access:
           name: "View templates"
           description: "View templates"

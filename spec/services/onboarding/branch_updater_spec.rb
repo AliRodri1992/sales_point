@@ -43,9 +43,9 @@ RSpec.describe Onboarding::BranchUpdater, type: :service do
       )
     end
 
-    it 'falls back to a non-deleted branch when no active branch exists' do
+    it 'updates a preparing branch when no active branch exists' do
       organization = create(:organization)
-      branch = create(:branch, organization:, status: false, name: 'Sucursal Inactiva')
+      branch = create(:branch, organization:, operational_state: 'preparing', name: 'Sucursal en preparación')
       params = ActionController::Parameters.new(branch: { name: 'Sucursal Actualizada' })
 
       expect(described_class.call(organization, params)).to be(true)

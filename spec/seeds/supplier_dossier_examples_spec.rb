@@ -113,7 +113,8 @@ RSpec.describe SupplierDossierExamples do
     supplier = Supplier.find_by!(code: 'SUP-0001')
     contact = supplier.contacts.find_by!(name: 'Contacto demo 2')
     address = supplier.addresses.find_by!(reference_notes: 'DEMO-DIRECCION-1')
-    schedule = supplier.supplier_schedules.find_by!(notes: 'DEMO-CALENDARIO-1')
+    schedule = supplier.supplier_schedules.joins(:note_entries)
+                       .merge(Note.general.where(body: 'DEMO-CALENDARIO-1')).sole
     counts = [supplier.contacts.with_deleted.count, supplier.addresses.with_deleted.count,
               supplier.supplier_schedules.count, supplier.documents.attachments.count]
 
@@ -133,7 +134,8 @@ RSpec.describe SupplierDossierExamples do
     supplier = organization.suppliers.find_by!(code: 'SUP-0001')
     contact = supplier.contacts.find_by!(name: 'Contacto demo 2')
     address = supplier.addresses.find_by!(reference_notes: 'DEMO-DIRECCION-1')
-    schedule = supplier.supplier_schedules.find_by!(notes: 'DEMO-CALENDARIO-1')
+    schedule = supplier.supplier_schedules.joins(:note_entries)
+                       .merge(Note.general.where(body: 'DEMO-CALENDARIO-1')).sole
 
     counts = [
       Contact.where(contactable_type: 'Supplier', contactable_id: organization.suppliers.select(:id)).count,

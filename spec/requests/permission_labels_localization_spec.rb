@@ -9,7 +9,8 @@ RSpec.describe 'Supplier, purchasing and finance permission localization', type:
   let(:user) { create(:user, :english) }
 
   before do
-    create(:user_role, user:, system_role: create(:system_role, :system, code: 'administrator'))
+    create(:organization_membership, user:)
+    create(:user_role, user:, system_role: create(:system_role, :system, code: 'super_admin'))
     create(:permission, code: 'suppliers.fiscal.view', name: 'View supplier fiscal information',
                         description: 'View supplier fiscal information.', module_name: 'Proveedores')
     create(:permission, code: 'purchases.view', name: 'View purchases',

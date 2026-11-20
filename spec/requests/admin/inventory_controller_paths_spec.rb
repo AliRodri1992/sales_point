@@ -74,8 +74,10 @@ RSpec.describe 'Inventory administration controller paths', type: :request do
     patch admin_branch_inventory_path(branch, stock), params: {
       inventory: { min_stock: 10, max_stock: 5 }
     }
-    expect(response).to redirect_to(admin_branch_inventories_path(branch))
-    expect(stock.reload.min_stock).to eq(1)
+    expect(response).to have_http_status(:unprocessable_content)
+    form = Nokogiri::HTML(response.body).at_css("form[action='#{admin_branch_inventory_path(branch, stock)}']")
+    expect(form.at_css('[role="alert"]').text).to include(I18n.t('admin.inventory.max_stock'))
+    expect(stock.reload).to have_attributes(min_stock: 1, max_stock: nil)
   end
 
   it 'rejects invalid adjustment quantities' do

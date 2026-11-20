@@ -100,7 +100,7 @@ RSpec.describe 'Purchasing flow negative-path behavior', type: :service do
     end
 
     it 'allows nontracked inventory without any lot' do
-      inventory = double(id: 1, product: double(tracking_none?: true))
+      inventory = double(id: 1, product: double(tracking_none?: true), inventory_lots: double(exists?: false))
       expect { described_class.validate_tracking!(inventory:, lot: nil) }.not_to raise_error
     end
   end

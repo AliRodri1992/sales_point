@@ -38,8 +38,8 @@ RSpec.describe Onboarding::StateCalculator, type: :service do
       expect(described_class.new(organization, 2).call).to eq({})
     end
 
-    it 'falls back to a non-deleted inactive branch and tolerates a missing address' do
-      branch = create(:branch, organization:, status: false, without_address: true)
+    it 'returns a preparing branch and tolerates a missing address' do
+      branch = create(:branch, :registration_placeholder, organization:)
 
       state = described_class.new(organization, 2).call
 

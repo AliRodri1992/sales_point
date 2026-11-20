@@ -24,7 +24,7 @@ RSpec.describe 'Polymorphic notes database structure', type: :model do
     index = ActiveRecord::Base.connection.indexes(:notes).find { |entry| entry.name == 'idx_notes_notable_kind' }
 
     expect(index).to be_present
-    expect(index).to be_unique
+    expect(index.unique).to be(true)
     expect(index.columns).to eq(%w[notable_type notable_id kind])
     expect(index.where).to include('deleted_at IS NULL')
   end

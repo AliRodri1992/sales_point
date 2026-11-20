@@ -8,6 +8,7 @@ RSpec.describe UserPermissionsHelper, type: :helper do
   let(:actor) { create(:user) }
 
   before do
+    create(:organization_membership, user: actor, organization:)
     allow(helper).to receive(:current_user).and_return(actor)
     allow(actor).to receive(:permission?).and_return(false)
     helper.define_singleton_method(:policy) { |record| Pundit.policy!(current_user, record) }
@@ -21,7 +22,8 @@ RSpec.describe UserPermissionsHelper, type: :helper do
     create(:organization_membership, user:, organization:, account_status: :blocked)
     UserStatusEvent.create!(user:, actor:, organization:, from_status: 'active', to_status: 'blocked', reason: 'Review')
     create(:user_role, user: actor, system_role: create(:system_role, :system, code: 'administrator'))
-    allow(actor).to receive(:permission?).with('users.unblock').and_return(true)
+    expect(helper.allowed_user_transitions(user, organization:)).to be_empty
+    allow(actor).to receive(:permission?).with('users.unblock', organization:).and_return(true)
     expect(helper.allowed_user_transitions(user, organization:)).to eq(['active'])
   end
 
