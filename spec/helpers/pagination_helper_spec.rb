@@ -66,6 +66,18 @@ RSpec.describe PaginationHelper, type: :helper do
       expect(result).not_to include('data-turbo-frame')
     end
 
+    it 'renders hover classes without embedded quotation marks' do
+      allow(helper).to receive(:url_for).and_return('/admin/languages?page=2')
+      allow(helper).to receive(:request).and_return(instance_double(ActionDispatch::Request, query_parameters: {}))
+
+      link = Nokogiri::HTML.fragment(helper.pagination_link('2', 2, false)).at_css('a')
+      classes = link['class'].split
+
+      expect(classes).to include('hover:bg-emerald-50', 'hover:text-emerald-700')
+      expect(classes).to include('focus-visible:outline', 'focus-visible:outline-2')
+      expect(classes).not_to include("'hover:bg-emerald-50", "focus-visible:outline'")
+    end
+
     it 'renders enabled links with a Turbo Frame when requested' do
       allow(helper).to receive(:url_for).and_return('/admin/products?page=2')
       allow(helper).to receive(:request).and_return(instance_double(ActionDispatch::Request, query_parameters: {}))
