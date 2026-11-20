@@ -114,7 +114,7 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     within('nav.products-filter-chips') do
       find('a.products-filter-chip', text: 'Beverages').click
     end
-    expect(page).to have_current_path(/admin\/products(?:\?|$)/)
+    expect(page).to have_current_path(%r{admin/products(?:\?|$)})
     expect(page.current_url).not_to include('category_id=')
     expect(page).to have_css('#admin_products_list', text: 'Catalog printer paper')
 

@@ -443,7 +443,7 @@ document.addEventListener("turbo:load", () => {
         // the drawer inert. Otherwise Chrome may drop focus to BODY when the
         // currently focused close button becomes inert.
         sidebarContent?.removeAttribute("inert")
-        if (wasOpen && window.innerWidth < 1024) sidebarToggle?.focus({ preventScroll: true })
+        if (wasOpen && window.innerWidth < 1024) document.getElementById("sidebarToggle")?.focus({ preventScroll: true })
         if (window.innerWidth < 1024) sidebar.setAttribute("inert", "")
         sidebar.removeAttribute("role")
         sidebar.removeAttribute("aria-modal")
@@ -456,14 +456,14 @@ document.addEventListener("turbo:load", () => {
         }
 
         if (wasOpen && window.innerWidth < 1024) {
-            sidebarToggle?.focus({ preventScroll: true })
+            document.getElementById("sidebarToggle")?.focus({ preventScroll: true })
             // Restore focus after the click default action has settled.
-            requestAnimationFrame(() => sidebarToggle?.focus({ preventScroll: true }))
+            requestAnimationFrame(() => document.getElementById("sidebarToggle")?.focus({ preventScroll: true }))
             // When the translated drawer completes its CSS transition, Chrome
             // can blur the now offscreen close button; recover only if focus
             // was lost, without stealing it from an intentional next action.
             const recoverFocusIfLost = () => {
-                if (!sidebarToggle?.isConnected || sidebar.classList.contains("sidebar-open") ||
+                if (!sidebar.isConnected || sidebar.classList.contains("sidebar-open") ||
                     window.innerWidth >= 1024) return
                 const focused = document.activeElement
                 const focusLost = !focused ||
@@ -472,7 +472,7 @@ document.addEventListener("turbo:load", () => {
                     !focused.isConnected ||
                     sidebar.contains(focused) ||
                     sidebarOverlay?.contains(focused)
-                if (focusLost) sidebarToggle.focus({ preventScroll: true })
+                if (focusLost) document.getElementById("sidebarToggle")?.focus({ preventScroll: true })
             }
             // Deferring restoration across the CSS transform keeps focus
             // out of BODY even if Chrome blurs the removed, inert close button
@@ -525,7 +525,11 @@ document.addEventListener("turbo:load", () => {
     })
 
     onDocument("keydown", trapMobileSidebarFocus)
-    onElement(sidebarCloseButton, "click", closeMobileSidebar)
+    onElement(sidebarCloseButton, "click", (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        closeMobileSidebar()
+    })
 
     if (sidebar && sidebarToggle) {
         sidebarToggle.setAttribute(
@@ -617,7 +621,7 @@ document.addEventListener("turbo:load", () => {
             closeMobileSidebar()
             queueMicrotask(() => {
                 if (!sidebar?.classList.contains("sidebar-open") && window.innerWidth < 1024) {
-                    sidebarToggle?.focus({ preventScroll: true })
+                    document.getElementById("sidebarToggle")?.focus({ preventScroll: true })
                 }
             })
         })

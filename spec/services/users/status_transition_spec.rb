@@ -52,6 +52,7 @@ RSpec.describe Users::StatusTransition do
     foreign = create(:organization)
     foreign_branch = create(:branch, organization: foreign, operational_state: 'active')
     branch_role = create(:system_role, :branch)
+    create(:organization_membership, user: actor, organization: foreign)
     actor.user_roles.destroy_all
     create(:user_role, user: actor, branch: foreign_branch, system_role: branch_role)
     %w[users.access users.suspend].each do |code|

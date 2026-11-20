@@ -150,7 +150,7 @@ RSpec.describe 'Commercial catalog administration', type: :request do
   it 'retires secondary barcodes logically and allows their values to be reused' do
     product.update!(barcode: 'PRIMARY-RETAINED')
     secondary = product.product_barcodes.create!(organization:, value: 'SECONDARY-RETIRED',
-                                                  symbology: 'code128', primary: false)
+                                                 symbology: 'code128', primary: false)
 
     patch admin_product_path(product), params: { product: {
       product_barcodes_attributes: {

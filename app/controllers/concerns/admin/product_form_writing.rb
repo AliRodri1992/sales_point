@@ -65,7 +65,7 @@ module Admin
       nested = attributes[:product_barcodes_attributes]
       return unless nested
 
-      entries = nested.respond_to?(:each_pair) ? nested.to_a : nested.each_with_index.map { |row, index| [index, row] }
+      entries = nested.respond_to?(:each_pair) ? nested.each_pair : nested.each_with_index.map { |row, index| [index, row] }
       retired_ids = []
       retained = {}
       entries.each do |index, row|

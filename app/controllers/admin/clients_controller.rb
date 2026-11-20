@@ -92,7 +92,8 @@ module Admin
     end
 
     def set_client
-      @client = scoped_clients.includes(:sat_fiscal_regime, :phones).find(params[:id])
+      @client = scoped_clients.includes(:sat_fiscal_regime, :phones).find_by(id: params[:id])
+      head :not_found unless @client
     end
 
     def load_fiscal_regimes

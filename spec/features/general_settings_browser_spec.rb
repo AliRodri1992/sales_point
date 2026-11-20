@@ -36,6 +36,7 @@ RSpec.describe 'General settings page', type: :feature, js: true do
     expect(page).to have_button('Save preference', disabled: false)
 
     click_button 'Save preference'
+    expect(page).to have_button('Save preference', disabled: true)
 
     expect(page).to have_css('[data-general-settings-preview-target="summary"]',
                              text: 'Showing 25 records per page by default.')
@@ -99,6 +100,7 @@ RSpec.describe 'General settings page', type: :feature, js: true do
 
     click_button 'Save initial settings'
 
+    expect(page).to have_button('Save preference', disabled: true)
     expect(page).to have_current_path(admin_general_settings_path)
     expect(organization.organization_settings.active_records.sole).to have_attributes(
       base_currency: currency, timezone: 'America/Mexico_City', payment_method: 'card'

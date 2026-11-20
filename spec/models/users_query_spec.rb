@@ -45,6 +45,8 @@ RSpec.describe UsersQuery, type: :model do
     organization = create(:organization)
     local = create(:branch, organization:)
     foreign = create(:branch)
+    create(:organization_membership, user: matching_user, organization:)
+    create(:organization_membership, user: other_user, organization: foreign.organization)
     role = create(:system_role, :branch, code: 'store_checkout')
     create(:user_role, user: matching_user, system_role: role, branch: local)
     create(:user_role, user: other_user, system_role: role, branch: foreign)
@@ -56,6 +58,8 @@ RSpec.describe UsersQuery, type: :model do
 
   it 'matches a branch role on the same assignment when both filters are selected' do
     organization = create(:organization)
+    create(:organization_membership, user: matching_user, organization:)
+    create(:organization_membership, user: other_user, organization:)
     center = create(:branch, organization:)
     north = create(:branch, organization:, name: 'North')
     cashier = create(:system_role, :branch, code: 'cashier_filter')
