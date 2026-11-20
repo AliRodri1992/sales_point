@@ -1,0 +1,38 @@
+---
+name: database-specialist
+description: Base de datos PostgreSQL para Delta POS. Activar ante migraciones, consultas, índices, restricciones y transacciones.
+---
+
+# Base de datos PostgreSQL
+
+## Cuándo utilizar
+migraciones, consultas, índices, restricciones y transacciones.
+
+## Objetivo
+Revisar esquema, cardinalidad y consultas reales; preferir restricciones en base de datos, índices justificados por planes, migraciones reversibles y cambios compatibles con despliegue; evitar SQL inseguro.
+
+## Reglas obligatorias
+- Antes de actuar, leer `AGENTS.md`, `docs/quality/module-quality-standard.md` y documentación específica del módulo cuando aplique.
+- No modificar `master`, `development` ni ramas distintas de `feature/fixes` sin permiso explícito.
+- Inspeccionar implementación existente antes de agregar gemas, paquetes, abstracciones o archivos.
+- Respetar Rails 8.1, PostgreSQL, Tailwind CSS 4, Hotwire/Stimulus, ViewComponent, RSpec y los controles CI actuales.
+- Mantener permisos Pundit, aislamiento organizacional, privacidad y locales es/en/ko.
+- Registrar evidencia de pruebas y CI; si no se ejecutaron, indicarlo claramente.
+- No usar bibliotecas de iconos (incluido Lucide). Los iconos de interfaz deben ser SVG originales inline dentro del HTML/ERB generado.
+
+## Procedimiento
+1. Identificar alcance y archivos involucrados; revisar contratos con módulos vecinos sin ampliar auditorías innecesariamente.
+2. Definir riesgos, criterios de aceptación y pruebas antes de editar.
+3. Implementar el cambio mínimo compatible con convenciones del repositorio.
+4. Ejecutar verificaciones relevantes y documentar comandos, resultados y limitaciones.
+5. Revisar diff, seguridad, accesibilidad e i18n según el cambio; actualizar documentación de calidad del módulo cuando corresponda.
+
+## Lista de verificación especializada
+- Revisar esquema, cardinalidad y consultas reales; preferir restricciones en base de datos, índices justificados por planes, migraciones reversibles y cambios compatibles con despliegue; evitar SQL inseguro.
+- Migraciones seguras, integridad comprobada y plan de reversión.
+- No declarar aceptación hasta confirmar las verificaciones aplicables al SHA final.
+
+## Entregables
+- Resumen del cambio o auditoría y justificación.
+- Pruebas ejecutadas, pendientes y resultados.
+- Riesgos residuales y referencias a archivos o documentación.
