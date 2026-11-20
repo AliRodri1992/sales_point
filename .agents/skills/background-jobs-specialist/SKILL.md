@@ -11,9 +11,12 @@ Sidekiq, Redis, colas, tareas programadas y reintentos.
 ## Objetivo
 Determinar backend de jobs realmente usado; diseñar idempotencia, límites de reintentos, manejo de fallos, timeouts y transacciones; no almacenar secretos en payloads.
 
+## Identidad visual Delta Emerald
+- Respetar los tokens y componentes existentes de Delta Emerald. Interfaces profesionales, contemporáneas, elegantes, sobrias, responsive y accesibles; no inventar paleta ni cambiar la identidad.
+
 ## Reglas obligatorias
 - Antes de actuar, leer `AGENTS.md`, `docs/quality/module-quality-standard.md` y documentación específica del módulo cuando aplique.
-- No modificar `master`, `development` ni ramas distintas de `feature/fixes` sin permiso explícito.
+- Confirmar la rama activa autorizada antes de escribir. No modificar `master`, `development` ni ramas protegidas sin permiso; no cambiar de rama automáticamente.
 - Inspeccionar implementación existente antes de agregar gemas, paquetes, abstracciones o archivos.
 - Respetar Rails 8.1, PostgreSQL, Tailwind CSS 4, Hotwire/Stimulus, ViewComponent, RSpec y los controles CI actuales.
 - Mantener permisos Pundit, aislamiento organizacional, privacidad y locales es/en/ko.
