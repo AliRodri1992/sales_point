@@ -6,15 +6,11 @@
 <% sign_in_mode = session.delete(:swal_mode) %>
 <% swal_message = already_authenticated ? already_authenticated_message : (sign_in_message_key.present? ? t(sign_in_message_key) : sign_in_message.presence || flash[:swal_message]) %>
 <% swal_icon = already_authenticated ? 'info' : sign_in_icon.presence || flash[:swal_icon] || 'success' %>
+<% swal_mode = (sign_in_mode.presence || flash[:swal_mode]) == 'modal' && !already_authenticated ? 'modal' : 'toast' %>
 
 <% if swal_message.present? %>
-  <div
-    data-controller="swal-flash"
-    data-swal-flash-message-value="<%= swal_message %>"
-    data-swal-flash-icon-value="<%= swal_icon %>"
-    data-swal-flash-mode-value="<%= sign_in_mode == 'modal' && !already_authenticated ? 'modal' : 'toast' %>"
-    class="hidden"
-  ></div>
+  <%= render 'admin/shared/swal_feedback', swal_message: swal_message, swal_icon: swal_icon,
+             swal_mode: swal_mode, swal_title: flash[:swal_title], swal_confirm_label: flash[:swal_confirm_label] %>
 <% end %>
 
 <% if flash[:notice].present? && !already_authenticated %>

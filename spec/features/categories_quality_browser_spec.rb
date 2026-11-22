@@ -16,6 +16,28 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
 
   after { Warden.test_reset! }
 
+  scenario 'shows a SweetAlert warning and retains the category and filters when removal is blocked' do
+    category = create(:category, organization:, name: 'Groceries', code: 'groceries')
+    create(:product, organization:, category:)
+
+    page.driver.browser.manage.window.resize_to(1280, 900)
+    visit admin_categories_path(search: category.name)
+    find('tr', text: category.name).find('button[aria-label="Delete: Groceries"]').click
+    find('.swal2-popup.delta-confirm-popup .delta-confirm-accept').click
+
+    expect(page).to have_css('.swal2-popup.swal2-icon-warning[role="dialog"]',
+                             text: I18n.t('admin.categories.in_use', locale: :en, raise: true), wait: 10)
+    within('.swal2-popup.swal2-icon-warning') do
+      expect(page).to have_text('This category cannot be removed')
+      click_button 'Close'
+    end
+    expect(page).to have_no_css('.swal2-popup', wait: 10)
+    expect(page).to have_no_css('#categories_alert')
+    expect(page).to have_field('category_search', with: category.name)
+    expect(page).to have_css('turbo-frame#categories_list', text: category.name)
+    expect(category.reload.deleted_at).to be_nil
+  end
+
   scenario 'validates required fields and saves the description from the modal' do
     visit admin_categories_path
     click_link 'New category'

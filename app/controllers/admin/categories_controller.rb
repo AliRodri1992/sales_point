@@ -109,15 +109,17 @@ module Admin
     end
 
     def category_in_use_response
-      message = t('admin.categories.in_use')
+      feedback = {
+        swal_message: t('admin.categories.in_use'), swal_title: t('admin.categories.in_use_title'),
+        swal_icon: 'warning', swal_mode: 'modal', swal_confirm_label: t('admin.categories.show.close')
+      }
       respond_to do |format|
-        format.html { redirect_to admin_categories_path, alert: message, status: :see_other }
+        format.html do
+          redirect_to admin_categories_path(request.query_parameters), flash: feedback, status: :see_other
+        end
         format.turbo_stream do
-          content = view_context.tag.div(
-            message, role: 'alert',
-                     class: 'rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800'
-          )
-          render turbo_stream: turbo_stream.update('categories_alert', content), status: :unprocessable_content
+          render turbo_stream: turbo_stream.append('flash', partial: 'admin/shared/swal_feedback', locals: feedback),
+                 status: :unprocessable_content
         end
       end
     end

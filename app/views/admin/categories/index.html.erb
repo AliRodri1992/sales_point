@@ -76,7 +76,6 @@
     <% end %>
   </section>
 
-  <div id="categories_alert" aria-live="assertive" class="categories-alert"></div>
   <%= turbo_stream_from "categories_catalog_#{current_organization.id}" %>
 
   <div class="delta-skeleton-region" data-controller="skeleton-loading"

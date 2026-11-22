@@ -308,6 +308,7 @@ es:
       confirm:
         cancel: Cancelar
       in_use: "No se puede retirar una categoría utilizada por productos o promociones. Desactívala o reasigna sus referencias."
+      in_use_title: "No se puede retirar la categoría"
       created: Categoría creada correctamente
       destroyed: Categoría eliminada correctamente
       edit:

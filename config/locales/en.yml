@@ -307,6 +307,7 @@ en:
       confirm:
         cancel: Cancel
       in_use: "This category is used by products or promotions. Deactivate it or reassign its references before removing it."
+      in_use_title: "This category cannot be removed"
       created: Category created successfully
       destroyed: Category deleted successfully
       edit:

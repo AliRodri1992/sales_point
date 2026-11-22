@@ -5,6 +5,8 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
     static values = {
         message: String,
+        title: String,
+        confirmLabel: String,
         icon: { type: String, default: "success" },
         mode: { type: String, default: "toast" },
         persistent: { type: Boolean, default: false },
@@ -27,7 +29,9 @@ export default class extends Controller {
             showCloseButton: this.persistentValue,
             closeButtonAriaLabel: this.closeLabelValue,
             timerProgressBar: !modal && !this.persistentValue,
-            title: this.messageValue,
+            titleText: this.titleValue || this.messageValue,
+            ...(this.titleValue ? { text: this.messageValue } : {}),
+            ...(this.confirmLabelValue ? { confirmButtonText: this.confirmLabelValue } : {}),
             didClose: () => {
                 if (focusTarget?.isConnected) focusTarget.focus()
             }

@@ -269,20 +269,39 @@ RSpec.describe 'Admin::Categories', type: :request do
     it 'protects categories referenced by active products' do
       organization = user.organization_memberships.first.organization
       create(:product, organization:, category:)
-      delete admin_category_path(category)
+      delete admin_category_path(category, search: category.name)
 
       expect(response).to have_http_status(:see_other)
+      expect(response).to redirect_to(admin_categories_path(search: category.name))
       expect(category.reload.deleted_at).to be_nil
-      expect(flash[:alert]).to eq(I18n.t('admin.categories.in_use'))
+      expect(flash[:alert]).to be_nil
+      expect(flash[:swal_message]).to eq(I18n.t('admin.categories.in_use', raise: true))
+      expect(flash[:swal_icon]).to eq('warning')
+      expect(flash[:swal_mode]).to eq('modal')
+
+      follow_redirect!
+      feedback = Nokogiri::HTML(response.body).at_css('#flash [data-controller="swal-flash"]')
+      expect(feedback['data-swal-flash-mode-value']).to eq('modal')
+      expect(feedback['data-swal-flash-confirm-label-value']).to eq(I18n.t('admin.categories.show.close'))
     end
 
-    it 'shows a translated error in Turbo Stream for an in-use category' do
+    it 'shows a translated SweetAlert warning in Turbo Stream for an in-use category' do
       organization = user.organization_memberships.first.organization
       create(:product, organization:, category:)
-      delete admin_category_path(category, format: :turbo_stream)
+      expect do
+        delete admin_category_path(category, format: :turbo_stream)
+      end.not_to change(Noticed::Notification, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include('categories_alert', I18n.t('admin.categories.in_use'))
+      document = Nokogiri::HTML.fragment(response.body)
+      stream = document.at_css('turbo-stream[action="append"][target="flash"]')
+      expect(stream).to be_present
+      feedback = stream.at_css('[data-controller="swal-flash"]')
+      expect(feedback['data-swal-flash-message-value']).to eq(I18n.t('admin.categories.in_use', raise: true))
+      expect(feedback['data-swal-flash-title-value']).to eq(I18n.t('admin.categories.in_use_title', raise: true))
+      expect(feedback['data-swal-flash-icon-value']).to eq('warning')
+      expect(feedback['data-swal-flash-mode-value']).to eq('modal')
+      expect(response.body).not_to include('categories_alert')
       expect(category.reload.deleted_at).to be_nil
     end
 

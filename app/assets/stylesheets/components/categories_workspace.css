@@ -27,8 +27,6 @@
 .categories-filter-field .delta-select-native {display:none}
 .categories-mobile-sort-field {display:none}
 .categories-status-field .relative,.categories-filter-field .relative {min-width:0}
-.categories-alert:empty {display:none}
-.categories-alert:not(:empty) {margin-bottom:1rem}
 .categories-filter-chips {display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:.625rem 0 1rem}
 .categories-filter-chips-label {font-size:.75rem;font-weight:650;color:#64748b;margin-right:.125rem}
 .categories-filter-chip {display:inline-flex;align-items:center;gap:.6rem;max-width:100%;min-height:40px;padding:.35rem .75rem;border:1px solid var(--brand-on-white,#047857);border-radius:999px;background:var(--brand-light,#ecfdf5);color:var(--brand-on-white,#047857);font-size:.75rem;font-weight:650}

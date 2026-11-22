@@ -456,3 +456,18 @@ El CI global #42762227403 ya confirma I18n/YAML y Security scans satisfactorios;
 ### Dictamen
 
 **REAUDITORÍA COMPLETADA · CATEGORIES-031–033 VERIFICADOS AUTOMÁTICAMENTE · CATEGORIES-034–037 ABIERTOS · CATEGORIES-001/009/010/026/029 PENDIENTES · MÓDULO NO CERRADO.** Esta pasada es documental: no modifica lógica, migraciones ni datos. Mantener todo en `feature/fixes`; no fusionar ramas.
+
+## CATEGORIES-038 — Aviso de categoría en uso (2026-11-22)
+
+**P2 · UX / propio.** Base: `f2a9190c2d9945bda1eb7d918fcd22ca1725848f`.
+Al intentar retirar una categoría referenciada, la respuesta HTML mostraba un
+flash inline y la respuesta Turbo actualizaba `categories_alert`. Se unificó
+el aviso en SweetAlert2, con título y botón Cerrar localizados (es/en/ko),
+icono de advertencia y diálogo sin temporizador. La petición Turbo conserva
+el 422; la petición HTML redirige con los filtros. La restricción de dominio,
+el registro de categoría y las notificaciones de baja no cambian.
+
+**Validación:** auditor de locales estricto y sintaxis JavaScript aprobados
+localmente. Nuevos request specs para HTML/Turbo y regresión Chrome para el
+diálogo y la conservación del registro/filtros. RSpec, RuboCop y revisión
+visual real pendientes de ejecución en CI; no hay Ruby ni Docker local.
