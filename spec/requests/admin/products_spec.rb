@@ -63,6 +63,61 @@ RSpec.describe 'Admin::Products', type: :request do
     end
   end
 
+  describe 'GET /admin/products column sorting' do
+    let!(:empty) { create(:product, organization:, name: 'Z zero', status: 'inactive') }
+    let!(:small) { create(:product, organization:, name: 'A small', status: 'active') }
+    let!(:large) { create(:product, organization:, name: 'M large', status: 'active') }
+    let!(:also_empty) { create(:product, organization:, name: 'B zero', status: 'inactive') }
+
+    before do
+      branch = create(:branch, organization:)
+      second_branch = create(:branch, organization:, name: 'Second stock branch')
+      create(:inventory, organization:, branch:, product: small, stock: 2)
+      create(:inventory, organization:, branch: second_branch, product: small, stock: 3)
+      create(:inventory, organization:, branch:, product: large, stock: 20)
+    end
+
+    def product_names
+      Nokogiri::HTML(response.body).css('.products-directory tbody .catalog-list-name').map { |node| node.text.strip }
+    end
+
+    it 'marks the effective default sort and exposes paired arrows for four data columns' do
+      get admin_products_path
+      document = Nokogiri::HTML(response.body)
+      headers = document.css('.products-directory thead th')
+
+      expect(headers.first['aria-sort']).to eq('ascending')
+      expect(headers[1..3].pluck('aria-sort')).to eq(%w[none none none])
+      expect(document.css('.products-sort-link').size).to eq(4)
+      expect(document.css('.products-sort-link .products-sort-arrows svg').size).to eq(8)
+      expect(headers.last.at_css('a')).to be_nil
+      query = Rack::Utils.parse_query(URI.parse(headers.first.at_css('a')['href']).query)
+      expect(query).to include('sort' => 'products.name', 'direction' => 'desc')
+    end
+
+    it 'orders the displayed stock total across branches with zero fallback and stable ties' do
+      foreign = create(:organization)
+      foreign_product = create(:product, organization: foreign, name: 'Foreign inventory')
+      create(:inventory, organization: foreign, branch: create(:branch, organization: foreign),
+                         product: foreign_product, stock: 999)
+
+      get admin_products_path(sort: 'products.stock', direction: 'asc')
+      expect(product_names).to eq([empty.name, also_empty.name, small.name, large.name])
+      get admin_products_path(sort: 'products.stock', direction: 'desc')
+      expect(product_names).to eq([large.name, small.name, empty.name, also_empty.name])
+      expect(Nokogiri::HTML(response.body).at_css('th[aria-sort="descending"]').text.strip).to eq(
+        I18n.t('admin.products.index.columns.stock')
+      )
+    end
+
+    it 'orders status in both directions without changing the identifier tie breaker' do
+      get admin_products_path(sort: 'products.status', direction: 'asc')
+      expect(product_names).to eq([small.name, large.name, empty.name, also_empty.name])
+      get admin_products_path(sort: 'products.status', direction: 'desc')
+      expect(product_names).to eq([empty.name, also_empty.name, small.name, large.name])
+    end
+  end
+
   describe 'GET /admin/products' do
     it 'queries inventory stock totals once for a page of products', :n_plus_one do
       statements = recorded_sql_queries { get admin_products_path }

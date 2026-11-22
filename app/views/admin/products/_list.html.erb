@@ -16,7 +16,9 @@
     <% end %>
     <%= render 'admin/shared/catalog_mobile_sort', frame: '_top', columns: {
           'products.name' => t('admin.products.index.columns.name'), 'products.code' => t('admin.products.index.columns.code'),
-          'products.price' => t('admin.products.index.columns.price') } %>
+          'products.price' => t('admin.products.index.columns.price'),
+          'products.stock' => t('admin.products.index.columns.stock'),
+          'products.status' => t('admin.products.index.columns.status') } %>
   </header>
 
   <% if product_rows.any? %>
@@ -25,10 +27,10 @@
         <caption class="sr-only"><%= t('admin.products.index.card_title') %></caption>
         <thead>
           <tr>
-            <th scope="col"><%= sort_link('products.name', t('activerecord.models.product'), url_options: { action: 'index', id: nil, format: nil }, frame: '_top') %></th>
-            <th scope="col" class="catalog-list-numeric"><%= sort_link('products.price', t('admin.products.index.columns.price'), url_options: { action: 'index', id: nil, format: nil }, frame: '_top') %></th>
-            <th scope="col" class="catalog-list-numeric"><%= t('admin.products.index.columns.stock') %></th>
-            <th scope="col"><%= t('admin.products.index.columns.status') %></th>
+            <th scope="col" aria-sort="<%= product_sort_state('products.name') %>"><%= product_sort_link('products.name', t('activerecord.models.product')) %></th>
+            <th scope="col" class="catalog-list-numeric" aria-sort="<%= product_sort_state('products.price') %>"><%= product_sort_link('products.price', t('admin.products.index.columns.price')) %></th>
+            <th scope="col" class="catalog-list-numeric" aria-sort="<%= product_sort_state('products.stock') %>"><%= product_sort_link('products.stock', t('admin.products.index.columns.stock')) %></th>
+            <th scope="col" aria-sort="<%= product_sort_state('products.status') %>"><%= product_sort_link('products.status', t('admin.products.index.columns.status')) %></th>
             <th scope="col" class="catalog-list-actions-heading"><%= t('admin.products.index.columns.actions') %></th>
           </tr>
         </thead>

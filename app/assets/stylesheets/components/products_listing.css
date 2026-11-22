@@ -12,8 +12,15 @@
 .products-directory .catalog-list-table th:first-child { width: 46%; }
 .products-directory .catalog-list-table td:nth-child(2) { font-weight: 650; }
 .products-directory .catalog-list-page-count { margin-left: auto; }
-.products-directory .catalog-list-mobile-sort { display: block; }
-.products-directory .catalog-list-mobile-sort[open] { flex-basis: 100%; }
+.products-directory .catalog-list-table th { padding-block: .375rem; }
+.products-sort-link { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; min-width: 44px; color: #475569; font: inherit; letter-spacing: inherit; text-transform: inherit; }
+.products-sort-link:hover { color: var(--brand-on-white, #047857); }
+.products-sort-arrows { display: grid; flex-shrink: 0; gap: 0; color: #64748b; }
+.products-sort-arrows svg { width: 12px; height: 12px; }
+.products-directory th[aria-sort="ascending"] .products-sort-arrow--asc,
+.products-directory th[aria-sort="descending"] .products-sort-arrow--desc { color: var(--brand-on-white, #047857); stroke-width: 2.75; }
+.products-directory th[aria-sort="ascending"] .products-sort-arrow--desc,
+.products-directory th[aria-sort="descending"] .products-sort-arrow--asc { color: #94a3b8; }
 .products-directory .catalog-list-mobile-facts { padding-top: .875rem; border-top: 1px solid #f1f5f9; }
 @media (max-width: 1099px) {
   .products-directory .catalog-list-mobile-card-heading { align-items: flex-start; }

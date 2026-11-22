@@ -5,7 +5,7 @@ module Admin
     SORT_DIRECTIONS = %w[asc desc].freeze
 
     SORTABLE_COLUMNS = %w[
-      products.name products.code products.price
+      products.name products.code products.price products.stock products.status
       products.cost products.created_at products.updated_at products.position
     ].freeze
 
@@ -90,7 +90,21 @@ module Admin
       sort_column = SORTABLE_COLUMNS.include?(params[:sort]) ? params[:sort] : 'products.name'
       sort_direction = SORT_DIRECTIONS.include?(params[:direction]) ? params[:direction] : 'asc'
 
+      if sort_column == 'products.stock'
+        expression = stock_sort_expression
+        ordering = sort_direction == 'desc' ? expression.desc : expression.asc
+        return scope.order(ordering, 'products.id' => :asc)
+      end
+
       scope.order(sort_column => sort_direction, 'products.id' => :asc)
+    end
+
+    def stock_sort_expression
+      inventory = Inventory.arel_table
+      total = Arel::Nodes::NamedFunction.new('COALESCE', [inventory[:stock].sum, Arel::Nodes.build_quoted(0)])
+      totals = Inventory.where(organization_id: current_organization&.id)
+                        .where(inventory[:product_id].eq(Product.arel_table[:id])).select(total)
+      Arel::Nodes::Grouping.new(totals.arel)
     end
 
     def paginate(scope)

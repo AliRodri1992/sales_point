@@ -16,6 +16,7 @@ on:
       - 'app/services/products/**'
       - 'app/policies/product_policy.rb'
       - 'app/views/admin/products/**'
+      - 'app/helpers/product_listing_helper.rb'
       - 'app/assets/stylesheets/components/catalog_workspace.css'
       - 'app/assets/stylesheets/components/products_filters.css'
       - 'app/assets/stylesheets/components/products_listing.css'
@@ -62,6 +63,7 @@ jobs:
       - name: Lint Products and focused regressions
         run: |
           bin/rubocop -f simple \
+            app/helpers/product_listing_helper.rb \
             app/controllers/admin/products_controller.rb \
             app/controllers/admin/product_images_controller.rb \
             app/controllers/concerns/admin/product_form_writing.rb \

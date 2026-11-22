@@ -404,3 +404,43 @@ Permisos granulares de Productos: 6 ejemplos, 0 fallos (seed 38782), incluidos
 listado sin escritura, consulta sin edición y acciones autorizadas por separado;
 `tmp/product-list-compact-permissions.log`. Total funcional local de esta adecuación:
 98 ejemplos aprobados, además del escenario de capturas.
+
+## PRODUCTS-033 — Orden en los encabezados con flechas (2026-11-22)
+
+**Base:** `71afe55a98a1b0bff2668c7a30b1158d85480832`, `feature/fixes`.
+El usuario sustituye el control separado de orden de escritorio de PRODUCTS-032
+por controles junto al nombre de las columnas. Producto, Precio, Existencias y
+Estado ofrecen pares de flechas SVG propias; la dirección efectiva se destaca
+y se publica en `aria-sort`. Los enlaces indican la siguiente acción en es/en/ko,
+alternan asc/desc, conservan filtros/tamaño de página y reinician la página.
+El orden predeterminado Producto ascendente también se refleja sin query explícita.
+El menú anterior permanece en las tarjetas móviles, donde no hay cabeceras de tabla.
+
+Se amplía la lista blanca de `ProductsListing` a estado y existencias. El total
+ordenado coincide con el mostrado: suma de inventarios de la organización actual
+en todas sus sucursales, con cero para productos sin inventarios. Subconsulta Arel
+correlacionada por product_id, sin interpolar SQL del usuario, dirección validada
+y desempate estable por products.id ASC. Hay índice existente en product_id.
+No se modifican modelos, permisos, validaciones, otras tablas ni migraciones.
+
+Nuevo `ProductListingHelper` con rutas de colección explícitas y controles de al
+menos 44 px, semántica de tabla y etiquetas de siguiente acción. CSS limitado a
+Productos; el resto de catálogos conserva sus controles. Se usan textos existentes.
+
+**Regresión:** 3 ejemplos fallidos (seed 59869) por estado ARIA ausente y orden de
+existencias/estado no admitido. **Suite local:** 93 ejemplos, 0 fallos (seed 39460),
+requests de Productos/paginación, concern de listado, interfaz de filtros y flujos
+Chrome de catálogo. Incluye suma en dos sucursales, inventario vacío, aislamiento,
+desempates y teclado asc/desc con filtros. Revisión independiente sin hallazgos.
+I18n estricto: 291 archivos, 5,418 claves por idioma, 0 hallazgos; registro modular
+válido. Brakeman 8.0.6: 0 errores y 0 advertencias. Capturas y verificación final de
+estilo en curso; CI del SHA publicado pendiente. No se certifica cierre del módulo.
+
+**Verificación final:** RuboCop 4 archivos sin ofensas; 3 regresiones de orden
+aprobadas (seed 26010) y 2 flujos Chrome aprobados (seed 20064), tras sustituir
+el dispatch dinámico por ramas Arel asc/desc explícitas. Capturas es/en/ko en
+320/390/768/1440 px: 1 escenario aprobado (seed 8032), sin overflow, mostrando
+Precio descendente seleccionado. Archivos `tmp/capybara/product-header-sort-*.png`
+y `product-table-column-sorting.png`; logs `tmp/product-header-sort-*.log`.
+La inspección confirma ausencia del menú de escritorio y pares de flechas junto
+a los cuatro encabezados ordenables. CI del SHA publicado pendiente de consulta.

@@ -47,18 +47,28 @@ RSpec.describe 'Product listing information design', type: :feature, js: true do
     end
   end
 
-  scenario 'retains desktop code sorting and its filters without a separate Code column' do
-    create_list(:product, 10, organization:, name: 'Compact coffee')
+  scenario 'toggles header arrows with keyboard while retaining filters and resetting the page' do
+    create_list(:product, 10, organization:, name: 'Compact coffee', price: 20)
+    create(:product, organization:, name: 'Compact low price', price: 5)
+    create(:product, organization:, name: 'Compact high price', price: 90)
     page.driver.browser.manage.window.resize_to(1440, 1000)
     visit admin_products_path(search: 'Compact', status: 'active', per_page: 5, page: 2)
 
-    find('.products-directory .catalog-list-mobile-sort summary').send_keys(:enter)
-    within('.products-directory .catalog-list-mobile-sort') do
-      find('a[href*="sort=products.code"][href*="direction=asc"]').click
-    end
-    expect(page).to have_current_path(/sort=products.code/)
-    expect(page.current_url).to include('search=Compact', 'status=active', 'per_page=5')
+    expect(page).to have_no_css('.products-directory .catalog-list-mobile-sort')
+    find('.products-directory thead th:nth-child(2) a').send_keys(:enter)
+    expect(page).to have_current_path(/sort=products.price/)
+    expect(page.current_url).to include('search=Compact', 'status=active', 'per_page=5', 'direction=asc')
     expect(page).to have_no_current_path(/page=2/)
-    expect(page).to have_css('.products-directory thead th', count: 5)
+    expect(page).to have_css('th:nth-child(2)[aria-sort="ascending"]')
+    expect(page).to have_css('.products-directory tbody tr:first-child', text: 'Compact low price')
+
+    find('.products-directory thead th:nth-child(2) a').send_keys(:enter)
+    expect(page).to have_current_path(/direction=desc/)
+    expect(page).to have_css('th:nth-child(2)[aria-sort="descending"]')
+    expect(page).to have_css('.products-directory tbody tr:first-child', text: 'Compact high price')
+    find('.products-directory thead th:first-child a').send_keys(:enter)
+    expect(page).to have_current_path(/sort=products.name/)
+    expect(page).to have_css('th:first-child[aria-sort="ascending"]')
+    expect(page).to have_css('th:nth-child(2)[aria-sort="none"]')
   end
 end
