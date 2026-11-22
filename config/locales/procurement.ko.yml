@@ -40,7 +40,7 @@ ko:
       save: "저장"
       back: "돌아가기"
       empty: "이 공급업체에 연결된 상품이 아직 없습니다. 제안을 추가해 카탈로그의 상품을 연결하세요."
-      yes: "예"
+      "yes": "예"
       supplier_sku: "공급업체 SKU"
       units_per_package: "포장당 수량"
       currency: "통화"

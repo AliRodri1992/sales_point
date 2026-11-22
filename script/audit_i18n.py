@@ -8,6 +8,8 @@ Checks every config/locales/**/*.yml and *.yaml file for:
 - Non-mapping locale roots.
 - Missing/extra top-level locale keys.
 - Interpolation variable drift across en/es/ko for shared translation paths.
+- Missing literal translation references (including relative Rails view keys).
+- Non-string YAML keys, blank values, type drift and conflicting definitions.
 """
 
 from __future__ import annotations
@@ -23,6 +25,13 @@ from yaml.events import AliasEvent, MappingEndEvent, MappingStartEvent, ScalarEv
 LOCALES_DIR = pathlib.Path("config/locales")
 REQUIRED_LOCALES = ("en", "es", "ko")
 INTERPOLATION_RE = re.compile(r"%{([A-Za-z0-9_]+)}")
+TRANSLATION_CALL_RE = re.compile(
+    r"(?<![\w])(?:I18n\.(?:t|translate|exists\?)|\b(?:t|translate))"
+    r"\s*\(?\s*(['\"])(\.?[a-zA-Z_][\w-]*(?:\.[\w-]+)*)\1"
+)
+# Supplied by rails-i18n; covered by a runtime regression spec instead of
+# requiring a duplicate application translation in config/locales.
+FRAMEWORK_KEYS = {"date.day_names"}
 
 
 class DuplicateKeyError(ValueError):
@@ -37,6 +46,10 @@ def construct_mapping_no_duplicates(loader: StrictLoader, node: yaml.MappingNode
     mapping = {}
     for key_node, value_node in node.value:
         key = loader.construct_object(key_node, deep=deep)
+        if not isinstance(key, str):
+            raise DuplicateKeyError(
+                f"non-string mapping key {key!r} at line {key_node.start_mark.line + 1}; quote YAML keys"
+            )
         if key in mapping:
             raise DuplicateKeyError(
                 f"duplicate key {key!r} at line {key_node.start_mark.line + 1}, "
@@ -120,6 +133,58 @@ def leaf_map(value, prefix=()):
     return {".".join(prefix): value}
 
 
+def translation_references(root=pathlib.Path("app")):
+    """Inventory literal Rails calls; dynamic expressions need explicit tests."""
+    references = {}
+    for path in sorted(root.rglob("*")):
+        if path.suffix not in (".rb", ".erb") or not path.is_file():
+            continue
+        source = path.read_text(encoding="utf-8")
+        for match in TRANSLATION_CALL_RE.finditer(source):
+            key = match.group(2)
+            if key.startswith("."):
+                try:
+                    relative = path.relative_to(root / "views")
+                except ValueError:
+                    # Controller and component lazy lookup is context-dependent.
+                    continue
+                scope = str(relative).split(".", 1)[0].replace("/_", "/").replace("/", ".")
+                key = scope + key
+            if "." not in key:
+                continue
+            line = source.count("\n", 0, match.start()) + 1
+            references.setdefault(key, f"{path}:{line}")
+    return references
+
+
+def audit_references(leaves, references):
+    issues = []
+    for key, source in sorted(references.items()):
+        if key in FRAMEWORK_KEYS:
+            continue
+        for locale, catalog in leaves.items():
+            if key not in catalog and not any(path.startswith(key + ".") for path in catalog):
+                issues.append(f"{locale}: MISSING_REFERENCE {key} ({source})")
+    return issues
+
+
+def audit_definitions(parsed):
+    """Identical overlaps are harmless; conflicting values are order-dependent."""
+    seen = {}
+    issues = []
+    for path, (locale, data) in parsed.items():
+        if locale not in REQUIRED_LOCALES:
+            continue
+        for key, value in leaf_map(data[locale]).items():
+            if value is None or (isinstance(value, str) and not value.strip()) or value == []:
+                issues.append(f"{locale}: EMPTY {key} ({path})")
+            previous = seen.get((locale, key))
+            if previous is not None and previous[1] != value:
+                issues.append(f"{locale}: CONFLICT {key} ({previous[0]} / {path})")
+            seen[locale, key] = (path, value)
+    return issues
+
+
 
 def compare_manual_structure(base_sections, other_sections, locale):
     """Validate every manual topic, task and step against the Spanish reference."""
@@ -201,7 +266,9 @@ def audit_full_locale_parity(parsed):
 
     leaves = {locale: leaf_map(tree) for locale, tree in merged.items()}
     reference = leaves["es"]
-    issues = []
+    issues = audit_definitions(parsed)
+    references = translation_references()
+    issues.extend(audit_references(leaves, references))
     for locale in ("en", "ko"):
         current = leaves[locale]
         for key, value in sorted(reference.items()):
@@ -209,6 +276,8 @@ def audit_full_locale_parity(parsed):
                 issues.append(f"{locale}: MISSING {key}")
                 continue
             translated = current[key]
+            if type(value) is not type(translated):
+                issues.append(f"{locale}: TYPE {key}: {type(value).__name__} != {type(translated).__name__}")
             if isinstance(value, str) and isinstance(translated, str):
                 base_vars = sorted(INTERPOLATION_RE.findall(value))
                 target_vars = sorted(INTERPOLATION_RE.findall(translated))
@@ -235,6 +304,7 @@ def audit_full_locale_parity(parsed):
         issues.extend(compare_manual_structure(reference_sections, translated_sections, locale))
 
     print("FULL_LOCALE_PARITY")
+    print(f"  literal source references: {len(references)}")
     for locale in REQUIRED_LOCALES:
         print(f"  {locale}: {len(leaves[locale])} leaf paths")
     print(f"  findings: {len(issues)}")

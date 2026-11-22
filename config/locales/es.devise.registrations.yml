@@ -9,4 +9,4 @@ es:
           new_title: "Es un sistema completamente nuevo"
           new_description: "Inicializa una base de datos limpia. Ideal si abres tu primer comercio minorista."
           migration_title: "Es una migración de un sistema existente"
-          migration_description: "Trae tus datos existentes a Delta POS y continúa operando sin empezar desde cero."
+          migration_description: "Migra tu catálogo e información operativa actual a Delta POS de forma segura."

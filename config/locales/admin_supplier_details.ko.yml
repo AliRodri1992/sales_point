@@ -126,6 +126,7 @@ ko:
         primary: "대표"
         active: "활성"
       address_form:
+        summary_heading: "주소 요약"
         location_searching: "주소의 위치를 검색하고 있습니다…"
         location_search: "지도에서 주소 찾기"
         location_confirm: "위치 확인"

@@ -27,10 +27,11 @@ inmediata en el proceso actual y se comparte con otros procesos cuando
 `Rails.cache` utiliza un almacén compartido (Redis/SolidCache). Se consulta
 la versión compartida como máximo una vez por segundo por proceso.
 
-**No sobrescribas traducciones editadas directamente en la base** si ejecutas
-`translations:load` o `db:seed`: ambas tareas importan los valores de YAML
-y actualizan los registros de las mismas claves. Se recomienda definir una
-política de fuente de verdad antes de editar traducciones en producción.
+`translations:load` y `db:seed` conservan los overrides administrados y
+actualizan el baseline `yaml_value`. Previsualiza la sincronización con
+`DRY_RUN=1 bin/rails translations:load`; no uses `OVERWRITE=1` salvo que se
+quiera explícitamente reemplazar las personalizaciones. Las filas históricas
+sin baseline se preservan de forma conservadora.
 
 ## Instalación y carga de archivos
 
@@ -69,3 +70,11 @@ bundle exec rspec spec/models/language_spec.rb spec/models/translate_spec.rb \
 Comprueba también `bundle exec rubocop` y el flujo de CI antes de integrar
 los cambios. Las traducciones YAML faltantes deben revisarse con un auditor
 de cobertura; el fallback no equivale a una traducción de calidad.
+
+`I18N_STRICT_PARITY=1 python script/audit_i18n.py` verifica referencias
+literales de controladores, componentes y vistas (incluidas claves relativas
+de vistas), paridad, tipos, interpolación, valores vacíos y conflictos de
+definiciones. Los solapamientos idénticos se permiten; las expresiones
+dinámicas requieren pruebas de los valores concretos. `date.day_names` se
+verifica mediante RSpec porque lo suministra rails-i18n. Ejecuta los tests del
+auditor con `python -m unittest discover -s test -p audit_i18n_test.py`.

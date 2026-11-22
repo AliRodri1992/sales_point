@@ -47,4 +47,26 @@ RSpec.describe 'Locale coverage', type: :model do
       expect(File.read(path)).not_to match(/NEXO\s*POS/i)
     end
   end
+
+  %i[es en ko].each do |locale|
+    it "resolves application and framework translations in #{locale} without fallback" do
+      keys = %w[
+        admin.languages.created admin.languages.updated admin.languages.destroyed
+        admin.products.destroy_failed admin.products.index.not_found
+        admin.supplier_details.address_form.summary_heading
+        admin.supplier_dossier.contact_cards.additional_phones admin.supplier_dossier.contact_cards.more_details
+        admin.procurement.yes admin.units_of_measure.filters.yes admin.units_of_measure.filters.no
+        admin.suppliers.index.advanced.options.yes admin.suppliers.index.advanced.options.no
+        countries.NO landing.dashboard.sale
+        admin.dashboard.page_header.new_sale admin.dashboard.page_header.save_changes
+      ]
+      keys.each do |key|
+        value = I18n.t(key, locale:, raise: true, fallback: false)
+        expect(value).to be_a(String).and be_present
+        expect(value).not_to match(/translation[ _]missing/i)
+      end
+      days = I18n.t('date.day_names', locale:, raise: true, fallback: false)
+      expect(days).to be_an(Array).and have_attributes(size: 7)
+    end
+  end
 end

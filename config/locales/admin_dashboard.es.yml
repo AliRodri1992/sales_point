@@ -4,7 +4,7 @@ es:
     dashboard:
       page_header:
         title: "Panel de control"
-        subtitle: "Consulta el rendimiento de tu negocio de un vistazo."
+        subtitle: "Resumen de las operaciones de tu negocio."
         customize: "Personalizar panel"
         new_sale: "Nueva venta"
       saved:

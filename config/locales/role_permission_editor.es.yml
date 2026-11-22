@@ -120,11 +120,11 @@ es:
           name: Desbloquear usuarios
           description: Permite levantar un bloqueo de seguridad.
         users_destroy:
-          name: Archivar usuarios
-          description: Permite archivar usuarios de la organización.
+          name: "Eliminar / archivar · Usuarios"
+          description: "Permite dar de baja registros mediante el flujo de eliminación del módulo."
         users_restore:
           name: Restaurar usuarios
-          description: Permite restaurar usuarios archivados.
+          description: "Permite restaurar usuarios archivados. Requiere una cuenta superadministradora."
         email_templates_access:
           name: Acceder a plantillas de correo
           description: Permite abrir el catálogo de plantillas de correo.

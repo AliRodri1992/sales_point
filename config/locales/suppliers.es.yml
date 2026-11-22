@@ -86,8 +86,8 @@ es:
             MXN: "MXN"
             USD: "USD"
             EUR: "EUR"
-            yes: "Con crédito"
-            no: "Sin crédito"
+            "yes": "Con crédito"
+            "no": "Sin crédito"
         pagination:
           per_page_label: "Mostrar"
           range: "Mostrando %{first}–%{last} de %{total}"

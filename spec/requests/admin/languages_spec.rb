@@ -23,6 +23,27 @@ RSpec.describe 'Admin::Languages', type: :request do
     sign_out user
   end
 
+  {
+    es: ['Idioma creado correctamente', 'Idioma actualizado correctamente', 'Idioma eliminado correctamente'],
+    en: ['Language created successfully', 'Language updated successfully', 'Language deleted successfully'],
+    ko: ['언어가 성공적으로 생성되었습니다', '언어가 성공적으로 업데이트되었습니다', '언어가 성공적으로 삭제되었습니다']
+  }.each do |locale, messages|
+    it "returns localized create, update and delete notices in #{locale}" do
+      preference = Language.find_by(code: locale.to_s) || create(:language, code: locale.to_s)
+      user.update!(language: preference)
+      post admin_languages_path,
+           params: { language: { name: 'French draft', code: 'fr', flag_iso: 'fr', status: 'inactive' } }
+      expect(flash[:notice]).to eq(messages[0])
+
+      language = Language.find_by!(code: 'fr')
+      patch admin_language_path(language), params: { language: { name: 'French revised' } }
+      expect(flash[:notice]).to eq(messages[1])
+
+      delete admin_language_path(language)
+      expect(flash[:notice]).to eq(messages[2])
+    end
+  end
+
   describe 'modal create/edit contracts' do
     let(:frame_headers) { { 'Turbo-Frame' => 'language_modal' } }
 
@@ -168,7 +189,7 @@ RSpec.describe 'Admin::Languages', type: :request do
            params: { language: { name: 'HTML Language', code: 'hl', flag_iso: 'hl', status: 'inactive' } }
 
       expect(response).to redirect_to(admin_languages_path)
-      expect(flash[:notice]).to eq(I18n.t('admin.languages.created'))
+      expect(flash[:notice]).to eq(I18n.t('admin.languages.created', raise: true))
     end
   end
 
@@ -234,7 +255,7 @@ RSpec.describe 'Admin::Languages', type: :request do
             params: { language: { name: 'Updated HTML Language', code: 'ol', flag_iso: 'ol', status: 'inactive' } }
 
       expect(response).to redirect_to(admin_languages_path)
-      expect(flash[:notice]).to eq(I18n.t('admin.languages.updated'))
+      expect(flash[:notice]).to eq(I18n.t('admin.languages.updated', raise: true))
     end
   end
 

@@ -15,38 +15,38 @@ en:
           name: "Adjust inventory"
           description: "Record audited stock adjustments."
         email_templates_access:
-          name: "View templates"
-          description: "View templates"
+          name: "Access email templates"
+          description: "Allows opening the email template catalog."
         email_templates_create:
-          name: "Create templates"
-          description: "Create templates"
+          name: "Create email templates"
+          description: "Allows creating template drafts."
         email_templates_update:
-          name: "Edit drafts"
-          description: "Edit drafts"
+          name: "Update email templates"
+          description: "Allows editing template content."
         email_templates_publish:
-          name: "Publish templates"
-          description: "Publish templates"
+          name: "Publish email templates"
+          description: "Allows publishing a template version."
         email_templates_archive:
-          name: "Archive templates"
-          description: "Archive templates"
+          name: "Archive email templates"
+          description: "Allows removing templates from the active catalog."
         email_templates_preview:
-          name: "Preview emails"
-          description: "Preview emails"
+          name: "Preview email templates"
+          description: "Allows previewing email templates."
         email_templates_send_test:
           name: "Send test emails"
-          description: "Send test emails"
+          description: "Allows sending template test messages."
         email_templates_versions:
-          name: "View versions"
-          description: "View versions"
+          name: "View template versions"
+          description: "Allows viewing template version history."
         email_branding_manage:
           name: "Manage email branding"
-          description: "Manage email branding"
+          description: "Allows configuring email visual branding."
         email_settings_manage:
-          name: "Manage sender settings"
-          description: "Manage sender settings"
+          name: "Manage email settings"
+          description: "Allows configuring email sender settings."
         email_template_audits_view:
-          name: "View email audit"
-          description: "View email audit"
+          name: "View email audits"
+          description: "Allows viewing email change history."
         suppliers_view:
           name: "View suppliers"
           description: "View the supplier directory."
@@ -153,8 +153,8 @@ en:
           name: "Access inventory"
           description: "Allows access to inventory."
         customers_access:
-          name: "Access customers"
-          description: "Allows access to customers."
+          name: "Access · Customers"
+          description: "Enables the module. Each operation also requires its own permission."
         suppliers_access:
           name: "Access suppliers"
           description: "Allows access to suppliers."
@@ -234,17 +234,17 @@ en:
           name: "Access reports"
           description: "Allows access to reports."
         products_access:
-          name: "Access products"
-          description: "Allows access to products."
+          name: "Access · Products"
+          description: "Enables the module. Each operation also requires its own permission."
         categories_access:
-          name: "Access categories"
-          description: "Allows access to categories."
+          name: "Access · Categories"
+          description: "Enables the module. Each operation also requires its own permission."
         branches_access:
           name: "Access branches"
           description: "Allows access to branches."
         languages_access:
-          name: "Access languages"
-          description: "Allows access to languages."
+          name: "Access · Languages"
+          description: "Enables the module. Each operation also requires its own permission."
         roles_access:
           name: "Access roles"
           description: "Allows access to roles."

@@ -40,7 +40,7 @@ es:
       save: "Guardar"
       back: "Volver"
       empty: "Este proveedor todavía no tiene productos asociados. Agrega una oferta para vincular un artículo de tu catálogo."
-      yes: "Sí"
+      "yes": "Sí"
       supplier_sku: "Código del proveedor"
       units_per_package: "Unidades por presentación"
       currency: "Moneda"

@@ -4,7 +4,7 @@ en:
     dashboard:
       page_header:
         title: "Dashboard"
-        subtitle: "Monitor your business performance at a glance."
+        subtitle: "Overview of your business operations."
         customize: "Customize dashboard"
         new_sale: "New sale"
       saved:

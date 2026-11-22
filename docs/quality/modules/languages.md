@@ -311,3 +311,20 @@ El flujo `.github/workflows/languages-ci.yml` ahora escucha también cambios en 
 La baja lógica de `languages` no purga traducciones. La reactivación por un alta del mismo código utiliza el ID antiguo; no duplica registros ni modifica `users.language_id`. La reactivación necesita las mismas comprobaciones Pundit del alta.
 
 **Punto de aceptación:** resultados del CI focalizado, CI global, migraciones en base limpia, pruebas de Chrome, inspección visual/teclado/zoom 200 % y lector de pantalla deben verificarse y registrarse antes de dar cierre definitivo. No afirmar que las últimas puertas pasaron antes de consultar los runs correspondientes.
+
+## Auditoría transversal I18n — 2026-11-22
+
+- Base: `069284a17ab1c9a3f11179c09c1e4d30efca256b`, rama `feature/fixes`.
+- Alcance: exclusivamente traducciones de todos los módulos y controles de regresión, sin cambios de autorización, datos de negocio ni diseño.
+- Estado: correcciones locales verificadas por auditoría estática; verificación Rails/CI y revisión visual pendientes.
+
+| ID | Prioridad | Hallazgo y adecuación | Evidencia |
+|---|---|---|---|
+| I18N-001 | P1 | Siete claves usadas ausentes en los tres locales; añadidas o trasladadas a su ámbito correcto. | Auditor de referencias y RSpec de resolución. |
+| I18N-002 | P1 | La paridad no detectaba ausencias comunes; se auditan referencias literales de Rails y claves relativas de vistas. | `test/audit_i18n_test.py` y auditor estricto. |
+| I18N-003 | P1 | Diez claves por idioma se interpretaban como booleanos; ahora se delimitan con comillas. | Carga YAML estricta y RSpec. |
+| I18N-004 / I18N-005 | P2 | `new_sale` nulo y `save_changes` concatenado en inglés; separados y corregidos. | Auditor de tipos/vacíos y RSpec. |
+| I18N-006 | P2 | 243 conflictos entre archivos; se alinearon los valores con la última definición efectiva de Rails, sin cambiar el texto efectivo de otras claves. | Comparación antes/después de los catálogos y auditor de conflictos. |
+| I18N-007 | P1 | Request specs podían comparar dos mensajes ausentes; ahora exigen resolución y mensajes esperados en los tres idiomas. | RSpec de altas, edición y baja. |
+
+Validación local: 282 archivos YAML, 5,388 claves por idioma, 2,594 referencias literales, cero hallazgos del auditor estricto; cuatro pruebas Python sin fallos. Ruby y Docker no están disponibles en el entorno de trabajo: RSpec, RuboCop, Brakeman, Bundler Audit, `i18n-tasks health` y auditoría del registro modular requieren CI o un entorno Rails. La revisión semántica exhaustiva, claves dinámicas no enumeradas, formatos regionales y renderizados reales siguen pendientes. No se escribió en PostgreSQL; el importador conserva los overrides mediante `yaml_value`.

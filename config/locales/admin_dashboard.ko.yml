@@ -4,7 +4,7 @@ ko:
     dashboard:
       page_header:
         title: "대시보드"
-        subtitle: "비즈니스 성과를 한눈에 확인하세요."
+        subtitle: "비즈니스 운영 현황을 한눈에 확인하세요."
         customize: "대시보드 사용자 지정"
         new_sale: "새 판매"
       saved:

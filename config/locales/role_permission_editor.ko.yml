@@ -117,11 +117,11 @@ ko:
           name: 사용자 차단 해제
           description: 보안 차단을 해제할 수 있습니다.
         users_destroy:
-          name: 사용자 보관
-          description: 조직 사용자를 보관할 수 있습니다.
+          name: "삭제 / 보관 · 사용자"
+          description: "모듈의 삭제 절차를 통해 항목을 삭제하거나 보관할 수 있습니다."
         users_restore:
           name: 사용자 복원
-          description: 보관된 사용자를 복원할 수 있습니다.
+          description: "보관된 사용자를 복원할 수 있습니다. 최고 관리자 계정이 필요합니다."
         email_templates_access:
           name: 이메일 템플릿 접근
           description: 이메일 템플릿 목록에 접근할 수 있습니다.

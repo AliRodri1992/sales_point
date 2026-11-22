@@ -472,7 +472,7 @@
         },
         "product": {
           "price_change_reason": "가격 변경 사유",
-          "image": "상품 이미지",
+          "image": "이미지",
           "product_variants": "변형",
           "product_presentations": "포장 단위",
           "product_barcodes": "바코드"

@@ -472,7 +472,7 @@
         },
         "product": {
           "price_change_reason": "Reason for price change",
-          "image": "Product image",
+          "image": "Image",
           "product_variants": "Variants",
           "product_presentations": "Presentations",
           "product_barcodes": "Barcodes"

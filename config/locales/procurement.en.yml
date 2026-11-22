@@ -40,7 +40,7 @@ en:
       save: "Save"
       back: "Back"
       empty: "This supplier has no linked products yet. Add an offer to connect an item from your catalog."
-      yes: "Yes"
+      "yes": "Yes"
       supplier_sku: "Supplier SKU"
       units_per_package: "Units per package"
       currency: "Currency"

@@ -395,8 +395,8 @@ en:
         title: Complete your initial setup
       page_header:
         customize: Customize dashboard
-        new_sale:
-        save_changes: Save changes New sale
+        new_sale: New sale
+        save_changes: Save changes
         subtitle: Overview of your business operations.
         title: Dashboard
     languages:
@@ -407,6 +407,7 @@ en:
       confirm:
         cancel: Cancel
       created: Language created successfully
+      updated: Language updated successfully
       destroyed: Language deleted successfully
       edit:
         subtitle: Update the language details.
@@ -563,6 +564,7 @@ en:
         cancel: Cancel
       created: Product created successfully
       destroyed: Product deleted successfully
+      destroy_failed: The product could not be deleted. Try again.
       edit:
         back: Back to products
         label: Edit product
@@ -612,6 +614,7 @@ en:
         update: Update product
       index:
         card_title: Registered products
+        not_found: Product not found.
         columns:
           actions: Actions
           category: Category
@@ -754,44 +757,44 @@ en:
         submit: Create role
       permissions:
         branches_access:
-          description: Allows branch administration.
-          name: Branch access
+          description: "Allows access to branches."
+          name: "Access branches"
         cash_register_access:
-          description: Allows access to the cash register module.
-          name: Cash register access
+          description: "Allows access to cash register."
+          name: "Access cash register"
         categories_access:
-          description: Allows access to the category catalog.
-          name: Category access
+          description: "Enables the module. Each operation also requires its own permission."
+          name: "Access · Categories"
         customers_access:
-          description: Allows access to the customer module.
-          name: Customer access
+          description: "Enables the module. Each operation also requires its own permission."
+          name: "Access · Customers"
         dashboard_access:
-          description: Allows access to the main dashboard.
-          name: Dashboard access
+          description: "Allows access to dashboard."
+          name: "Access dashboard"
         employees_access:
-          description: Allows access to the employee module.
-          name: Employee access
+          description: "Allows access to employees."
+          name: "Access employees"
         inventory_access:
-          description: Allows access to the inventory module.
-          name: Inventory access
+          description: "Allows access to inventory."
+          name: "Access inventory"
         languages_access:
-          description: Allows administration of available languages.
-          name: Language access
+          description: "Enables the module. Each operation also requires its own permission."
+          name: "Access · Languages"
         products_access:
-          description: Allows access to the product catalog.
-          name: Product access
+          description: "Enables the module. Each operation also requires its own permission."
+          name: "Access · Products"
         reports_access:
-          description: Allows access to the reports module.
-          name: Reports access
+          description: "Allows access to reports."
+          name: "Access reports"
         roles_access:
-          description: Allows administration of roles and their permissions.
-          name: Role access
+          description: "Allows access to roles."
+          name: "Access roles"
         sales_access:
-          description: Allows access to the sales module.
-          name: Sales access
+          description: "Allows access to sales."
+          name: "Access sales"
         suppliers_access:
-          description: Allows access to the supplier module.
-          name: Supplier access
+          description: "Allows access to suppliers."
+          name: "Access suppliers"
       roles:
         administrator:
           description: Manages the system's general configuration and operations.
@@ -843,37 +846,37 @@ en:
         system: System role
     users:
       actions:
-        delete: Delete user
-        edit: Edit user
-        view: View user
-      cannot_delete_self: You cannot delete your own user.
+        delete: "Delete"
+        edit: "Edit"
+        view: "View"
+      cannot_delete_self: "You cannot delete your own account."
       confirm:
         cancel: Cancel
-      confirm_delete: Are you sure you want to delete this user?
-      created: User created successfully.
+      confirm_delete: "Are you sure you want to delete the user %{name}?"
+      created: "The user was registered and is now listed. Review their roles and permissions before they start using the system."
       destroyed: User deleted successfully.
       form:
         buttons:
-          back: Back to users
+          back: "Back"
           create: Create user
-          update: Update user
-        edit_title: Edit %{name}
+          update: "Save changes"
+        edit_title: "Edit user"
         fields:
-          email: Email
+          email: "Email address"
           language: Language
           language_placeholder: Select a language
           password: Password
           password_confirmation: Confirm password
           status: Status
           status_placeholder: Select a status
-          system_roles: System roles
+          system_roles: "Roles"
           theme: Theme
           user_type: User type
-          user_type_placeholder: Select a user type
+          user_type_placeholder: "Select a type"
           username: Username
         new_title: New user
-        password_hint: Leave this field blank to keep the current password.
-        subtitle: Configure the user's account, access, and preferences.
+        password_hint: "Leave blank to keep the current password."
+        subtitle: "Fill in the user information."
       index:
         columns:
           actions: Actions
@@ -881,35 +884,35 @@ en:
           email: Email
           roles: Roles
           status: Status
-          user_type: User type
+          user_type: "Type"
           username: Username
         empty:
-          subtitle: Create the first user to get started.
+          subtitle: "There are no users registered yet."
           title: No users
         filters:
           all_roles: All roles
           all_statuses: All statuses
           all_types: All types
-          apply: Apply
-          reset: Reset
+          apply: "Filter"
+          reset: "Clear"
           search_placeholder: Search by email or username...
         new: New user
         no_data: "—"
         no_roles: No roles
-        page_title: Users | Delta POS
+        page_title: "Users"
         pagination:
-          navigation: User pagination
+          navigation: "Users navigation"
           next: Next
           per_page_label: Show
           prev: Previous
-        subtitle: Manage users and their access.
+        subtitle: "Manage the users of the system."
         title: Users
       show:
-        access_title: Access
-        email: Email
-        identity_title: Identity
+        access_title: "Access and security"
+        email: "Email address"
+        identity_title: "Account information"
         language: Language
-        last_sign_in_at: Last sign-in
+        last_sign_in_at: "Last sign in"
         never: Never
         no_roles: No roles assigned
         roles: Roles
@@ -944,7 +947,7 @@ en:
         theme-supermarket-red: Supermarket red
         theme-tech-purple: Tech purple
         theme-wheat-yellow: Wheat yellow
-      updated: User updated successfully.
+      updated: "The user details were saved. Review the account and assigned access to confirm the changes."
       user_types:
         customer: Customer
         employee: Employee
@@ -1495,6 +1498,7 @@ en:
       minutes_ago: "%{count} min ago"
       products: Products
       recent_sales: Recent sales
+      sale: Sale
       sales: Sales
       sold_products: Products sold
       summary: Your business overview
@@ -1502,7 +1506,6 @@ en:
       today: Today
       today_sales: Today's sales
     faq:
-      sale: Sale
       subtitle: Answers to the most common questions.
       title: Frequently asked questions
     feature_items:

@@ -1,7 +1,7 @@
 en:
   admin:
     breadcrumbs:
-      clients: "Customers"
+      clients: "Clients"
     clients:
       created: "The customer was registered and is now available in the customer catalog."
       updated: "The customer details were saved. Open the customer record to review the changes."

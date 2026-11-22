@@ -119,11 +119,11 @@ en:
           name: Unblock users
           description: Allows lifting a security block.
         users_destroy:
-          name: Archive users
-          description: Allows archiving organization users.
+          name: "Delete / archive · Users"
+          description: "Allows removing records through the module’s deletion workflow."
         users_restore:
           name: Restore users
-          description: Allows restoring archived users.
+          description: "Allows restoring archived users. Requires a super-administrator account."
         email_templates_access:
           name: Access email templates
           description: Allows opening the email template catalog.

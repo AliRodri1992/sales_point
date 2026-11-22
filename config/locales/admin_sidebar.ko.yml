@@ -42,7 +42,7 @@ ko:
         coming_soon: 준비 중
         onboarding:
           title: 초기 설정
-          progress: 초기 설정 %{percentage}% 완료
+          progress: "초기 설정 %{percentage}%"
       user_menu:
         toggle: 사용자 메뉴 열기
         my_profile: 내 프로필

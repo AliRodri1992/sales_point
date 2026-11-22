@@ -126,6 +126,7 @@ es:
         primary: "Principal"
         active: "Activo"
       address_form:
+        summary_heading: "Resumen de la dirección"
         location_searching: "Buscando la ubicación del domicilio…"
         location_search: "Buscar domicilio en el mapa"
         location_confirm: "Confirmar ubicación"

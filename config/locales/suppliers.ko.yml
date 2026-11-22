@@ -86,8 +86,8 @@ ko:
             MXN: "MXN"
             USD: "USD"
             EUR: "EUR"
-            yes: "신용 거래 있음"
-            no: "신용 거래 없음"
+            "yes": "신용 거래 있음"
+            "no": "신용 거래 없음"
         pagination:
           per_page_label: "표시"
           range: "전체 %{total}건 중 %{first}–%{last}건 표시"

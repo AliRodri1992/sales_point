@@ -411,6 +411,7 @@ es:
       confirm:
         cancel: Cancelar
       created: Idioma creado correctamente
+      updated: Idioma actualizado correctamente
       destroyed: Idioma eliminado correctamente
       edit:
         subtitle: Actualiza los datos del idioma.
@@ -567,6 +568,7 @@ es:
         cancel: Cancelar
       created: Producto creado correctamente
       destroyed: Producto eliminado correctamente
+      destroy_failed: No se pudo eliminar el producto. Inténtalo de nuevo.
       edit:
         back: Volver a productos
         label: Editar producto
@@ -616,6 +618,7 @@ es:
         update: Actualizar producto
       index:
         card_title: Productos registrados
+        not_found: No se encontró el producto.
         columns:
           actions: Acciones
           category: Categoría
@@ -759,44 +762,44 @@ es:
         submit: Crear rol
       permissions:
         branches_access:
-          description: Permite administrar las sucursales.
-          name: Acceso a sucursales
+          description: "Permite abrir sucursales."
+          name: "Acceder a sucursales"
         cash_register_access:
-          description: Permite acceder al módulo de caja.
-          name: Acceso a caja
+          description: "Permite abrir caja."
+          name: "Acceder a caja"
         categories_access:
-          description: Permite acceder al catálogo de categorías.
-          name: Acceso a categorías
+          description: "Habilita el módulo. Cada operación requiere además su permiso individual."
+          name: "Acceder · Categorías"
         customers_access:
-          description: Permite acceder al módulo de clientes.
-          name: Acceso a clientes
+          description: "Habilita el módulo. Cada operación requiere además su permiso individual."
+          name: "Acceder · Clientes"
         dashboard_access:
-          description: Permite acceder al panel principal.
-          name: Acceso al panel
+          description: "Permite abrir panel principal."
+          name: "Acceder a panel principal"
         employees_access:
-          description: Permite acceder al módulo de empleados.
-          name: Acceso a empleados
+          description: "Permite abrir empleados."
+          name: "Acceder a empleados"
         inventory_access:
-          description: Permite acceder al módulo de inventario.
-          name: Acceso a inventario
+          description: "Permite abrir inventario."
+          name: "Acceder a inventario"
         languages_access:
-          description: Permite administrar los idiomas disponibles.
-          name: Acceso a idiomas
+          description: "Habilita el módulo. Cada operación requiere además su permiso individual."
+          name: "Acceder · Idiomas"
         products_access:
-          description: Permite acceder al catálogo de productos.
-          name: Acceso a productos
+          description: "Habilita el módulo. Cada operación requiere además su permiso individual."
+          name: "Acceder · Productos"
         reports_access:
-          description: Permite acceder al módulo de reportes.
-          name: Acceso a reportes
+          description: "Permite abrir reportes."
+          name: "Acceder a reportes"
         roles_access:
-          description: Permite administrar roles y sus permisos.
-          name: Acceso a roles
+          description: "Permite abrir roles."
+          name: "Acceder a roles"
         sales_access:
-          description: Permite acceder al módulo de ventas.
-          name: Acceso a ventas
+          description: "Permite abrir ventas."
+          name: "Acceder a ventas"
         suppliers_access:
-          description: Permite acceder al módulo de proveedores.
-          name: Acceso a proveedores
+          description: "Permite abrir proveedores."
+          name: "Acceder a proveedores"
       roles:
         administrator:
           description: Administra la configuración y operación general del sistema.
@@ -848,21 +851,21 @@ es:
         system: Rol del sistema
     users:
       actions:
-        delete: Eliminar usuario
-        edit: Editar usuario
-        view: Ver usuario
-      cannot_delete_self: No puedes eliminar tu propio usuario.
+        delete: "Eliminar"
+        edit: "Editar"
+        view: "Ver"
+      cannot_delete_self: "No puedes eliminar tu propia cuenta."
       confirm:
         cancel: Cancelar
-      confirm_delete: "¿Seguro que quieres eliminar este usuario?"
-      created: Usuario creado correctamente.
+      confirm_delete: "¿Estás seguro de que deseas eliminar al usuario %{name}?"
+      created: "El usuario se registró y ya aparece en la lista. Revisa sus roles y permisos antes de que comience a utilizar el sistema."
       destroyed: Usuario eliminado correctamente.
       form:
         buttons:
-          back: Volver a usuarios
+          back: "Volver"
           create: Crear usuario
-          update: Actualizar usuario
-        edit_title: Editar %{name}
+          update: "Guardar cambios"
+        edit_title: "Editar usuario"
         fields:
           email: Correo electrónico
           language: Idioma
@@ -871,48 +874,48 @@ es:
           password_confirmation: Confirmar contraseña
           status: Estado
           status_placeholder: Selecciona un estado
-          system_roles: Roles del sistema
+          system_roles: "Roles"
           theme: Tema
           user_type: Tipo de usuario
-          user_type_placeholder: Selecciona un tipo de usuario
+          user_type_placeholder: "Selecciona un tipo"
           username: Nombre de usuario
         new_title: Nuevo usuario
-        password_hint: Deja este campo vacío para conservar la contraseña actual.
-        subtitle: Configura la cuenta, acceso y preferencias del usuario.
+        password_hint: "Déjalo en blanco para mantener la contraseña actual."
+        subtitle: "Completa la información del usuario."
       index:
         columns:
           actions: Acciones
           created_at: Creado
-          email: Correo electrónico
+          email: "Correo"
           roles: Roles
           status: Estado
-          user_type: Tipo de usuario
+          user_type: "Tipo"
           username: Usuario
         empty:
-          subtitle: Crea el primer usuario para comenzar.
-          title: No hay usuarios
+          subtitle: "Aún no hay usuarios registrados."
+          title: "Sin usuarios"
         filters:
           all_roles: Todos los roles
           all_statuses: Todos los estados
           all_types: Todos los tipos
-          apply: Aplicar
-          reset: Restablecer
-          search_placeholder: Buscar por correo o usuario...
+          apply: "Filtrar"
+          reset: "Limpiar"
+          search_placeholder: "Buscar por correo o nombre de usuario..."
         new: Nuevo usuario
         no_data: "—"
         no_roles: Sin roles
-        page_title: Usuarios | Delta POS
+        page_title: "Usuarios"
         pagination:
-          navigation: Paginación de usuarios
+          navigation: "Navegación de usuarios"
           next: Siguiente
           per_page_label: Mostrar
           prev: Anterior
-        subtitle: Administra los usuarios y sus accesos.
+        subtitle: "Administra los usuarios del sistema."
         title: Usuarios
       show:
-        access_title: Acceso
+        access_title: "Acceso y seguridad"
         email: Correo electrónico
-        identity_title: Identidad
+        identity_title: "Información de la cuenta"
         language: Idioma
         last_sign_in_at: Último acceso
         never: Nunca
@@ -949,7 +952,7 @@ es:
         theme-supermarket-red: Rojo supermercado
         theme-tech-purple: Púrpura tecnológico
         theme-wheat-yellow: Amarillo trigo
-      updated: Usuario actualizado correctamente.
+      updated: "Los datos del usuario se guardaron. Revisa su información y los accesos asignados para confirmar los cambios."
       user_types:
         customer: Cliente
         employee: Empleado
@@ -1505,6 +1508,7 @@ es:
       minutes_ago: Hace %{count} min
       products: Productos
       recent_sales: Ventas recientes
+      sale: Venta
       sales: Ventas
       sold_products: Productos vendidos
       summary: Resumen de tu negocio
@@ -1512,7 +1516,6 @@ es:
       today: Hoy
       today_sales: Ventas del día
     faq:
-      sale: Venta
       subtitle: Resolvemos las dudas más comunes.
       title: Preguntas frecuentes
     feature_items:
