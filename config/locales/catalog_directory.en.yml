@@ -1,0 +1,11 @@
+en:
+  admin:
+    catalog_directory:
+      page: "Page %{page} of %{total}"
+      pagination: Catalog pagination
+      showing: "Showing %{count}"
+      sort_by: Sort by
+      asc: Ascending
+      desc: Descending
+      filters_title: Explore catalog
+      filters_hint: Find records by name, code and status.

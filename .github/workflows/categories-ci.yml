@@ -15,12 +15,27 @@ on:
       - 'app/controllers/concerns/admin/category_reference_transfers.rb'
       - 'app/services/categories/**'
       - 'app/assets/stylesheets/components/categories_workspace.css'
+      - 'app/assets/stylesheets/components/catalog_directory.css'
+      - 'app/assets/stylesheets/components/languages_workspace.css'
+      - 'app/views/admin/shared/_catalog_*.html.erb'
+      - 'app/views/admin/languages/**'
+      - 'app/views/admin/products/_list.html.erb'
+      - 'app/views/admin/products/_row_actions.html.erb'
+      - 'app/views/admin/products/_listing_identity.html.erb'
+      - 'app/views/admin/products/index.html.erb'
+      - 'app/views/admin/units_of_measure/**'
+      - 'config/locales/catalog_directory.*.yml'
+      - 'spec/requests/admin/catalog_presentation_spec.rb'
+      - 'spec/features/catalog_presentation_browser_spec.rb'
       - 'app/models/category.rb'
       - 'app/models/organization.rb'
       - 'app/models/product.rb'
       - 'app/models/promotion_condition.rb'
       - 'app/policies/category_policy.rb'
       - 'app/helpers/catalog_design_helper.rb'
+      - 'app/helpers/application_helper.rb'
+      - 'app/helpers/pagination_helper.rb'
+      - 'spec/helpers/pagination_helper_spec.rb'
       - 'app/views/admin/categories/**'
       - 'app/views/admin/products/_form.html.erb'
       - 'app/views/admin/commercial_catalog/_row.html.erb'
@@ -72,12 +87,16 @@ jobs:
             app/services/categories/reference_transfer.rb \
             app/models/category.rb app/models/promotion_condition.rb \
             app/policies/category_policy.rb app/helpers/catalog_design_helper.rb \
+            app/helpers/application_helper.rb app/helpers/pagination_helper.rb \
+            spec/helpers/pagination_helper_spec.rb \
             db/migrate/20261110042000_harden_category_data_constraints.rb \
             db/migrate/20261110043000_scope_categories_to_organizations.rb \
             spec/models/category_spec.rb spec/policies/category_policy_spec.rb \
             spec/requests/admin/categories_spec.rb spec/requests/admin/categories_tenant_spec.rb \
             spec/requests/admin/category_reference_transfers_spec.rb \
             spec/services/categories/reference_transfer_concurrency_spec.rb \
+            spec/requests/admin/catalog_presentation_spec.rb \
+            spec/features/catalog_presentation_browser_spec.rb \
             spec/features/categories_quality_browser_spec.rb
 
   categories_specs:
@@ -141,6 +160,9 @@ jobs:
             spec/requests/admin/categories_spec.rb spec/requests/admin/categories_tenant_spec.rb \
             spec/requests/admin/category_reference_transfers_spec.rb \
             spec/services/categories/reference_transfer_concurrency_spec.rb \
+            spec/requests/admin/catalog_presentation_spec.rb \
+            spec/features/catalog_presentation_browser_spec.rb \
             spec/requests/admin/catalog_pagination_spec.rb \
+            spec/helpers/pagination_helper_spec.rb spec/helpers/application_helper_spec.rb \
             spec/requests/admin/granular_catalog_permissions_spec.rb \
             spec/features/categories_quality_browser_spec.rb

@@ -1,0 +1,25 @@
+<div class="catalog-list-row-actions">
+  <% if policy(Product).show? %>
+    <%= link_to admin_product_path(product),
+                data: { tooltip: t('admin.products.show.title'), turbo_frame: '_top' },
+                class: 'catalog-list-icon-button', aria: { label: t('admin.products.show.title') } do %>
+      <%= delta_icon('eye', class: 'size-4', aria: { hidden: true }) %>
+    <% end %>
+  <% end %>
+  <% if policy(Product).update? %>
+    <%= link_to edit_admin_product_path(product),
+                data: { tooltip: t('admin.products.index.edit'), turbo_frame: '_top' },
+                class: 'catalog-list-icon-button', aria: { label: t('admin.products.index.edit') } do %>
+      <%= delta_icon('pencil-square', class: 'size-4', aria: { hidden: true }) %>
+    <% end %>
+  <% end %>
+  <% if policy(Product).destroy? %>
+    <%= button_to admin_product_path(product), method: :delete,
+                  class: 'catalog-list-icon-button catalog-list-icon-button--danger',
+                  data: { controller: 'swal-confirm', turbo_confirm: t('admin.products.index.confirm_delete'),
+                          swal_cancel_text: t('admin.products.confirm.cancel'), turbo_frame: '_top' },
+                  aria: { label: t('admin.products.index.delete') } do %>
+      <%= delta_icon('trash', class: 'size-4', aria: { hidden: true }) %>
+    <% end %>
+  <% end %>
+</div>

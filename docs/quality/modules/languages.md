@@ -338,3 +338,55 @@ alta, edición y detalle muestran `Delta POS | Idiomas` (nombre localizado), inc
 si una vista aporta un título de registro. Contrato y pruebas compartidas en
 `catalog_presentation_spec` / `catalog_presentation_browser_spec`; seguimiento de
 validación en **CATEGORIES-043**. Se conserva la política de overrides de I18n.
+
+
+## IDI-044 — Listado alineado con Categorías (2026-11-22)
+
+**Base:** `fe96a7fb3c1d6719c1cb7438aa1d5966dc9af716`, `feature/fixes`.
+Alcance solicitado: diseño completo de los listados de Categorías, Productos,
+Idiomas y Unidades de medida. Sin cambios de modelos, controladores o permisos.
+
+El listado adopta el ancho, encabezado, filtros, tabla/tarjetas, acciones y pie de
+Categorías. Se mantienen banderas, idioma predeterminado y sus restricciones. El
+pie común también se muestra en catálogos pequeños con resultados, igual que en
+Categorías. La limpieza del CSS conserva los estilos específicos del editor, modal
+y detalle, incluida la etiqueta de códigos.
+
+Los tres catálogos adaptados ofrecen ordenamiento desde tarjetas móviles mediante
+un `details` nativo con enlaces GET; conserva filtros y tamaño de página, y reinicia
+la página al cambiar el orden. El parcial de paginación conserva el frame propio
+de cada módulo, IDs exclusivos y etiquetas asociadas, ventana compacta y controles
+de 44 px para enlaces/acciones. Nuevos textos equivalentes en es/en/ko.
+
+Regresión request inicial reproducida (seed 61402); contrato compartido y matriz
+de 48 páginas es/en/ko aprobados: 5 ejemplos, 0 fallos (seed 11945). Capturas
+previas de los cuatro listados en 1440/390 px: 1 escenario aprobado (seed 18301),
+`tmp/capybara/catalog-list-before-*.png`. Verificación final y CI pendientes.
+No se certifica el cierre de hallazgos anteriores del módulo.
+
+**Resultado local de la adecuación:** 221 ejemplos, 0 fallos (seed 38465), con
+requests de los cuatro catálogos, paginación, títulos, filtros avanzados y flujos
+Chrome de alta/edición/eliminación, modales y tarjetas responsive. La primera
+ejecución detectó seis expectativas incompatibles con el nuevo layout/texto y
+un fixture que dejaba el catálogo vacío; se corrigieron y se repitió la suite.
+
+Después se reprodujo y corrigió el destino de enlaces tras Turbo (CATEGORIES-045):
+62 ejemplos, 0 fallos (seed 1913), incluyendo helpers, matriz es/en/ko, navegación
+móvil y regresión de actualización. Capturas definitivas de los cuatro listados
+en es/en/ko, 320/390/768/1440 px: 1 escenario, 0 fallos (seed 53024), sin overflow
+de página ni de las tablas desktop. Artefactos `tmp/capybara/catalog-list-after-*.png`
+y paneles `tmp/capybara/catalog-listing-*.png`. Revisión independiente de UI y
+rutas sin hallazgos pendientes; el estilo del detalle de Idiomas fue preservado.
+I18n estricto: 291 archivos, 5,418 claves por idioma, 0 hallazgos de paridad.
+Registro modular válido: 32 módulos / 28 recursos. CSS compilado correctamente
+(con advertencia previa de `@position-try` del proveedor telefónico).
+CI del SHA publicado y aceptación integral de hallazgos anteriores pendientes;
+no se certifica accesibilidad exhaustiva con lector de pantalla o zoom manual.
+
+**Verificación final de navegación:** 63 ejemplos, 0 fallos (seed 62874),
+`tmp/catalog-list-navigation-final.log`. Incluye parámetros Unicode/`&`, página
+única en query, actualización Turbo y navegación real en móvil. La generación
+manual de href se sustituyó por opciones explícitas de `url_for`; Brakeman final
+8.0.6: 0 errores y 0 advertencias (`tmp/catalog-list-security-final.log`). RuboCop:
+8 archivos, 0 ofensas. Revisión independiente final sin hallazgos. El workflow de
+Categorías ejecuta también los contratos compartidos y helpers de navegación.

@@ -1,0 +1,11 @@
+es:
+  admin:
+    catalog_directory:
+      page: "Página %{page} de %{total}"
+      pagination: Paginación del catálogo
+      showing: "Mostrando %{count}"
+      sort_by: Ordenar por
+      asc: Ascendente
+      desc: Descendente
+      filters_title: Explorar catálogo
+      filters_hint: Encuentra registros por nombre, código y estado.

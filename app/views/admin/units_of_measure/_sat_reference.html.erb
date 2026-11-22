@@ -1,0 +1,11 @@
+<div class="catalog-list-sat-reference">
+  <span class="font-semibold text-emerald-800"><%= unit.sat_unit_key.code %></span>
+  <span class="block max-w-52 text-xs text-slate-500"><%= unit.sat_unit_key.description %></span>
+  <% unless unit.sat_unit_key_current? %>
+    <span class="mt-1 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-800"
+          title="<%= t('admin.units_of_measure.sat.invalid_hint') %>">
+      <%= delta_icon('exclamation-triangle', class: 'size-3', aria: { hidden: true }) %>
+      <%= t('admin.units_of_measure.sat.invalid') %>
+    </span>
+  <% end %>
+</div>

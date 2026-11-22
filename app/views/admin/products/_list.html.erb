@@ -1,146 +1,93 @@
-<%# total_count / total_pages come from locals when rendered via
-    Turbo::StreamsChannel broadcast (no controller ivars), or fall
-    back to the controller-set instance variables for normal requests. %>
+<%# Counts can also be supplied by a streamed update. %>
 <% total_count = local_assigns[:total_count] || @total_count || 0 %>
 <% total_pages = local_assigns[:total_pages] || @total_pages || 1 %>
 <% product_rows = products.to_a %>
 <% stock_totals = Inventory.where(organization_id: current_organization&.id, product_id: product_rows.map(&:id)).group(:product_id).sum(:stock) %>
+<% filtered = request.query_parameters.slice('search', 'status', 'category_id', 'featured', 'tracking_mode', 'stock_status', 'min_price', 'max_price').values.any? { |value| value.present? && value != 'all' } %>
 
-<div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-  <div class="flex items-center justify-between px-6 py-4">
+<section class="catalog-list-directory" aria-labelledby="products-directory-title">
+  <header class="catalog-list-directory-heading">
     <div>
-      <h3 class="font-bold"><%= t('admin.products.index.card_title') %></h3>
-      <p class="mt-1 text-xs text-slate-400">
-        <%= t('admin.products.index.total_count', count: total_count) %>
-      </p>
+      <h2 id="products-directory-title"><%= t('admin.products.index.card_title') %></h2>
+      <p aria-live="polite"><%= t('admin.products.index.total_count', count: total_count) %></p>
     </div>
-  </div>
+    <% if product_rows.any? %>
+      <span class="catalog-list-page-count"><%= t('admin.catalog_directory.showing', count: product_rows.size) %></span>
+    <% end %>
+    <%= render 'admin/shared/catalog_mobile_sort', frame: '_top', columns: {
+          'products.name' => t('admin.products.index.columns.name'), 'products.code' => t('admin.products.index.columns.code'),
+          'products.price' => t('admin.products.index.columns.price') } %>
+  </header>
 
   <% if product_rows.any? %>
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
+    <div class="catalog-list-desktop-table">
+      <table class="catalog-list-table">
         <thead>
-          <tr class="border-y border-slate-100 text-xs text-slate-400">
-            <th class="px-6 py-3 text-left font-medium">
-              <%= sort_link('products.code', t('admin.products.index.columns.code'), frame: '_top') %>
-            </th>
-            <th class="px-6 py-3 text-left font-medium">
-              <%= sort_link('products.name', t('admin.products.index.columns.name'), frame: '_top') %>
-            </th>
-            <th class="px-6 py-3 text-right font-medium">
-              <%= sort_link('products.price', t('admin.products.index.columns.price'), frame: '_top') %>
-            </th>
-            <th class="px-6 py-3 text-right font-medium">
-              <%= t('admin.products.index.columns.stock') %>
-            </th>
-            <th class="px-6 py-3 text-left font-medium">
-              <%= t('admin.products.index.columns.category') %>
-            </th>
-            <th class="px-6 py-3 text-center font-medium">
-              <%= t('admin.products.index.columns.featured') %>
-            </th>
-            <th class="px-6 py-3 text-center font-medium">
-              <%= t('admin.products.index.columns.status') %>
-            </th>
-            <th class="px-6 py-3 text-center font-medium">
-              <%= t('admin.products.index.columns.actions') %>
-            </th>
+          <tr>
+            <th scope="col"><%= sort_link('products.code', t('admin.products.index.columns.code'), url_options: { action: 'index', id: nil, format: nil }, frame: '_top') %></th>
+            <th scope="col"><%= sort_link('products.name', t('admin.products.index.columns.name'), url_options: { action: 'index', id: nil, format: nil }, frame: '_top') %></th>
+            <th scope="col" class="catalog-list-numeric"><%= sort_link('products.price', t('admin.products.index.columns.price'), url_options: { action: 'index', id: nil, format: nil }, frame: '_top') %></th>
+            <th scope="col" class="catalog-list-numeric"><%= t('admin.products.index.columns.stock') %></th>
+            <th scope="col"><%= t('admin.products.index.columns.category') %></th>
+            <th scope="col"><%= t('admin.products.index.columns.featured') %></th>
+            <th scope="col"><%= t('admin.products.index.columns.status') %></th>
+            <th scope="col" class="catalog-list-actions-heading"><%= t('admin.products.index.columns.actions') %></th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
+        <tbody>
           <% product_rows.each do |product| %>
-            <tr class="hover:bg-slate-50">
-              <td class="px-6 py-4">
-                <code class="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600"><%= product.code %></code>
+            <tr>
+              <td><code class="catalog-list-code"><%= product.code %></code></td>
+              <td><%= render 'listing_identity', product: product %></td>
+              <td class="catalog-list-numeric"><%= product_money(product.price) %></td>
+              <td class="catalog-list-numeric"><%= number_with_precision(stock_totals.fetch(product.id, 0), strip_insignificant_zeros: true, precision: 3) %></td>
+              <td><span class="catalog-list-description"><%= product.category&.name || '—' %></span></td>
+              <td>
+                <% if product.featured? %>
+                  <%= delta_icon('star', class: 'size-4 text-amber-600', aria: { label: t('admin.products.index.columns.featured') }) %>
+                <% else %>
+                  <span aria-hidden="true">—</span>
+                <% end %>
               </td>
-              <td class="px-6 py-4 font-semibold">
-                <div class="flex items-center gap-3"><span class="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50"><% if product.image.attached? %><%= image_tag product.image, alt: '', loading: 'lazy', class: 'size-10 object-cover' %><% else %><%= delta_icon('cube', class: 'size-5 text-slate-400') %><% end %></span><span class="min-w-0"><span class="block"><%= product.name %></span><span class="mt-1 block text-xs font-normal text-slate-500"><%= product.sku %></span></span></div>
-              </td>
-              <td class="px-6 py-4 text-right">
-                <%= product_money(product.price) %>
-              </td>
-              <td class="px-6 py-4 text-right">
-                <%= number_with_precision(stock_totals.fetch(product.id, 0), strip_insignificant_zeros: true, precision: 3) %>
-              </td>
-              <td class="px-6 py-4">
-                <%= product.category&.name || '-' %>
-              </td>
-              <td class="px-6 py-4 text-center">
-                <%= delta_icon('star', class: 'size-4 text-amber-500') if product.featured? %>
-              </td>
-              <td class="px-6 py-4">
-                <span class="inline-flex items-center justify-center rounded-full px-2 py-1 text-[11px] font-semibold
-                  <%= product.active? ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' %>">
-                  <%= t("admin.products.statuses.#{product.status}") %>
-                </span>
-              </td>
-              <td class="px-6 py-4">
-                <div class="flex items-center justify-center gap-1">
-                  <% if policy(Product).show? %>
-<%= link_to admin_product_path(product),
-                              data: { tooltip: t('admin.products.show.title'), turbo_frame: '_top' },
-                              class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
-                              aria: { label: t('admin.products.show.title') } do %>
-                    <%= delta_icon('eye', class: 'size-4') %>
-                  <% end %>
-<% end %>
-                  <% if policy(Product).update? %>
-<%= link_to edit_admin_product_path(product),
-                              data: { tooltip: t('admin.products.index.edit'), turbo_frame: '_top' },
-                              class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600',
-                              aria: { label: t('admin.products.index.edit') } do %>
-                    <%= delta_icon('pencil-square', class: 'size-4') %>
-                  <% end %>
-<% end %>
-                  <% if policy(Product).destroy? %>
-<%= button_to admin_product_path(product),
-                                method: :delete,
-                                class: 'inline-flex items-center justify-center rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600',
-                                data: {
-                                  controller: 'swal-confirm',
-                                  turbo_confirm: t('admin.products.index.confirm_delete'),
-                                  swal_cancel_text: t('admin.products.confirm.cancel'),
-                                  turbo_frame: '_top'
-                                },
-                                aria: { label: t('admin.products.index.delete') } do %>
-                    <%= delta_icon('trash', class: 'size-4') %>
-                  <% end %>
-<% end %>
-                </div>
-              </td>
+              <td><span class="catalog-list-status <%= 'catalog-list-status--inactive' unless product.active? %>"><%= t("admin.products.statuses.#{product.status}") %></span></td>
+              <td><%= render 'row_actions', product: product %></td>
             </tr>
           <% end %>
         </tbody>
       </table>
     </div>
 
-    <% if total_count > 0 %>
-      <div class="flex items-center justify-between gap-4 border-t border-slate-100 px-6 py-4"
->
-        <div class="flex items-center gap-2 text-sm text-slate-600">
-          <span><%= t('admin.products.index.pagination.per_page_label') %>:</span>
-          <%= select_tag :per_page,
-                options_for_select(TablePagePreference::OPTIONS, @per_page || TablePagePreference::DEFAULT),
-                data: { controller: 'table-page-size', table_page_size_key_value: 'products',
-                        action: 'change->table-page-size#apply' },
-                class: 'rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-700 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500' %>
-        </div>
-        <div class="flex items-center gap-1">
-          <%= pagination_links(total_pages, frame: '_top') if total_pages > 1 %>
-        </div>
-      </div>
-    <% end %>
+    <ul class="catalog-list-mobile-list" aria-label="<%= t('admin.products.index.card_title') %>">
+      <% product_rows.each do |product| %>
+        <li class="catalog-list-mobile-card">
+          <div class="catalog-list-mobile-card-heading">
+            <%= render 'listing_identity', product: product %>
+            <span class="catalog-list-status <%= 'catalog-list-status--inactive' unless product.active? %>"><%= t("admin.products.statuses.#{product.status}") %></span>
+          </div>
+          <dl class="catalog-list-mobile-facts">
+            <div><dt><%= t('admin.products.index.columns.code') %></dt><dd><code class="catalog-list-code"><%= product.code %></code></dd></div>
+            <div><dt><%= t('admin.products.index.columns.price') %></dt><dd><%= product_money(product.price) %></dd></div>
+            <div><dt><%= t('admin.products.index.columns.stock') %></dt><dd><%= number_with_precision(stock_totals.fetch(product.id, 0), strip_insignificant_zeros: true, precision: 3) %></dd></div>
+            <div><dt><%= t('admin.products.index.columns.category') %></dt><dd><%= product.category&.name || '—' %></dd></div>
+            <% if product.featured? %>
+              <div><dt><%= t('admin.products.index.columns.featured') %></dt><dd><%= delta_icon('star', class: 'size-4 text-amber-600', aria: { label: t('admin.products.index.columns.featured') }) %></dd></div>
+            <% end %>
+          </dl>
+          <%= render 'row_actions', product: product %>
+        </li>
+      <% end %>
+    </ul>
+    <%= render 'admin/shared/catalog_pagination', key: 'products', total_pages: total_pages,
+               per_page_label: t('admin.products.index.pagination.per_page_label'), frame: '_top' %>
   <% else %>
-    <div class="flex flex-col items-center gap-2 p-12 text-center">
-      <%= delta_icon('cube', class: 'size-8 text-slate-300') %>
-      <p class="text-sm font-semibold text-slate-500">
-        <%= t(request.query_parameters.slice('search', 'status', 'category_id', 'featured', 'tracking_mode', 'stock_status', 'min_price', 'max_price').values.any? { |value| value.present? && value != 'all' } ? 'admin.catalog_design.no_results' : 'admin.products.index.empty_title') %>
-      </p>
-      <p class="text-xs text-slate-400"><%= t('admin.products.index.empty_subtitle') %></p>
-      <% if request.query_parameters.slice('search', 'status', 'category_id', 'featured', 'tracking_mode', 'stock_status', 'min_price', 'max_price').values.any? { |value| value.present? && value != 'all' } %>
+    <div class="catalog-list-empty-state">
+      <div class="catalog-list-empty-icon" aria-hidden="true"><%= delta_icon('cube', class: 'size-7') %></div>
+      <h3><%= t(filtered ? 'admin.catalog_design.no_results' : 'admin.products.index.empty_title') %></h3>
+      <p><%= t('admin.products.index.empty_subtitle') %></p>
+      <% if filtered %>
         <%= link_to t('admin.catalog_design.product_clear_all'), admin_products_path,
-                    class: 'catalog-button mt-2', data: { turbo_frame: '_top' } %>
+                    class: 'catalog-list-secondary-button', data: { turbo_frame: '_top' } %>
       <% end %>
     </div>
   <% end %>
-</div>
+</section>

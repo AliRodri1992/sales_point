@@ -1,0 +1,13 @@
+<div class="catalog-list-identity">
+  <span class="catalog-list-avatar catalog-list-product-image" aria-hidden="true">
+    <% if product.image.attached? %>
+      <%= image_tag product.image, alt: '', loading: 'lazy' %>
+    <% else %>
+      <%= delta_icon('cube', class: 'size-5') %>
+    <% end %>
+  </span>
+  <div class="catalog-list-mobile-identity">
+    <strong class="catalog-list-name"><%= product.name %></strong>
+    <span class="catalog-list-secondary-text"><%= product.sku %></span>
+  </div>
+</div>

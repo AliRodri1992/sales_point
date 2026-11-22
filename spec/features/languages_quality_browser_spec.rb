@@ -92,31 +92,31 @@ RSpec.describe 'Languages administration quality', type: :feature, js: true do
     expect(page).to have_current_path(admin_languages_path)
   end
 
-  scenario 'aligns New language with the unchanged subtitle above filters' do
+  scenario 'aligns New language with the common catalog heading above filters' do
     page.driver.browser.manage.window.resize_to(1280, 900)
     visit admin_languages_path
 
-    expect(page).to have_css('.languages-description-row .languages-new-button', visible: true)
-    expect(page).to have_css('.languages-description-row p', visible: true)
+    expect(page).to have_css('.languages-page-header .languages-new-button', visible: true)
+    expect(page).to have_css('.languages-page-header p', visible: true)
     expect(page).to have_no_css('.languages-actions-bar')
     expect(page).to have_no_css('.languages-filters .languages-new-button')
     positioning = page.evaluate_script(<<~JS)
       (() => {
-        const row = document.querySelector('.languages-description-row')
-        const description = row.querySelector('p').getBoundingClientRect()
+        const row = document.querySelector('.languages-page-header')
+        const description = row.getBoundingClientRect()
         const button = row.querySelector('.languages-new-button').getBoundingClientRect()
         const filters = document.querySelector('.languages-filters').getBoundingClientRect()
         return {
           centerDifference: Math.abs((description.top + description.bottom) / 2 - (button.top + button.bottom) / 2),
-          gap: filters.top - button.bottom,
+          gap: filters.top - description.bottom,
           rightGap: Math.abs(button.right - filters.right)
         }
       })()
     JS
     expect(positioning.fetch('centerDifference')).to be <= 4
-    expect(positioning.fetch('gap')).to be_between(0, 20)
+    expect(positioning.fetch('gap')).to be_between(16, 32)
     expect(positioning.fetch('rightGap')).to be <= 2
-    within('.languages-description-row') { click_link 'New language' }
+    within('.languages-page-header') { click_link 'New language' }
 
     expect(page).to have_css('#language_modal[aria-hidden="false"] .languages-modal-panel', wait: 10)
     dimensions = page.evaluate_script(<<~JS)

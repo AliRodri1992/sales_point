@@ -1,9 +1,9 @@
-<div class="categories-row-actions" role="group" aria-label="<%= t('admin.categories.index.columns.actions') %>">
+<div class="categories-row-actions catalog-list-row-actions" role="group" aria-label="<%= t('admin.categories.index.columns.actions') %>">
   <% if policy(Category).show? %>
     <%= link_to admin_category_path(category, request.query_parameters),
                 data: { turbo_frame: 'category_modal', categories_filter_navigation: true,
                         tooltip: t('admin.categories.show.title') },
-                class: 'categories-icon-button',
+                class: 'categories-icon-button catalog-list-icon-button',
                 aria: { label: "#{t('admin.categories.show.title')}: #{category.name}" } do %>
       <%= delta_icon('eye', class: 'size-4', aria: { hidden: true }) %>
     <% end %>
@@ -12,7 +12,7 @@
     <%= link_to edit_admin_category_path(category, request.query_parameters),
                 data: { turbo_frame: 'category_modal', categories_filter_navigation: true,
                         tooltip: t('admin.categories.index.edit') },
-                class: 'categories-icon-button',
+                class: 'categories-icon-button catalog-list-icon-button',
                 aria: { label: "#{t('admin.categories.index.edit')}: #{category.name}" } do %>
       <%= delta_icon('pencil-square', class: 'size-4', aria: { hidden: true }) %>
     <% end %>
@@ -21,7 +21,7 @@
     <%= button_to admin_category_path(category, request.query_parameters),
                   method: :delete,
                   form: { data: { categories_filter_mutation: true } },
-                  class: 'categories-icon-button categories-icon-button--danger',
+                  class: 'categories-icon-button catalog-list-icon-button categories-icon-button--danger catalog-list-icon-button--danger',
                   data: {
                     controller: 'swal-confirm',
                     turbo_frame: 'categories_list',
@@ -36,7 +36,7 @@
     <%= link_to references_admin_category_path(category, request.query_parameters),
                 data: { turbo_frame: 'category_modal', categories_filter_navigation: true,
                         tooltip: t('admin.categories.references.action') },
-                class: 'categories-icon-button',
+                class: 'categories-icon-button catalog-list-icon-button',
                 aria: { label: "#{t('admin.categories.references.action')}: #{category.name}" } do %>
       <%= delta_icon('arrow-path', class: 'size-4', aria: { hidden: true }) %>
     <% end %>

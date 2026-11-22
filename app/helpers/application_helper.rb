@@ -99,17 +99,16 @@ module ApplicationHelper
     end)
   end
 
-  def sort_link(column, title = nil, frame: nil)
+  def sort_link(column, title = nil, frame: nil, url_options: {})
     title ||= column.titleize
     direction = params[:sort] == column && params[:direction] != 'asc' ? 'asc' : 'desc'
     indicator = sort_indicator(column)
+    query = request.query_parameters.merge(sort: column, direction: direction, page: nil)
+    destination = url_for(query.merge(url_options))
 
-    link_to(
-      safe_join([title, indicator]),
-      url_for(request.query_parameters.merge(sort: column, direction: direction, page: nil)),
-      class: 'inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-800',
-      data: frame ? { turbo_frame: frame } : nil
-    )
+    link_to(safe_join([title, indicator]), destination,
+            class: 'inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-800',
+            data: frame ? { turbo_frame: frame } : nil)
   end
 
   def sort_indicator(column)

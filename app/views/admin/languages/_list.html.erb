@@ -7,11 +7,11 @@
 <% filtered = search_filter.present? || status_filter.present? %>
 
 <% if filtered %>
-  <nav class="languages-active-filters" aria-label="<%= t('admin.languages.ui.active_filters') %>">
-    <span class="languages-active-filters__label"><%= t('admin.languages.ui.active_filters') %></span>
+  <nav class="languages-active-filters catalog-list-filter-chips" aria-label="<%= t('admin.languages.ui.active_filters') %>">
+    <span class="languages-active-filters__label catalog-list-filter-chips-label"><%= t('admin.languages.ui.active_filters') %></span>
     <% if search_filter.present? %>
       <%= link_to admin_languages_path(request.query_parameters.except('search', 'page')),
-                  class: 'languages-filter-chip', data: { turbo_frame: '_top' },
+                  class: 'languages-filter-chip catalog-list-filter-chip', data: { turbo_frame: '_top' },
                   aria: { label: t('admin.languages.ui.remove_search') } do %>
         <span><%= t('admin.languages.ui.search_filter', value: search_filter) %></span>
         <%= delta_icon('x-mark', class: 'size-3.5', aria: { hidden: true }) %>
@@ -19,57 +19,61 @@
     <% end %>
     <% if status_filter.present? %>
       <%= link_to admin_languages_path(request.query_parameters.except('status', 'page')),
-                  class: 'languages-filter-chip', data: { turbo_frame: '_top' },
+                  class: 'languages-filter-chip catalog-list-filter-chip', data: { turbo_frame: '_top' },
                   aria: { label: t('admin.languages.ui.remove_status') } do %>
         <span><%= t('admin.languages.ui.status_filter', value: t("admin.languages.statuses.#{status_filter}")) %></span>
         <%= delta_icon('x-mark', class: 'size-3.5', aria: { hidden: true }) %>
       <% end %>
     <% end %>
     <%= link_to t('admin.languages.ui.clear_filters'), admin_languages_path,
-                class: 'languages-filter-clear', data: { turbo_frame: '_top' } %>
+                class: 'languages-filter-clear catalog-list-clear-filters', data: { turbo_frame: '_top' } %>
   </nav>
 <% end %>
 
-<section class="languages-results" aria-label="<%= t('admin.languages.index.card_title') %>"
+<section class="languages-results catalog-list-directory" aria-label="<%= t('admin.languages.index.card_title') %>"
          <% if @page_clamped %>
            data-controller="languages-page-state"
            data-languages-page-state-url-value="<%= admin_languages_path(request.query_parameters.except('page').merge(@current_page > 1 ? { page: @current_page } : {})) %>"
          <% end %>>
-  <header class="languages-results__header">
+  <header class="languages-results__header catalog-list-directory-heading">
     <div>
       <h2><%= t('admin.languages.index.card_title') %></h2>
       <p aria-live="polite"><%= t('admin.languages.index.total_count', count: total_count) %></p>
     </div>
+    <span class="catalog-list-page-count"><%= t('admin.catalog_directory.showing', count: languages.size) %></span>
+    <%= render 'admin/shared/catalog_mobile_sort', frame: '_top', columns: {
+          'name' => t('admin.languages.index.columns.language'), 'code' => t('admin.languages.index.columns.code'),
+          'status' => t('admin.languages.index.columns.status') } %>
   </header>
 
   <% if languages.any? %>
-    <div class="languages-desktop-table">
-      <table>
+    <div class="languages-desktop-table catalog-list-desktop-table">
+      <table class="catalog-list-table">
         <thead>
           <tr>
-            <th scope="col"><%= sort_link('name', t('admin.languages.index.columns.language'), frame: '_top') %></th>
-            <th scope="col"><%= sort_link('code', t('admin.languages.index.columns.code'), frame: '_top') %></th>
-            <th scope="col"><%= sort_link('status', t('admin.languages.index.columns.status'), frame: '_top') %></th>
-            <th scope="col" class="languages-actions-heading"><%= t('admin.languages.index.columns.actions') %></th>
+            <th scope="col"><%= sort_link('name', t('admin.languages.index.columns.language'), url_options: { action: 'index', id: nil, format: nil }, frame: '_top') %></th>
+            <th scope="col"><%= sort_link('code', t('admin.languages.index.columns.code'), url_options: { action: 'index', id: nil, format: nil }, frame: '_top') %></th>
+            <th scope="col"><%= sort_link('status', t('admin.languages.index.columns.status'), url_options: { action: 'index', id: nil, format: nil }, frame: '_top') %></th>
+            <th scope="col" class="languages-actions-heading catalog-list-actions-heading"><%= t('admin.languages.index.columns.actions') %></th>
           </tr>
         </thead>
         <tbody>
           <% languages.each do |language| %>
             <tr>
               <td>
-                <div class="languages-identity">
+                <div class="languages-identity catalog-list-identity">
                   <%= image_tag language.flag_url('64x48'), srcset: language.flag_srcset, alt: '',
                                 loading: 'lazy', class: 'languages-flag' %>
                   <div>
-                    <span class="languages-name"><%= language.name %></span>
+                    <span class="languages-name catalog-list-name"><%= language.name %></span>
                     <% if language.code == I18n.default_locale.to_s %>
                       <span class="languages-default-label"><%= t('admin.languages.ui.default_language') %></span>
                     <% end %>
                   </div>
                 </div>
               </td>
-              <td><code class="languages-code"><%= language.code %></code></td>
-              <td><%= catalog_status(language.active?, scope: 'admin.languages.statuses') %></td>
+              <td><code class="languages-code catalog-list-code"><%= language.code %></code></td>
+              <td><span class="catalog-list-status <%= 'catalog-list-status--inactive' unless language.active? %>"><%= t("admin.languages.statuses.#{language.status}") %></span></td>
               <td><%= render 'row_actions', language: language %></td>
             </tr>
           <% end %>
@@ -77,21 +81,21 @@
       </table>
     </div>
 
-    <ul class="languages-mobile-list">
+    <ul class="languages-mobile-list catalog-list-mobile-list">
       <% languages.each do |language| %>
-        <li>
-          <div class="languages-mobile-card-head">
-            <div class="languages-identity">
+        <li class="catalog-list-mobile-card">
+          <div class="languages-mobile-card-head catalog-list-mobile-card-heading">
+            <div class="languages-identity catalog-list-identity">
               <%= image_tag language.flag_url('64x48'), srcset: language.flag_srcset, alt: '',
                             loading: 'lazy', class: 'languages-flag' %>
               <div>
-                <span class="languages-name"><%= language.name %></span>
-                <code class="languages-code"><%= language.code %></code>
+                <span class="languages-name catalog-list-name"><%= language.name %></span>
+                <code class="languages-code catalog-list-code"><%= language.code %></code>
               </div>
             </div>
-            <%= catalog_status(language.active?, scope: 'admin.languages.statuses') %>
+            <span class="catalog-list-status <%= 'catalog-list-status--inactive' unless language.active? %>"><%= t("admin.languages.statuses.#{language.status}") %></span>
           </div>
-          <div class="languages-mobile-card-footer">
+          <div class="languages-mobile-card-footer catalog-list-mobile-card-footer">
             <% if language.code == I18n.default_locale.to_s %>
               <span class="languages-default-label"><%= t('admin.languages.ui.default_language') %></span>
             <% else %>
@@ -103,36 +107,26 @@
       <% end %>
     </ul>
 
-    <% if total_count > TablePagePreference::OPTIONS.min || total_pages > 1 %>
-      <footer class="languages-pagination">
-        <div class="languages-page-size">
-        <%= label_tag :per_page, t('admin.languages.index.pagination.per_page_label') %>
-        <div class="relative" data-controller="delta-select">
-          <%= select_tag :per_page,
-                         options_for_select(TablePagePreference::OPTIONS, @per_page || TablePagePreference::DEFAULT),
-                         data: { controller: 'table-page-size', table_page_size_key_value: 'languages',
-                                 action: 'change->table-page-size#apply' } %>
-        </div>
-      </div>
-      <div class="languages-pagination-links">
-        <%= pagination_links(total_pages, frame: '_top') if total_pages > 1 %>
-      </div>
-      </footer>
+    <% if total_count.positive? %>
+      <%= render 'admin/shared/catalog_pagination', key: 'languages', total_pages: total_pages,
+                 current_page: @current_page || 1, per_page_label: t('admin.languages.index.pagination.per_page_label'),
+                 frame: '_top', legacy_class: 'languages-pagination', size_class: 'languages-page-size',
+                 links_class: 'languages-pagination-links' %>
     <% end %>
   <% else %>
-    <div class="languages-empty">
-      <div class="languages-empty__icon"><%= delta_icon('language', class: 'size-7', aria: { hidden: true }) %></div>
+    <div class="languages-empty catalog-list-empty-state">
+      <div class="languages-empty__icon catalog-list-empty-icon"><%= delta_icon('language', class: 'size-7', aria: { hidden: true }) %></div>
       <% if unfiltered_count.positive? %>
         <h3><%= t('admin.languages.ui.no_results_title') %></h3>
         <p><%= t('admin.languages.ui.no_results_hint') %></p>
         <%= link_to t('admin.languages.ui.clear_filters'), admin_languages_path,
-                    class: 'catalog-button', data: { turbo_frame: '_top' } %>
+                    class: 'catalog-list-secondary-button', data: { turbo_frame: '_top' } %>
       <% else %>
         <h3><%= t('admin.languages.index.empty_title') %></h3>
         <p><%= t('admin.languages.index.empty_subtitle') %></p>
         <% if policy(Language).create? %>
           <%= link_to new_admin_language_path(request.query_parameters),
-                      class: 'catalog-button catalog-button-primary',
+                      class: 'catalog-list-primary-button',
                       data: { turbo_frame: 'language_modal' } do %>
             <%= delta_icon('plus', class: 'size-4', aria: { hidden: true }) %>
             <%= t('admin.languages.index.new') %>

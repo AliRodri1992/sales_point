@@ -1,22 +1,22 @@
-<div class="categories-workspace">
-  <header class="categories-page-header">
-    <div class="categories-heading-copy">
+<div class="categories-workspace catalog-list-workspace">
+  <header class="categories-page-header catalog-list-page-header catalog-list-header">
+    <div class="categories-heading-copy catalog-list-heading-copy">
       <%= render 'admin/shared/catalog_module_heading', title: t('admin.categories.index.title') %>
-      <p class="categories-subtitle"><%= t('admin.categories.index.subtitle') %></p>
+      <p class="categories-subtitle catalog-list-subtitle"><%= t('admin.categories.index.subtitle') %></p>
     </div>
     <% if policy(Category).create? %>
       <%= link_to new_admin_category_path(request.query_parameters),
                   data: { turbo_frame: 'category_modal', categories_filter_navigation: true,
                           tooltip: t('admin.categories.index.new') },
-                  class: 'categories-primary-button' do %>
+                  class: 'categories-primary-button catalog-list-primary-button' do %>
         <%= delta_icon('plus', class: 'size-4', aria: { hidden: true }) %>
         <%= t('admin.categories.index.new') %>
       <% end %>
     <% end %>
   </header>
 
-  <section class="categories-filter-panel" aria-labelledby="categories-filter-title">
-    <div class="categories-filter-heading">
+  <section class="categories-filter-panel catalog-list-filter-panel" aria-labelledby="categories-filter-title">
+    <div class="categories-filter-heading catalog-list-filter-heading">
       <h2 id="categories-filter-title"><%= t('admin.categories.index.search_label') %></h2>
       <p><%= t('admin.categories.index.filter_hint') %></p>
     </div>
@@ -37,17 +37,17 @@
     <% selected_direction = params[:direction] == 'desc' ? 'desc' : 'asc' %>
     <%= form_with url: admin_categories_path, method: :get,
                   data: { turbo_frame: 'categories_list', controller: 'categories-search' },
-                  class: 'categories-filter-form' do %>
+                  class: 'categories-filter-form catalog-list-filter-form' do %>
       <%= hidden_field_tag :sort, params[:sort].presence || 'name', id: 'category_sort' %>
       <%= hidden_field_tag :direction, params[:direction].presence || 'asc', id: 'category_direction' %>
-      <div class="categories-filter-field categories-search-field">
+      <div class="categories-filter-field catalog-list-filter-field categories-search-field catalog-list-search-field">
         <%= label_tag :category_search, t('admin.categories.index.search_label') %>
         <%= search_field_tag :search, params[:search], id: 'category_search',
               maxlength: 100, autocomplete: 'off',
               placeholder: t('admin.categories.index.search_placeholder'),
               data: { action: 'input->categories-search#debouncedSubmit' } %>
       </div>
-      <div class="categories-filter-field categories-status-field">
+      <div class="categories-filter-field catalog-list-filter-field categories-status-field catalog-list-status-field">
         <%= label_tag :category_status, t('admin.categories.form.status') %>
         <div class="relative" data-controller="delta-select">
           <%= select_tag :status,
@@ -60,7 +60,7 @@
                 data: { action: 'change->categories-search#submitNow' } %>
         </div>
       </div>
-      <div class="categories-filter-field categories-mobile-sort-field">
+      <div class="categories-filter-field catalog-list-filter-field categories-mobile-sort-field">
         <%= label_tag :category_mobile_sort, t('admin.categories.index.filters.sort_by') %>
         <div class="relative" data-controller="delta-select">
           <select id="category_mobile_sort" data-action="change->categories-search#changeSort">
@@ -68,7 +68,7 @@
           </select>
         </div>
       </div>
-      <button type="submit" class="categories-apply-button">
+      <button type="submit" class="categories-apply-button catalog-list-apply-button">
         <%= delta_icon('funnel', class: 'size-4', aria: { hidden: true }) %>
         <%= t('admin.categories.index.filters.apply') %>
       </button>

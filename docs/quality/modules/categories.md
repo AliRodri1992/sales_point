@@ -623,3 +623,69 @@ RuboCop: 5 archivos sin ofensas; Brakeman: 0 errores/advertencias; I18n estricto
 aprobados. Revisión independiente del cambio completo y los breadcrumbs sin
 hallazgos. CSS compilado con la advertencia previa de `@position-try` del proveedor
 telefónico. Estado: verificado localmente; CI del SHA publicado pendiente de consulta.
+
+
+## CATEGORIES-044 — Patrón compartido del listado de catálogos (2026-11-22)
+
+**Base:** `fe96a7fb3c1d6719c1cb7438aa1d5966dc9af716`, `feature/fixes`.
+Alcance solicitado: diseño completo de los listados de Categorías, Productos,
+Idiomas y Unidades de medida. Sin cambios de modelos, controladores o permisos.
+
+Categorías conserva su diseño y sirve como fuente de los estilos opt-in `catalog-list-*`.
+La paginación se extrae a un parcial compartido sin cambiar su frame, tamaño de
+página, ventana de enlaces ni permisos. Se conservan los hooks de búsqueda y de CRUD.
+
+Los tres catálogos adaptados ofrecen ordenamiento desde tarjetas móviles mediante
+un `details` nativo con enlaces GET; conserva filtros y tamaño de página, y reinicia
+la página al cambiar el orden. El parcial de paginación conserva el frame propio
+de cada módulo, IDs exclusivos y etiquetas asociadas, ventana compacta y controles
+de 44 px para enlaces/acciones. Nuevos textos equivalentes en es/en/ko.
+
+Regresión request inicial reproducida (seed 61402); contrato compartido y matriz
+de 48 páginas es/en/ko aprobados: 5 ejemplos, 0 fallos (seed 11945). Capturas
+previas de los cuatro listados en 1440/390 px: 1 escenario aprobado (seed 18301),
+`tmp/capybara/catalog-list-before-*.png`. Verificación final y CI pendientes.
+No se certifica el cierre de hallazgos anteriores del módulo.
+
+**Resultado local de la adecuación:** 221 ejemplos, 0 fallos (seed 38465), con
+requests de los cuatro catálogos, paginación, títulos, filtros avanzados y flujos
+Chrome de alta/edición/eliminación, modales y tarjetas responsive. La primera
+ejecución detectó seis expectativas incompatibles con el nuevo layout/texto y
+un fixture que dejaba el catálogo vacío; se corrigieron y se repitió la suite.
+
+Después se reprodujo y corrigió el destino de enlaces tras Turbo (CATEGORIES-045):
+62 ejemplos, 0 fallos (seed 1913), incluyendo helpers, matriz es/en/ko, navegación
+móvil y regresión de actualización. Capturas definitivas de los cuatro listados
+en es/en/ko, 320/390/768/1440 px: 1 escenario, 0 fallos (seed 53024), sin overflow
+de página ni de las tablas desktop. Artefactos `tmp/capybara/catalog-list-after-*.png`
+y paneles `tmp/capybara/catalog-listing-*.png`. Revisión independiente de UI y
+rutas sin hallazgos pendientes; el estilo del detalle de Idiomas fue preservado.
+I18n estricto: 291 archivos, 5,418 claves por idioma, 0 hallazgos de paridad.
+Registro modular válido: 32 módulos / 28 recursos. CSS compilado correctamente
+(con advertencia previa de `@position-try` del proveedor telefónico).
+CI del SHA publicado y aceptación integral de hallazgos anteriores pendientes;
+no se certifica accesibilidad exhaustiva con lector de pantalla o zoom manual.
+
+## CATEGORIES-045 — Rutas de colección tras reemplazo Turbo (2026-11-22)
+
+**P2 · compartido / reproducido.** `url_for` en encabezados y pie heredaba la acción
+`update` y su ID al renderizar un listado desde Turbo Stream. La regresión de
+actualización comprobó enlaces a `/admin/categories/:id`, en lugar del listado
+(1 ejemplo fallido, seed 64211). Idiomas y Unidades comparten ese contrato.
+
+`sort_link` y `pagination_links` aceptan ahora una ruta de colección opcional; los
+cuatro catálogos la suministran explícitamente, incluyendo orden móvil. El resto
+de consumidores conserva el comportamiento previo. Los parámetros se codifican
+con `to_query`; cambiar orden reinicia página y conserva criterios/tamaño.
+Regresión de requests comprueba tabla, orden móvil y paginación tras actualizar
+por Turbo en los tres módulos que reemplazan la lista; Products conserva navegación
+completa. Pruebas posteriores al ajuste: 62 ejemplos aprobados (seed 1913).
+Estado: verificado localmente, CI pendiente.
+
+**Verificación final de navegación:** 63 ejemplos, 0 fallos (seed 62874),
+`tmp/catalog-list-navigation-final.log`. Incluye parámetros Unicode/`&`, página
+única en query, actualización Turbo y navegación real en móvil. La generación
+manual de href se sustituyó por opciones explícitas de `url_for`; Brakeman final
+8.0.6: 0 errores y 0 advertencias (`tmp/catalog-list-security-final.log`). RuboCop:
+8 archivos, 0 ofensas. Revisión independiente final sin hallazgos. El workflow de
+Categorías ejecuta también los contratos compartidos y helpers de navegación.

@@ -16,8 +16,8 @@ RSpec.describe PaginationHelper, type: :helper do
 
     it 'omits the previous link on the first page and includes the next link' do
       allow(helper).to receive(:params).and_return(ActionController::Parameters.new(page: 1))
-      allow(helper).to receive(:page_links).with(1, 3, frame: nil).and_return(['pages'])
-      allow(helper).to receive(:next_link).with(1, 3, frame: nil).and_return('next')
+      allow(helper).to receive(:page_links).with(1, 3, frame: nil, url_options: {}).and_return(['pages'])
+      allow(helper).to receive(:next_link).with(1, 3, frame: nil, url_options: {}).and_return('next')
 
       expect(helper).not_to receive(:prev_link)
       expect(helper.pagination_links(3)).to include('pages', 'next')
@@ -25,11 +25,28 @@ RSpec.describe PaginationHelper, type: :helper do
 
     it 'omits the next link on the last page and includes the previous link' do
       allow(helper).to receive(:params).and_return(ActionController::Parameters.new(page: 3))
-      allow(helper).to receive(:page_links).with(3, 3, frame: nil).and_return(['pages'])
-      allow(helper).to receive(:prev_link).with(3, frame: nil).and_return('previous')
+      allow(helper).to receive(:page_links).with(3, 3, frame: nil, url_options: {}).and_return(['pages'])
+      allow(helper).to receive(:prev_link).with(3, frame: nil, url_options: {}).and_return('previous')
 
       expect(helper).not_to receive(:next_link)
       expect(helper.pagination_links(3)).to include('pages', 'previous')
+    end
+
+    it 'uses an explicit collection path and safely retains the query through every link builder' do
+      allow(helper).to receive(:params).and_return(ActionController::Parameters.new(page: 2))
+      allow(helper).to receive(:request).and_return(
+        instance_double(ActionDispatch::Request, query_parameters: { 'search' => 'café & tea', 'page' => '2' })
+      )
+
+      options = { controller: 'admin/products', action: 'index', only_path: true }
+      links = Nokogiri::HTML.fragment(helper.pagination_links(4, window: 1, url_options: options)).css('a')
+      expect(links).not_to be_empty
+      links.each do |link|
+        uri = URI.parse(link['href'])
+        expect(uri.path).to eq('/admin/products')
+        expect(CGI.parse(uri.query)['search']).to eq(['café & tea'])
+        expect(CGI.parse(uri.query)['page'].size).to eq(1)
+      end
     end
   end
 

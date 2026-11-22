@@ -23,7 +23,7 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
 
   scenario 'validates fields, selects an SAT key, creates, views and edits in modals' do
     visit admin_units_of_measure_path
-    within('main > header') { click_link 'New unit' }
+    within('.catalog-list-header') { click_link 'New unit' }
     expect(page).to have_css('turbo-frame#unit_of_measure_modal [role="dialog"]', wait: 10)
     expect(page).to have_css('turbo-frame#unit_of_measure_modal.flex')
 
@@ -65,7 +65,7 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
     [320, 390, 768, 1440].each do |width|
       page.driver.browser.manage.window.resize_to(width, 900)
       visit admin_units_of_measure_path
-      within('main > header') { click_link 'New unit' }
+      within('.catalog-list-header') { click_link 'New unit' }
       expect(page).to have_css('turbo-frame#unit_of_measure_modal.flex [role="dialog"]', wait: 10)
 
       bounds = page.evaluate_script(<<~JS)
@@ -131,7 +131,7 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
 
     started = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     visit admin_units_of_measure_path
-    within('main > header') { click_link 'New unit' }
+    within('.catalog-list-header') { click_link 'New unit' }
     expect(page).to have_css('turbo-frame#unit_of_measure_modal.flex [role="dialog"]', wait: 10)
 
     select_control = find('#unit_of_measure_sat_unit_key_id', visible: :all).find(:xpath, '..')
@@ -176,7 +176,7 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
     expect(page).to have_css('#units_of_measure_list [data-list-query*="status=inactive"]')
     expect(page).to have_no_css('#units_of_measure_list', text: active.name)
 
-    within('main > header') { click_link 'New unit' }
+    within('.catalog-list-header') { click_link 'New unit' }
     fill_in 'unit_of_measure_code', with: 'FILTERED'
     fill_in 'unit_of_measure_name', with: 'Filtered new unit'
     fill_in 'unit_of_measure_abbreviation', with: 'flt'
@@ -217,14 +217,14 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
 
     visit admin_units_of_measure_path(status: 'inactive', sort: 'code', direction: 'asc',
                                       page: 2, per_page: 10)
-    expect(page).to have_css('#units_of_measure_list', text: '2 / 2', wait: 10)
+    expect(page).to have_css('#units_of_measure_list', text: 'Page 2 of 2', wait: 10)
     within('turbo-frame#units_of_measure_list tr', text: 'Inactive 10') do
       find('button[aria-label="Remove unit"]').click
     end
     expect(page).to have_css('.swal2-popup', text: 'Remove this record?', wait: 10)
     find('.delta-confirm-accept').click
 
-    expect(page).to have_css('#units_of_measure_list', text: '1 / 1', wait: 10)
+    expect(page).to have_css('#units_of_measure_list', text: 'Page 1 of 1', wait: 10)
     expect(page).to have_css('#units_of_measure_list [data-list-query*="status=inactive"]')
     expect(page).to have_css('#units_of_measure_list [data-list-query*="page=1"]')
     expect(URI.parse(current_url).query).to include('page=1', 'status=inactive')
@@ -234,7 +234,7 @@ RSpec.describe 'Units of measure modal and responsive flows', type: :feature, js
 
   scenario 'closes only the open SAT dropdown on the first Escape, preserving modal edits' do
     visit admin_units_of_measure_path
-    within('main > header') { click_link 'New unit' }
+    within('.catalog-list-header') { click_link 'New unit' }
     fill_in 'unit_of_measure_code', with: 'STAY_OPEN'
 
     sat_dropdown = find('#unit_of_measure_sat_unit_key_id', visible: :all).find(:xpath, '..')

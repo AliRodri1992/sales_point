@@ -1,0 +1,11 @@
+ko:
+  admin:
+    catalog_directory:
+      page: "%{total}페이지 중 %{page}페이지"
+      pagination: 카탈로그 페이지 탐색
+      showing: "%{count}개 표시"
+      sort_by: 정렬 기준
+      asc: 오름차순
+      desc: 내림차순
+      filters_title: 카탈로그 탐색
+      filters_hint: 이름, 코드 및 상태로 항목을 찾으세요.

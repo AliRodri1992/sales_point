@@ -1,0 +1,13 @@
+<details class="catalog-list-mobile-sort">
+  <summary><%= delta_icon('adjustments-horizontal', class: 'size-4', aria: { hidden: true }) %><%= t('admin.catalog_directory.sort_by') %></summary>
+  <nav aria-label="<%= t('admin.catalog_directory.sort_by') %>">
+    <% columns.each do |column, label| %>
+      <% %w[asc desc].each do |direction| %>
+        <%= link_to url_for(request.query_parameters.merge(sort: column, direction: direction, page: nil, controller: controller_path, action: 'index', id: nil, format: nil)),
+                    data: { turbo_frame: frame } do %>
+          <%= label %> · <%= t("admin.catalog_directory.#{direction}") %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </nav>
+</details>

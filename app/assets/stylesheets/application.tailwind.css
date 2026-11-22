@@ -18,6 +18,7 @@
 @import "./components/products_filters.css";
 @import "./components/categories_workspace.css";
 @import "./components/languages_workspace.css";
+@import "./components/catalog_directory.css";
 @import "./components/branch_workspace.css";
 
 @theme {

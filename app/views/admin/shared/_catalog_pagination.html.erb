@@ -1,0 +1,20 @@
+<% current_page = (local_assigns[:current_page] || params[:page].to_i).clamp(1, total_pages) %>
+<% legacy_class = local_assigns[:legacy_class] %>
+<footer class="catalog-list-pagination <%= legacy_class %>">
+  <div class="catalog-list-pagination-size <%= local_assigns[:size_class] %>">
+    <label for="<%= key %>_per_page"><%= per_page_label %></label>
+    <div class="relative" data-controller="delta-select">
+      <%= select_tag :per_page,
+            options_for_select(TablePagePreference::OPTIONS, @per_page || TablePagePreference::DEFAULT),
+            id: "#{key}_per_page",
+            data: { controller: 'table-page-size', table_page_size_key_value: key,
+                    action: 'change->table-page-size#apply' } %>
+    </div>
+    <span aria-live="polite"><%= t('admin.catalog_directory.page', page: current_page, total: total_pages) %></span>
+  </div>
+  <% if total_pages > 1 %>
+    <nav class="catalog-list-pagination-links <%= local_assigns[:links_class] %>" aria-label="<%= t('admin.catalog_directory.pagination') %>">
+      <%= pagination_links(total_pages, frame: frame, window: 1, url_options: { controller: controller_path, action: 'index', id: nil, format: nil }) %>
+    </nav>
+  <% end %>
+</footer>

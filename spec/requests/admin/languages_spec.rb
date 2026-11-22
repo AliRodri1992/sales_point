@@ -304,7 +304,7 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(response).to have_http_status(:ok)
       page = Nokogiri::HTML(response.body)
       expect(page.css('.languages-desktop-table tbody tr').size).to eq(5)
-      expect(page.at_css('.languages-page-size')).to be_nil
+      expect(page.at_css('.languages-page-size')).to be_present
       canonical = page.at_css('.languages-results[data-controller="languages-page-state"]')
       expect(canonical).to be_present
       expect(canonical['data-languages-page-state-url-value']).to include('per_page=5')
@@ -399,7 +399,8 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(page_link['data-turbo-frame']).to eq('_top') if page_link
     end
 
-    it 'hides page-size controls for a catalog that cannot fill the smallest page' do
+    it 'keeps the common page-size controls for a small nonempty catalog' do
+      create(:language, code: I18n.default_locale.to_s)
       Language.not_deleted.find_each do |language|
         language.update!(deleted_at: Time.current) unless language.code == I18n.default_locale.to_s
       end
@@ -407,7 +408,7 @@ RSpec.describe 'Admin::Languages', type: :request do
       get admin_languages_path
 
       page = Nokogiri::HTML(response.body)
-      expect(page.at_css('.languages-page-size')).to be_nil
+      expect(page.at_css('.languages-page-size')).to be_present
       expect(page.at_css('.languages-pagination-links')).to be_nil
     end
 
@@ -421,24 +422,24 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(actual).to eq(expected)
     end
 
-    it 'omits size controls when a large catalog is narrowed to one result' do
+    it 'keeps the common footer when a large catalog is narrowed to one result' do
       create(:language, code: 'zz', flag_iso: 'zz', name: 'Unique filtered result', status: 'inactive')
 
       get admin_languages_path(search: 'Unique filtered result', per_page: 5)
 
       document = Nokogiri::HTML(response.body)
       expect(document.css('.languages-desktop-table tbody tr').size).to eq(1)
-      expect(document.at_css('.languages-page-size')).to be_nil
-      expect(document.at_css('.languages-pagination')).to be_nil
+      expect(document.at_css('.languages-page-size')).to be_present
+      expect(document.at_css('.languages-pagination')).to be_present
     end
 
     it 'uses distinct IDs for hidden page size and visible page-size selector' do
       get admin_languages_path(per_page: 5)
 
       document = Nokogiri::HTML(response.body)
-      expect(document.css('#per_page').size).to eq(1)
+      expect(document.css('#languages_per_page').size).to eq(1)
       expect(document.at_css('#languages_filter_per_page')['value']).to eq('5')
-      expect(document.at_css('label[for="per_page"]')).to be_present
+      expect(document.at_css('label[for="languages_per_page"]')).to be_present
     end
 
     it 'exposes a canonical URL for out-of-range page requests' do
@@ -465,15 +466,15 @@ RSpec.describe 'Admin::Languages', type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it 'keeps the page subtitle and New language on the same row above filters' do
+    it 'keeps the common catalog header and New language above filters' do
       get admin_languages_path
 
       document = Nokogiri::HTML(response.body)
-      row = document.at_css('.languages-page-header .languages-description-row')
+      row = document.at_css('.languages-page-header')
       action = row.at_css('.languages-new-button')
       filters = document.at_css('section.languages-filters')
 
-      expect(row.at_css('p').text.strip).to eq(I18n.t('admin.languages.index.subtitle'))
+      expect(row.at_css('.catalog-list-subtitle').text.strip).to eq(I18n.t('admin.languages.index.subtitle'))
       expect(action['data-turbo-frame']).to eq('language_modal')
       expect(filters).to be_present
       expect(document.at_css('.languages-actions-bar')).to be_nil
