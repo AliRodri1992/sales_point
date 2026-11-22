@@ -137,7 +137,9 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
 
   %w[es en ko].each do |locale|
     scenario "fits the compact edit form without scrolling on desktop and mobile in #{locale}" do
-      administrator.update!(language: create(:language, code: locale, name: locale, flag_iso: locale)) unless locale == 'en'
+      unless locale == 'en'
+        administrator.update!(language: create(:language, code: locale, name: locale, flag_iso: locale))
+      end
       category = create(:category, organization:, name: 'Groceries', code: 'groceries')
 
       page.driver.browser.manage.window.resize_to(1280, 720)
