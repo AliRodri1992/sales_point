@@ -177,3 +177,12 @@ Mantener **NO CERRADO** hasta que todas las comprobaciones del estándar estén 
 - **[Units of measure CI #42765033263](https://github.com/AliRodri1992/sales_point/actions/runs/42765033263): SUCCESS** en ambos jobs. RuboCop del módulo **PASÓ**, y RSpec (modelos, requests, cuatro pruebas de seeds y Chrome) terminó con **42 ejemplos, 0 fallos**. Esto incluye navegación de filtros aplicada automáticamente, sincronización del formulario tras ordenar dentro del frame, etiquetas de filtros activos, eliminación individual de filtro SAT y limpieza total.
 - **UOM-022, cambios automatizados: VERIFICADOS EN CI FOCALIZADO**. El primer intento registró un fallo de expectativa de idioma en el spec request y quedó corregido sin retirar escenarios.
 - **No equivale a aceptación completa del módulo:** CI global verde, validación manual de zoom 200 %, lector de pantalla/contraste, historial de navegación y migración en una base antigua continúan **PENDIENTES**. No se fusionó ninguna rama ni se modificó Productos.
+
+### UOM-023 — Encabezado y título de pestaña compartidos (2026-11-22)
+
+Base `f10b79d59a889e215ab91aed88ff68cd5fc6004d`, `feature/fixes`. El contexto del
+listado se unifica a «Catálogos» y usa el fragmento de encabezado común. La pestaña
+muestra `Delta POS | Unidades de medida`, con el nombre localizado, en listado,
+alta, edición y detalle. Se conservan los atributos Turbo del botón Nuevo y las
+validaciones del modal. Pruebas de presentación, es/en/ko y adaptabilidad en
+**CATEGORIES-043**; no supone una nueva aceptación integral del módulo.

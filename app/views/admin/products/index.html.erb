@@ -2,9 +2,7 @@
 <div class="catalog-workspace">
 <div class="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
   <div>
-    <h1 class="font-jakarta text-2xl font-bold text-slate-900">
-      <%= t('admin.products.index.title') %>
-    </h1>
+    <%= render 'admin/shared/catalog_module_heading', title: t('admin.products.index.title') %>
     <p class="mt-1 text-sm text-slate-500">
       <%= t('admin.products.index.subtitle') %>
     </p>

@@ -32,7 +32,7 @@ module BreadcrumbsHelper
   end
 
   def product_breadcrumb_items
-    products_path = { label: t('admin.breadcrumbs.products'), path: admin_products_path }
+    products_path = { label: t('admin.products.index.title'), path: admin_products_path }
 
     case params[:action]
     when 'new'
@@ -59,6 +59,10 @@ module BreadcrumbsHelper
 
   def category_breadcrumb_items
     [{ label: t('admin.breadcrumbs.categories') }]
+  end
+
+  def unit_of_measure_breadcrumb_items
+    [{ label: t('admin.units_of_measure.index.title') }]
   end
 
   def branch_breadcrumb_items

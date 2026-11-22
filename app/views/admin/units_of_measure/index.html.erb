@@ -1,7 +1,6 @@
 <header class="mb-7 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
   <div class="space-y-2">
-    <p class="text-xs font-bold uppercase tracking-[0.18em] text-emerald-700"><%= t('admin.units_of_measure.index.eyebrow') %></p>
-    <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.units_of_measure.index.title') %></h1>
+    <%= render 'admin/shared/catalog_module_heading', title: t('admin.units_of_measure.index.title') %>
     <p class="max-w-2xl text-sm leading-relaxed text-slate-500"><%= t('admin.units_of_measure.index.subtitle') %></p>
   </div>
   <% if policy(UnitOfMeasure).create? %>

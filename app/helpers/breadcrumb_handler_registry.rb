@@ -6,6 +6,7 @@ module BreadcrumbHandlerRegistry
     'admin/dashboard' => :dashboard_breadcrumb_items,
     'admin/languages' => :language_breadcrumb_items,
     'admin/categories' => :category_breadcrumb_items,
+    'admin/units_of_measure' => :unit_of_measure_breadcrumb_items,
     'system_roles' => :system_role_breadcrumb_items,
     'system_role_statuses' => :system_role_breadcrumb_items,
     'admin/profiles' => :profile_breadcrumb_items,

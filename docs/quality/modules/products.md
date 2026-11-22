@@ -266,3 +266,13 @@ Política: [Estándar modular](../module-quality-standard.md) · [Plantilla](../
 | **PRODUCTS-028** | **P2 · INTEGRACIÓN con Categorías** | La baja de Categoría usa `with_lock` y verifica referencias, pero `Product#valid_catalog_reference?` (líneas 113–119) solo consulta `organization_id`, `active?` y `deleted_at`; no bloquea la fila de Categoría. Una creación/actualización concurrente puede validar antes de la baja y persistir `category_id` después de que Categorías marque la fila como retirada. | Usar el mismo bloqueo transaccional al asignar/modificar `category_id` y en la baja lógica; spec concurrente con dos transacciones y aserción de que no se crea referencia activa a categoría retirada. Coordinar con Categorías y Promociones. | **ABIERTO · riesgo confirmado por secuencia de código; concurrencia no reproducida** |
 
 Detectado por la reauditoría de Categorías del 2026-11-11. Este apunte cubre únicamente el contrato de asignación de categoría; no amplía el alcance a una nueva auditoría integral de Productos.
+
+## PRODUCTS-029 — Encabezado y título de pestaña compartidos (2026-11-22)
+
+Base `f10b79d59a889e215ab91aed88ff68cd5fc6004d`, `feature/fixes`. Productos añade
+el contexto localizado «Catálogos» y reutiliza la misma jerarquía de encabezado
+de Categorías, Idiomas y Unidades de medida. Su título de pestaña pasa a
+`Delta POS | Productos`, con el nombre localizado, en listado/alta/edición/detalle;
+los títulos de producto capturados por parciales no reemplazan el nombre del módulo.
+Pruebas compartidas y resultados de esta adecuación en **CATEGORIES-043**.
+El alcance se limita a presentación; PRODUCTS-028 conserva su estado.

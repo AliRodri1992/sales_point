@@ -1,8 +1,7 @@
 <div class="categories-workspace">
   <header class="categories-page-header">
     <div class="categories-heading-copy">
-      <p class="categories-eyebrow"><%= t('admin.shared.sidebar.section_catalogs') %></p>
-      <h1><%= t('admin.categories.index.title') %></h1>
+      <%= render 'admin/shared/catalog_module_heading', title: t('admin.categories.index.title') %>
       <p class="categories-subtitle"><%= t('admin.categories.index.subtitle') %></p>
     </div>
     <% if policy(Category).create? %>

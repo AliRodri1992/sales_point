@@ -328,3 +328,13 @@ La baja lógica de `languages` no purga traducciones. La reactivación por un al
 | I18N-007 | P1 | Request specs podían comparar dos mensajes ausentes; ahora exigen resolución y mensajes esperados en los tres idiomas. | RSpec de altas, edición y baja. |
 
 Validación local: 282 archivos YAML, 5,388 claves por idioma, 2,594 referencias literales, cero hallazgos del auditor estricto; cuatro pruebas Python sin fallos. Ruby y Docker no están disponibles en el entorno de trabajo: RSpec, RuboCop, Brakeman, Bundler Audit, `i18n-tasks health` y auditoría del registro modular requieren CI o un entorno Rails. La revisión semántica exhaustiva, claves dinámicas no enumeradas, formatos regionales y renderizados reales siguen pendientes. No se escribió en PostgreSQL; el importador conserva los overrides mediante `yaml_value`.
+
+## IDI-043 — Encabezado y título de pestaña compartidos (2026-11-22)
+
+Base `f10b79d59a889e215ab91aed88ff68cd5fc6004d`, `feature/fixes`. El listado usa
+el contexto localizado «Catálogos» y el encabezado común de los cuatro catálogos;
+Nuevo idioma conserva su posición junto al subtítulo. Las vistas HTML de listado,
+alta, edición y detalle muestran `Delta POS | Idiomas` (nombre localizado), incluso
+si una vista aporta un título de registro. Contrato y pruebas compartidas en
+`catalog_presentation_spec` / `catalog_presentation_browser_spec`; seguimiento de
+validación en **CATEGORIES-043**. Se conserva la política de overrides de I18n.

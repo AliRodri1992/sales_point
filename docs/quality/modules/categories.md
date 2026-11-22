@@ -591,3 +591,35 @@ conservan el título y los locales existentes; sin datos, estilos ni lógica de 
 incluyendo un `kicker` antiguo persistido para comprobar la prioridad del backend.
 I18n estricto: PASS, 285 archivos, 0 hallazgos de paridad; registro modular y
 `git diff --check` aprobados. CI del SHA publicado pendiente de consulta.
+
+## CATEGORIES-043 — Encabezados y títulos de los catálogos (2026-11-22)
+
+**P3 · presentación compartida. Base:** `f10b79d59a889e215ab91aed88ff68cd5fc6004d`.
+Los listados de Categorías, Idiomas, Productos y Unidades de medida reutilizan
+`admin/shared/catalog_module_heading`: contexto «Catálogos», un único h1 y la
+misma jerarquía tipográfica con los tokens Delta existentes. Se conservan los
+subtítulos y la ubicación/atributos de botones y filtros de cada módulo.
+
+`CatalogDesignHelper#catalog_module_page_title` asigna `Delta POS | nombre del
+módulo` mediante un mapa de cuatro `controller_path`. El layout administrativo
+lo utiliza en todas sus acciones HTML (index/new/edit/show y reasignación), con
+el nombre localizado y el comportamiento anterior fuera de ese mapa. No se crean
+claves ni se escriben traducciones en PostgreSQL.
+
+La navegación de Unidades de medida tenía un fallback en inglés; se añade su
+handler localizado. Productos reutiliza el nombre canónico del módulo también
+en su breadcrumb, evitando una denominación distinta en coreano. La matriz de
+requests comprueba que cada breadcrumb de listado coincide con el encabezado.
+
+**Pruebas:** nuevo request spec con 48 páginas de es/en/ko y una página fuera del
+alcance; Chrome comprueba navegación Turbo y encabezados en 320/390/768/1440 px.
+**Evidencia local:** 23 ejemplos aprobados (seed 40762), con flujos de catálogo,
+formularios/modales de Unidades y posición del botón de Idiomas. Tras corregir
+los breadcrumbs, 11 ejemplos aprobados (seed 46278): matriz HTML, Turbo y helper
+de navegación. Capturas de los cuatro catálogos en es/en/ko y escritorio/móvil:
+1 escenario aprobado (seed 55552), artefactos `tmp/capybara/catalog-heading-*.png`.
+RuboCop: 5 archivos sin ofensas; Brakeman: 0 errores/advertencias; I18n estricto:
+285 archivos y 0 hallazgos de paridad; registro modular y `git diff --check`
+aprobados. Revisión independiente del cambio completo y los breadcrumbs sin
+hallazgos. CSS compilado con la advertencia previa de `@position-try` del proveedor
+telefónico. Estado: verificado localmente; CI del SHA publicado pendiente de consulta.

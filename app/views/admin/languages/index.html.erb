@@ -3,8 +3,7 @@
 <div class="catalog-workspace languages-workspace">
   <header class="catalog-header languages-page-header">
     <div>
-      <p class="catalog-eyebrow"><%= t('admin.catalog_design.localization') %></p>
-      <h1><%= t('admin.languages.index.title') %></h1>
+      <%= render 'admin/shared/catalog_module_heading', title: t('admin.languages.index.title') %>
       <div class="languages-description-row">
         <p><%= t('admin.languages.index.subtitle') %></p>
         <% if policy(Language).create? %>

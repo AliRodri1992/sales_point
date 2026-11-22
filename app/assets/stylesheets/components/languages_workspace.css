@@ -1,7 +1,6 @@
 /* Idiomas: una interfaz deliberadamente compacta sobre los tokens de Delta POS. */
 .languages-workspace { max-width: 1160px; }
 .languages-page-header { align-items: center; margin-bottom: .875rem; }
-.languages-page-header .catalog-eyebrow { margin-bottom: .4rem; }
 .languages-page-header > div { width: 100%; min-width: 0; }
 .languages-description-row { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-top: .5rem; }
 .languages-page-header .languages-description-row p { flex: 1 1 auto; min-width: 0; margin-top: 0; }

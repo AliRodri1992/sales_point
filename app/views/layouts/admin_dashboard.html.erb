@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>" class="h-full bg-slate-100">
 <head>
-  <title><%= content_for?(:title) ? yield(:title) : t('admin.dashboard.index.title') %></title>
+  <title><%= catalog_module_page_title || (content_for?(:title) ? yield(:title) : t('admin.dashboard.index.title')) %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="application-name" content="<%= t("app.name") %> <%= t("app.short_name") %>">

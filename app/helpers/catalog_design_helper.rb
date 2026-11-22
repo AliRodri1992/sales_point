@@ -1,6 +1,18 @@
 # frozen_string_literal: true
 
 module CatalogDesignHelper
+  CATALOG_TITLE_KEYS = {
+    'admin/categories' => 'admin.categories.index.title',
+    'admin/languages' => 'admin.languages.index.title',
+    'admin/products' => 'admin.products.index.title',
+    'admin/units_of_measure' => 'admin.units_of_measure.index.title'
+  }.freeze
+
+  def catalog_module_page_title
+    key = CATALOG_TITLE_KEYS[controller_path]
+    "Delta POS | #{t(key)}" if key
+  end
+
   def catalog_heading(title, subtitle, icon: 'squares-2x2', id: nil)
     content_tag(:header, class: 'catalog-card-heading') do
       safe_join([
