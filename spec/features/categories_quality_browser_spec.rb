@@ -326,7 +326,11 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
   end
 
   def category_edit_layout
-    page.evaluate_script(<<~JS)
+    page.evaluate_script(category_edit_layout_script)
+  end
+
+  let(:category_edit_layout_script) do
+    <<~JS
       (() => {
         const panel = document.querySelector('#category_modal .categories-modal--edit')
         const [code, name, description, status] = ['#category_code', '#category_name', '#category_description',
