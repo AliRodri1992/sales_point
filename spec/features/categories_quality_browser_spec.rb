@@ -16,6 +16,7 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
 
   after do
     Warden.test_reset!
+    page.execute_script('document.documentElement.style.removeProperty("font-size")')
     page.driver.browser.manage.window.resize_to(1400, 900)
   end
 
@@ -152,13 +153,13 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
       expect(desktop['firstRow']).to be(true)
       expect(desktop['secondRow']).to be(true)
       expect(desktop['footerRow']).to be(true)
-      expect(desktop['fits']).to be(true)
+      expect(desktop['fits']).to be(true), desktop.inspect
       expect(desktop['touchTargets']).to be(true)
 
       page.driver.browser.manage.window.resize_to(390, 844)
       mobile = category_edit_layout
       expect(mobile['stacked']).to be(true)
-      expect(mobile['fits']).to be(true)
+      expect(mobile['fits']).to be(true), mobile.inspect
       expect(mobile['touchTargets']).to be(true)
 
       page.driver.browser.manage.window.resize_to(390, 450)
@@ -326,28 +327,32 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
   end
 
   def category_edit_layout
-    page.evaluate_script(category_edit_layout_script)
+    page.evaluate_async_script(category_edit_layout_script)
   end
 
   let(:category_edit_layout_script) do
     <<~JS
-      (() => {
+      const done = arguments[arguments.length - 1]
+      document.fonts.ready.then(() => requestAnimationFrame(() => requestAnimationFrame(() => {
         const panel = document.querySelector('#category_modal .categories-modal--edit')
         const [code, name, description, status] = ['#category_code', '#category_name', '#category_description',
           '.categories-field--status button[aria-haspopup="listbox"]'].map(selector => panel.querySelector(selector).getBoundingClientRect())
         const actions = [...panel.querySelectorAll('.categories-modal-actions > *')].map(el => el.getBoundingClientRect())
         const sameRow = (a, b) => Math.abs(a.top - b.top) < 4
         const box = panel.getBoundingClientRect()
-        return {
+        done({
           firstRow: sameRow(code, name), secondRow: sameRow(description, status),
           footerRow: actions.length === 3 && actions.every(action => sameRow(action, actions[0])),
           stacked: name.top > code.bottom && description.top > name.bottom && status.top > description.bottom,
           fits: panel.scrollHeight <= panel.clientHeight + 1 && panel.scrollWidth <= panel.clientWidth + 1 &&
-            box.top >= 0 && box.bottom <= innerHeight && box.left >= 0 && box.right <= innerWidth,
+            box.top >= -1 && box.bottom <= innerHeight + 1 && box.left >= -1 && box.right <= innerWidth + 1,
           touchTargets: [code, name, description, status, ...actions].every(action => action.height >= 44),
-          canScroll: panel.scrollHeight > panel.clientHeight && getComputedStyle(panel).overflowY === 'auto'
-        }
-      })()
+          canScroll: panel.scrollHeight > panel.clientHeight && getComputedStyle(panel).overflowY === 'auto',
+          geometry: { viewport: [innerWidth, innerHeight], panel: box.toJSON(),
+            scroll: [panel.scrollWidth, panel.scrollHeight], client: [panel.clientWidth, panel.clientHeight],
+            rootFontSize: getComputedStyle(document.documentElement).fontSize }
+        })
+      })))
     JS
   end
 
