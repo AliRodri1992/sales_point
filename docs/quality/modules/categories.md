@@ -703,5 +703,8 @@ El formulario de alta conserva su distribución, y los permisos y textos
 existentes en es/en/ko permanecen intactos.
 
 Regresión Chrome en es/en/ko: edición a 1280×720 y 390×844 sin desbordamiento,
-acciones accesibles a 390×450 y guardado real. Ejecución RSpec y aceptación
-del SHA publicado pendientes de verificar.
+acciones accesibles a 390×450 y guardado real. Chrome headless reportó áreas
+útiles de 1280×520 y 390×644; la primera implementación excedía en 3 y 59 px
+la altura disponible respectivamente (run 45075502414). Se ajustó el límite
+al espacio interior del overlay y se redujo el espaciado móvil sin reducir
+los controles de 44 px. Aceptación del SHA publicado pendiente de verificar.

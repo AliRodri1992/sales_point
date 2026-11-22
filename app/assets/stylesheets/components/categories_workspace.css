@@ -96,9 +96,10 @@
 .categories-modal .categories-form-fields textarea {min-height:100px}
 .categories-modal .categories-modal-actions {display:flex;justify-content:flex-end;flex-wrap:wrap;gap:.75rem;padding-top:1.125rem;border-top:1px solid #f1f5f9}
 /* Editing has four fields: fit them in two rows without shrinking touch targets. */
-.categories-modal--edit .categories-modal-header {padding-block:1rem}
-.categories-modal--edit .categories-modal-body {padding-block:1.125rem}
-.categories-modal--edit .categories-form {gap:.875rem}
+.categories-modal--edit {max-height:min(100%,800px)}
+.categories-modal--edit .categories-modal-header {padding-block:.75rem}
+.categories-modal--edit .categories-modal-body {padding-block:1rem}
+.categories-modal--edit .categories-form {gap:.75rem}
 .categories-modal--edit .categories-form-fields {grid-template-columns:repeat(3,minmax(0,1fr));gap:.875rem 1rem}
 .categories-modal--edit .categories-form-fields > :is(.categories-field--name,.categories-field--description) {grid-column:span 2}
 .categories-modal--edit .categories-form-fields textarea {min-height:76px}
@@ -143,6 +144,14 @@
   .categories-modal--edit .categories-form-fields > :is(.categories-field--name,.categories-field--description) {grid-column:auto}
   .categories-modal-header {padding:1rem}
   .categories-modal-body {padding:1rem}
+  .categories-modal--edit {max-height:100%}
+  .categories-modal--edit :is(.categories-modal-header,.categories-modal-body) {padding-block:.625rem}
+  .categories-modal--edit .categories-form {gap:.5rem}
+  .categories-modal--edit .categories-form-fields {gap:.375rem}
+  .categories-modal--edit .categories-form-fields label {margin-bottom:.25rem}
+  .categories-modal--edit .categories-form-fields :is(input,select,textarea) {padding-block:.625rem}
+  .categories-modal--edit .categories-form-fields textarea {min-height:68px}
+  .categories-modal--edit .categories-modal-actions {padding-top:.5rem;gap:.5rem}
   .categories-detail-list {padding:0 1rem}
   .categories-detail-actions {padding:1rem}
 }
