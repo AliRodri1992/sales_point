@@ -5,7 +5,7 @@
 <% stock_totals = Inventory.where(organization_id: current_organization&.id, product_id: product_rows.map(&:id)).group(:product_id).sum(:stock) %>
 <% filtered = request.query_parameters.slice('search', 'status', 'category_id', 'featured', 'tracking_mode', 'stock_status', 'min_price', 'max_price').values.any? { |value| value.present? && value != 'all' } %>
 
-<section class="catalog-list-directory" aria-labelledby="products-directory-title">
+<section class="catalog-list-directory products-directory" aria-labelledby="products-directory-title">
   <header class="catalog-list-directory-heading">
     <div>
       <h2 id="products-directory-title"><%= t('admin.products.index.card_title') %></h2>
@@ -22,14 +22,12 @@
   <% if product_rows.any? %>
     <div class="catalog-list-desktop-table">
       <table class="catalog-list-table">
+        <caption class="sr-only"><%= t('admin.products.index.card_title') %></caption>
         <thead>
           <tr>
-            <th scope="col"><%= sort_link('products.code', t('admin.products.index.columns.code'), url_options: { action: 'index', id: nil, format: nil }, frame: '_top') %></th>
-            <th scope="col"><%= sort_link('products.name', t('admin.products.index.columns.name'), url_options: { action: 'index', id: nil, format: nil }, frame: '_top') %></th>
+            <th scope="col"><%= sort_link('products.name', t('activerecord.models.product'), url_options: { action: 'index', id: nil, format: nil }, frame: '_top') %></th>
             <th scope="col" class="catalog-list-numeric"><%= sort_link('products.price', t('admin.products.index.columns.price'), url_options: { action: 'index', id: nil, format: nil }, frame: '_top') %></th>
             <th scope="col" class="catalog-list-numeric"><%= t('admin.products.index.columns.stock') %></th>
-            <th scope="col"><%= t('admin.products.index.columns.category') %></th>
-            <th scope="col"><%= t('admin.products.index.columns.featured') %></th>
             <th scope="col"><%= t('admin.products.index.columns.status') %></th>
             <th scope="col" class="catalog-list-actions-heading"><%= t('admin.products.index.columns.actions') %></th>
           </tr>
@@ -37,18 +35,9 @@
         <tbody>
           <% product_rows.each do |product| %>
             <tr>
-              <td><code class="catalog-list-code"><%= product.code %></code></td>
               <td><%= render 'listing_identity', product: product %></td>
               <td class="catalog-list-numeric"><%= product_money(product.price) %></td>
               <td class="catalog-list-numeric"><%= number_with_precision(stock_totals.fetch(product.id, 0), strip_insignificant_zeros: true, precision: 3) %></td>
-              <td><span class="catalog-list-description"><%= product.category&.name || '—' %></span></td>
-              <td>
-                <% if product.featured? %>
-                  <%= delta_icon('star', class: 'size-4 text-amber-600', aria: { label: t('admin.products.index.columns.featured') }) %>
-                <% else %>
-                  <span aria-hidden="true">—</span>
-                <% end %>
-              </td>
               <td><span class="catalog-list-status <%= 'catalog-list-status--inactive' unless product.active? %>"><%= t("admin.products.statuses.#{product.status}") %></span></td>
               <td><%= render 'row_actions', product: product %></td>
             </tr>
@@ -65,13 +54,8 @@
             <span class="catalog-list-status <%= 'catalog-list-status--inactive' unless product.active? %>"><%= t("admin.products.statuses.#{product.status}") %></span>
           </div>
           <dl class="catalog-list-mobile-facts">
-            <div><dt><%= t('admin.products.index.columns.code') %></dt><dd><code class="catalog-list-code"><%= product.code %></code></dd></div>
             <div><dt><%= t('admin.products.index.columns.price') %></dt><dd><%= product_money(product.price) %></dd></div>
             <div><dt><%= t('admin.products.index.columns.stock') %></dt><dd><%= number_with_precision(stock_totals.fetch(product.id, 0), strip_insignificant_zeros: true, precision: 3) %></dd></div>
-            <div><dt><%= t('admin.products.index.columns.category') %></dt><dd><%= product.category&.name || '—' %></dd></div>
-            <% if product.featured? %>
-              <div><dt><%= t('admin.products.index.columns.featured') %></dt><dd><%= delta_icon('star', class: 'size-4 text-amber-600', aria: { label: t('admin.products.index.columns.featured') }) %></dd></div>
-            <% end %>
           </dl>
           <%= render 'row_actions', product: product %>
         </li>

@@ -1,4 +1,4 @@
-<div class="catalog-list-identity">
+<div class="catalog-list-identity products-list-identity">
   <span class="catalog-list-avatar catalog-list-product-image" aria-hidden="true">
     <% if product.image.attached? %>
       <%= image_tag product.image, alt: '', loading: 'lazy' %>
@@ -6,8 +6,33 @@
       <%= delta_icon('cube', class: 'size-5') %>
     <% end %>
   </span>
-  <div class="catalog-list-mobile-identity">
-    <strong class="catalog-list-name"><%= product.name %></strong>
-    <span class="catalog-list-secondary-text"><%= product.sku %></span>
+  <div class="products-list-copy">
+    <div class="products-list-name">
+      <strong class="catalog-list-name">
+        <% if policy(Product).show? %>
+          <%= link_to product.name, admin_product_path(product), class: 'catalog-list-name-link', data: { turbo_frame: '_top' } %>
+        <% else %>
+          <%= product.name %>
+        <% end %>
+      </strong>
+      <% if product.featured? %>
+        <span class="products-list-featured" title="<%= t('admin.products.index.columns.featured') %>">
+          <%= delta_icon('star', class: 'size-4', aria: { hidden: true }) %>
+          <span class="sr-only"><%= t('admin.products.index.columns.featured') %></span>
+        </span>
+      <% end %>
+    </div>
+    <dl class="products-list-identifiers">
+      <div>
+        <dt><%= t('admin.products.form.code') %>:</dt>
+        <dd><%= product.code %></dd>
+      </div>
+      <% if product.sku.present? && product.sku != product.code %>
+        <div class="products-list-identifier--sku">
+          <dt><%= t('admin.products.form.sku') %>:</dt>
+          <dd><%= product.sku %></dd>
+        </div>
+      <% end %>
+    </dl>
   </div>
 </div>

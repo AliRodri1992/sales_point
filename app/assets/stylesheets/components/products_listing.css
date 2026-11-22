@@ -1,0 +1,23 @@
+/* Product information hierarchy inside the shared catalog directory. */
+.products-directory .products-list-identity { min-width: 0; align-items: center; }
+.products-directory .catalog-list-product-image { width: 40px; height: 40px; }
+.products-list-copy { display: grid; gap: .375rem; min-width: 0; }
+.products-list-name { display: flex; align-items: center; gap: .5rem; min-width: 0; }
+.products-list-name .catalog-list-name { font-size: .875rem; line-height: 1.5; }
+.products-list-featured { display: inline-flex; flex-shrink: 0; color: #b45309; }
+.products-list-identifiers { display: flex; flex-wrap: wrap; gap: .25rem 1rem; color: #64748b; font-size: .75rem; line-height: 1.6; }
+.products-list-identifiers > div { display: flex; align-items: baseline; gap: .25rem; min-width: 0; max-width: 100%; }
+.products-list-identifiers dt { flex-shrink: 0; }
+.products-list-identifiers dd { min-width: 0; color: #475569; overflow-wrap: anywhere; }
+.products-directory .catalog-list-table th:first-child { width: 46%; }
+.products-directory .catalog-list-table td:nth-child(2) { font-weight: 650; }
+.products-directory .catalog-list-page-count { margin-left: auto; }
+.products-directory .catalog-list-mobile-sort { display: block; }
+.products-directory .catalog-list-mobile-sort[open] { flex-basis: 100%; }
+.products-directory .catalog-list-mobile-facts { padding-top: .875rem; border-top: 1px solid #f1f5f9; }
+@media (max-width: 1099px) {
+  .products-directory .catalog-list-mobile-card-heading { align-items: flex-start; }
+  .products-directory .catalog-list-mobile-card-heading > .products-list-identity { flex-basis: 100%; }
+  .products-directory .catalog-list-mobile-card-heading { flex-wrap: wrap; }
+  .products-directory .catalog-list-mobile-card-heading > .catalog-list-status { margin-left: 52px; }
+}

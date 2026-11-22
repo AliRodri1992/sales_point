@@ -18,8 +18,10 @@ on:
       - 'app/views/admin/products/**'
       - 'app/assets/stylesheets/components/catalog_workspace.css'
       - 'app/assets/stylesheets/components/products_filters.css'
+      - 'app/assets/stylesheets/components/products_listing.css'
       - 'config/locales/product_filters.*.yml'
       - 'spec/features/product_filters_design_browser_spec.rb'
+      - 'spec/features/product_listing_design_browser_spec.rb'
       - 'app/javascript/controllers/product*'
       - 'app/javascript/controllers/nested_catalog_controller.js'
       - 'config/locales/catalog_design.*.yml'
@@ -76,7 +78,8 @@ jobs:
             spec/controllers/concerns/admin/products_listing_spec.rb \
             spec/controllers/concerns/admin/products_lookup_spec.rb \
             spec/features/products_quality_browser_spec.rb \
-            spec/features/product_filters_design_browser_spec.rb
+            spec/features/product_filters_design_browser_spec.rb \
+            spec/features/product_listing_design_browser_spec.rb
 
   products_specs:
     name: Products models, requests, transactions and browser
@@ -133,7 +136,7 @@ jobs:
         env:
           CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}
           CHROMEDRIVER_PATH: ${{ steps.browser.outputs.chromedriver-path }}
-        run: bundle exec rspec spec/features/products_quality_browser_spec.rb spec/features/product_filters_design_browser_spec.rb
+        run: bundle exec rspec spec/features/products_quality_browser_spec.rb spec/features/product_filters_design_browser_spec.rb spec/features/product_listing_design_browser_spec.rb
       - name: Verify models, isolation, requests and commercial transactions
         env:
           CHROME_BINARY: ${{ steps.browser.outputs.chrome-path }}

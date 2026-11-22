@@ -26,6 +26,43 @@ RSpec.describe 'Admin::Products', type: :request do
 
   include SqlQueryRecorder
 
+  describe 'GET /admin/products compact listing' do
+    it 'groups identifiers and featured state in Product and keeps five essential columns in every locale' do
+      category = create(:category, organization:, name: 'Coffee category')
+      create(:product, organization:, category:, name: 'Compact coffee', code: 'COFFEE-01',
+                       sku: 'COFFEE-SKU', featured: true)
+
+      %w[es en ko].each do |locale|
+        language = Language.find_by(code: locale) || create(:language, code: locale)
+        user.update!(language:)
+        get admin_products_path(search: 'COFFEE-01')
+        document = Nokogiri::HTML(response.body)
+        headings = document.css('.products-directory table thead th').map { |cell| cell.text.strip }
+        keys = %w[activerecord.models.product admin.products.index.columns.price admin.products.index.columns.stock
+                  admin.products.index.columns.status admin.products.index.columns.actions]
+        expect(headings).to eq(keys.map { |key| I18n.t(key, locale:, raise: true) })
+        identity = document.at_css('.products-directory tbody tr td:first-child')
+        expect(identity.text).to include('Compact coffee', 'COFFEE-01', 'COFFEE-SKU')
+        expect(identity.at_css('.products-list-featured .sr-only').text).to eq(
+          I18n.t('admin.products.index.columns.featured', locale:, raise: true)
+        )
+        expect(document.css('.products-directory tbody tr td').size).to eq(5)
+        expect(document.at_css('.products-directory tbody').text).not_to include(category.name)
+      end
+    end
+
+    it 'omits empty SKU and featured decorations from an ordinary product' do
+      create(:product, organization:, name: 'Plain coffee', code: 'PLAIN-COFFEE', sku: nil, featured: false)
+      get admin_products_path(search: 'PLAIN-COFFEE')
+      identity = Nokogiri::HTML(response.body).at_css('.products-directory .products-list-identity')
+
+      expect(identity).to be_present
+      expect(identity.text).to include('PLAIN-COFFEE')
+      expect(identity.at_css('.products-list-identifier--sku')).to be_nil
+      expect(identity.at_css('.products-list-featured')).to be_nil
+    end
+  end
+
   describe 'GET /admin/products' do
     it 'queries inventory stock totals once for a page of products', :n_plus_one do
       statements = recorded_sql_queries { get admin_products_path }

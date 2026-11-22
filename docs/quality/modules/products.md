@@ -362,3 +362,45 @@ manual de href se sustituyó por opciones explícitas de `url_for`; Brakeman fin
 8.0.6: 0 errores y 0 advertencias (`tmp/catalog-list-security-final.log`). RuboCop:
 8 archivos, 0 ofensas. Revisión independiente final sin hallazgos. El workflow de
 Categorías ejecuta también los contratos compartidos y helpers de navegación.
+
+## PRODUCTS-032 — Información esencial de la tabla (2026-11-22)
+
+**Base:** `6eff756c21c7637aecea1a66dc5a91c1e7f04022`, `feature/fixes`.
+Alcance solicitado: reducir la información del listado de Productos a cinco
+columnas: Producto, Precio, Existencias, Estado y Acciones. No se modifican
+modelos, consultas, importes, validaciones, permisos ni filtros del servidor.
+
+Nombre, código y SKU se agrupan en una identidad compartida por tabla/tarjeta.
+El SKU vacío o idéntico al código se omite; los identificadores largos se ajustan
+sin recortarse. Destacado pasa a una estrella junto al nombre, con texto accesible.
+El nombre enlaza al detalle solo con permiso de consulta. Categoría sigue en el
+filtro y detalle. Precio/existencias mantienen formato y agregación existentes.
+Se ajusta el skeleton a cinco columnas. El orden por código permanece disponible
+en el control de orden, ahora visible también en escritorio para Productos.
+
+Estilos nuevos opt-in en `products_listing.css`; los estilos del control de orden
+se reutilizan sin cambiar la visibilidad desktop del resto de catálogos. Se usan
+exclusivamente traducciones existentes de es/en/ko. Se conserva el patrón visual
+compartido de PRODUCTS-031, el acordeón de filtros de PRODUCTS-030 y sus acciones.
+
+**Verificación local:** regresión inicial reproducida (seed 4634). Suite aplicable:
+92 ejemplos, 0 fallos (seed 27320), con requests de Productos, matriz es/en/ko,
+paginación y Chrome de filtros, catálogo compartido y nueva presentación. Incluye
+320/390/768/1440 px, tabla sin overflow, identificadores, enlace/estrella, orden por
+código desde escritorio, conservación de criterios y reinicio de página.
+RuboCop: 2 archivos sin ofensas; Brakeman 8.0.6: 0 errores y 0 advertencias.
+I18n estricto: 291 archivos, 5,418 claves por idioma, 0 hallazgos de paridad.
+Registro modular válido (32 módulos / 28 recursos), CSS compilado y diff limpio.
+Revisión independiente sin hallazgos accionables.
+
+Capturas reales con estados activo/inactivo, destacado, existencias y SKU de
+50 caracteres: 1 escenario, 0 fallos (seed 9952), es/en/ko en cuatro anchos,
+`tmp/capybara/product-information-*.png` y `product-table-redesigned.png`.
+Referencia anterior de ocho columnas: `product-list-compact-before.png`.
+CI del SHA publicado pendiente; no se certifica el cierre integral del módulo,
+ni una auditoría exhaustiva con lector de pantalla o zoom manual.
+
+Permisos granulares de Productos: 6 ejemplos, 0 fallos (seed 38782), incluidos
+listado sin escritura, consulta sin edición y acciones autorizadas por separado;
+`tmp/product-list-compact-permissions.log`. Total funcional local de esta adecuación:
+98 ejemplos aprobados, además del escenario de capturas.
