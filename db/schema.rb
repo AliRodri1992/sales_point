@@ -1041,8 +1041,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["organization_id", "normalized_sku"], name: "idx_product_sku_claim_unique", unique: true, where: "(deleted_at IS NULL)"
-    t.index ["owner_type", "owner_id"], name: "idx_product_sku_claim_owner", unique: true, where: "(deleted_at IS NULL)"
     t.index ["organization_id"], name: "index_product_sku_claims_on_organization_id"
+    t.index ["owner_type", "owner_id"], name: "idx_product_sku_claim_owner", unique: true, where: "(deleted_at IS NULL)"
   end
 
   create_table "product_variants", force: :cascade do |t|
@@ -2314,12 +2314,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
   create_table "translates", force: :cascade do |t|
     t.string "key", limit: 255, null: false
     t.text "value", null: false
-    t.text "yaml_value"
     t.string "locale", limit: 10
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "language_id"
+    t.text "yaml_value"
     t.index ["deleted_at"], name: "index_translates_on_deleted_at"
     t.index ["key", "locale"], name: "index_translates_on_key_and_locale", unique: true, where: "(deleted_at IS NULL)"
     t.index ["key"], name: "index_translates_on_key"
