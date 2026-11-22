@@ -53,3 +53,8 @@ Política: [Estándar modular](../module-quality-standard.md) · [Plantilla ampl
 ### Seguimiento de integración — reauditoría de Categorías (2026-11-11)
 
 Este registro incorpora **PROMOTIONS-001** como defecto de frontera observado desde Categorías; no representa una auditoría completa de Promociones. La corrección corresponde al dominio `PromotionCondition`: requerir una categoría no retirada y de la misma organización de la promoción. No modificar ni seleccionar categorías legadas globales con `organization_id NULL`.
+
+### Desarrollo comercial — 2026-11-22
+
+- **PROMOTIONS-001:** la prueba `spec/services/products/promotion_targets_spec.rb` reprodujo la aceptación de referencias inactivas en [Products CI #45085475017](https://github.com/AliRodri1992/sales_point/actions/runs/45085475017), SHA `311c0dbc`. El modelo valida organización y estado en nuevas asignaciones sin eliminar referencias históricas. Verificación de esta adecuación: pendiente de CI del nuevo SHA.
+- **PROMOTIONS-002 · P1 · PROPIO:** el evaluador aplicaba `all?` a todas las condiciones; dos productos o categorías alternativos impedían cualquier descuento. La misma ejecución reprodujo dos descuentos esperados de 20 que eran 0. Se agrupan por tipo: OR dentro de producto/categoría, AND para las demás condiciones y entre tipos. Verificación: pendiente de CI del nuevo SHA.

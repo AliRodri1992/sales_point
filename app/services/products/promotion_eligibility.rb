@@ -12,10 +12,20 @@ module Products
     end
 
     def eligible?
-      quota_available? && @promotion.promotion_conditions.all? { |condition| matches?(condition) }
+      quota_available? && @promotion.promotion_conditions.group_by(&:kind).all? do |kind, conditions|
+        matches_group?(kind, conditions)
+      end
     end
 
     private
+
+    def matches_group?(kind, conditions)
+      if %w[product category].include?(kind)
+        conditions.any? { |condition| matches?(condition) }
+      else
+        conditions.all? { |condition| matches?(condition) }
+      end
+    end
 
     def quota_available?
       redemptions = @promotion.promotion_redemptions

@@ -24,9 +24,15 @@ class PromotionCondition < ApplicationRecord
 
   def same_organization
     validate_commercial_parent(promotion, :promotion)
-    validate_commercial_parent(product, :product) if product
-    return unless category && category.organization_id.present? && category.organization_id != organization_id
+    validate_target(product, :product) if product
+    validate_target(category, :category) if category
+  end
 
-    errors.add(:category, :invalid)
+  def validate_target(target, attribute)
+    validate_commercial_parent(target, attribute)
+    return unless new_record? || will_save_change_to_kind? || will_save_change_to_attribute?("#{attribute}_id")
+    return if target.active? && target.deleted_at.nil?
+
+    errors.add(attribute, :invalid)
   end
 end
