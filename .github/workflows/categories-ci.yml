@@ -12,6 +12,9 @@ on:
       - '.github/workflows/categories-ci.yml'
       - 'app/controllers/admin/categories_controller.rb'
       - 'app/controllers/concerns/admin/category_mutations.rb'
+      - 'app/controllers/concerns/admin/category_reference_transfers.rb'
+      - 'app/services/categories/**'
+      - 'app/assets/stylesheets/components/categories_workspace.css'
       - 'app/models/category.rb'
       - 'app/models/organization.rb'
       - 'app/models/product.rb'
@@ -28,6 +31,9 @@ on:
       - 'config/locales/en.yml'
       - 'config/locales/ko.yml'
       - 'spec/requests/admin/categories*'
+      - 'spec/requests/admin/category_reference_transfers_spec.rb'
+      - 'spec/services/categories/**'
+      - 'config/locales/category_references.*.yml'
       - 'spec/models/category_spec.rb'
       - 'spec/policies/category_policy_spec.rb'
       - 'spec/features/categories_quality_browser_spec.rb'
@@ -62,12 +68,16 @@ jobs:
           bin/rubocop -f simple \
             app/controllers/admin/categories_controller.rb \
             app/controllers/concerns/admin/category_mutations.rb \
+            app/controllers/concerns/admin/category_reference_transfers.rb \
+            app/services/categories/reference_transfer.rb \
             app/models/category.rb app/models/promotion_condition.rb \
             app/policies/category_policy.rb app/helpers/catalog_design_helper.rb \
             db/migrate/20261110042000_harden_category_data_constraints.rb \
             db/migrate/20261110043000_scope_categories_to_organizations.rb \
             spec/models/category_spec.rb spec/policies/category_policy_spec.rb \
             spec/requests/admin/categories_spec.rb spec/requests/admin/categories_tenant_spec.rb \
+            spec/requests/admin/category_reference_transfers_spec.rb \
+            spec/services/categories/reference_transfer_concurrency_spec.rb \
             spec/features/categories_quality_browser_spec.rb
 
   categories_specs:
@@ -129,6 +139,8 @@ jobs:
           bundle exec rspec \
             spec/models/category_spec.rb spec/policies/category_policy_spec.rb \
             spec/requests/admin/categories_spec.rb spec/requests/admin/categories_tenant_spec.rb \
+            spec/requests/admin/category_reference_transfers_spec.rb \
+            spec/services/categories/reference_transfer_concurrency_spec.rb \
             spec/requests/admin/catalog_pagination_spec.rb \
             spec/requests/admin/granular_catalog_permissions_spec.rb \
             spec/features/categories_quality_browser_spec.rb

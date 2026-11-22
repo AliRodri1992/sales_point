@@ -1,0 +1,9 @@
+<% if turbo_frame_request? %>
+  <%= turbo_frame_tag 'category_modal' do %>
+    <%= render 'reference_transfer', standalone: false %>
+  <% end %>
+<% else %>
+  <div class="mx-auto max-w-2xl">
+    <%= render 'reference_transfer', standalone: true %>
+  </div>
+<% end %>

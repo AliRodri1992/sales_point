@@ -1,0 +1,26 @@
+en:
+  admin:
+    categories:
+      index:
+        pagination:
+          label: Category pages
+      references:
+        action: Reassign references
+        in_use: This category still has linked products or promotions. Use Reassign references to move them before removing it.
+        explanation: Move the linked products and promotion conditions to another category. Inactive records are included; retired records keep their historical links.
+        retire_after: The original category will remain until you remove it. Deactivating it does not remove its references.
+        conditions_hint: Promotion conditions will use the destination category and may apply to its products.
+        products:
+          one: "%{count} product"
+          other: "%{count} products"
+        conditions:
+          one: "%{count} promotion condition"
+          other: "%{count} promotion conditions"
+        destination: Destination category
+        choose: Choose a category
+        destination_hint: Choose a different active category from this organization.
+        no_destinations: Create or activate another category before reassigning references.
+        no_references: This category has no current references and can be removed.
+        saving: Reassigning…
+        saved: "References reassigned to %{name}. You can now remove the original category."
+        failed: No references were changed. A linked record failed validation; review its data and try again.

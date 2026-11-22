@@ -215,6 +215,69 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     expect(page.evaluate_script('new URL(window.location.href).searchParams.get("page")')).to eq('2')
   end
 
+  scenario 'keeps page controls together, touchable and inside the viewport' do
+    create_list(:category, 65, organization:)
+    widths = [1440, 768, 390, 320]
+
+    [1, 4].each do |current_page|
+      visit admin_categories_path(page: current_page)
+      widths.each do |width|
+        page.driver.browser.manage.window.resize_to(width, 900)
+        expect(page).to have_css('.categories-pagination-links[aria-label] [aria-current="page"]',
+                                 text: current_page.to_s)
+        expect_compact_category_pagination
+      end
+    end
+    within('.categories-pagination-links') { click_link '5' }
+    expect(page).to have_css('.categories-pagination-links [aria-current="page"]', text: '5')
+  end
+
+  scenario 'reassigns an inactive category through its modal and then removes it with filters intact' do
+    source = create(:category, organization:, name: 'Groceries', code: 'groceries')
+    product = create(:product, organization:, category: source)
+    target = create(:category, organization:, name: 'Replacement')
+    source.update!(status: :inactive)
+    visit admin_categories_path(search: source.name, status: 'inactive')
+    find('a[aria-label="Reassign references: Groceries"]', visible: true).click
+
+    within('turbo-frame#category_modal') do
+      expect(page).to have_text('1 product')
+      click_button 'Reassign references'
+      expect(page).to have_css('[data-server-field-error]', text: "can't be blank")
+      find('button[aria-haspopup="listbox"]').click
+      find('[role="option"]', text: target.name, exact_text: true).click
+      click_button 'Reassign references'
+    end
+    expect(page).to have_no_css('turbo-frame#category_modal [role="dialog"]')
+    expect(product.reload.category_id).to eq(target.id)
+    expect(page).to have_field('category_search', with: source.name)
+    expect(page).to have_select('category_status', selected: 'Inactive', visible: :all)
+    expect(page).to have_no_css('.swal2-popup', wait: 10)
+
+    find('button[aria-label="Delete: Groceries"]', visible: true).click
+    find('.delta-confirm-accept').click
+    expect(page).to have_no_css('a.categories-name-link', text: source.name)
+    expect(source.reload.deleted_at).to be_present
+    expect(product.reload.category_id).to eq(target.id)
+  end
+
+  scenario 'returns to the filtered catalog after a reassignment from the direct screen' do
+    source = create(:category, organization:, name: 'Groceries')
+    product = create(:product, organization:, category: source)
+    target = create(:category, organization:, name: 'Replacement')
+    source.update!(status: :inactive)
+    visit references_admin_category_path(source, search: source.name, status: 'inactive')
+
+    find('button[aria-haspopup="listbox"]').click
+    find('[role="option"]', text: target.name, exact_text: true).click
+    click_button 'Reassign references'
+
+    expect(page).to have_current_path(admin_categories_path, ignore_query: true)
+    expect(page).to have_field('category_search', with: source.name)
+    expect(page).to have_select('category_status', selected: 'Inactive', visible: :all)
+    expect(product.reload.category_id).to eq(target.id)
+  end
+
   scenario 'searches live and renders a removable filter chip' do
     create(:category, organization:, name: 'Groceries', code: 'groceries')
 
@@ -238,6 +301,18 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
           button.height >= 44 && getComputedStyle(popup.querySelector('.swal2-title')).textAlign === 'center' &&
           popup.getAttribute('aria-labelledby') === popup.querySelector('.swal2-title').id &&
           popup.getAttribute('aria-describedby') === popup.querySelector('.swal2-html-container').id
+      })()
+    JS
+  end
+
+  def expect_compact_category_pagination
+    expect(page.evaluate_script(<<~JS)).to be(true)
+      (() => {
+        const group = document.querySelector('.categories-pagination-links')
+        const boxes = [...group.querySelectorAll('a, [aria-current="page"]')].map(n => n.getBoundingClientRect())
+        const children = [...group.children].map(n => n.getBoundingClientRect())
+        return boxes.length <= 9 && boxes.every(b => b.width >= 44 && b.height >= 44 && b.left >= 0 && b.right <= innerWidth) &&
+          children.slice(1).every((b, i) => b.top > children[i].top || b.left - children[i].right <= 12)
       })()
     JS
   end

@@ -1,9 +1,9 @@
 <%= form_with model: [:admin, category],
               url: category.persisted? ? admin_category_path(category, request.query_parameters) :
                                          admin_categories_path(request.query_parameters),
-              html: { novalidate: true, data: { categories_filter_mutation: true } },
+              html: { novalidate: true },
               class: 'categories-form space-y-6',
-              data: { turbo_frame: (local_assigns[:standalone] ? '_top' : 'category_modal'),
+              data: { categories_filter_mutation: true, turbo_frame: (local_assigns[:standalone] ? '_top' : 'category_modal'),
                       turbo: !local_assigns[:standalone] } do |form| %>
   <p class="categories-form-note text-xs text-slate-500"><%= t('admin.categories.form.instructions') %></p>
   <div class="categories-form-fields space-y-5">
@@ -58,6 +58,11 @@
       </div>
     <% end %>
   </div>
+  <% if category.persisted? && policy(Category).references? %>
+    <%= link_to t('admin.categories.references.action'), references_admin_category_path(category, request.query_parameters),
+                class: 'categories-reference-link',
+                data: { turbo_frame: (local_assigns[:standalone] ? '_top' : 'category_modal'), categories_filter_navigation: true } %>
+  <% end %>
   <div class="categories-modal-actions flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-5">
     <% if local_assigns[:standalone] %>
       <%= link_to t('admin.categories.form.cancel'), catalog_back_path(Category),

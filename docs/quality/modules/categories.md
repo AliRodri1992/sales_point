@@ -517,3 +517,62 @@ claro **6.84:1**. No supone una certificación WCAG completa de todos los temas.
 **Pendiente:** resultado de CI global del commit publicado, lector de pantalla real
 y zoom del navegador (la ampliación de texto al 200 % no los sustituye). Los
 hallazgos previos del módulo conservan sus estados; esta mejora no cierra el módulo.
+
+## CATEGORIES-040 / 041 — Paginación y reasignación (2026-11-22)
+
+**Base:** `d787ad0b0313db9e4abbb2c0b80ce568dd4fedec`, `feature/fixes`.
+**Propiedad:** Categorías; Productos/Promociones solo como contratos de referencias.
+
+- **CATEGORIES-040 · P2 · UX.** El footer usaba `justify-content: space-between`
+  sobre el selector y cada enlace de página individual; los botones se repartían
+  por todo el ancho. Ahora el selector y el grupo de navegación son dos unidades,
+  con ventana de páginas, posición actual, controles de 44 px y salto de línea
+  compacto en móvil. Sin cambios al helper global ni a la navegación de otros módulos.
+- **CATEGORIES-041 · P2 · funcionalidad/UX.** Desactivar no elimina las referencias:
+  el bloqueo del servidor era correcto, pero no existía un flujo propio para
+  liberarlas. `GET references` / `PATCH reassign` ofrecen una categoría activa,
+  distinta y de la misma organización, con recuentos y errores por campo. Se
+  requiere autorización de actualización en Categorías, Productos y Promociones;
+  actualmente la política de escritura de Promociones es administrativa. Se
+  oculta la acción y se responde 403 sin los permisos; origen ajeno devuelve 404.
+
+La reasignación conserva las validaciones/callbacks de cada producto y condición,
+incluye referencias inactivas y promociones archivadas, y excluye filas retiradas
+por `acts_as_paranoid`. No modifica redenciones, precios, beneficios ni estados.
+Las condiciones apuntarán a la categoría destino; esta consecuencia se explica en
+el formulario. La transacción revierte todo ante un registro inválido. Origen y
+destino se bloquean en orden por id, y el destino se vuelve a comprobar al guardar.
+La categoría original se conserva: su baja continúa siendo una acción explícita,
+protegida por `CategoryMutations#destroy` / `Category#in_use?`. El aviso para una
+categoría ya inactiva explica la reasignación, en es/en/ko, sin volver a sugerir
+desactivarla. Se mantienen filtros, respuesta 422 y actualización Turbo del catálogo.
+
+**Revisión independiente:** detectó un bloqueo incompatible con la edición normal
+de productos (categoría `FOR UPDATE` frente a FK `KEY SHARE`). La regresión con
+dos conexiones PostgreSQL reprodujo `ActiveRecord::Deadlocked`; `FOR NO KEY UPDATE`
+protege estado/baja y permite finalizar al editor que ya tiene el producto bloqueado.
+También detectó el merge superficial de los atributos `data` de `form_with`: se
+unificaron los hashes del nuevo formulario y del formulario de Categorías reutilizado,
+con pruebas de pantalla directa y modal. Ambos hallazgos corregidos y re-revisados.
+
+**Pruebas añadidas:** destinos vacío/no numérico/inexistente/idéntico/inactivo/retirado/
+ajeno, destino desactivado después de abrir el formulario, permisos, aislamiento,
+referencias inactivas e históricas, rollback real de una promoción inválida,
+edición concurrente, reasignación → baja y preservación de filtros HTML/Turbo.
+Paginación Chrome en primera/página intermedia y 320/390/768/1440 px. Capturas
+locales en `tmp/capybara/category-pagination-*.png` y `category-references-*.png`.
+
+**Validación local final:** contenedor efímero `sale_point-web` y base exclusiva
+`delta_category_alert_test`, sin datos de desarrollo. **170 ejemplos, 0 fallos**
+(seed 45173, 3m05s): modelos/policy de Categorías, helper de paginación, requests
+de categorías/tenant/reasignación/paginación/permisos granulares/catálogo comercial,
+concurrencia PG, navegador de categorías/catálogos/alertas/confirmaciones.
+RuboCop focalizado: 7 archivos, 0 ofensas. Brakeman: 0 errores, 0 advertencias.
+I18n estricto: PASS, 285 archivos, 0 hallazgos de paridad. Registro documental:
+32 módulos / 28 recursos. Compilación CSS aprobada; conserva advertencia previa
+del proveedor telefónico sobre `@position-try`. Se incorporan a Categories CI el
+servicio, nuevas pruebas, estilos y locales.
+
+**Estado:** CATEGORIES-040/041 verificados localmente; aceptación del SHA publicado
+pendiente de CI. Los hallazgos históricos 034–037 conservan sus estados; no se
+declara cerrado el módulo ni certificada una auditoría completa de accesibilidad.

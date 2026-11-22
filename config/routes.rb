@@ -49,7 +49,12 @@ Rails.application.routes.draw do
     patch 'sidebar', to: 'sidebar#update'
     get 'languages/content', to: 'languages#content'
     resources :languages
-    resources :categories
+    resources :categories do
+      member do
+        get :references
+        patch :reassign
+      end
+    end
     resources :units_of_measure
     resources :product_images, only: :create
     resources :price_lists

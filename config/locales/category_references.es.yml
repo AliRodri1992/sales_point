@@ -1,0 +1,26 @@
+es:
+  admin:
+    categories:
+      index:
+        pagination:
+          label: Páginas de categorías
+      references:
+        action: Reasignar referencias
+        in_use: Esta categoría todavía está vinculada a productos o promociones. Usa Reasignar referencias para moverlos antes de retirarla.
+        explanation: Mueve los productos y las condiciones de promociones vinculados a otra categoría. Incluye registros inactivos; los retirados conservan sus vínculos históricos.
+        retire_after: La categoría original se conserva hasta que la retires. Desactivarla no elimina sus referencias.
+        conditions_hint: Las condiciones de promoción usarán la categoría de destino y podrán aplicar a sus productos.
+        products:
+          one: "%{count} producto"
+          other: "%{count} productos"
+        conditions:
+          one: "%{count} condición de promoción"
+          other: "%{count} condiciones de promoción"
+        destination: Categoría de destino
+        choose: Selecciona una categoría
+        destination_hint: Elige otra categoría activa de esta organización.
+        no_destinations: Crea o activa otra categoría antes de reasignar las referencias.
+        no_references: Esta categoría no tiene referencias vigentes y se puede retirar.
+        saving: Reasignando…
+        saved: "Referencias reasignadas a %{name}. Ya puedes retirar la categoría original."
+        failed: No se cambió ninguna referencia. Un registro vinculado no pasó la validación; revisa sus datos e inténtalo de nuevo.

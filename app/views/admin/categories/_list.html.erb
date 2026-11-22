@@ -137,8 +137,13 @@
                   data: { controller: 'table-page-size', table_page_size_key_value: 'categories',
                           action: 'change->table-page-size#apply' } %>
           </div>
+          <span aria-live="polite"><%= t('admin.categories.index.pagination.page', page: @current_page || 1, total: total_pages) %></span>
         </div>
-        <%= pagination_links(total_pages, frame: 'categories_list') if total_pages > 1 %>
+        <% if total_pages > 1 %>
+          <nav class="categories-pagination-links" aria-label="<%= t('admin.categories.index.pagination.label') %>">
+            <%= pagination_links(total_pages, frame: 'categories_list', window: 1) %>
+          </nav>
+        <% end %>
       </footer>
     <% end %>
   <% else %>

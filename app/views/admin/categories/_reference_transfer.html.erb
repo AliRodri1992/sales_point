@@ -1,0 +1,59 @@
+<section class="categories-modal"
+         <%= tag.attributes(role: 'dialog', aria: { modal: true, labelledby: 'category-reference-title' }, data: { modal_target: 'panel' }) unless standalone %>>
+  <header class="categories-modal-header">
+    <div>
+      <h2 id="category-reference-title"><%= t('admin.categories.references.action') %></h2>
+      <p><%= @category.name %> · <%= t("admin.categories.statuses.#{@category.status}") %></p>
+    </div>
+    <% unless standalone %>
+      <button type="button" class="categories-modal-close" data-modal-dismiss data-action="modal#close"
+              aria-label="<%= t('admin.categories.show.close') %>"><%= delta_icon('x-mark', class: 'size-5', aria: { hidden: true }) %></button>
+    <% end %>
+  </header>
+  <div class="categories-modal-body">
+    <%= form_with model: @reference_transfer, scope: :category_reference_transfer,
+                  url: reassign_admin_category_path(@category, request.query_parameters), method: :patch,
+                  html: { novalidate: true },
+                  data: { categories_filter_mutation: true, turbo_frame: standalone ? '_top' : 'category_modal', turbo: !standalone },
+                  class: 'categories-form' do |form| %>
+      <%= catalog_errors(@reference_transfer) %>
+      <% products_count = @category.products.count %>
+      <% conditions_count = @category.promotion_conditions.count %>
+      <div class="categories-reference-summary">
+        <p><%= t('admin.categories.references.explanation') %></p>
+        <div class="categories-reference-counts">
+          <strong><%= t('admin.categories.references.products', count: products_count) %></strong>
+          <strong><%= t('admin.categories.references.conditions', count: conditions_count) %></strong>
+        </div>
+        <% if conditions_count.positive? %><p><%= t('admin.categories.references.conditions_hint') %></p><% end %>
+        <p><%= t('admin.categories.references.retire_after') %></p>
+      </div>
+      <div>
+        <%= form.label :target_category_id, required_field_label(t('admin.categories.references.destination')),
+                       class: 'mb-2 block text-sm font-semibold text-slate-700' %>
+        <div class="relative" data-controller="delta-select">
+          <%= form.select :target_category_id, @reference_targets.map { |category| [category.name, category.id] },
+                          { include_blank: t('admin.categories.references.choose') },
+                          aria: { invalid: @reference_transfer.errors[:target_category_id].any?,
+                                  describedby: validation_describedby(@reference_transfer, :target_category_id, 'category-reference-hint') },
+                          class: "input-field w-full #{form_state_classes(@reference_transfer, :target_category_id)}" %>
+        </div>
+        <p class="categories-form-note mt-2" id="category-reference-hint"><%= t('admin.categories.references.destination_hint') %></p>
+        <%= error_message_for(@reference_transfer, :target_category_id, label: t('admin.categories.references.destination')) %>
+      </div>
+      <% unavailable = @reference_targets.empty? || products_count + conditions_count == 0 %>
+      <% if unavailable %>
+        <p class="categories-form-note" role="status"><%= t("admin.categories.references.#{@reference_targets.empty? ? 'no_destinations' : 'no_references'}") %></p>
+      <% end %>
+      <footer class="categories-modal-actions flex flex-wrap justify-end gap-3 border-t border-slate-100 pt-5">
+        <% if standalone %>
+          <%= link_to t('admin.categories.form.cancel'), catalog_back_path(Category), class: 'categories-secondary-button' %>
+        <% else %>
+          <button type="button" class="categories-secondary-button" data-modal-dismiss data-action="modal#close"><%= t('admin.categories.form.cancel') %></button>
+        <% end %>
+        <%= form.submit t('admin.categories.references.action'), class: 'categories-primary-button', disabled: unavailable,
+                        data: { turbo_submits_with: t('admin.categories.references.saving') } %>
+      </footer>
+    <% end %>
+  </div>
+</section>

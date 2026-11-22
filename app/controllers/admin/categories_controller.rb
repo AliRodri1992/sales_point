@@ -7,9 +7,10 @@ module Admin
     include CatalogAuthorization
     include CatalogNavigation
     include Admin::CategoryMutations
+    include Admin::CategoryReferenceTransfers
 
     before_action :require_organization
-    before_action :set_category, if: -> { %w[show edit update destroy].include?(action_name) }
+    before_action :set_category, if: -> { %w[show edit update destroy references reassign].include?(action_name) }
 
     rescue_from Pundit::NotAuthorizedError, with: :forbidden
 
@@ -109,8 +110,9 @@ module Admin
     end
 
     def category_in_use_response
+      message_key = @category.inactive? ? 'admin.categories.references.in_use' : 'admin.categories.in_use'
       feedback = {
-        swal_message: t('admin.categories.in_use'), swal_title: t('admin.categories.in_use_title'),
+        swal_message: t(message_key), swal_title: t('admin.categories.in_use_title'),
         swal_icon: 'warning', swal_mode: 'modal', swal_confirm_label: t('admin.categories.show.close'),
         swal_presentation: 'category-in-use'
       }

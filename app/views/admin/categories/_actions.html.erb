@@ -32,4 +32,13 @@
       <%= delta_icon('trash', class: 'size-4', aria: { hidden: true }) %>
     <% end %>
   <% end %>
+  <% if policy(Category).references? %>
+    <%= link_to references_admin_category_path(category, request.query_parameters),
+                data: { turbo_frame: 'category_modal', categories_filter_navigation: true,
+                        tooltip: t('admin.categories.references.action') },
+                class: 'categories-icon-button',
+                aria: { label: "#{t('admin.categories.references.action')}: #{category.name}" } do %>
+      <%= delta_icon('arrow-path', class: 'size-4', aria: { hidden: true }) %>
+    <% end %>
+  <% end %>
 </div>

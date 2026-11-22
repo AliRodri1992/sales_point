@@ -60,10 +60,18 @@
 .categories-icon-button--danger:hover {background:#fff1f2;color:#be123c}
 .categories-icon-button:disabled {opacity:.45;cursor:not-allowed}
 .categories-pagination {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:.85rem 1.25rem}
-.categories-pagination-size {display:flex;align-items:center;gap:.625rem;font-size:.75rem;color:#475569}
+.categories-pagination-size {display:flex;align-items:center;flex-wrap:wrap;gap:.625rem;font-size:.75rem;color:#475569}
 .categories-pagination-size .relative {min-width:90px}
 .categories-pagination-size select {min-height:40px;width:100%;border:1px solid #cbd5e1;border-radius:.625rem;padding:.375rem .625rem;background:#fff;color:#334155}
 .categories-pagination-size .delta-select-native {display:none}
+.categories-pagination-links {display:flex;align-items:center;flex-wrap:wrap;gap:.375rem;max-width:100%}
+.categories-pagination-links :is(a,[aria-current="page"]) {display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}
+.categories-pagination-links [aria-current="page"] {background:var(--brand-on-white,#047857);border-color:var(--brand-on-white,#047857)}
+.categories-reference-summary {display:grid;gap:.625rem;padding:1rem;border:1px solid #e2e8f0;border-radius:.75rem;background:#f8fafc;color:#475569;font-size:.875rem;line-height:1.6;overflow-wrap:anywhere}
+.categories-reference-summary strong {color:#0f172a}
+.categories-reference-counts {display:flex;gap:.5rem 1.5rem;flex-wrap:wrap}
+.categories-reference-link {display:inline-flex;align-items:center;gap:.5rem;min-height:44px;color:var(--brand-on-white,#047857);font-size:.875rem;font-weight:650;text-decoration:underline;text-underline-offset:3px}
+.categories-modal .categories-primary-button:disabled {opacity:.5;cursor:not-allowed}
 .categories-mobile-list {display:none}
 .categories-empty-state {display:grid;justify-items:center;gap:.8rem;text-align:center;padding:3.75rem 1.25rem}
 .categories-empty-icon {display:grid;place-items:center;width:64px;height:64px;border-radius:1rem;background:var(--brand-light,#ecfdf5);color:var(--brand-on-white,#047857)}
@@ -109,6 +117,9 @@
   .categories-mobile-card .categories-row-actions:only-child {margin-top:0}
 }
 @media(max-width:639px){
+  .categories-pagination {padding:1rem}
+  .categories-pagination-size {width:100%;justify-content:space-between}
+  .categories-pagination-links {width:100%;justify-content:center}
   .categories-page-header {align-items:flex-start}
   .categories-page-header .categories-primary-button {width:100%}
   .categories-filter-panel {padding:1rem}
