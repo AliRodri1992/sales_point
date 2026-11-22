@@ -390,3 +390,19 @@ manual de href se sustituyó por opciones explícitas de `url_for`; Brakeman fin
 8.0.6: 0 errores y 0 advertencias (`tmp/catalog-list-security-final.log`). RuboCop:
 8 archivos, 0 ofensas. Revisión independiente final sin hallazgos. El workflow de
 Categorías ejecuta también los contratos compartidos y helpers de navegación.
+
+## IDI-045 — Etiqueta compartida «Regresar» (2026-11-22)
+
+Base `17f19d050f0043cd60355271c7556f74d38555bb`, `feature/fixes`.
+A petición del usuario, `admin.catalog_design.back` cambia en español de
+«Volver al listado» a «Regresar». Sus siete referencias cubren botones de
+Categorías, Productos, Idiomas, Listas de precios y Promociones. Se conservan
+los destinos y atributos Turbo; inglés/coreano conservan sus traducciones.
+No se añaden claves, lógica, pruebas nuevas ni cambios de navegación.
+
+Verificación: I18n estricto PASS, 291 archivos y cero hallazgos de paridad;
+11 ejemplos existentes aprobados (seed 7302), cobertura de locales y páginas de
+catálogo. La instancia local contenía además una traducción española legada
+con el texto exacto anterior y yaml_value nulo; se actualiza únicamente esa
+entrada mediante Translate para aplicar el rótulo e invalidar su caché,
+conservando otros textos personalizados. CI del SHA publicado pendiente.
