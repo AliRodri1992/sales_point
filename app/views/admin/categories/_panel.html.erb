@@ -4,7 +4,7 @@
   role="dialog"
   aria-modal="true"
   aria-labelledby="category-modal-title"
-  class="categories-modal"
+  class="categories-modal<%= ' categories-modal--edit' if category.persisted? %>"
 >
   <div class="categories-modal-header">
     <div>

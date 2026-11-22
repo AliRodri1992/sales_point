@@ -95,6 +95,14 @@
 .categories-modal .categories-form-fields :is(input,select,textarea) {min-height:44px}
 .categories-modal .categories-form-fields textarea {min-height:100px}
 .categories-modal .categories-modal-actions {display:flex;justify-content:flex-end;flex-wrap:wrap;gap:.75rem;padding-top:1.125rem;border-top:1px solid #f1f5f9}
+/* Editing has four fields: fit them in two rows without shrinking touch targets. */
+.categories-modal--edit .categories-modal-header {padding-block:1rem}
+.categories-modal--edit .categories-modal-body {padding-block:1.125rem}
+.categories-modal--edit .categories-form {gap:.875rem}
+.categories-modal--edit .categories-form-fields {grid-template-columns:repeat(3,minmax(0,1fr));gap:.875rem 1rem}
+.categories-modal--edit .categories-form-fields > :is(.categories-field--name,.categories-field--description) {grid-column:span 2}
+.categories-modal--edit .categories-form-fields textarea {min-height:76px}
+.categories-modal--edit .categories-modal-actions {padding-top:.875rem;gap:.625rem}
 .categories-detail-list {padding:0 1.5rem}
 .categories-detail-row {display:grid;grid-template-columns:minmax(110px,32%) minmax(0,1fr);gap:1rem;padding:1rem 0;border-bottom:1px solid #f1f5f9}
 .categories-detail-row dt {color:#64748b;font-size:.8125rem;font-weight:650}
@@ -132,6 +140,7 @@
   .categories-modal {max-height:calc(100dvh - 1.5rem);border-radius:1rem}
   .categories-modal .categories-form-fields {grid-template-columns:minmax(0,1fr)}
   .categories-modal .categories-form-fields > .categories-field--description {grid-column:auto}
+  .categories-modal--edit .categories-form-fields > :is(.categories-field--name,.categories-field--description) {grid-column:auto}
   .categories-modal-header {padding:1rem}
   .categories-modal-body {padding:1rem}
   .categories-detail-list {padding:0 1rem}

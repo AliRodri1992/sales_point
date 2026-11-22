@@ -135,6 +135,41 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     expect(stacked['fits']).to be(true)
   end
 
+  %w[es en ko].each do |locale|
+    scenario "fits the compact edit form without scrolling on desktop and mobile in #{locale}" do
+      administrator.update!(language: create(:language, code: locale, name: locale, flag_iso: locale)) unless locale == 'en'
+      category = create(:category, organization:, name: 'Groceries', code: 'groceries')
+
+      page.driver.browser.manage.window.resize_to(1280, 720)
+      visit admin_categories_path
+      label = I18n.t('admin.categories.index.edit', locale:, raise: true)
+      find("a[aria-label=\"#{label}: Groceries\"]", visible: true).click
+      expect(page).to have_css('#category_modal .categories-field--status button[aria-haspopup="listbox"]')
+
+      desktop = category_edit_layout
+      expect(desktop['firstRow']).to be(true)
+      expect(desktop['secondRow']).to be(true)
+      expect(desktop['footerRow']).to be(true)
+      expect(desktop['fits']).to be(true)
+      expect(desktop['touchTargets']).to be(true)
+
+      page.driver.browser.manage.window.resize_to(390, 844)
+      mobile = category_edit_layout
+      expect(mobile['stacked']).to be(true)
+      expect(mobile['fits']).to be(true)
+      expect(mobile['touchTargets']).to be(true)
+
+      page.driver.browser.manage.window.resize_to(390, 450)
+      expect(category_edit_layout['canScroll']).to be(true)
+      within('#category_modal') do
+        fill_in 'category_name', with: 'Updated groceries'
+        click_button I18n.t('admin.categories.form.update', locale:, raise: true)
+      end
+      expect(page).to have_no_css('#category_modal [role="dialog"]')
+      expect(category.reload.name).to eq('Updated groceries')
+    end
+  end
+
   scenario 'retains sorting after a table header click without advanced filters' do
     create(:category, organization:, name: 'Groceries', code: 'groceries')
 
@@ -286,6 +321,28 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
 
     expect(page).to have_css('turbo-frame#categories_list .categories-filter-chip', text: 'groceries', wait: 10)
     expect(page).to have_css('.categories-mobile-card', text: 'Groceries', visible: :all)
+  end
+
+  def category_edit_layout
+    page.evaluate_script(<<~JS)
+      (() => {
+        const panel = document.querySelector('#category_modal .categories-modal--edit')
+        const [code, name, description, status] = ['#category_code', '#category_name', '#category_description',
+          '.categories-field--status button[aria-haspopup="listbox"]'].map(selector => panel.querySelector(selector).getBoundingClientRect())
+        const actions = [...panel.querySelectorAll('.categories-modal-actions > *')].map(el => el.getBoundingClientRect())
+        const sameRow = (a, b) => Math.abs(a.top - b.top) < 4
+        const box = panel.getBoundingClientRect()
+        return {
+          firstRow: sameRow(code, name), secondRow: sameRow(description, status),
+          footerRow: actions.length === 3 && actions.every(action => sameRow(action, actions[0])),
+          stacked: name.top > code.bottom && description.top > name.bottom && status.top > description.bottom,
+          fits: panel.scrollHeight <= panel.clientHeight + 1 && panel.scrollWidth <= panel.clientWidth + 1 &&
+            box.top >= 0 && box.bottom <= innerHeight && box.left >= 0 && box.right <= innerWidth,
+          touchTargets: [code, name, description, status, ...actions].every(action => action.height >= 44),
+          canScroll: panel.scrollHeight > panel.clientHeight && getComputedStyle(panel).overflowY === 'auto'
+        }
+      })()
+    JS
   end
 
   def expect_category_warning_layout

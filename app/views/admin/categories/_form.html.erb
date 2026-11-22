@@ -7,7 +7,7 @@
                       turbo: !local_assigns[:standalone] } do |form| %>
   <p class="categories-form-note text-xs text-slate-500"><%= t('admin.categories.form.instructions') %></p>
   <div class="categories-form-fields space-y-5">
-    <div>
+    <div class="categories-field--code">
       <%= form.label :code, required_field_label(t('admin.categories.form.code')),
                      class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.text_field :code, maxlength: 20, autocomplete: 'off',
@@ -19,7 +19,7 @@
       <p id="category_code_hint" class="mt-1 text-xs text-slate-500"><%= t('admin.categories.form.code_hint') %></p>
       <%= error_message_for(category, :code) %>
     </div>
-    <div>
+    <div class="categories-field--name">
       <%= form.label :name, required_field_label(t('admin.categories.form.name')),
                      class: 'mb-2 block text-sm font-semibold text-slate-700' %>
       <%= form.text_field :name, maxlength: 50,
@@ -32,7 +32,7 @@
     <div class="categories-field--description">
       <%= form.label :description, t('admin.categories.form.description'),
                      class: 'mb-2 block text-sm font-semibold text-slate-700' %>
-      <%= form.text_area :description, rows: 3, maxlength: 500,
+      <%= form.text_area :description, rows: category.persisted? ? 2 : 3, maxlength: 500,
                          aria: { invalid: category.errors[:description].any?,
                                  describedby: validation_describedby(category, :description) },
                          class: "input-field w-full resize-y rounded-xl #{form_state_classes(category, :description)} px-4 py-3 text-sm text-slate-800 transition placeholder:text-slate-400",
@@ -40,7 +40,7 @@
       <%= error_message_for(category, :description) %>
     </div>
     <% if category.persisted? %>
-      <div>
+      <div class="categories-field--status">
         <%= form.label :status, t('admin.categories.form.status'),
                        class: 'mb-2 block text-sm font-semibold text-slate-700' %>
         <div class="relative" data-controller="delta-select">
@@ -58,12 +58,12 @@
       </div>
     <% end %>
   </div>
-  <% if category.persisted? && policy(Category).references? %>
-    <%= link_to t('admin.categories.references.action'), references_admin_category_path(category, request.query_parameters),
-                class: 'categories-reference-link',
-                data: { turbo_frame: (local_assigns[:standalone] ? '_top' : 'category_modal'), categories_filter_navigation: true } %>
-  <% end %>
   <div class="categories-modal-actions flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-5">
+    <% if category.persisted? && policy(Category).references? %>
+      <%= link_to t('admin.categories.references.action'), references_admin_category_path(category, request.query_parameters),
+                  class: 'categories-reference-link mr-auto',
+                  data: { turbo_frame: (local_assigns[:standalone] ? '_top' : 'category_modal'), categories_filter_navigation: true } %>
+    <% end %>
     <% if local_assigns[:standalone] %>
       <%= link_to t('admin.categories.form.cancel'), catalog_back_path(Category),
                   class: 'inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50' %>

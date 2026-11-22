@@ -689,3 +689,19 @@ manual de href se sustituyó por opciones explícitas de `url_for`; Brakeman fin
 8.0.6: 0 errores y 0 advertencias (`tmp/catalog-list-security-final.log`). RuboCop:
 8 archivos, 0 ofensas. Revisión independiente final sin hallazgos. El workflow de
 Categorías ejecuta también los contratos compartidos y helpers de navegación.
+
+## CATEGORIES-046 — Formulario de edición compacto (2026-11-22)
+
+**P2 · UX · implementado.** Base `ca9727523e93b7d959c641d8a0e9a9421213494d`.
+La descripción ocupaba una fila completa, seguida del estado y del enlace de
+reasignación, aumentando la altura del modal. La edición usa ahora dos filas
+de campos en escritorio, descripción de dos líneas ampliable y reasignación
+en el mismo pie que las acciones. En móvil los campos vuelven a una columna;
+se mantienen los controles de 44 px, los mensajes de validación, el orden de
+teclado y el desplazamiento de respaldo cuando la altura disponible no basta.
+El formulario de alta conserva su distribución, y los permisos y textos
+existentes en es/en/ko permanecen intactos.
+
+Regresión Chrome en es/en/ko: edición a 1280×720 y 390×844 sin desbordamiento,
+acciones accesibles a 390×450 y guardado real. Ejecución RSpec y aceptación
+del SHA publicado pendientes de verificar.
