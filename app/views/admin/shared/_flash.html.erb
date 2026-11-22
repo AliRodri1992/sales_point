@@ -10,7 +10,8 @@
 
 <% if swal_message.present? %>
   <%= render 'admin/shared/swal_feedback', swal_message: swal_message, swal_icon: swal_icon,
-             swal_mode: swal_mode, swal_title: flash[:swal_title], swal_confirm_label: flash[:swal_confirm_label] %>
+             swal_mode: swal_mode, swal_title: flash[:swal_title], swal_confirm_label: flash[:swal_confirm_label],
+             swal_presentation: flash[:swal_presentation] %>
 <% end %>
 
 <% if flash[:notice].present? && !already_authenticated %>

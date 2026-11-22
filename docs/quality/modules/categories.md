@@ -176,7 +176,7 @@ IDs permanentes de esta primera auditoría. **Confirmado por código** significa
 
 ## Verificación focalizada real — 2026-11-09
 
-**SHA de código verificado:** `e553a5f976e22724c03e365b62681ae63ae5cd00`.  
+**SHA de código verificado:** `e553a5f976e22724c03e365b62681ae63ae5cd00`.
 **GitHub Actions:** [Categories CI #42622839776](https://github.com/AliRodri1992/sales_point/actions/runs/42622839776) — **SUCCESS**.
 
 | Comprobación | Resultado real | Evidencia |
@@ -471,3 +471,49 @@ el registro de categoría y las notificaciones de baja no cambian.
 localmente. Nuevos request specs para HTML/Turbo y regresión Chrome para el
 diálogo y la conservación del registro/filtros. RSpec, RuboCop y revisión
 visual real pendientes de ejecución en CI; no hay Ruby ni Docker local.
+
+## CATEGORIES-039 — Composición del aviso de categoría en uso (2026-11-22)
+
+**P2 · UX / propio. Base:** `31644b31b2cb38998d7c3bc3ef2442ee3fe11427`.
+**Estado: VERIFICADO LOCALMENTE; aceptación del SHA publicado pendiente de CI.**
+
+La prueba Chrome reprodujo el ícono alineado a la izquierda: la regla compartida
+`.swal2-popup .swal2-icon:not(.delta-confirm-icon)` reemplazaba el margen automático
+de SweetAlert2 por `margin: 0 0 1.125rem`. El aviso ahora opta explícitamente por
+`category-in-use`, con estilos limitados a `.delta-category-in-use`: una columna,
+ícono de advertencia centrado arriba, título y descripción con jerarquía y ancho
+de lectura, acción centrada y scroll vertical con espacio simétrico para evitar
+descentrado al ampliar texto. Usa fuentes, colores y acción de tema existentes.
+
+La única modificación del controlador Ruby es el metadato de presentación.
+No cambian restricciones, permisos, datos, notificaciones, traducciones es/en/ko,
+422 de Turbo ni redirección HTML con filtros. El feedback sigue retirándose del
+DOM para evitar repetición al navegar con Turbo. No se toca el CSS global.
+
+**Evidencia local (2026-11-22):** contenedor efímero `sale_point-web`, este checkout
+montado en `/rails`, PostgreSQL exclusivo `delta_category_alert_test`; sin utilizar
+la base de desarrollo. Compilación JS/CSS aprobada (advertencia previa del proveedor
+telefónico sobre `@position-try`). RSpec focalizado: **128 ejemplos, 0 fallos**, seed
+13987: modelos/policies, requests de categorías y aislamiento, paginación/permisos
+granulares, `categories_quality_browser_spec`, `sweetalert_theme_browser_spec` y
+`admin_delete_confirmation_browser_spec`. Se verificaron geometría centrada en
+320/390/768/1440 px, texto al 200 % en es/ko, ARIA del diálogo, foco inicial,
+cierre con botón/Escape, retorno del foco y dos intentos Turbo consecutivos.
+
+`bundle exec rubocop app/controllers/admin/categories_controller.rb
+spec/requests/admin/categories_spec.rb spec/features/categories_quality_browser_spec.rb`:
+3 archivos, 0 ofensas. `bundle exec brakeman --no-pager`: 0 errores, 0 advertencias.
+`I18N_STRICT_PARITY=1 python script/audit_i18n.py`: PASS, 282 archivos, 0 hallazgos
+de paridad completa. `ruby script/audit_module_quality.rb`: 32 módulos y 28 recursos.
+Revisión independiente del diff sin hallazgos funcionales; corregida línea vacía
+final señalada por `git diff --check`.
+
+Capturas Chrome locales de escritorio/móvil y colores computados en es/en/ko:
+`tmp/capybara/category-warning-{es,en,ko}-{1440,390}.png` (artefactos locales, no
+versionados). Contraste calculado desde esos colores: título/blanco **17.85:1**,
+descripción/blanco **7.58:1**, acción esmeralda/blanco **5.48:1**, advertencia/ámbar
+claro **6.84:1**. No supone una certificación WCAG completa de todos los temas.
+
+**Pendiente:** resultado de CI global del commit publicado, lector de pantalla real
+y zoom del navegador (la ampliación de texto al 200 % no los sustituye). Los
+hallazgos previos del módulo conservan sus estados; esta mejora no cierra el módulo.

@@ -14,7 +14,10 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     login_as(administrator, scope: :user)
   end
 
-  after { Warden.test_reset! }
+  after do
+    Warden.test_reset!
+    page.driver.browser.manage.window.resize_to(1400, 900)
+  end
 
   scenario 'shows a SweetAlert warning and retains the category and filters when removal is blocked' do
     category = create(:category, organization:, name: 'Groceries', code: 'groceries')
@@ -27,6 +30,11 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
 
     expect(page).to have_css('.swal2-popup.swal2-icon-warning[role="dialog"]',
                              text: I18n.t('admin.categories.in_use', locale: :en, raise: true), wait: 10)
+    [1440, 768, 390, 320].each do |width|
+      page.driver.browser.manage.window.resize_to(width, 900)
+      expect_category_warning_layout
+    end
+    expect(page).to have_css('.swal2-confirm:focus', text: 'Close')
     within('.swal2-popup.swal2-icon-warning') do
       expect(page).to have_text('This category cannot be removed')
       click_button 'Close'
@@ -36,6 +44,47 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
     expect(page).to have_field('category_search', with: category.name)
     expect(page).to have_css('turbo-frame#categories_list', text: category.name)
     expect(category.reload.deleted_at).to be_nil
+  end
+
+  scenario 'dismisses a blocked removal with Escape and allows another Turbo attempt' do
+    category = create(:category, organization:, name: 'Groceries', code: 'groceries')
+    create(:product, organization:, category:)
+    visit admin_categories_path(search: category.name)
+
+    2.times do
+      trigger = find('tr', text: category.name).find('button[aria-label="Delete: Groceries"]')
+      trigger.click
+      find('.delta-confirm-accept').click
+      expect(page).to have_css('.swal2-popup.swal2-icon-warning', text: 'This category cannot be removed')
+      expect_category_warning_layout
+      find('.swal2-confirm').send_keys(:escape)
+      expect(page).to have_no_css('.swal2-popup')
+      expect(page).to have_css('button[aria-label="Delete: Groceries"]:focus')
+    end
+
+    expect(category.reload.deleted_at).to be_nil
+    expect(page).to have_field('category_search', with: category.name)
+  end
+
+  %w[es ko].each do |locale|
+    scenario "keeps the #{locale} warning readable on mobile with enlarged text" do
+      administrator.update!(language: create(:language, code: locale, name: locale, flag_iso: locale))
+      category = create(:category, organization:, name: 'Groceries', code: 'groceries')
+      create(:product, organization:, category:)
+      visit admin_categories_path(search: category.name)
+      label = I18n.t('admin.categories.index.delete', locale:, raise: true)
+      find('tr', text: category.name).find("button[aria-label=\"#{label}: Groceries\"]").click
+      find('.delta-confirm-accept').click
+
+      expect(page).to have_css('.swal2-popup.swal2-icon-warning',
+                               text: I18n.t('admin.categories.in_use', locale:, raise: true))
+      page.driver.browser.manage.window.resize_to(320, 900)
+      page.execute_script('document.documentElement.style.fontSize = "200%"')
+      expect_category_warning_layout
+      click_button I18n.t('admin.categories.show.close', locale:, raise: true)
+      expect(page).to have_no_css('.swal2-popup')
+      expect(category.reload.deleted_at).to be_nil
+    end
   end
 
   scenario 'validates required fields and saves the description from the modal' do
@@ -174,5 +223,22 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
 
     expect(page).to have_css('turbo-frame#categories_list .categories-filter-chip', text: 'groceries', wait: 10)
     expect(page).to have_css('.categories-mobile-card', text: 'Groceries', visible: :all)
+  end
+
+  def expect_category_warning_layout
+    expect(page.evaluate_script(<<~JS)).to be(true)
+      (() => {
+        const popup = document.querySelector('.swal2-popup.swal2-icon-warning')
+        const [icon, title, text, button] = ['.swal2-icon', '.swal2-title', '.swal2-html-container', '.swal2-confirm']
+          .map(selector => popup.querySelector(selector).getBoundingClientRect())
+        const box = popup.getBoundingClientRect()
+        return Math.abs((icon.left + icon.right - box.left - box.right) / 2) < 2 &&
+          icon.bottom < title.top && title.bottom < text.top && text.bottom < button.top &&
+          box.left >= 0 && box.right <= innerWidth && popup.scrollWidth <= popup.clientWidth &&
+          button.height >= 44 && getComputedStyle(popup.querySelector('.swal2-title')).textAlign === 'center' &&
+          popup.getAttribute('aria-labelledby') === popup.querySelector('.swal2-title').id &&
+          popup.getAttribute('aria-describedby') === popup.querySelector('.swal2-html-container').id
+      })()
+    JS
   end
 end

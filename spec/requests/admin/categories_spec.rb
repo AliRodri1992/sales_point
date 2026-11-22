@@ -282,6 +282,7 @@ RSpec.describe 'Admin::Categories', type: :request do
       follow_redirect!
       feedback = Nokogiri::HTML(response.body).at_css('#flash [data-controller="swal-flash"]')
       expect(feedback['data-swal-flash-mode-value']).to eq('modal')
+      expect(feedback['data-swal-flash-presentation-value']).to eq('category-in-use')
       expect(feedback['data-swal-flash-confirm-label-value']).to eq(I18n.t('admin.categories.show.close'))
     end
 
@@ -301,6 +302,7 @@ RSpec.describe 'Admin::Categories', type: :request do
       expect(feedback['data-swal-flash-title-value']).to eq(I18n.t('admin.categories.in_use_title', raise: true))
       expect(feedback['data-swal-flash-icon-value']).to eq('warning')
       expect(feedback['data-swal-flash-mode-value']).to eq('modal')
+      expect(feedback['data-swal-flash-presentation-value']).to eq('category-in-use')
       expect(response.body).not_to include('categories_alert')
       expect(category.reload.deleted_at).to be_nil
     end

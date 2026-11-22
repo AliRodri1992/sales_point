@@ -23,3 +23,11 @@ comportamiento en `swal_confirm_controller.js`.
 La duración y los callbacks siguen perteneciendo a cada flujo. El rechazo de
 credenciales permanece visible hasta cerrarlo y devuelve el foco a contraseña.
 Las validaciones de campos continúan junto al campo correspondiente.
+
+El bloqueo de baja de categorías solicita `swal_presentation: 'category-in-use'`
+en el feedback HTML/Turbo. `swal_flash_controller.js` aplica únicamente a ese
+diálogo la clase `delta-category-in-use`; sus estilos viven en
+`components/categories_workspace.css`. Ícono, título, descripción y acción
+ocupan filas propias y centradas. El panel permite scroll vertical en pantallas
+bajas o con texto ampliado, reservando espacio simétrico para la barra de scroll.
+Las confirmaciones destructivas y los toasts conservan su presentación compartida.

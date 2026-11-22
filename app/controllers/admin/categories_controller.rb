@@ -111,7 +111,8 @@ module Admin
     def category_in_use_response
       feedback = {
         swal_message: t('admin.categories.in_use'), swal_title: t('admin.categories.in_use_title'),
-        swal_icon: 'warning', swal_mode: 'modal', swal_confirm_label: t('admin.categories.show.close')
+        swal_icon: 'warning', swal_mode: 'modal', swal_confirm_label: t('admin.categories.show.close'),
+        swal_presentation: 'category-in-use'
       }
       respond_to do |format|
         format.html do

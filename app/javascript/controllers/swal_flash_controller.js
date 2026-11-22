@@ -1,12 +1,13 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Displays the server-provided SweetAlert2 message once after navigation.
-// Authentication notices may use a centered dialog; other notices remain toasts.
+// Dialog presentation is opt-in; other notices keep their shared styling.
 export default class extends Controller {
     static values = {
         message: String,
         title: String,
         confirmLabel: String,
+        presentation: String,
         icon: { type: String, default: "success" },
         mode: { type: String, default: "toast" },
         persistent: { type: Boolean, default: false },
@@ -18,6 +19,7 @@ export default class extends Controller {
         if (!this.messageValue || !window.Swal) return
 
         const modal = this.modeValue === "modal"
+        const categoryWarning = modal && this.presentationValue === "category-in-use"
         const focusTarget = this.focusSelectorValue ? document.querySelector(this.focusSelectorValue) : null
         focusTarget?.focus()
         window.Swal.fire({
@@ -32,6 +34,12 @@ export default class extends Controller {
             titleText: this.titleValue || this.messageValue,
             ...(this.titleValue ? { text: this.messageValue } : {}),
             ...(this.confirmLabelValue ? { confirmButtonText: this.confirmLabelValue } : {}),
+            ...(categoryWarning ? {
+                customClass: { popup: "delta-category-in-use" },
+                buttonsStyling: false,
+                heightAuto: false,
+                focusConfirm: true
+            } : {}),
             didClose: () => {
                 if (focusTarget?.isConnected) focusTarget.focus()
             }
