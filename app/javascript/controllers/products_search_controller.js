@@ -122,5 +122,10 @@ export default class extends Controller {
     const count = page.querySelector(".products-filters__count")
     const heading = panel.querySelector(".products-filter-panel__heading")
     if (count && heading) heading.append(count)
+
+    const summary = panel.querySelector(".products-filters__advanced > summary")
+    summary?.querySelector(".products-filters__advanced-count")?.remove()
+    const advancedCount = page.querySelector(".products-filters__advanced-count")
+    if (summary && advancedCount) summary.insertBefore(advancedCount, summary.querySelector(".products-filters__chevron"))
   }
 }

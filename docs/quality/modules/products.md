@@ -276,3 +276,38 @@ de Categorías, Idiomas y Unidades de medida. Su título de pestaña pasa a
 los títulos de producto capturados por parciales no reemplazan el nombre del módulo.
 Pruebas compartidas y resultados de esta adecuación en **CATEGORIES-043**.
 El alcance se limita a presentación; PRODUCTS-028 conserva su estado.
+
+## PRODUCTS-030 — Rediseño de filtros avanzados (2026-11-22)
+
+**Base:** `1f2877b10414119a4873a97aee770e4bbb41d382`, `feature/fixes`.
+Alcance: panel de filtros de `GET /admin/products` y su feedback de búsqueda.
+Capturas previas locales: `tmp/capybara/product-filters-before-{es,en,ko}-*.png`.
+
+Se sustituye la composición de cards anidadas por un acordeón de ancho completo,
+icono propio y descripción, tres grupos semánticos con separadores y jerarquía de
+campos consistente. Clasificación e Inventario conservan sus dos opciones; Precio
+presenta mínimo/máximo en pareja, moneda y ayuda. Aplicar/Limpiar forman una única
+fila al final, accesible tras completar los criterios. Controles de al menos 44 px,
+foco visible con token de marca, columnas 3/2/1 según el espacio disponible y
+respeto por movimiento reducido. Estilos exclusivos en `products_filters.css`;
+se retira el bloque duplicado/anterior de `catalog_workspace.css`.
+
+Se conservan campos, IDs, valores, queries GET, filtros de organización, orden,
+tamaño de página, búsqueda IME/debounce, chips y validación de rango. Al buscar
+con criterios avanzados, `syncBadges` sincroniza también el contador del acordeón:
+una regresión previa reprodujo el contador ausente pese a `min_price=5` aplicado.
+Se añaden tres textos equivalentes en es/en/ko; sin cambios de modelo o servidor.
+
+**Verificación local:** 76 ejemplos, 0 fallos, seed 36144 (67 requests de Productos,
+7 flujos de catálogo y 2 nuevas regresiones de diseño/contador). Incluye teclado,
+320/390/768/1440 px, filtros móviles, orden/tamaño de página y persistencia al recargar.
+Compilación JS/CSS y RuboCop de los tres specs aprobados; I18n estricto: 288 archivos,
+0 hallazgos de paridad. Registro modular: 32 módulos / 28 recursos.
+Revisión independiente sin hallazgos. Brakeman: 0 errores y 0 advertencias.
+Capturas finales es/en/ko en cuatro anchos: 1 escenario, 0 fallos (seed 61280),
+archivos `tmp/capybara/product-filters-after-*.png`. CI del SHA publicado pendiente.
+El registro no declara cerrado el módulo ni sus hallazgos previos.
+
+Comprobación adicional de rango invertido en móvil: 1 ejemplo, 0 fallos (seed
+11528). Capturas definitivas con transiciones finalizadas: 1 escenario, 0 fallos
+(seed 53574), incluido el panel aislado `tmp/capybara/product-advanced-filters.png`.

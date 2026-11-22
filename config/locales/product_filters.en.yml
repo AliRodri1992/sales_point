@@ -1,0 +1,7 @@
+en:
+  admin:
+    products:
+      filters:
+        advanced_hint: Category, inventory and price
+        price_hint: You can enter just one of the limits.
+        apply_hint: Search updates as you type. Use the button to apply the other filters.

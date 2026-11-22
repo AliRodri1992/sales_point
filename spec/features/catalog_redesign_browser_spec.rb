@@ -133,7 +133,7 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     page.current_window.resize_to(390, 844)
     visit admin_products_path
 
-    expect(page).to have_css('.products-filters__primary .products-filters__actions')
+    expect(page).to have_css('.products-filters__footer .products-filters__actions')
     expect(page).to have_css('details.products-filters__advanced:not([open])')
     find('details.products-filters__advanced summary').click
     expect(page).to have_css('fieldset.products-filters__group', count: 3)

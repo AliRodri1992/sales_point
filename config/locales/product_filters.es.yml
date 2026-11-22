@@ -1,0 +1,7 @@
+es:
+  admin:
+    products:
+      filters:
+        advanced_hint: Categoría, inventario y precio
+        price_hint: Puedes indicar solo uno de los límites.
+        apply_hint: La búsqueda se actualiza al escribir. Aplica los demás filtros con el botón.

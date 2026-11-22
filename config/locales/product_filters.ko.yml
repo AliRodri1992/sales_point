@@ -1,0 +1,7 @@
+ko:
+  admin:
+    products:
+      filters:
+        advanced_hint: 카테고리, 재고 및 가격
+        price_hint: 최솟값이나 최댓값 중 하나만 입력해도 됩니다.
+        apply_hint: 입력하면 검색 결과가 갱신됩니다. 다른 필터는 버튼으로 적용하세요.

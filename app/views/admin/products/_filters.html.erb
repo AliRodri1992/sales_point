@@ -55,26 +55,22 @@
               ], params[:status].presence || 'all'), id: 'products_status' %>
         </div>
       </div>
-      <div class="products-filters__actions">
-        <%= button_tag type: :submit, name: nil, class: 'catalog-button catalog-button-primary products-filters__apply' do %>
-          <%= delta_icon('funnel', class: 'size-4') %>
-          <%= t('admin.catalog_design.filter') %>
-        <% end %>
-        <%= link_to t('admin.catalog_design.clear'), admin_products_path, class: 'products-filters__clear', data: { turbo_frame: '_top' } %>
-      </div>
     </div>
 
     <details class="products-filters__advanced" <%= 'open' if advanced_count.positive? %>>
       <summary>
-        <%= delta_icon('adjustments-horizontal', class: 'size-4') %>
-        <span><%= t('admin.catalog_design.advanced_filters') %></span>
+        <span class="products-filters__advanced-symbol" aria-hidden="true"><%= delta_icon('adjustments-horizontal', class: 'size-5') %></span>
+        <span class="products-filters__advanced-copy">
+          <span class="products-filters__advanced-title"><%= t('admin.catalog_design.advanced_filters') %></span>
+          <span class="products-filters__advanced-hint"><%= t('admin.products.filters.advanced_hint') %></span>
+        </span>
         <% if advanced_count.positive? %><span class="products-filters__advanced-count"><%= advanced_count %></span><% end %>
         <%= delta_icon('chevron-down', class: 'size-4 products-filters__chevron') %>
       </summary>
       <div class="products-filters__advanced-panel">
         <div class="products-filters__groups">
           <fieldset class="products-filters__group">
-            <legend><%= t('admin.catalog_design.product_group_classification') %></legend>
+            <legend><%= delta_icon('squares-2x2', class: 'size-4', aria: { hidden: true }) %><%= t('admin.catalog_design.product_group_classification') %></legend>
             <div class="products-filters__group-fields">
               <div class="products-filters__field">
                 <%= label_tag :products_category, t('admin.catalog_design.category_id') %>
@@ -91,7 +87,7 @@
             </div>
           </fieldset>
           <fieldset class="products-filters__group">
-            <legend><%= t('admin.catalog_design.product_group_inventory') %></legend>
+            <legend><%= delta_icon('cube', class: 'size-4', aria: { hidden: true }) %><%= t('admin.catalog_design.product_group_inventory') %></legend>
             <div class="products-filters__group-fields">
               <div class="products-filters__field">
                 <%= label_tag :products_tracking, t('admin.catalog_design.tracking_mode') %>
@@ -109,9 +105,9 @@
           </fieldset>
           <% invalid_range = Products::PriceFilter.inverted?(params[:min_price], params[:max_price]) %>
           <% range_error_id = invalid_range ? 'products_price_range_error' : nil %>
-          <fieldset class="products-filters__group">
-            <legend><%= t('admin.catalog_design.product_group_price') %> <span class="products-filters__currency"><%= product_currency_code %></span></legend>
-            <div class="products-filters__group-fields">
+          <fieldset class="products-filters__group products-filters__group--price">
+            <legend><%= delta_icon('currency-dollar', class: 'size-4', aria: { hidden: true }) %><%= t('admin.catalog_design.product_group_price') %> <span class="products-filters__currency"><%= product_currency_code %></span></legend>
+            <div class="products-filters__group-fields products-filters__group-fields--price">
               <div class="products-filters__field">
                 <%= label_tag :products_min_price, t('admin.catalog_design.minimum_price') %>
                 <%= number_field_tag :min_price, params[:min_price], id: 'products_min_price', min: 0, step: '0.01', inputmode: 'decimal', aria: { invalid: invalid_range, describedby: range_error_id } %>
@@ -121,6 +117,7 @@
                 <%= number_field_tag :max_price, params[:max_price], id: 'products_max_price', min: 0, step: '0.01', inputmode: 'decimal', aria: { invalid: invalid_range, describedby: range_error_id } %>
               </div>
             </div>
+            <p class="products-filters__price-hint"><%= t('admin.products.filters.price_hint') %></p>
             <% if invalid_range %>
               <p id="products_price_range_error" class="products-filters__range-error" role="alert"><%= t('admin.catalog_design.product_price_range_invalid') %></p>
             <% end %>
@@ -129,7 +126,16 @@
       </div>
     </details>
 
-
+    <footer class="products-filters__footer">
+      <p class="products-filters__apply-hint"><%= delta_icon('information-circle', class: 'size-4', aria: { hidden: true }) %><span><%= t('admin.products.filters.apply_hint') %></span></p>
+      <div class="products-filters__actions">
+        <%= link_to t('admin.catalog_design.clear'), admin_products_path, class: 'products-filters__clear', data: { turbo_frame: '_top' } %>
+        <%= button_tag type: :submit, name: nil, class: 'catalog-button catalog-button-primary products-filters__apply' do %>
+          <%= delta_icon('funnel', class: 'size-4', aria: { hidden: true }) %>
+          <%= t('admin.catalog_design.filter') %>
+        <% end %>
+      </div>
+    </footer>
     <p class="products-filters__error" data-products-search-target="error" role="alert" hidden>
       <%= t('admin.catalog_design.product_filter_request_error') %>
     </p>
