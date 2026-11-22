@@ -576,3 +576,18 @@ servicio, nuevas pruebas, estilos y locales.
 **Estado:** CATEGORIES-040/041 verificados localmente; aceptación del SHA publicado
 pendiente de CI. Los hallazgos históricos 034–037 conservan sus estados; no se
 declara cerrado el módulo ni certificada una auditoría completa de accesibilidad.
+
+## CATEGORIES-042 — Contexto del encabezado (2026-11-22)
+
+**P3 · UX / propio. Base:** `e22f4f2ffeee1c15bcc1517ddf107659e36ed8d0`.
+`admin.categories.index.kicker` mostraba «Catálogos / Productos» encima de
+«Categorías», mezclando el contexto general con otro catálogo. La vista reutiliza
+`admin.shared.sidebar.section_catalogs`: «Catálogos» / «Catalogs» / «카탈로그»,
+igual que la sección del menú. Esto evita depender del antiguo `kicker`, incluso
+si existe una traducción guardada en PostgreSQL que prevalece sobre YAML. Se
+conservan el título y los locales existentes; sin datos, estilos ni lógica de negocio nuevos.
+
+**Verificación local:** Chrome en es/en/ko (1 escenario, 0 fallos, seed 31567),
+incluyendo un `kicker` antiguo persistido para comprobar la prioridad del backend.
+I18n estricto: PASS, 285 archivos, 0 hallazgos de paridad; registro modular y
+`git diff --check` aprobados. CI del SHA publicado pendiente de consulta.
