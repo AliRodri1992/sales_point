@@ -28,6 +28,24 @@ RSpec.describe 'Promotion redemption concurrency', :concurrent_db do
     expect(offer.promotion_redemptions.count).to eq(1)
   end
 
+  it 'prevents concurrent redemptions from exceeding the per-customer quota' do
+    organization = create(:organization)
+    create(:currency, code: 'MXN')
+    products = Array.new(2) { create(:product, organization:) }
+    offer = organization.promotions.create!(name: 'Customer one-time', currency: 'MXN',
+                                            status: 'active', customer_limit: 1, usage_limit: 10,
+                                            promotion_benefits_attributes: [{ kind: 'percentage', value: 10 }])
+    outcomes = concurrent_calls(products) do |product, index|
+      Products::RedeemPromotion.new(product:, customer_reference: 'CLIENT-1',
+                                    idempotency_key: "PER-CUSTOMER-#{index}").call
+    rescue Products::RedeemPromotion::Unavailable => e
+      e
+    end
+    expect(outcomes.count { |result| result.is_a?(PromotionRedemption) }).to eq(1)
+    expect(outcomes.count { |result| result.is_a?(Products::RedeemPromotion::Unavailable) }).to eq(1)
+    expect(offer.promotion_redemptions.where(customer_reference: 'CLIENT-1').count).to eq(1)
+  end
+
   def redeem(product, key)
     Products::RedeemPromotion.new(product:, idempotency_key: key).call
   rescue Products::RedeemPromotion::Unavailable, Products::RedeemPromotion::IdempotencyConflict => e

@@ -4,7 +4,7 @@
   <div class="catalog-card-body">
     <%= error_message_for(form.object, :promotion_benefits) %>
     <p class="mb-3 text-xs font-semibold text-slate-600" aria-live="polite"
-       aria-label="<%= campaign_text('editor.#{kind}_count_label') %>">
+       aria-label="<%= campaign_text('benefits_count_label') %>">
       <span data-promotion-editor-target="benefitCount"><%= form.object.promotion_benefits.count { |row| !row.marked_for_destruction? && row.deleted_at.nil? } %> / <%= Promotion::MAX_BENEFITS %></span>
     </p>
     <div data-promotion-editor-target="benefits">

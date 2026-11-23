@@ -67,6 +67,16 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
     expect(page).to have_button('Pause')
   end
 
+  scenario 'shows accurate benefit and condition counters during add and remove' do
+    visit new_admin_promotion_path
+    expect(page).to have_css('[data-promotion-editor-target="benefitCount"]', text: '1 / 10')
+    expect(page).to have_css('[data-promotion-editor-target="conditionCount"]', text: '0 / 20')
+    click_button 'Add condition'
+    expect(page).to have_css('[data-promotion-editor-target="conditionCount"]', text: '1 / 20')
+    within('.promotion-condition-row') { find('button.promotion-editor-remove').click }
+    expect(page).to have_css('[data-promotion-editor-target="conditionCount"]', text: '0 / 20')
+  end
+
   scenario 'keeps product search results floating and uses borderless benefit rows on small screens' do
     8.times { |index| create(:product, organization:, name: format('Lookup sample %02d', index)) }
     visit new_admin_promotion_path

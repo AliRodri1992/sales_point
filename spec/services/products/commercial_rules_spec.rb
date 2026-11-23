@@ -82,8 +82,10 @@ RSpec.describe 'Commercial line pricing rules' do
     excluded = special.promotion_conditions.create!(kind: 'excluded_category', category:)
     expect(quote.discount).to eq(0)
     excluded.destroy!
-    special.promotion_conditions.create!(kind: 'excluded_product', product:)
-    expect(quote.discount).to eq(0)
+    special.promotion_conditions.build(kind: 'excluded_product', product:)
+    expect(special).not_to be_valid
+    expect(special.errors.details[:promotion_conditions].map { |error| error[:error] })
+      .to include(:contradictory_target)
   end
 
   it 'preserves historical category associations but never grants a discount for a retired or foreign category' do
