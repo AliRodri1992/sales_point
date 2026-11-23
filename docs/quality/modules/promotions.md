@@ -95,3 +95,18 @@ Este registro incorpora **PROMOTIONS-001** como defecto de frontera observado de
 - **PROMOTIONS-005 · P2 · PROPIO:** la distribución del listado, filtros avanzados, ordenación, tablas y estados, y las secciones de consulta y edición diferían de la maqueta aprobada. Se implementa la jerarquía, composición responsive, ayuda con ejemplos y controles de búsqueda/edición con datos reales. Las acciones conservan permisos, estados y archivo lógico. Producto y categoría encuentran reglas incluidas y excluidas; segmento permite coincidencias parciales escapadas.
 - Alcance: las cuatro pantallas propias y sus componentes directos; no se modifica el motor de cálculo, el esquema, las autorizaciones ni los datos existentes. Se mantienen los locales es/en/ko y Delta Select, con carga remota acotada de referencias.
 - Regresiones: `spec/requests/admin/commercial_workflows_spec.rb` y `spec/features/promotion_campaigns_browser_spec.rb`. Comparación estática de los 23 trazados SVG con `delta-pos-promociones.zip`: aprobada. Runner RSpec local: no ejecutado, Docker no disponible. Pendientes de evidencia: CI del SHA publicado, revisión visual con aplicación Rails renderizada y cierre del módulo.
+
+
+### Estabilización fase 1 — 2026-11-23
+
+- Se reforzó `Promotion` con validaciones de conflictos y duplicados de condiciones, límites de filas vigentes y guardado de borradores sin el beneficio inicial vacío. Ningún mensaje depende de validación nativa HTML5.
+- Se cambiaron los rótulos del directorio de «Eliminar» a «Archivar», se separó la búsqueda de productos incluidos de los excluidos, se agregaron contadores y se advierte del alcance general antes de activar.
+- Simulador: explica condiciones de inelegibilidad sin consumir canjes. Motor: mantiene una sola promoción por línea, cuotas e idempotencia; `Products::Quote` y `Products::RedeemPromotion` emiten eventos de ActiveSupport::Notifications sin datos de identificación.
+- Se registran los IDs y nombres de campos alterados de beneficios y condiciones en eventos de auditoría, sin copiar valores de entrada.
+- Para transiciones a activa se rechazan objetivos de producto/categoría que dejaron de estar disponibles; las referencias históricas se conservan para lectura.
+- PostgreSQL: migración `20261123000200_harden_promotion_rule_kinds.rb` agrega restricciones de tipos de condición y beneficio **NOT VALID**, para proteger nuevas escrituras sin romper filas históricas.
+- Benchmarks read-only en `script/benchmarks/promotion_quote.rb`; para un diagnóstico representativo de latencia aún debe ejecutarse en datos de prueba.
+- **Dependencia explícita:** el módulo actual dispone del servicio de canje para una venta externa, pero no implementa un flujo local de cierre y reversión de venta. El contrato y las pruebas de integración se describen en [`promotions-sale-contract.md`](promotions-sale-contract.md). No asumir que este ciclo está integrado ni que existe reversión de un canje confirmado.
+- **Cierre pendiente:** verificar todos los jobs de CI para el mismo SHA de `feature/fixes`, revisar el foco móvil del sidebar cuando hay pruebas intermitentes y completar benchmarks/QA manual de accesibilidad. No marcar el módulo como concluido sin dichas evidencias.
+
+Evidencias de referencia: [Commercial CI #45122063844](https://github.com/AliRodri1992/sales_point/actions/runs/45122063844) y [Products CI #45122063853](https://github.com/AliRodri1992/sales_point/actions/runs/45122063853) aprobaron para `2f6eca3`; la migración y los cambios posteriores requieren nuevas verificaciones.
