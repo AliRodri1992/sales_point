@@ -3,7 +3,7 @@
 # Displays the saved-state and browser conditions whenever a collapse regression occurs.
 # This keeps asynchronous failures diagnosable without weakening the expectation.
 module SidebarBrowserExpectations
-  FOCUS_STATE_SCRIPT = <<~JS.freeze
+  FOCUS_STATE_SCRIPT = <<~JS
     (() => {
       const element = document.activeElement
       const toggle = document.getElementById('sidebarToggle')
@@ -14,7 +14,7 @@ module SidebarBrowserExpectations
     })()
   JS
 
-  FOCUS_TRACE_SCRIPT = <<~JS.freeze
+  FOCUS_TRACE_SCRIPT = <<~JS
     window.sidebarFocusTrace = []
     const trace = (type, target) => {
       const sidebar = document.getElementById('adminSidebar')
