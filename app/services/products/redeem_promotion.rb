@@ -16,6 +16,12 @@ module Products
     end
 
     def call
+      ActiveSupport::Notifications.instrument('promotions.redemption') { commit_redemption }
+    end
+
+    private
+
+    def commit_redemption
       @product.with_lock do
         lock_idempotency_key
         previous = PromotionRedemption.find_by(organization_id: @product.organization_id, idempotency_key: @key)
@@ -30,8 +36,6 @@ module Products
       consistent_previous(PromotionRedemption.find_by!(organization_id: @product.organization_id,
                                                        idempotency_key: @key))
     end
-
-    private
 
     # Products have separate locks, but a caller's operation reference is unique across its tenant.
     def lock_idempotency_key

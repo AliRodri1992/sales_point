@@ -18,11 +18,11 @@ module Products
     end
 
     def call
-      calculate(preview: false)
+      ActiveSupport::Notifications.instrument('promotions.quote') { calculate(preview: false) }
     end
 
     def preview
-      calculate(preview: true)
+      ActiveSupport::Notifications.instrument('promotions.preview') { calculate(preview: true) }
     end
 
     private

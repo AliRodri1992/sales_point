@@ -18,6 +18,25 @@ RSpec.describe 'Commercial product pricing' do
     Products::Quote.new(product:, **options).call
   end
 
+  it 'instruments quote, preview and redemption without exposing identifiers' do
+    promotion()
+    observed = []
+    subscriber = ActiveSupport::Notifications.subscribe(/\Apromotions\.(quote|preview|redemption)\z/) do |*args|
+      observed << ActiveSupport::Notifications::Event.new(*args)
+    end
+
+    quote
+    Products::Quote.new(product:).preview
+    Products::RedeemPromotion.new(product:, idempotency_key: 'METRIC-1',
+                                  customer_reference: 'PRIVATE-CUSTOMER').call
+
+    expect(observed.map(&:name)).to include('promotions.quote', 'promotions.preview', 'promotions.redemption')
+    expect(observed.flat_map { |event| event.payload.keys.map(&:to_s) })
+      .not_to include('customer_reference', 'idempotency_key')
+  ensure
+    ActiveSupport::Notifications.unsubscribe(subscriber) if subscriber
+  end
+
   it 'uses decimal arithmetic and applies only the greatest discount' do
     percentage = promotion(discount: 20)
     fixed = promotion(code: 'FIXED', kind: 'fixed_amount', discount: 25)
