@@ -12,6 +12,7 @@ es:
         name_placeholder: "Ej. Descuento de temporada"
         generated_code: "Generado al guardar"
         benefits: "Beneficios"
+        best_benefit_hint: "Si agregas varios beneficios, se aplicará únicamente el de mayor descuento por línea. No se suman."
         benefits_hint: "Agrega descuentos porcentuales o de importe fijo."
         benefit_kind: "Tipo de beneficio"
         benefit_kinds:

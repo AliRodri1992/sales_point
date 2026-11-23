@@ -7,6 +7,14 @@ export default class extends Controller {
   connect() {
     this.sequence = Date.now()
     this.updateCounts()
+    if (this.element.querySelector("[data-server-field-error]")) {
+      requestAnimationFrame(() => {
+        const field = Array.from(this.element.querySelectorAll('[aria-invalid="true"]'))
+          .find((input) => !input.closest("[hidden]"))
+        const visibleField = field?.closest(".promotion-date-enhanced")?.querySelector(".promotion-date-trigger") || field
+        visibleField?.focus()
+      })
+    }
   }
 
   activeCount(container) {

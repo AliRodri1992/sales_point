@@ -4,8 +4,16 @@ export default class extends Controller {
   static targets = ["query", "results", "status", "selection"]
   static values = { kind: String, key: String, url: String, empty: String, loading: String, error: String, found: String }
 
+  connect() {
+    this.onOutsideClick = (event) => {
+      if (!this.element.contains(event.target)) this.clear()
+    }
+    document.addEventListener("click", this.onOutsideClick)
+  }
+
   disconnect() {
     this.cancel()
+    document.removeEventListener("click", this.onOutsideClick)
   }
 
   cancel() {

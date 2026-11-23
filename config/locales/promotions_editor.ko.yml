@@ -12,6 +12,7 @@ ko:
         name_placeholder: "예: 시즌 할인"
         generated_code: "저장 시 생성"
         benefits: "혜택"
+        best_benefit_hint: "혜택이 여러 개인 경우 품목별 최대 할인 한 가지만 적용됩니다. 혜택은 합산되지 않습니다."
         benefits_hint: "비율 또는 정액 할인을 추가합니다."
         benefit_kind: "혜택 유형"
         benefit_kinds:

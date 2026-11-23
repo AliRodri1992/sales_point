@@ -12,6 +12,7 @@ en:
         name_placeholder: "E.g. Seasonal discount"
         generated_code: "Generated on save"
         benefits: "Benefits"
+        best_benefit_hint: "When several benefits exist, only the largest line discount applies. Benefits are not added together."
         benefits_hint: "Add percentage or fixed amount discounts."
         benefit_kind: "Benefit type"
         benefit_kinds:
