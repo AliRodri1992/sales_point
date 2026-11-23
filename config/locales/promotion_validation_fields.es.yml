@@ -1,0 +1,27 @@
+# Labels for ActiveModel errors in the promotion form.
+es:
+  errors:
+    attributes:
+      promotion:
+        name: "Nombre de la promoción"
+        currency: "Moneda"
+        starts_at: "Fecha de inicio"
+        ends_at: "Fecha de fin"
+        usage_limit: "Límite total de usos"
+        customer_limit: "Límite por cliente"
+        maximum_discount: "Descuento máximo por línea"
+        priority: "Prioridad"
+        combination_mode: "Combinación de promociones"
+        promotion_benefits: "Beneficios"
+        promotion_conditions: "Condiciones"
+        price_list: "Lista de precios"
+      promotion_benefit:
+        kind: "Tipo de beneficio"
+        value: "Valor del beneficio"
+      promotion_condition:
+        kind: "Condición"
+        product: "Producto"
+        category: "Categoría"
+        quantity: "Cantidad mínima"
+        amount: "Subtotal mínimo"
+        customer_segment: "Segmento de clientes"

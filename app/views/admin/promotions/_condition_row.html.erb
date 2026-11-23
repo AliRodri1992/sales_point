@@ -15,7 +15,7 @@
     <% PromotionsHelper::RULE_FIELDS.each do |rule_kind, field| %>
       <div data-condition-value="<%= rule_kind %>" <%= 'hidden' unless kind == rule_kind %>>
         <%= catalog_field(form, field, type: field == :customer_segment ? :text_field : :number_field,
-                          label: required_field_label(t('admin.catalog_design.value')), **(field == :customer_segment ? { maxlength: 100 } : { step: 'any' })) %>
+                          label: required_field_label(t('admin.catalog_design.value')), step: field == :customer_segment ? nil : 'any') %>
       </div>
     <% end %>
   </div>

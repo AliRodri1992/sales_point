@@ -22,7 +22,7 @@
         <%= catalog_select(form, :combination_mode, campaign_choices('editor.modes', %w[best_price exclusive]), label: campaign_text('editor.mode'), include_blank: false) %>
       </div>
       <%= catalog_field(form, :priority, type: :number_field, step: 1, label: required_field_label(campaign_text('priority')), aria: { required: true }) %>
-      <%= catalog_field(form, :maximum_discount, type: :number_field, min: 0.01, step: 'any', label: campaign_text('editor.cap'), placeholder: t('admin.catalog_design.no_limit')) %>
+      <%= catalog_field(form, :maximum_discount, type: :number_field, step: 'any', label: campaign_text('editor.cap'), placeholder: t('admin.catalog_design.no_limit')) %>
     </div>
   </div>
 </section>

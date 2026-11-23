@@ -1,0 +1,27 @@
+# Labels for ActiveModel errors in the promotion form.
+ko:
+  errors:
+    attributes:
+      promotion:
+        name: "프로모션 이름"
+        currency: "통화"
+        starts_at: "시작 날짜"
+        ends_at: "종료 날짜"
+        usage_limit: "전체 사용 한도"
+        customer_limit: "고객별 사용 한도"
+        maximum_discount: "품목별 최대 할인액"
+        priority: "우선순위"
+        combination_mode: "프로모션 적용 방식"
+        promotion_benefits: "할인 혜택"
+        promotion_conditions: "적용 조건"
+        price_list: "가격표"
+      promotion_benefit:
+        kind: "혜택 유형"
+        value: "혜택 값"
+      promotion_condition:
+        kind: "조건"
+        product: "상품"
+        category: "카테고리"
+        quantity: "최소 수량"
+        amount: "최소 소계"
+        customer_segment: "고객 그룹"

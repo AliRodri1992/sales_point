@@ -22,7 +22,7 @@
                  id: 'campaign-general-title', icon: 'tag', section: 'general' %>
       <div class="catalog-card-body catalog-fields">
         <div class="col-span-full">
-          <%= catalog_field(form, :name, label: required_field_label(campaign_text('editor.name')), maxlength: 100, placeholder: campaign_text('editor.name_placeholder'), aria: { required: true }) %>
+          <%= catalog_field(form, :name, label: required_field_label(campaign_text('editor.name')), placeholder: campaign_text('editor.name_placeholder'), aria: { required: true }) %>
         </div>
         <div class="catalog-field">
           <%= label_tag 'promotion_display_code', t('admin.catalog_design.code') %>
@@ -61,7 +61,7 @@
                  id: 'campaign-limits-title', icon: 'users', section: 'limits' %>
       <div class="catalog-card-body grid gap-4">
         <% %i[usage_limit customer_limit].each do |field| %>
-          <%= catalog_field(form, field, label: campaign_text("editor.#{field}"), type: :number_field, min: 1, step: 1, placeholder: t('admin.catalog_design.no_limit')) %>
+          <%= catalog_field(form, field, label: campaign_text("editor.#{field}"), type: :number_field, step: 1, placeholder: t('admin.catalog_design.no_limit')) %>
         <% end %>
       </div>
     </section>
