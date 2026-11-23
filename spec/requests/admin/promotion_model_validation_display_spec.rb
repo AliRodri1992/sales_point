@@ -53,6 +53,62 @@ RSpec.describe 'Promotion model validation messages', type: :request do
     expect(organization.promotions).to be_empty
   end
 
+
+  context 'with the user language set to Spanish' do
+    let(:user) { create(:user, :spanish, system_roles: [create(:system_role, :system, code: 'administrator')]) }
+
+    let(:invalid_period) do
+      { starts_at: '2026-11-13T12:56', ends_at: '2026-11-11T00:00' }
+    end
+
+    def expect_period_error
+      expect(response).to have_http_status(:unprocessable_content)
+      page = Nokogiri::HTML(response.body)
+      error = page.at_css('[data-server-field-error][data-validation-attribute="ends_at"]')
+      expect(error).to be_present
+      expect(error.text.strip).to eq('Fecha y hora de fin debe ser posterior a la de inicio.')
+      expect(page.at_css('#promotion_ends_at')['aria-invalid']).to eq('true')
+      expect(page.at_css('form.promotion-form').has_attribute?('novalidate')).to be(true)
+    end
+
+    it 'shows the descriptive ActiveRecord validation when creating a promotion' do
+      post admin_promotions_path, params: { promotion: {
+        name: 'Oferta noviembre', currency: 'MXN', **invalid_period
+      } }
+
+      expect_period_error
+      expect(organization.promotions).to be_empty
+    end
+
+    it 'shows the same validation when editing a promotion, without saving an invalid period' do
+      promotion = organization.promotions.create!(name: 'Oferta existente', currency: 'MXN')
+
+      patch admin_promotion_path(promotion), params: { promotion: invalid_period }
+
+      expect_period_error
+      expect(promotion.reload.starts_at).to be_nil
+      expect(promotion.ends_at).to be_nil
+    end
+
+    it 'rejects an end date equal to the start date using the same message' do
+      post admin_promotions_path, params: { promotion: {
+        name: 'Oferta misma hora', currency: 'MXN',
+        starts_at: '2026-11-13T12:56', ends_at: '2026-11-13T12:56'
+      } }
+
+      expect_period_error
+    end
+
+    it 'keeps malformed dates under the existing invalid-date validation' do
+      promotion = organization.promotions.build(name: 'Fecha mal formada', currency: 'MXN',
+                                                starts_at: '2026-11-13T12:56', ends_at: 'not-a-date')
+
+      expect(promotion).not_to be_valid
+      expect(promotion.errors.details[:ends_at].map { |detail| detail[:error] }).to include(:invalid)
+      expect(promotion.errors.details[:ends_at].map { |detail| detail[:error] }).not_to include(:after_start)
+    end
+  end
+
   it 'retains the field names in Spanish and Korean translations' do
     expect(I18n.t('errors.attributes.promotion.name', locale: :es)).to eq('Nombre de la promoción')
     expect(I18n.t('errors.attributes.promotion_benefit.value', locale: :es)).to eq('Valor del beneficio')

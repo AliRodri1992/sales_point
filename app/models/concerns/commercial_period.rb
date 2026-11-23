@@ -18,6 +18,6 @@ module CommercialPeriod
         errors.add(attribute, :invalid)
       end
     end
-    errors.add(:ends_at, :invalid) if starts_at && ends_at && ends_at <= starts_at
+    errors.add(:ends_at, :after_start) if starts_at && ends_at && ends_at <= starts_at
   end
 end

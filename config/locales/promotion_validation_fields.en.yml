@@ -5,8 +5,8 @@ en:
       promotion:
         name: "Promotion name"
         currency: "Currency"
-        starts_at: "Start date"
-        ends_at: "End date"
+        starts_at: "Start date and time"
+        ends_at: "End date and time"
         usage_limit: "Total usage limit"
         customer_limit: "Per-customer limit"
         maximum_discount: "Maximum line discount"
@@ -25,3 +25,15 @@ en:
         quantity: "Minimum quantity"
         amount: "Minimum subtotal"
         customer_segment: "Customer segment"
+
+  activerecord:
+    errors:
+      models:
+        promotion:
+          attributes:
+            ends_at:
+              after_start: "must be after the start date and time."
+        price_list:
+          attributes:
+            ends_at:
+              after_start: "must be after the start date and time."

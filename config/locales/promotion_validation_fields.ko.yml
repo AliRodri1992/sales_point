@@ -5,8 +5,8 @@ ko:
       promotion:
         name: "프로모션 이름"
         currency: "통화"
-        starts_at: "시작 날짜"
-        ends_at: "종료 날짜"
+        starts_at: "시작 날짜와 시간"
+        ends_at: "종료 날짜와 시간"
         usage_limit: "전체 사용 한도"
         customer_limit: "고객별 사용 한도"
         maximum_discount: "품목별 최대 할인액"
@@ -25,3 +25,15 @@ ko:
         quantity: "최소 수량"
         amount: "최소 소계"
         customer_segment: "고객 그룹"
+
+  activerecord:
+    errors:
+      models:
+        promotion:
+          attributes:
+            ends_at:
+              after_start: "시작 날짜와 시간보다 늦어야 합니다."
+        price_list:
+          attributes:
+            ends_at:
+              after_start: "시작 날짜와 시간보다 늦어야 합니다."
