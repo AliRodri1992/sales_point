@@ -357,11 +357,15 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
   end
 
   def expect_category_warning_layout
-    expect(page.evaluate_async_script(<<~JS)).to be(true)
+    expect(page.evaluate_async_script(category_warning_layout_script)).to be(true)
+  end
+
+  let(:category_warning_layout_script) do
+    <<~JS
       const done = arguments[arguments.length - 1]
       const popup = document.querySelector('.swal2-popup.swal2-icon-warning')
-      Promise.allSettled([document.fonts.ready, ...popup.getAnimations().map(animation => animation.finished)])
-        .then(() => requestAnimationFrame(() => requestAnimationFrame(() => {
+      const animations = popup.getAnimations().map(animation => animation.finished)
+      Promise.allSettled([document.fonts.ready, ...animations]).then(() => requestAnimationFrame(() => requestAnimationFrame(() => {
         const [icon, title, text, button] = ['.swal2-icon', '.swal2-title', '.swal2-html-container', '.swal2-confirm']
           .map(selector => popup.querySelector(selector).getBoundingClientRect())
         const box = popup.getBoundingClientRect()
