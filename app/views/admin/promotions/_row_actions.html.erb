@@ -6,14 +6,14 @@
     <%= link_to admin_promotion_path(record, context), class: 'catalog-list-icon-button',
                 data: { tooltip: campaign_text('row_actions.show') },
                 aria: { label: "#{campaign_text('row_actions.show')}: #{record.name}" } do %>
-      <%= delta_icon('eye', class: 'size-4') %>
+      <%= promotion_icon('eye', class: 'size-4') %>
     <% end %>
   <% end %>
   <% if permissions.update? && %w[draft active scheduled paused].include?(record.effective_status.to_s) %>
     <%= link_to edit_admin_promotion_path(record, context), class: 'catalog-list-icon-button',
                 data: { tooltip: t('admin.catalog_design.edit') },
                 aria: { label: "#{t('admin.catalog_design.edit')}: #{record.name}" } do %>
-      <%= delta_icon('pencil-square', class: 'size-4') %>
+      <%= promotion_icon('edit', class: 'size-4') %>
     <% end %>
   <% end %>
   <% if permissions.destroy? && record.transition_available?('archive') %>
@@ -22,7 +22,7 @@
                   form: { data: { turbo_confirm: campaign_text('confirm.archive', name: record.name) } },
                   data: { tooltip: campaign_text('row_actions.delete') },
                   aria: { label: "#{campaign_text('row_actions.delete')}: #{record.name}" } do %>
-      <%= delta_icon('trash', class: 'size-4') %>
+      <%= promotion_icon('trash', class: 'size-4') %>
     <% end %>
   <% end %>
 </div>

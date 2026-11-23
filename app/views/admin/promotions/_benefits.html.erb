@@ -1,6 +1,6 @@
 <section id="campaign-benefits" class="catalog-card !overflow-visible" aria-labelledby="campaign-benefits-title">
   <%= render 'section_heading', title: campaign_text('sections.benefit'), subtitle: t('admin.catalog_design.promotion_benefits_hint'),
-             icon: 'promotion-percent', id: 'campaign-benefits-title', section: 'benefit' %>
+             icon: 'percent', id: 'campaign-benefits-title', section: 'benefit' %>
   <div class="catalog-card-body space-y-5">
     <%= error_message_for(form.object, :promotion_benefits) %>
     <div data-promotion-editor-target="benefits" class="divide-y divide-slate-100">
@@ -14,7 +14,7 @@
       <% end %>
     </template>
     <button type="button" class="catalog-button" data-action="promotion-editor#addBenefit" data-promotion-editor-target="addBenefit">
-      <%= delta_icon('plus', class: 'size-4') %><%= campaign_text('add_benefit') %>
+      <%= promotion_icon('plus', class: 'size-4') %><%= campaign_text('add_benefit') %>
     </button>
     <p class="text-sm text-slate-600 empty:hidden" role="status" data-promotion-editor-target="benefitNotice"></p>
     <div class="catalog-fields border-t border-slate-100 pt-5">

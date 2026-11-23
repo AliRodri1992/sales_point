@@ -10,6 +10,12 @@ module PromotionsHelper
                    'category' => :category, 'excluded_category' => :category }.freeze
   RULE_FIELDS = { 'min_quantity' => :quantity, 'min_subtotal' => :amount,
                   'customer_segment' => :customer_segment }.freeze
+  ACTION_ICONS = { 'activate' => 'play', 'resume' => 'play', 'pause' => 'pause',
+                   'archive' => 'archive', 'duplicate' => 'copy' }.freeze
+
+  def promotion_icon(name, **options)
+    delta_icon("promotion-#{name}", stroke_width: 1.7, focusable: false, **options)
+  end
 
   def campaign_text(key, **)
     t("admin.promotion_campaigns.#{key}", **)

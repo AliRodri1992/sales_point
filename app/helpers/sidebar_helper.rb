@@ -33,6 +33,7 @@ module SidebarHelper
   def sidebar_navigation_icon(name, class_name: 'size-5', identifier: nil)
     delta_icon(SIDEBAR_NAVIGATION_ICONS.fetch(name.to_sym),
                class: class_name,
+               stroke_width: name.to_sym == :promotions ? 1.7 : 1.8,
                aria: { hidden: true },
                data: { sidebar_icon: identifier || name.to_s.dasherize })
   end

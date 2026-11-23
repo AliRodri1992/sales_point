@@ -1,11 +1,20 @@
 <tr class="promotion-directory-row grid grid-cols-2 gap-x-3 gap-y-3 px-4 py-4 align-middle xl:table-row xl:p-0">
   <td class="col-span-2 break-words xl:max-w-64 xl:px-4 xl:py-4">
-    <% if policy(record).show? %>
-      <%= link_to record.name, admin_promotion_path(record, campaign_navigation_params), class: 'rounded font-semibold text-[var(--brand-on-white)] underline-offset-4 hover:underline' %>
-    <% else %>
-      <strong><%= record.name %></strong>
-    <% end %>
-    <span class="mt-1 block text-xs text-slate-600"><%= record.code %> · <%= record.currency %></span>
+    <% primary_benefit = record.promotion_benefits.first %>
+    <% symbol = primary_benefit.nil? ? 'tag' : (primary_benefit.percentage? ? 'percent' : 'money') %>
+    <div class="promotion-campaign-name">
+      <span class="promotion-campaign-symbol promotion-campaign-symbol--<%= symbol %>">
+        <%= promotion_icon(symbol) %>
+      </span>
+      <div class="min-w-0">
+        <% if policy(record).show? %>
+          <%= link_to record.name, admin_promotion_path(record, campaign_navigation_params), class: 'rounded font-semibold text-[var(--brand-on-white)] underline-offset-4 hover:underline' %>
+        <% else %>
+          <strong><%= record.name %></strong>
+        <% end %>
+        <span class="mt-1 block text-xs text-slate-600"><%= record.code %> · <%= record.currency %></span>
+      </div>
+    </div>
   </td>
   <td class="min-w-0 xl:px-4 xl:py-4">
     <span class="catalog-label xl:hidden"><%= campaign_text('columns.benefit') %></span>

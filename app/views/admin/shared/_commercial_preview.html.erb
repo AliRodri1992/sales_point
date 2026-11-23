@@ -9,7 +9,7 @@
          data-commercial-preview-none-value="<%= t('admin.commercial_preview.none') %>">
   <% if local_assigns[:promotion_help] %>
     <%= render 'admin/promotions/section_heading', title: t('admin.commercial_preview.title'), subtitle: t('admin.commercial_preview.subtitle'),
-               icon: 'calculator', id: 'commercial-preview-heading', section: 'preview' %>
+               icon: 'eye', id: 'commercial-preview-heading', section: 'preview' %>
   <% else %>
     <%= catalog_heading(t('admin.commercial_preview.title'), t('admin.commercial_preview.subtitle'),
                         icon: 'calculator', id: 'commercial-preview-heading') %>
@@ -22,7 +22,11 @@
                            placeholder: t('admin.commercial_preview.placeholder'),
                            aria: { controls: 'commercial-preview-results' },
                            data: { commercial_preview_target: 'search', action: 'input->commercial-preview#search keydown.esc->commercial-preview#dismiss keydown.down->commercial-preview#focusResults' } %>
-        <%= delta_icon('magnifying-glass', class: 'absolute right-3 top-3 size-4 text-slate-400 pointer-events-none') %>
+        <% if local_assigns[:promotion_help] %>
+          <%= promotion_icon('search', class: 'absolute right-3 top-3 size-4 text-slate-400 pointer-events-none') %>
+        <% else %>
+          <%= delta_icon('magnifying-glass', class: 'absolute right-3 top-3 size-4 text-slate-400 pointer-events-none') %>
+        <% end %>
       </div>
       <div id="commercial-preview-results" data-commercial-preview-target="results" hidden
            class="absolute inset-x-0 top-full z-20 max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg"></div>
@@ -68,7 +72,12 @@
     <div class="flex flex-wrap items-center gap-3">
       <button type="button" data-action="commercial-preview#calculate" data-commercial-preview-target="calculate"
               class="catalog-button catalog-button-primary disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-        <%= delta_icon('calculator', class: 'size-4') %><%= t('admin.commercial_preview.calculate') %>
+        <% if local_assigns[:promotion_help] %>
+          <%= promotion_icon('eye', class: 'size-4') %>
+        <% else %>
+          <%= delta_icon('calculator', class: 'size-4') %>
+        <% end %>
+        <%= t('admin.commercial_preview.calculate') %>
       </button>
       <p data-commercial-preview-target="status" role="status" aria-live="polite" class="text-sm text-slate-600"></p>
     </div>

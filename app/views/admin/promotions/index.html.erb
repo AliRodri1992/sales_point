@@ -5,7 +5,7 @@
                title: t('admin.catalog_design.promotions'), intro: campaign_text('index_intro') %>
     <% if policy(Promotion).create? %>
       <%= link_to new_admin_promotion_path(campaign_navigation_params), class: 'catalog-button catalog-button-primary' do %>
-        <%= delta_icon('plus', class: 'size-4') %><%= campaign_text('new') %>
+        <%= promotion_icon('plus', class: 'size-4') %><%= campaign_text('new') %>
       <% end %>
     <% end %>
   </header>
@@ -33,7 +33,9 @@
           <%= label_tag :campaign_direction, campaign_text('order_label'), class: 'sr-only' %>
           <%= select_tag :direction, options_for_select(campaign_choices('direction', %w[asc desc]), campaign_filters[:direction] || 'asc'), id: 'campaign_direction' %>
         </div>
-        <%= button_tag campaign_text('sort_label'), name: nil, class: 'catalog-button' %>
+        <%= button_tag name: nil, class: 'catalog-button' do %>
+          <%= promotion_icon('sort', class: 'size-4') %><%= campaign_text('sort_label') %>
+        <% end %>
       <% end %>
     </header>
     <% if @records.any? %>
@@ -54,7 +56,7 @@
                  current_page: @current_page, per_page_label: t('admin.products.index.pagination.per_page_label'), frame: '_top' %>
     <% else %>
       <div class="catalog-card-body text-center">
-        <%= delta_icon('promotion-percent', class: 'mx-auto mb-3 size-8 text-[var(--brand-on-white)]') %>
+        <%= promotion_icon('search', class: 'mx-auto mb-3 size-8 text-[var(--brand-on-white)]') %>
         <p class="text-sm font-semibold"><%= campaign_text(campaign_filters.slice(*PromotionsHelper::CAMPAIGN_FILTERS).any? ? 'no_matches' : 'empty') %></p>
       </div>
     <% end %>

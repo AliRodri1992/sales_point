@@ -5,5 +5,5 @@
     <%= catalog_select(form, :kind, PromotionBenefit.kinds.keys.map { |kind| [t("admin.catalog_design.benefit_#{kind}"), kind] }, include_blank: false) %>
   </div>
   <%= catalog_field(form, :value, type: :number_field, label: required_field_label(t('admin.catalog_design.value')), step: 'any', aria: { required: true }) %>
-  <button type="button" class="catalog-button" data-action="promotion-editor#remove"><%= t('admin.catalog_design.remove') %></button>
+  <button type="button" class="catalog-button" data-action="promotion-editor#remove"><%= promotion_icon('x', class: 'size-4') %><%= t('admin.catalog_design.remove') %></button>
 </div>

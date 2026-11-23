@@ -1,5 +1,5 @@
 <div class="promotion-metrics" aria-label="<%= campaign_text('metrics.title') %>">
-  <% { 'total' => 'promotion-percent', 'active' => 'check-circle', 'scheduled' => 'calendar-days', 'paused' => 'pause-circle' }.each do |state, icon| %>
+  <% { 'total' => 'tag', 'active' => 'check', 'scheduled' => 'calendar', 'paused' => 'pause' }.each do |state, icon| %>
     <% options = campaign_filters.except(:status) %>
     <% options = options.merge(status: state) unless state == 'total' %>
     <% selected = state == 'total' ? campaign_filters[:status].blank? : campaign_filters[:status] == state %>
@@ -9,7 +9,7 @@
         <span class="promotion-metric-label"><%= campaign_text("metrics.#{state}") %></span>
         <strong><%= number_with_delimiter(@promotion_metrics.fetch(state)) %></strong>
       </span>
-      <span class="promotion-metric-icon"><%= delta_icon(icon, class: 'size-5') %></span>
+      <span class="promotion-metric-icon"><%= promotion_icon(icon, class: 'size-5') %></span>
     <% end %>
   <% end %>
 </div>

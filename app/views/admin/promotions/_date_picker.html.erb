@@ -6,17 +6,17 @@
             data-action="promotion-date#toggle" aria-expanded="false" aria-haspopup="dialog" aria-controls="<%= field_id %>-calendar"
             data-label="<%= campaign_text('calendar.open') %>"
             aria-label="<%= campaign_text('calendar.open') %>">
-      <%= delta_icon('calendar-days', class: 'size-5') %>
+      <%= promotion_icon('calendar', class: 'size-5') %>
     </button>
     <div class="promotion-date-panel" id="<%= field_id %>-calendar" data-promotion-date-target="panel" hidden
          role="dialog" aria-label="<%= campaign_text('calendar.open') %>">
       <div class="flex items-center justify-between gap-2">
         <button type="button" class="promotion-date-nav" data-action="promotion-date#previous" aria-label="<%= campaign_text('calendar.previous') %>">
-          <%= delta_icon('chevron-left', class: 'size-4') %>
+          <%= promotion_icon('chevron-left', class: 'size-4') %>
         </button>
         <strong class="text-sm" data-promotion-date-target="month" aria-live="polite"></strong>
         <button type="button" class="promotion-date-nav" data-action="promotion-date#next" aria-label="<%= campaign_text('calendar.next') %>">
-          <%= delta_icon('chevron-right', class: 'size-4') %>
+          <%= promotion_icon('chevron-right', class: 'size-4') %>
         </button>
       </div>
       <div class="promotion-date-grid" data-promotion-date-target="days"></div>

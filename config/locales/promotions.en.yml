@@ -34,6 +34,7 @@
           "label": "Help: %{title}",
           "close": "Close help",
           "how_to": "How to use",
+          "status": { "purpose": "Activation takes place from the detail screen.", "usage": "New promotions are saved as drafts. Open the detail screen to manage available transitions." },
           "filters": { "purpose": "Find campaigns by name, code, status and conditions.", "usage": "Choose filters, select Apply filters, and remove individual filters to broaden the search." },
           "directory": { "purpose": "Review promotions, validity periods and recorded usage.", "usage": "Use the actions to view, edit or archive according to your permissions. Archiving retains history." },
           "general": { "purpose": "Identify the campaign and set the discount currency.", "usage": "Enter a recognizable name. The code is assigned automatically on save." },

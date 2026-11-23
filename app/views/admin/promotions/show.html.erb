@@ -7,7 +7,7 @@
       <%= render 'back_button' %>
       <% if policy(@record).update? && !%w[archived exhausted expired].include?(@record.effective_status.to_s) %>
         <%= link_to edit_admin_promotion_path(@record, campaign_navigation_params), class: 'catalog-button catalog-button-primary' do %>
-          <%= delta_icon('pencil', class: 'size-4') %><%= t('admin.catalog_design.edit') %>
+          <%= promotion_icon('edit', class: 'size-4') %><%= t('admin.catalog_design.edit') %>
         <% end %>
       <% end %>
     </div>
@@ -18,12 +18,12 @@
   <div class="promotion-detail-grid">
       <section class="catalog-card !overflow-visible" aria-labelledby="campaign-offer-title">
         <%= render 'section_heading', title: campaign_text('sections.benefit'), subtitle: t('admin.catalog_design.promotion_benefits_hint'),
-                   icon: 'promotion-percent', id: 'campaign-offer-title', section: 'benefit' %>
+                   icon: 'percent', id: 'campaign-offer-title', section: 'benefit' %>
         <div class="catalog-card-body">
           <% if @record.promotion_benefits.any? %>
             <ul class="mb-5 grid gap-3 sm:grid-cols-2">
               <% @record.promotion_benefits.each do |benefit| %>
-                <li class="border-l-2 border-[var(--brand)] pl-3">
+                <li class="promotion-offer-box">
                   <span class="block font-jakarta text-2xl font-bold tabular-nums"><%= campaign_benefit_label(benefit, @record.currency, precision) %></span>
                   <span class="text-xs text-slate-600"><%= t("admin.catalog_design.benefit_#{benefit.kind}") %></span>
                 </li>
@@ -40,9 +40,10 @@
         </div>
       </section>
 
+      <%= render 'usage_and_actions', record: @record %>
       <section class="catalog-card !overflow-visible" aria-labelledby="campaign-conditions-title">
         <%= render 'section_heading', title: campaign_text('sections.conditions'), subtitle: campaign_text('conditions_hint'),
-                   icon: 'funnel', id: 'campaign-conditions-title', section: 'conditions' %>
+                   icon: 'filter', id: 'campaign-conditions-title', section: 'conditions' %>
         <div class="catalog-card-body">
           <% if @record.promotion_conditions.any? %>
             <dl class="catalog-definition">
@@ -74,11 +75,10 @@
           <% end %>
         </dl>
       </section>
-      <%= render 'usage_and_actions', record: @record %>
-      <%= render 'admin/shared/commercial_overlaps', record: @record, promotion_help: true %>
       <div class="promotion-full">
         <%= render 'admin/shared/commercial_preview', record: @record, preview_url: preview_admin_promotion_path(@record, format: :json), lookup_url: products_lookup_admin_promotions_path(format: :json), promotion_help: true %>
       </div>
+      <%= render 'admin/shared/commercial_overlaps', record: @record, promotion_help: true %>
       <% if policy(@record).history? %>
         <section class="catalog-card promotion-full !overflow-visible" aria-labelledby="campaign-history-title">
           <%= render 'section_heading', title: campaign_text('history'), subtitle: nil,

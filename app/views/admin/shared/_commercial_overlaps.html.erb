@@ -3,7 +3,11 @@
   <% if overlapping.any? %>
     <section class="rounded-xl border border-amber-200 bg-amber-50 p-4 <%= 'promotion-full' if local_assigns[:promotion_help] %>" aria-labelledby="commercial-overlaps-heading">
       <div class="flex items-start gap-3">
-        <%= delta_icon('exclamation-triangle', class: 'size-5 shrink-0 text-amber-700') %>
+        <% if local_assigns[:promotion_help] %>
+          <%= promotion_icon('calendar', class: 'size-5 shrink-0 text-amber-700') %>
+        <% else %>
+          <%= delta_icon('exclamation-triangle', class: 'size-5 shrink-0 text-amber-700') %>
+        <% end %>
         <div class="min-w-0 flex-1">
           <div class="flex items-center gap-2">
             <h2 id="commercial-overlaps-heading" class="text-sm font-semibold text-amber-900"><%= t('admin.commercial_preview.overlaps') %></h2>

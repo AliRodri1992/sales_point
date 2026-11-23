@@ -176,7 +176,46 @@ RSpec.describe 'Independent commercial catalog workflows', type: :request do
     sidebar = document.at_css('svg[data-sidebar-icon="promotions"]')
     heading = document.at_css('svg[data-promotion-icon]')
     expect(sidebar.element_children.map(&:to_html)).to eq(heading.element_children.map(&:to_html))
+    expect(sidebar['stroke-width']).to eq('1.7')
+    expect(heading['stroke-width']).to eq('1.7')
     expect(heading.css('circle').size).to eq(2)
+  end
+
+  it 'renders the approved prototype metric, benefit and action icons' do
+    offer
+    organization.promotions.create!(name: 'Fixed offer', currency: 'MXN',
+                                    promotion_benefits_attributes: [{ kind: 'fixed_amount', value: 20 }])
+    get admin_promotions_path
+    document = Nokogiri::HTML(response.body)
+    expect(document.css('.promotion-metric-icon svg path').pluck('d')).to eq([
+      'M3 3h9l10 10-9 9L3 12z', 'm5 12 4 4L19 6', 'M7 3v4m10-4v4M3 10h18', 'M9 5v14M15 5v14'
+    ])
+    expect(document.css('.promotion-campaign-symbol svg path').pluck('d'))
+      .to contain_exactly('m5 19 14-14', 'M5 12h1m12 0h1')
+    expect(document.at_css('[data-promotion-row-actions] svg path')['d'])
+      .to eq('M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z')
+    expect(document.at_css("a[href='#{edit_admin_promotion_path(offer)}'] svg path")['d'])
+      .to eq('m4 16 12-12 4 4L8 20H4zM13 7l4 4')
+    expect(document.at_css('[data-promotion-row-actions] button svg path')['d'])
+      .to eq('M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7')
+  end
+
+  it 'uses prototype section and lifecycle icons in the promotion detail and editor' do
+    get admin_promotion_path(offer)
+    detail = Nokogiri::HTML(response.body)
+    expect(detail.at_css('[aria-labelledby="commercial-preview-heading"] .catalog-icon path')['d'])
+      .to eq('M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z')
+    expect(detail.at_css('[data-section-help-trigger] svg path')['d'])
+      .to eq('M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.3-3 4m.1 3h.01')
+    expect(detail.css('.promotion-lifecycle-action svg path').pluck('d'))
+      .to include('m7 4 14 8-14 8z', 'M3 4h18v5H3zM5 9v12h14V9M9 13h6')
+    get edit_admin_promotion_path(offer)
+    editor = Nokogiri::HTML(response.body)
+    expect(editor.at_css('[aria-labelledby="campaign-limits-title"] .catalog-icon circle')['cx']).to eq('9')
+    expect(editor.at_css('.promotion-date-trigger svg path')['d']).to eq('M7 3v4m10-4v4M3 10h18')
+    expect(editor.at_css('.promotion-form button[type="submit"] svg path')['d']).to eq('m5 12 4 4L19 6')
+    expect(editor.css('.promotion-editor-column').size).to eq(2)
+    expect(editor.at_css('[aria-labelledby="campaign-status-title"] .catalog-icon path')['d']).to eq('M12 11v6m0-10v.5')
   end
 
   it 'offers permitted row actions and archives without deleting the promotion' do

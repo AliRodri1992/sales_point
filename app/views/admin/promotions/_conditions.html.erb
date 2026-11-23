@@ -1,6 +1,6 @@
 <section id="campaign-conditions" class="catalog-card !overflow-visible" aria-labelledby="campaign-conditions-title">
   <%= render 'section_heading', title: campaign_text('sections.conditions'), subtitle: campaign_text('conditions_hint'),
-             id: 'campaign-conditions-title', icon: 'funnel', section: 'conditions' %>
+             id: 'campaign-conditions-title', icon: 'filter', section: 'conditions' %>
   <div class="catalog-card-body space-y-5">
     <% unless @target_lists.nil? %>
       <div class="catalog-field">
@@ -31,7 +31,7 @@
         </div>
       </div>
       <button type="button" class="catalog-button" data-action="promotion-editor#addRule" data-promotion-editor-target="addRule">
-        <%= delta_icon('plus', class: 'size-4') %><%= campaign_text('add_rule') %>
+        <%= promotion_icon('plus', class: 'size-4') %><%= campaign_text('add_rule') %>
       </button>
     </div>
     <p class="text-sm text-slate-600 empty:hidden" role="status" data-promotion-editor-target="conditionNotice"></p>

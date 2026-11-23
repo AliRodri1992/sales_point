@@ -34,6 +34,7 @@
           "label": "Ayuda: %{title}",
           "close": "Cerrar ayuda",
           "how_to": "Cómo se usa",
+          "status": { "purpose": "La activación se realiza desde el detalle.", "usage": "Las promociones nuevas se guardan como borrador. Consulta el detalle para gestionar las transiciones disponibles." },
           "filters": { "purpose": "Localiza campañas mediante su nombre, código, estado y condiciones.", "usage": "Elige los filtros, pulsa Aplicar filtros y retira los filtros individuales cuando quieras ampliar la búsqueda." },
           "directory": { "purpose": "Consulta las promociones, su vigencia y el uso registrado.", "usage": "Usa las acciones para mostrar, editar o archivar según tus permisos. Archivar conserva el historial." },
           "general": { "purpose": "Identifica la campaña y define la moneda de sus descuentos.", "usage": "Escribe un nombre reconocible. Al guardar se asigna el código automáticamente." },

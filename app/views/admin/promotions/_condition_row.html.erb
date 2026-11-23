@@ -16,5 +16,5 @@
                       label: required_field_label(campaign_condition_label(kind)), **(field == :customer_segment ? { maxlength: 100 } : { step: 'any' })) %>
   <% end %>
   <%= error_message_for(form.object, :kind) %>
-  <button type="button" class="catalog-button" data-action="promotion-editor#remove"><%= t('admin.catalog_design.remove') %></button>
+  <button type="button" class="catalog-button" data-action="promotion-editor#remove"><%= promotion_icon('x', class: 'size-4') %><%= t('admin.catalog_design.remove') %></button>
 </div>
