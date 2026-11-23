@@ -1,11 +1,25 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["benefits", "benefitTemplate", "conditions", "conditionTemplate", "benefitNotice", "conditionNotice", "addCondition", "addBenefit"]
+  static targets = ["benefits", "benefitTemplate", "conditions", "conditionTemplate", "benefitNotice", "conditionNotice", "addCondition", "addBenefit", "benefitCount", "conditionCount"]
   static values = { limit: String, duplicate: String, removed: String }
 
   connect() {
     this.sequence = Date.now()
+    this.updateCounts()
+  }
+
+  activeCount(container) {
+    return Array.from(container.children).filter((row) => !row.hidden).length
+  }
+
+  updateCounts() {
+    const benefits = this.activeCount(this.benefitsTarget)
+    const conditions = this.activeCount(this.conditionsTarget)
+    this.benefitCountTarget.textContent = `${benefits} / 10`
+    this.conditionCountTarget.textContent = `${conditions} / 20`
+    this.addBenefitTarget.disabled = benefits >= 10 || this.benefitsTarget.children.length >= 20
+    this.addConditionTarget.disabled = conditions >= 20 || this.conditionsTarget.children.length >= 40
   }
 
   addBenefit() {
@@ -55,7 +69,7 @@ export default class extends Controller {
   append(container, template, limit) {
     const notice = container === this.benefitsTarget ? this.benefitNoticeTarget : this.conditionNoticeTarget
     notice.textContent = ""
-    if (!template || container.children.length >= limit) {
+    if (!template || this.activeCount(container) >= limit || container.children.length >= limit * 2) {
       notice.textContent = this.limitValue
       return
     }
@@ -69,6 +83,7 @@ export default class extends Controller {
     })
     this.sequence++
     container.append(row)
+    this.updateCounts()
     return row
   }
 
@@ -85,6 +100,7 @@ export default class extends Controller {
     }
     const notice = benefit ? this.benefitNoticeTarget : this.conditionNoticeTarget
     notice.textContent = this.removedValue
+    this.updateCounts()
     returnFocus.focus()
   }
 }

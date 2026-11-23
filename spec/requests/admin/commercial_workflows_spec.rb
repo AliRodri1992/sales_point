@@ -162,10 +162,10 @@ RSpec.describe 'Independent commercial catalog workflows', type: :request do
     expect(response.body).to include(offer.name)
   end
 
-  it 'finds included and excluded promotion targets and partial customer segments' do
+  it 'finds included promotion targets and partial customer segments' do
     category = create(:category, organization:)
-    offer.update!(promotion_conditions_attributes: [{ kind: 'excluded_product', product: },
-                                                    { kind: 'excluded_category', category: },
+    offer.update!(promotion_conditions_attributes: [{ kind: 'product', product: },
+                                                    { kind: 'category', category: },
                                                     { kind: 'customer_segment', customer_segment: 'Wholesale Trade' }])
     organization.promotions.create!(name: 'Unrelated promotion', currency: 'MXN')
 
@@ -174,6 +174,13 @@ RSpec.describe 'Independent commercial catalog workflows', type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include(offer.name)
     expect(response.body).not_to include('Unrelated promotion')
+  end
+
+  it 'does not confuse excluded-only products with included products in directory filters' do
+    excluded = create(:product, organization:)
+    offer.update!(promotion_conditions_attributes: [{ kind: 'excluded_product', product: excluded }])
+    get admin_promotions_path, params: { product_id: excluded.id }
+    expect(Nokogiri::HTML(response.body).css('.promotion-directory-row')).to be_empty
   end
 
   it 'shows a scoped promotion overview and the same percentage icon in the sidebar and heading' do
@@ -216,7 +223,7 @@ RSpec.describe 'Independent commercial catalog workflows', type: :request do
     expect(document.at_css("a[href='#{edit_admin_promotion_path(offer)}'] svg path")['d'])
       .to eq('m4 16 12-12 4 4L8 20H4zM13 7l4 4')
     expect(document.at_css('[data-promotion-row-actions] button svg path')['d'])
-      .to eq('M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7')
+      .to eq('M3 4h18v5H3zM5 9v12h14V9M9 13h6')
   end
 
   it 'uses prototype section and lifecycle icons in the promotion detail and editor' do

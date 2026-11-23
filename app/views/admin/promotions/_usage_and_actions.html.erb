@@ -22,7 +22,7 @@
           <% actions.each do |action| %>
             <%= button_to transition_admin_promotion_path(record, campaign_navigation_params),
                           method: :patch, params: { commercial_action: action }, class: 'catalog-button promotion-lifecycle-action',
-                          form: { data: { turbo_confirm: campaign_text("confirm.#{action}", name: record.name) } } do %>
+                          form: { data: { turbo_confirm: campaign_transition_confirmation(record, action) } } do %>
               <%= promotion_icon(PromotionsHelper::ACTION_ICONS.fetch(action), class: 'size-4') %><%= campaign_text("actions.#{action}") %>
             <% end %>
           <% end %>

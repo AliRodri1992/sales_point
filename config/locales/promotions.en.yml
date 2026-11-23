@@ -20,7 +20,7 @@
         },
         "row_actions": {
           "show": "View",
-          "delete": "Delete"
+          "archive": "Archive"
         },
         "calendar": {
           "open": "Open calendar",
@@ -137,6 +137,8 @@
         "date_hint": "Times are in %{zone}. The campaign ends at the specified time. Leave dates blank for an open period.",
         "limits_hint": "Leave limits blank for unlimited use. A per-customer limit requires a customer ID at redemption.",
         "add_benefit": "Add benefit",
+        "benefits_count_label": "Number of benefits",
+        "conditions_count_label": "Number of conditions",
         "cap": "Maximum line discount",
         "mode": "Promotion combination",
         "modes": {
@@ -183,6 +185,7 @@
         },
         "confirm": {
           "activate": "Activate %{name} for its configured period?",
+          "activate_all": "Activate %{name}? With no conditions, all eligible products and customers may receive this discount.",
           "pause": "Pause %{name} and suspend its discounts?",
           "resume": "Resume discounts for %{name}?",
           "archive": "Archive %{name} permanently and retain its history?",

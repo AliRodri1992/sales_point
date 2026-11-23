@@ -83,6 +83,14 @@ module PromotionsHelper
     time ? l(time.in_time_zone, format:) : t('admin.catalog_design.no_limit')
   end
 
+  def campaign_transition_confirmation(record, action)
+    if action == 'activate' && record.promotion_conditions.empty?
+      return campaign_text('confirm.activate_all', name: record.name)
+    end
+
+    campaign_text("confirm.#{action}", name: record.name)
+  end
+
   def campaign_available_actions(record)
     %w[activate pause resume archive duplicate].select do |action|
       policy(record).public_send("#{action}?") && record.transition_available?(action)

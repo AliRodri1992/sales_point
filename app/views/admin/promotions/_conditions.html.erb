@@ -3,6 +3,10 @@
              id: 'campaign-conditions-title', icon: 'filter', section: 'conditions' %>
   <div class="catalog-card-body">
     <%= error_message_for(form.object, :promotion_conditions) %>
+    <p class="mb-3 text-xs font-semibold text-slate-600" aria-live="polite"
+       aria-label="<%= campaign_text('editor.#{kind}_count_label') %>">
+      <span data-promotion-editor-target="conditionCount"><%= form.object.promotion_conditions.count { |row| !row.marked_for_destruction? && row.deleted_at.nil? } %> / <%= Promotion::MAX_CONDITIONS %></span>
+    </p>
     <div data-promotion-editor-target="conditions">
       <%= form.fields_for :promotion_conditions, include_id: false do |row| %>
         <%= render 'condition_row', form: row %>

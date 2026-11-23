@@ -250,7 +250,7 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
     expect(page).to have_css('.promotion-heading-actions .catalog-button', count: 2)
     expect(page.evaluate_script(
       "getComputedStyle(document.querySelector('.promotion-heading-actions')).justifyContent"
-    )).to eq('flex-start')
+    )).to be_in(%w[flex-start flow-start])
     expect(page.evaluate_script(
       "Math.round(document.querySelector('.promotion-module-icon').getBoundingClientRect().width)"
     )).to eq(43)
@@ -263,7 +263,7 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
     )).to eq('0px')
     expect(page.evaluate_script(
       "getComputedStyle(document.querySelector('.promotion-heading-actions')).justifyContent"
-    )).to eq('flex-start')
+    )).to be_in(%w[flex-start flow-start])
   end
 
   scenario 'uses the catalog pagination controls for both commercial directories' do

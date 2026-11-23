@@ -20,7 +20,7 @@
         },
         "row_actions": {
           "show": "Mostrar",
-          "delete": "Eliminar"
+          "archive": "Archivar"
         },
         "calendar": {
           "open": "Abrir calendario",
@@ -137,6 +137,8 @@
         "date_hint": "La zona horaria es %{zone}. La campaña termina a la hora indicada. Deja las fechas vacías para no limitar el periodo.",
         "limits_hint": "Deja los límites vacíos para permitir usos ilimitados. El límite por cliente requiere identificar al cliente al canjear.",
         "add_benefit": "Añadir beneficio",
+        "benefits_count_label": "Número de beneficios",
+        "conditions_count_label": "Número de condiciones",
         "cap": "Descuento máximo por línea",
         "mode": "Combinación de promociones",
         "modes": {
@@ -183,6 +185,7 @@
         },
         "confirm": {
           "activate": "¿Activar %{name} durante el periodo configurado?",
+          "activate_all": "¿Activar %{name}? Sin condiciones, la promoción podrá aplicarse a todos los productos y clientes elegibles.",
           "pause": "¿Pausar %{name} y suspender sus descuentos?",
           "resume": "¿Reanudar los descuentos de %{name}?",
           "archive": "¿Archivar %{name} definitivamente y conservar su historial?",

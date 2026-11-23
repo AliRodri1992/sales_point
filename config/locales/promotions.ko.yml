@@ -20,7 +20,7 @@
         },
         "row_actions": {
           "show": "보기",
-          "delete": "삭제"
+          "archive": "보관"
         },
         "calendar": {
           "open": "달력 열기",
@@ -137,6 +137,8 @@
         "date_hint": "시간대는 %{zone}입니다. 지정한 종료 시각이 되면 캠페인이 종료됩니다. 기간 제한이 없으면 날짜를 비워 두세요.",
         "limits_hint": "제한 없이 사용하려면 비워 두세요. 고객별 한도를 설정하면 사용 시 고객 ID가 필요합니다.",
         "add_benefit": "혜택 추가",
+        "benefits_count_label": "혜택 수",
+        "conditions_count_label": "조건 수",
         "cap": "품목별 최대 할인액",
         "mode": "프로모션 적용 방식",
         "modes": {
@@ -183,6 +185,7 @@
         },
         "confirm": {
           "activate": "설정한 기간 동안 %{name} 캠페인을 활성화할까요?",
+          "activate_all": "%{name} 프로모션을 활성화할까요? 조건이 없으면 모든 적격 상품과 고객에게 적용될 수 있습니다.",
           "pause": "%{name} 캠페인을 일시 중지하고 할인 적용을 멈출까요?",
           "resume": "%{name}의 할인을 재개할까요?",
           "archive": "%{name} 캠페인을 영구 보관하고 이력을 유지할까요?",

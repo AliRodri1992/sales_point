@@ -93,7 +93,7 @@ class CommercialCatalogQuery
     { product_id: 'product', category_id: 'category' }.each do |field, kind|
       next if @filters[field].blank?
 
-      conditions = PromotionCondition.where(kind: [kind, "excluded_#{kind}"], field => @filters[field])
+      conditions = PromotionCondition.where(kind:, field => @filters[field])
       scope = scope.where(id: conditions.select(:promotion_id))
     end
     scope
