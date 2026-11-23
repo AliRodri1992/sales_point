@@ -8,8 +8,26 @@ module CatalogDesignHelper
     'admin/units_of_measure' => 'admin.units_of_measure.index.title'
   }.freeze
 
+  # Keep browser tabs stable across a module's index, detail and editor pages.
+  # Catalogs already use this title convention; Commercial and Configuration
+  # share it without duplicating prefixes from individual view titles.
+  SECTION_TITLE_KEYS = {
+    'admin/price_lists' => 'admin.catalog_design.price_lists',
+    'admin/promotions' => 'admin.catalog_design.promotions',
+    'admin/general_settings' => 'admin.general_settings.title',
+    'system_roles' => 'admin.system_roles.index.title',
+    'admin/branches' => 'admin.branches.index.title',
+    'admin/users' => 'admin.users.index.title',
+    'admin/user_invitations' => 'admin.users.index.title',
+    'admin/user_restorations' => 'admin.users.index.title',
+    'admin/user_statuses' => 'admin.users.index.title',
+    'admin/email_templates' => 'admin.email_templates.title',
+    'admin/email_branding_settings' => 'admin.email_templates.title',
+    'admin/email_sender_settings' => 'admin.email_templates.title'
+  }.freeze
+
   def catalog_module_page_title
-    key = CATALOG_TITLE_KEYS[controller_path]
+    key = CATALOG_TITLE_KEYS[controller_path] || SECTION_TITLE_KEYS[controller_path]
     "Delta POS | #{t(key)}" if key
   end
 
