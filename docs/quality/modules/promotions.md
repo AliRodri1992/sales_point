@@ -67,3 +67,8 @@ Este registro incorpora **PROMOTIONS-001** como defecto de frontera observado de
 - Evidencia prevista: `spec/models/commercial_lifecycle_spec.rb`, `spec/services/products/commercial_rules_spec.rb`, `spec/services/products/promotion_concurrency_spec.rb`, `spec/services/commercial/overlaps_spec.rb`, `spec/requests/admin/commercial_workflows_spec.rb` y las pruebas de navegador de campañas y simulador. Aceptación pendiente de CI del SHA integrado.
 
 - Evidencia del SHA `8e87afa`: [Commercial CI](https://github.com/AliRodri1992/sales_point/actions/runs/45089004616), 168 pruebas funcionales y 21 de navegador, cero fallos; [Products CI](https://github.com/AliRodri1992/sales_point/actions/runs/45089004750) aprobado. En ese SHA queda una infracción de complejidad de RuboCop, corregida en la siguiente revisión. El dictamen integral exige comprobar CI en el SHA final y las demás puertas del estándar modular.
+
+### Datos de demostración y paginación
+
+- **PROMOTIONS-003 · P2 · PROPIO:** el listado utilizaba `table_pagination`, distinto del pie de catálogos. Se reutiliza `catalog_pagination` dentro del directorio, con Delta Select, enlaces y contador de página. La regresión de petición cubre dos páginas y conservación de filtros y orden. Verificación pendiente de CI del SHA publicado.
+- Doce campañas demo con beneficios porcentuales y monetarios, condiciones sobre productos activos, vigencias, segmentos y límites. Sin redenciones simuladas ni sobrescritura de ediciones manuales.

@@ -12,6 +12,7 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
       SystemRole, Permission, SystemRolePermission, Language, Translate, SatMonth,
       Supplier, Contact, Address, SupplierSchedule, SupplierEvent, SupplierProduct,
       SupplierProductPrice, SupplierBankAccount, Product, Inventory,
+      PriceList, PriceListItem, Promotion, PromotionCondition, PromotionBenefit, PromotionRedemption,
       Branch, Category, Client, Country, Currency, CountryCurrency,
       ActiveStorage::Attachment, ActiveStorage::Blob, SatFiscalRegime, SatBank,
       SatCfdiUse, SatCountry, SatCurrency, SatExportType, SatFactorType,
@@ -84,6 +85,18 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     expect(organization.units_of_measure.find_by!(code: 'KILO').sat_unit_key.code).to eq('KGM')
     expect(organization.inventories.select(:branch_id).distinct.count).to be >= 3
     expect(InventoryMovement.where(organization:).count).to be_positive
+    lists = organization.price_lists.where('code LIKE ?', 'LP-DEMO-%')
+    campaigns = organization.promotions.where('code LIKE ?', 'PRO-DEMO-%')
+    expect(lists.count).to be >= 12
+    expect(campaigns.count).to be >= 12
+    expect(lists.map(&:effective_status)).to include('draft', 'active', 'paused', 'scheduled', 'expired', 'archived')
+    expect(campaigns.map(&:effective_status))
+      .to include('draft', 'active', 'paused', 'scheduled', 'expired', 'archived')
+    expect(lists.all? { |list| list.price_list_items.any? }).to be(true)
+    expect(campaigns.all? { |campaign| campaign.promotion_benefits.any? }).to be(true)
+    expect(PromotionBenefit.where(promotion: campaigns).distinct.pluck(:kind))
+      .to match_array(%w[percentage fixed_amount])
+    expect(PromotionRedemption.where(promotion: campaigns)).not_to exist
   end
 
   it 'does not duplicate records or reset manual supplier and login changes on a second run' do
@@ -104,6 +117,10 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     product.update!(name: 'Producto editado manualmente')
     category = Category.find_by!(code: 'cat0001')
     category.update!(name: 'Categoría editada manualmente')
+    list = organization.price_lists.find_by!(code: 'LP-DEMO-0001')
+    list.update!(name: 'Lista editada manualmente')
+    campaign = organization.promotions.find_by!(code: 'PRO-DEMO-0001')
+    campaign.update!(name: 'Promoción editada manualmente')
     bank_account = supplier.supplier_bank_accounts.first!
     bank_account.update!(holder_name: 'Titular editado manualmente')
     role = SystemRole.find_by!(code: 'cashier')
@@ -119,6 +136,8 @@ RSpec.describe 'Full Delta POS seeds', type: :model do
     expect(admin.reload.valid_password?('PasswordManual#2026')).to be(true)
     expect(product.reload.name).to eq('Producto editado manualmente')
     expect(category.reload.name).to eq('Categoría editada manualmente')
+    expect(list.reload.name).to eq('Lista editada manualmente')
+    expect(campaign.reload.name).to eq('Promoción editada manualmente')
     expect(bank_account.reload.holder_name).to eq('Titular editado manualmente')
     expect(role.reload).to be_inactive
     expect(role.status_events.last.reason).to eq('Manual suspension')

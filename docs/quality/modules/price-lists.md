@@ -58,3 +58,8 @@ Política: [Estándar modular](../module-quality-standard.md) · [Plantilla ampl
 - Evidencia de regresión prevista: `spec/models/commercial_lifecycle_spec.rb`, `spec/services/products/commercial_rules_spec.rb`, `spec/services/products/price_list_retirement_spec.rb`, `spec/services/commercial/overlaps_spec.rb`, `spec/requests/admin/commercial_workflows_spec.rb` y las pruebas de navegador del módulo y simulador. La aceptación sigue pendiente de los resultados del SHA integrado en GitHub Actions.
 
 - Evidencia del SHA `8e87afa`: [Commercial CI](https://github.com/AliRodri1992/sales_point/actions/runs/45089004616), 168 pruebas de dominio/permisos/peticiones/transacciones y 21 de navegador, cero fallos. [Products CI](https://github.com/AliRodri1992/sales_point/actions/runs/45089004750) y migraciones frescas también aprobados. Quedó un hallazgo de complejidad de RuboCop en la autorización comercial, corregido en la revisión siguiente; CI del nuevo SHA y auditoría integral siguen como puertas de aceptación.
+
+### Datos de demostración y paginación
+
+- Doce listas demo de la organización Delta POS, con tres partidas por lista, escalas de cantidad, segmentos y estados efectivos. Códigos deterministas de semillas; la generación automática de las altas normales permanece intacta. Las recargas respetan ediciones y retiros manuales.
+- Se conserva el paginador compartido `admin/shared/catalog_pagination` y se añade el contador de registros de la página utilizado en Productos. Las regresiones cubren navegación, filtros y orden; verificación pendiente del SHA publicado.

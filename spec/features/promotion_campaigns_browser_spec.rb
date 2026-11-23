@@ -96,4 +96,29 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
     expect(page).to have_current_path(/status=draft/)
     within('#campaign-results') { expect(page).to have_link('Spring') }
   end
+
+  scenario 'uses the catalog pagination controls for both commercial directories' do
+    %i[promotions price_lists].each do |resource|
+      12.times do |index|
+        organization.public_send(resource).create!(name: format('Demo %02d', index + 1), currency: 'MXN')
+      end
+      visit public_send("admin_#{resource}_path", search: 'Demo', per_page: 10)
+      page.current_window.resize_to(390, 900)
+      expect(page).to have_css('footer.catalog-list-pagination [aria-current="page"]', exact_text: '1')
+      expect(page).to have_link('Demo 10')
+      expect(page).to have_no_link('Demo 11')
+      within('.catalog-list-pagination-links') { click_link '2', exact: true }
+      expect(page).to have_link('Demo 12')
+      expect(page).to have_no_link('Demo 01')
+      wrapper = find("##{resource}_per_page", visible: :all).find(:xpath, '..')
+      wrapper.find('button[aria-haspopup="listbox"]').click
+      wrapper.find('[role="option"]', text: '5', exact_text: true).click
+      expect(page).to have_current_path(/per_page=5/)
+      expect(page).to have_link('Demo 05')
+      expect(page).to have_no_link('Demo 06')
+      expect(page.current_url).to include('search=Demo')
+      expect(page).to have_css('.catalog-list-pagination [aria-current="page"]', exact_text: '1')
+      expect(page.evaluate_script('document.documentElement.scrollWidth <= innerWidth')).to be(true)
+    end
+  end
 end

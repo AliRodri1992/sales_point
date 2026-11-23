@@ -13,9 +13,12 @@
     <% end %>
   </header>
   <%= render 'filters' %>
-  <section id="campaign-results" class="catalog-card !overflow-visible" aria-labelledby="campaign-results-title">
+  <section id="campaign-results" class="catalog-list-directory !overflow-visible" aria-labelledby="campaign-results-title">
     <header class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-4 py-4 sm:px-5">
       <h2 id="campaign-results-title" class="font-jakarta font-bold"><%= campaign_text('results', count: @total_count) %></h2>
+      <% if @records.any? %>
+        <span class="catalog-list-page-count"><%= t('admin.catalog_directory.showing', count: @records.size) %></span>
+      <% end %>
       <%= form_with url: admin_promotions_path, method: :get, class: 'flex flex-wrap items-center gap-2' do %>
         <% campaign_filters.except(:sort, :direction).each do |field, value| %><%= hidden_field_tag field, value, id: nil %><% end %>
         <div class="min-w-0">
@@ -43,6 +46,8 @@
           <% end %>
         </tbody>
       </table>
+      <%= render 'admin/shared/catalog_pagination', key: 'promotions', total_pages: @total_pages,
+                 current_page: @current_page, per_page_label: t('admin.products.index.pagination.per_page_label'), frame: '_top' %>
     <% else %>
       <div class="catalog-card-body text-center">
         <%= delta_icon('receipt-percent', class: 'mx-auto mb-3 size-8 text-[var(--brand-on-white)]') %>
@@ -50,5 +55,4 @@
       </div>
     <% end %>
   </section>
-  <%= render 'admin/shared/table_pagination', table_key: controller_name %>
 </div>

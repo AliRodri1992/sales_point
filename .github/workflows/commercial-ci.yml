@@ -37,6 +37,8 @@ on:
       - 'config/routes.rb'
       - 'db/migrate/*commercial*'
       - 'db/schema.rb'
+      - 'db/seeds.rb'
+      - 'db/seeds/commercial_examples.rb'
       - 'spec/**/*commercial*'
       - 'spec/**/*price_list*'
       - 'spec/**/*promotion*'
@@ -117,7 +119,8 @@ jobs:
             spec/requests/admin/commercial_catalog_spec.rb spec/requests/admin/commercial_security_spec.rb \
             spec/requests/admin/commercial_workflows_spec.rb spec/requests/admin/product_commercial_access_spec.rb \
             spec/requests/admin/product_price_history_spec.rb spec/requests/admin/sidebar_spec.rb \
-            spec/requests/admin/sidebar_icons_spec.rb spec/helpers/breadcrumbs_helper_spec.rb
+            spec/requests/admin/sidebar_icons_spec.rb spec/helpers/breadcrumbs_helper_spec.rb \
+            spec/seeds/commercial_examples_spec.rb
       - name: Verify the new commercial browser workflows
         if: ${{ !cancelled() && (steps.rules.outcome == 'success' || steps.rules.outcome == 'failure') }}
         env:

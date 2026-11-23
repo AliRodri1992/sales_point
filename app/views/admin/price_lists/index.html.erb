@@ -27,9 +27,10 @@
       <% end %>
     </dl>
     <header class="catalog-list-directory-heading">
-      <div><h2 id="price-list-directory"><%= t('admin.price_lists_ui.directory') %></h2>
-
-      </div>
+      <div><h2 id="price-list-directory"><%= t('admin.price_lists_ui.directory') %></h2></div>
+      <% if @records.any? %>
+        <span class="catalog-list-page-count"><%= t('admin.catalog_directory.showing', count: @records.size) %></span>
+      <% end %>
       <%= render 'admin/shared/catalog_mobile_sort', columns: columns, frame: '_top' if @records.any? %>
     </header>
     <% if @records.any? %>

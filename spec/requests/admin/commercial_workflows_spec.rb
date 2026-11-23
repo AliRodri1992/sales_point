@@ -161,4 +161,30 @@ RSpec.describe 'Independent commercial catalog workflows', type: :request do
     get admin_promotions_path, params: { status: 'expired', usage: 'exhausted' }
     expect(response.body).to include(offer.name)
   end
+
+  %i[price_lists promotions].each do |resource|
+    it "paginates #{resource} with the catalog footer and retains filters and sorting" do
+      12.times do |index|
+        organization.public_send(resource).create!(name: format('Demo %02d', index + 1), currency: 'MXN')
+      end
+      organization.public_send(resource).create!(name: 'Unrelated', currency: 'MXN')
+      path = public_send("admin_#{resource}_path")
+
+      get path, params: { search: 'Demo', sort: 'name', direction: 'asc', per_page: 10 }
+      document = Nokogiri::HTML(response.body)
+      footer = document.at_css('section > footer.catalog-list-pagination')
+      selected = footer.at_css("[data-controller='delta-select'] select##{resource}_per_page option[selected]")
+      expect(selected['value']).to eq('10')
+      expect(footer.at_css('[aria-current="page"]').text).to eq('1')
+      expect(response.body).to include('Demo 01', 'Demo 10')
+      expect(response.body).not_to include('Demo 11', 'Unrelated')
+      next_page = footer.css('a').find { |link| link.text.strip == '2' }
+      get next_page['href']
+      expect(request.query_parameters).to include('search' => 'Demo', 'sort' => 'name', 'direction' => 'asc',
+                                                  'per_page' => '10', 'page' => '2')
+      expect(response.body).to include('Demo 11', 'Demo 12')
+      expect(response.body).not_to include('Demo 01', 'Unrelated')
+      expect(Nokogiri::HTML(response.body).at_css('.catalog-list-pagination [aria-current="page"]').text).to eq('2')
+    end
+  end
 end

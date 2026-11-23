@@ -704,6 +704,16 @@ SeedConsole.track('Productos', Product) do
   end
 end
 
+require_relative 'seeds/commercial_examples'
+SeedConsole.track('Listas de precios', PriceList) do
+  organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+  CommercialExamples.seed_price_lists!(organization:)
+end
+SeedConsole.track('Promociones', Promotion) do
+  organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
+  CommercialExamples.seed_promotions!(organization:)
+end
+
 SeedConsole.track('Sucursales', Branch) do
   organization = Organization.find_by!(tax_id: SupplierExamples::ORGANIZATION_TAX_ID)
 
