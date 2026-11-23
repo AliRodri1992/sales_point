@@ -85,6 +85,27 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
 
     click_button 'Add condition'
     condition = find('.promotion-condition-row')
+    [390, 1280].each do |width|
+      page.current_window.resize_to(width, 900)
+      spacing = page.evaluate_script(<<~JS)
+        (() => {
+          const control = document.querySelector('.promotion-condition-row .promotion-lookup-control')
+          const input = control.querySelector('input[type="search"]')
+          const icon = control.querySelector('.promotion-lookup-leading')
+          const chevron = control.querySelector('.promotion-lookup-chevron')
+          const bounds = input.getBoundingClientRect()
+          const style = getComputedStyle(input)
+          return {
+            leftGap: bounds.left + parseFloat(style.paddingLeft) - icon.getBoundingClientRect().right,
+            rightGap: chevron.getBoundingClientRect().left - (bounds.right - parseFloat(style.paddingRight))
+          }
+        })()
+      JS
+      expect(spacing['leftGap']).to be >= 8
+      expect(spacing['rightGap']).to be >= 8
+      expect(page.evaluate_script('document.documentElement.scrollWidth <= innerWidth')).to be(true)
+    end
+    page.current_window.resize_to(390, 900)
     initial_height = condition.native.rect.height
     within(condition) { find('input[type="search"]').set('Lookup sample') }
     within(condition) { expect(page).to have_css('ul[role="listbox"]:not([hidden]) button', minimum: 8) }

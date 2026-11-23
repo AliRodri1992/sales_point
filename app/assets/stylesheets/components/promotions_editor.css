@@ -7,6 +7,12 @@
 .promotion-form .catalog-field :is(input:not([type=checkbox]), select, textarea) {
   min-height: 41px; padding: .5rem .75rem; border-color: #e2e8f0; border-radius: .5rem;
 }
+/* This more specific selector must override the generic editor input padding.
+   Reserve space for the search icon, placeholder/text and trailing chevron. */
+.promotion-form .catalog-field .promotion-lookup-control input[type="search"] {
+  padding-left: 2.5rem;
+  padding-right: 2.25rem;
+}
 .promotion-form .catalog-field input[readonly] { background: #fff; color: #334155; }
 .promotion-form .catalog-field input::placeholder { color: #64748b; }
 .promotion-form .catalog-field [aria-invalid="true"] { border-color: #e11d48; }
