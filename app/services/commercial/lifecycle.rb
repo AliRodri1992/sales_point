@@ -55,14 +55,18 @@ module Commercial
       copy = @record.dup
       copy.assign_attributes(code: nil, status: 'draft')
       copy.default_list = false if copy.is_a?(PriceList)
-      child_associations.each do |name|
-        @record.public_send(name).each { |child| copy.public_send(name) << child.dup }
-      end
+      copy_children_to(copy)
       copy.save!
       copy
     rescue ActiveRecord::RecordInvalid => e
       @record.errors.add(:base, e.record.errors.full_messages.to_sentence)
       raise ActiveRecord::RecordInvalid, @record
+    end
+
+    def copy_children_to(copy)
+      child_associations.each do |name|
+        @record.public_send(name).each { |child| copy.public_send(name) << child.dup }
+      end
     end
 
     def child_associations

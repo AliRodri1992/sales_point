@@ -96,8 +96,12 @@ RSpec.describe 'Commercial line pricing rules' do
     expect(quote.discount).to eq(0)
     category.update!(status: 'active', deleted_at: Time.current)
     expect(quote.discount).to eq(0)
+    # Recreate historical cross-tenant links that the current editor disallows.
+    # rubocop:disable-next Rails/SkipsModelValidations
     category.update_columns(deleted_at: nil, organization_id: create(:organization).id)
     expect(quote.discount).to eq(0)
+    # Legacy global category rows have no owning organization.
+    # rubocop:disable-next Rails/SkipsModelValidations
     category.update_column(:organization_id, nil)
     expect(quote.discount).to eq(0)
     expect(special.promotion_conditions.sole.category_id).to eq(category.id)

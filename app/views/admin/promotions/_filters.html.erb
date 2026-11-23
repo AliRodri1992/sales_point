@@ -1,4 +1,5 @@
 <% filters = campaign_filters %>
+<% selected_labels = { 'product_id' => @selected_product&.name, 'category_id' => @selected_category&.name } %>
 <% chips = filters.slice(*PromotionsHelper::CAMPAIGN_FILTERS) %>
 <%= form_with url: admin_promotions_path, method: :get, class: 'catalog-card !overflow-visible mb-4 p-4 sm:p-5', role: 'search' do %>
   <% %i[sort direction per_page].each do |field| %>
@@ -45,7 +46,7 @@
 <% if chips.any? %>
   <nav aria-label="<%= campaign_text('applied_filters') %>" class="mb-4 flex flex-wrap items-center gap-2">
     <% chips.each do |field, value| %>
-      <% display = campaign_filter_value(field, value) || campaign_text('unavailable') %>
+      <% display = campaign_filter_value(field, value, selected_labels) || campaign_text('unavailable') %>
       <%= link_to admin_promotions_path(filters.except(field)), class: 'inline-flex min-h-10 items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 text-xs font-semibold text-emerald-900',
                   aria: { label: campaign_text('remove_filter', field: campaign_text("filters.#{field}"), value: display) } do %>
         <%= campaign_text("filters.#{field}") %> · <%= display %><%= delta_icon('x-mark', class: 'size-3.5') %>

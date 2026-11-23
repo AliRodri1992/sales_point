@@ -46,6 +46,8 @@ module Admin
 
     def destroy = perform_transition('archive')
 
+    def preview = render_commercial_preview
+
     def transition = perform_transition(params[:commercial_action])
 
     private
@@ -123,7 +125,7 @@ module Admin
     def save_or_render
       saved = resource_class.transaction do
         @record.lock! if @record.persisted?
-        @record.new_record? || editable_record? ? persist_with_audit : :locked
+        @record.new_record? || editable_record? ? persist_with_audit? : :locked
       end
       return render_locked if saved == :locked
       return render_form(:unprocessable_content) unless saved
@@ -134,7 +136,7 @@ module Admin
       render_form(:unprocessable_content)
     end
 
-    def persist_with_audit
+    def persist_with_audit?
       action = @record.new_record? ? 'create' : 'update'
       return false unless persist_record
 

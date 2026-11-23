@@ -9,19 +9,19 @@ class CommercialPreview
 
   def call
     product = @organization.products.available.find(@inputs.fetch(:product_id, nil))
-    options = line_options(product)
-    if @record.is_a?(PriceList)
-      options[:price_list] = @record
-    else
-      options[:promotion] = @record
-      options[:price_list] = @record.price_list if @record.price_list_id?
-    end
+    options = line_options(product).merge(selected_catalog)
     quote = Products::Quote.new(product:, **options).preview
     quote.to_h.slice(:unit_price, :subtotal, :discount, :total, :quantity, :currency)
          .merge(promotion: quote.promotion&.name, price_list: quote.price_list_item&.price_list&.name)
   end
 
   private
+
+  def selected_catalog
+    return { price_list: @record } if @record.is_a?(PriceList)
+
+    { promotion: @record, price_list: @record.price_list }
+  end
 
   def line_options(product)
     customer = @inputs[:customer_reference]

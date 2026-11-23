@@ -30,6 +30,8 @@ RSpec.describe 'Promotion redemption concurrency', :concurrent_db do
 
   def redeem(product, key)
     Products::RedeemPromotion.new(product:, idempotency_key: key).call
+  rescue Products::RedeemPromotion::Unavailable, Products::RedeemPromotion::IdempotencyConflict => e
+    e
   end
 
   def concurrent_calls(products)
@@ -41,8 +43,6 @@ RSpec.describe 'Promotion redemption concurrency', :concurrent_db do
           ready << true
           start.pop
           yield(product, index)
-        rescue StandardError => e
-          e
         end
       end
     end

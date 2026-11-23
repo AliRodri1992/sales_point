@@ -34,10 +34,13 @@ module Products
       currency = list&.currency || base_currency
       precision = Currency.with_deleted.where(code: currency).pick(:decimal_places) || 2
       line = priced_line(item, currency, precision)
+      apply_promotion(line, list:, precision:, selected: preview ? @promotion : nil)
+    end
+
+    def apply_promotion(line, list:, precision:, selected:)
       rules = LinePromotion.new(product: @product, quantity: line.base_units, subtotal: line.subtotal,
                                 segment: @segment, customer: @customer)
-      selected = @promotion if preview
-      line.promotion, line.discount = rules.best(currency:, precision:, at: @at, list:, selected:)
+      line.promotion, line.discount = rules.best(currency: line.currency, precision:, at: @at, list:, selected:)
       line.total = line.subtotal - line.discount
       line
     end

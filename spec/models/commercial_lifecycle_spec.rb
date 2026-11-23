@@ -71,8 +71,8 @@ RSpec.describe Commercial::Lifecycle do
       expect { transition(list, action) }.to raise_error(ActiveRecord::RecordInvalid)
     end
     events = FinancialAuditEvent.where(organization:, subject_type: 'PriceList', subject_id: list.id)
-    expect(events.order(:id).pluck(:event)).to eq(%w[price_list.activate price_list.pause price_list.resume
-                                                      price_list.archive])
+    expected_events = %w[price_list.activate price_list.pause price_list.resume price_list.archive]
+    expect(events.order(:id).pluck(:event)).to eq(expected_events)
     expect(events.last.actor).to eq(actor)
   end
 

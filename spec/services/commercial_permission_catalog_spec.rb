@@ -45,19 +45,20 @@ RSpec.describe 'Commercial permission catalog', type: :service do
     expect(administrator.permissions.pluck(:code)).to include('price_lists.authorize_below_cost', 'promotions.resume')
     reader.system_role_permissions.find_by!(permission: Permission.find_by!(code: 'promotions.index')).destroy!
 
-    expect { GranularPermissionCatalog.sync! }.not_to change { reader.permissions.order(:code).pluck(:code) }
+    expect { GranularPermissionCatalog.sync! }.not_to(change { reader.permissions.order(:code).pluck(:code) })
   end
 
   it 'registers labeled actions for each supported language' do
     GranularPermissionCatalog.sync!
-    codes = %w[price_lists promotions].product(%w[access index show create update archive activate pause
-                                                 resume duplicate history]).map { |parts| parts.join('.') }
+    actions = %w[access index show create update archive activate pause resume duplicate history]
+    codes = %w[price_lists promotions].product(actions).map { |parts| parts.join('.') }
     codes += %w[price_lists.view_margin price_lists.authorize_below_cost]
 
     expect(Permission.where(code: codes).pluck(:code)).to match_array(codes)
+    attributes = %w[name description]
     %i[es en ko].each do |locale|
       codes.each do |code|
-        %w[name description].each do |attribute|
+        attributes.each do |attribute|
           expect(I18n.exists?("admin.system_roles.permissions.#{code.tr('.', '_')}.#{attribute}", locale)).to be(true)
         end
       end

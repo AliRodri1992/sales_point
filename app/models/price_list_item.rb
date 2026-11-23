@@ -66,9 +66,11 @@ class PriceListItem < ApplicationRecord
   def no_overlapping_price
     return if deleted_at || !price_list&.persisted? || product_id.nil?
 
-    duplicate = price_list.price_list_items.to_a.any? do |other|
-      other != self && other.deleted_at.nil? && same_price_key?(other) && overlaps_period?(other)
-    end
+    duplicate = price_list.price_list_items.any? { |other| conflicting_price?(other) }
     errors.add(:base, I18n.t('admin.catalog_design.overlapping_price')) if duplicate
+  end
+
+  def conflicting_price?(other)
+    other != self && other.deleted_at.nil? && same_price_key?(other) && overlaps_period?(other)
   end
 end

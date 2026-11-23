@@ -59,15 +59,15 @@ module PriceListsHelper
   end
 
   def price_list_margin(item, product, currency)
-    return '—' unless product && product.cost && item.price&.positive? && currency == price_list_base_currency
+    return '—' unless product&.cost && item.price&.positive? && currency == price_list_base_currency
 
     cost = product.cost * price_list_units(item, product)
     number_to_percentage((item.price - cost) / item.price * 100, precision: 2, strip_insignificant_zeros: true)
   end
 
-  def price_list_filter_values
+  def price_list_filter_values(selected_product)
     values = params.permit(:search, :status, :currency, :customer_segment, :validity).to_h.compact_blank
-    values['product_id'] = @selected_product.name if @selected_product
+    values['product_id'] = selected_product.name if selected_product
     { 'status' => price_list_statuses, 'validity' => %w[current upcoming ended] }.each do |field, options|
       value = values.delete(field)
       values[field] = t("admin.price_lists_ui.#{field}.#{value}") if options.include?(value)

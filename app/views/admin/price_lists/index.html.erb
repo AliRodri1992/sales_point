@@ -1,4 +1,5 @@
 <% content_for :title, t('admin.catalog_design.price_lists') %>
+<% filters = price_list_filter_values(@selected_product) %>
 <% columns = { 'name' => t('admin.catalog_design.name'), 'code' => t('admin.catalog_design.code'),
                'currency' => t('admin.catalog_design.currency'), 'starts_at' => t('admin.catalog_design.starts_at'),
                'ends_at' => t('admin.catalog_design.ends_at') } %>
@@ -14,7 +15,7 @@
       <% end %>
     <% end %>
   </header>
-  <%= render 'admin/price_lists/filters' %>
+  <%= render 'admin/price_lists/filters', filters: filters %>
   <section class="catalog-list-directory" aria-labelledby="price-list-directory">
     <dl class="grid grid-cols-1 gap-4 border-b border-slate-100 px-4 py-4 sm:grid-cols-3 sm:px-6">
       <% [[t('admin.price_lists_ui.matching'), @total_count], [t('admin.price_lists_ui.products_covered'), @coverage_metrics.fetch(:products)],
@@ -82,8 +83,8 @@
     <% else %>
       <div class="catalog-list-empty-state">
         <%= delta_icon('tag', class: 'size-7 text-[var(--brand-on-white)]') %>
-        <h3><%= t(price_list_filter_values.any? ? 'admin.catalog_design.no_results' : 'admin.price_lists_ui.empty_directory') %></h3>
-        <% if price_list_filter_values.any? %>
+        <h3><%= t(filters.any? ? 'admin.catalog_design.no_results' : 'admin.price_lists_ui.empty_directory') %></h3>
+        <% if filters.any? %>
           <%= link_to t('admin.catalog_design.product_clear_all'), admin_price_lists_path, class: 'catalog-button' %>
         <% end %>
       </div>

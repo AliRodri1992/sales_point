@@ -1,4 +1,5 @@
 <% content_for :title, @record.name %>
+<% precision = campaign_currency_places.fetch(@record.currency, 2) %>
 <div class="catalog-workspace">
   <header class="catalog-header">
     <div>
@@ -30,7 +31,7 @@
             <ul class="mb-5 grid gap-3 sm:grid-cols-2">
               <% @record.promotion_benefits.each do |benefit| %>
                 <li class="border-l-2 border-[var(--brand)] pl-3">
-                  <span class="block font-jakarta text-2xl font-bold tabular-nums"><%= campaign_benefit_label(benefit, @record.currency) %></span>
+                  <span class="block font-jakarta text-2xl font-bold tabular-nums"><%= campaign_benefit_label(benefit, @record.currency, precision) %></span>
                   <span class="text-xs text-slate-600"><%= t("admin.catalog_design.benefit_#{benefit.kind}") %></span>
                 </li>
               <% end %>
@@ -41,7 +42,7 @@
           <dl class="catalog-definition">
             <div><dt><%= campaign_text('mode') %></dt><dd><%= campaign_text("modes.#{@record.combination_mode}") %></dd></div>
             <div><dt><%= campaign_text('priority') %></dt><dd><%= @record.priority %></dd></div>
-            <div><dt><%= campaign_text('cap') %></dt><dd><%= @record.maximum_discount ? campaign_money(@record.maximum_discount, @record.currency) : t('admin.catalog_design.no_limit') %></dd></div>
+            <div><dt><%= campaign_text('cap') %></dt><dd><%= @record.maximum_discount ? campaign_money(@record.maximum_discount, @record.currency, precision) : t('admin.catalog_design.no_limit') %></dd></div>
           </dl>
         </div>
       </section>
@@ -53,7 +54,7 @@
             <dl class="catalog-definition">
               <% @record.promotion_conditions.group_by(&:kind).each do |kind, conditions| %>
                 <div><dt><%= campaign_condition_label(kind) %></dt>
-                  <dd><%= conditions.map { |condition| campaign_condition_value(condition, @record.currency) }.join(', ') %></dd>
+                  <dd><%= conditions.map { |condition| campaign_condition_value(condition, @record.currency, precision) }.join(', ') %></dd>
                 </div>
               <% end %>
             </dl>

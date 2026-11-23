@@ -15,7 +15,7 @@ class CommercialSubmittedReferences
 
   def validate!(targets)
     targets.each do |field, model|
-      ids = @rows.filter_map { |row| row[field].presence&.to_s }.uniq
+      ids = submitted_ids(field)
       next if ids.empty?
 
       raise ActiveRecord::RecordNotFound unless ids.all? { |id| id.match?(/\A[1-9]\d{0,18}\z/) }
@@ -23,5 +23,11 @@ class CommercialSubmittedReferences
       owned = model.with_deleted.where(organization: @organization, id: ids).pluck(:id).map(&:to_s)
       raise ActiveRecord::RecordNotFound unless (ids - owned).empty?
     end
+  end
+
+  private
+
+  def submitted_ids(field)
+    @rows.filter_map { |row| row[field].presence&.to_s }.uniq
   end
 end

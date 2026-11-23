@@ -10,7 +10,7 @@
   <td class="min-w-0 lg:px-4 lg:py-4">
     <span class="catalog-label lg:hidden"><%= campaign_text('columns.benefit') %></span>
     <% if record.promotion_benefits.any? %>
-      <%= record.promotion_benefits.map { |benefit| campaign_benefit_label(benefit, record.currency) }.join(' / ') %>
+      <%= record.promotion_benefits.map { |benefit| campaign_benefit_label(benefit, record.currency, precision) }.join(' / ') %>
     <% else %>
       <%= campaign_text('no_benefit') %>
     <% end %>

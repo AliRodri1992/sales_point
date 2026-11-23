@@ -45,6 +45,10 @@ module Products
       @list.assign_attributes(@attributes.except(:price_list_items_attributes))
       removed, kept = submitted_rows.partition { |row| ActiveModel::Type::Boolean.new.cast(row[:_destroy]) }
       @list.price_list_items_attributes = kept
+      retired_rows(removed)
+    end
+
+    def retired_rows(removed)
       indexed = @list.price_list_items.select(&:persisted?).index_by { |item| item.id.to_s }
       removed.filter_map do |row|
         indexed.fetch(row[:id].to_s) { raise ActiveRecord::RecordNotFound } if row[:id].present?
@@ -77,7 +81,7 @@ module Products
       return false unless valid_reason?
 
       cost = ListPriceCost.new(@list)
-      below_cost = @list.price_list_items.select { |item| check_cost?(item) && cost.below_cost?(item) }
+      below_cost = (@list.price_list_items.to_a - @retiring).select { |item| cost.changed_below_cost?(item) }
       return true if below_cost.empty? || PriceListPolicy.new(@actor, @list).below_cost?
 
       below_cost.each { |item| item.errors.add(:price, I18n.t('admin.commercial.below_cost_forbidden')) }
@@ -85,34 +89,28 @@ module Products
     end
 
     def valid_reason?
-      edited = @list.price_list_items.any? do |item|
-        item.persisted? && item.changes_to_save.keys.intersect?(%w[price starts_at ends_at])
-      end
-      historical = edited || @retiring.any?
-      return true if @reason.nil? && !historical
-      return true if @reason.is_a?(String) && @reason.length <= 1000 && (!historical || @reason.present?)
+      error = reason_error
+      return true unless error
 
-      message = if !@reason.is_a?(String) || @reason.blank?
-                  I18n.t('admin.catalog_design.price_reason_required')
-                else
-                  I18n.t('errors.messages.too_long', count: 1000)
-                end
-      @list.errors.add(:price_change_reason, message)
+      @list.errors.add(:price_change_reason, error)
       false
     end
 
-    def check_cost?(item)
-      return false if @retiring.include?(item)
-      return true if item.new_record? || item.will_save_change_to_price?
-
-      extended_period?(item) || extended_period?(@list)
+    def reason_error
+      case @reason
+      when String
+        return I18n.t('errors.messages.too_long', count: 1000) if @reason.length > 1000
+        return if @reason.present? || !historical_edits?
+      when nil
+        return unless historical_edits?
+      end
+      I18n.t('admin.catalog_design.price_reason_required')
     end
 
-    def extended_period?(record)
-      previous_start = record.starts_at_in_database
-      previous_end = record.ends_at_in_database
-      (previous_start && (!record.starts_at || record.starts_at < previous_start)) ||
-        (previous_end && (!record.ends_at || record.ends_at > previous_end))
+    def historical_edits?
+      @retiring.any? || @list.price_list_items.any? do |item|
+        item.persisted? && item.changes_to_save.keys.intersect?(%w[price starts_at ends_at])
+      end
     end
 
     def retire(item)

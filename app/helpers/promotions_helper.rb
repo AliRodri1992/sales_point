@@ -11,8 +11,8 @@ module PromotionsHelper
   RULE_FIELDS = { 'min_quantity' => :quantity, 'min_subtotal' => :amount,
                   'customer_segment' => :customer_segment }.freeze
 
-  def campaign_text(key, **options)
-    t("admin.promotion_campaigns.#{key}", **options)
+  def campaign_text(key, **)
+    t("admin.promotion_campaigns.#{key}", **)
   end
 
   def campaign_filters
@@ -23,33 +23,30 @@ module PromotionsHelper
     values.map { |value| [campaign_text("#{group}.#{value}"), value] }
   end
 
-  def campaign_filter_value(field, value)
-    allowed = FILTER_OPTIONS[field.to_sym]
-    return value if allowed && allowed.exclude?(value)
+  def campaign_filter_value(field, value, selected_labels = {})
+    return selected_labels[field.to_s] if selected_labels.key?(field.to_s)
+    return value unless FILTER_OPTIONS[field.to_sym]&.include?(value)
+    return t("admin.catalog_design.benefit_#{value}") if field.to_s == 'benefit_kind'
 
-    case field.to_s
-    when 'status', 'validity', 'usage' then campaign_text("#{field}.#{value}", default: value)
-    when 'benefit_kind' then t("admin.catalog_design.benefit_#{value}", default: value)
-    when 'product_id' then @selected_product&.name
-    when 'category_id' then @selected_category&.name
-    else value
-    end
+    campaign_text("#{field}.#{value}")
   end
 
   def campaign_currency_options
-    @campaign_currency_options ||= Currency.active.order(:code).pluck(:name, :code).map do |name, code|
+    Currency.active.order(:code).pluck(:name, :code).map do |name, code|
       ["#{code} · #{name}", code]
     end
   end
 
-  def campaign_money(amount, currency)
-    @campaign_currency_precision ||= Currency.with_deleted.pluck(:code, :decimal_places).to_h
-    precision = @campaign_currency_precision.fetch(currency, 2)
+  def campaign_currency_places
+    Currency.with_deleted.pluck(:code, :decimal_places).to_h
+  end
+
+  def campaign_money(amount, currency, precision)
     number_to_currency(amount, unit: currency, format: '%n %u', precision:)
   end
 
-  def campaign_benefit_label(benefit, currency)
-    return campaign_money(benefit.value, currency) unless benefit.percentage?
+  def campaign_benefit_label(benefit, currency, precision)
+    return campaign_money(benefit.value, currency, precision) unless benefit.percentage?
 
     number_to_percentage(benefit.value, precision: 4, strip_insignificant_zeros: true)
   end
@@ -63,10 +60,10 @@ module PromotionsHelper
     record.name if record&.organization_id == current_organization.id
   end
 
-  def campaign_condition_value(condition, currency)
+  def campaign_condition_value(condition, currency, precision)
     target = TARGET_KINDS[condition.kind]
     return campaign_target_name(condition, target) || campaign_text('unavailable') if target
-    return campaign_money(condition.amount, currency) if condition.kind_min_subtotal?
+    return campaign_money(condition.amount, currency, precision) if condition.kind_min_subtotal?
 
     field = RULE_FIELDS[condition.kind]
     condition.public_send(field) if field

@@ -11,17 +11,19 @@ module Products
       offers = Promotion.where(organization_id: @context.fetch(:product).organization_id, currency:)
                         .effective_at(at).preload(:promotion_benefits, promotion_conditions: %i[product category])
       candidates = selected ? preview_offer(offers, selected) : offers.where(status: 'active')
-      discounts = candidates.filter_map do |offer|
-        next if offer.price_list_id && offer.price_list_id != list&.id
-        next unless PromotionEligibility.new(offer, **@context).eligible?
-
-        discount = discount_for(offer, precision)
-        [offer, discount.to_d] if discount.positive?
-      end
+      discounts = candidates.filter_map { |offer| eligible_discount(offer, precision, list) }
       discounts.max_by { |offer, discount| rank(offer, discount) } || [nil, BigDecimal('0')]
     end
 
     private
+
+    def eligible_discount(offer, precision, list)
+      return if offer.price_list_id && offer.price_list_id != list&.id
+      return unless PromotionEligibility.new(offer, **@context).eligible?
+
+      discount = discount_for(offer, precision)
+      [offer, discount.to_d] if discount.positive?
+    end
 
     def preview_offer(offers, selected)
       offer = offers.where(status: %w[active draft]).find_by(id: selected.id)

@@ -37,7 +37,10 @@
           <% end %></tr>
         </thead>
         <tbody class="block divide-y divide-slate-200 lg:table-row-group">
-          <% @records.each do |record| %><%= render 'campaign', record: record %><% end %>
+          <% currency_places = campaign_currency_places %>
+          <% @records.each do |record| %>
+            <%= render 'campaign', record: record, precision: currency_places.fetch(record.currency, 2) %>
+          <% end %>
         </tbody>
       </table>
     <% else %>

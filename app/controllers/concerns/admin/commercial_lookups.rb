@@ -10,7 +10,9 @@ module Admin
       render json: { products: results }
     end
 
-    def preview
+    private
+
+    def render_commercial_preview
       output = CommercialPreview.new(record: @record, organization: current_organization, inputs: preview_params).call
       output[:promotion] = nil unless policy(Promotion).show?
       output[:price_list] = nil unless policy(PriceList).show?
@@ -20,8 +22,6 @@ module Admin
     rescue ArgumentError
       render json: { error: t('admin.catalog_design.invalid_quote') }, status: :unprocessable_content
     end
-
-    private
 
     def preview_params
       inputs = params.permit(*PREVIEW_FIELDS)

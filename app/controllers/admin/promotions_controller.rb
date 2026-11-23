@@ -2,6 +2,8 @@
 
 module Admin
   class PromotionsController < CommercialCatalogController
+    CONDITION_FIELDS = %i[id _destroy kind product_id category_id quantity amount customer_segment].freeze
+
     def categories_lookup
       term = "%#{Category.sanitize_sql_like(params.permit(:q)[:q].to_s.strip.first(100))}%"
       matches = current_organization.categories.available.where('name ILIKE :q OR code ILIKE :q', q: term)
@@ -50,16 +52,16 @@ module Admin
       CommercialSubmittedReferences.new(current_organization, attributes[:promotion_conditions_attributes])
                                    .validate!(product_id: Product, category_id: Category)
       @record.assign_attributes(attributes)
-      @record.save
+      @record.save!
+    rescue ActiveRecord::RecordInvalid
+      false
     end
 
     def record_params
       permitted = params.expect(promotion: [:name, :currency, :starts_at, :ends_at, :usage_limit, :customer_limit,
                                             :price_list_id, :priority, :maximum_discount, :combination_mode,
-                                            { promotion_conditions_attributes: [
-                                                %i[id _destroy kind product_id category_id quantity amount
-                                                   customer_segment]
-                                              ], promotion_benefits_attributes: [%i[id _destroy kind value]] }])
+                                            { promotion_conditions_attributes: [CONDITION_FIELDS],
+                                              promotion_benefits_attributes: [%i[id _destroy kind value]] }])
       if permitted[:price_list_id].present?
         authorize PriceList, :index?
         current_organization.price_lists.with_deleted.find(permitted[:price_list_id])
