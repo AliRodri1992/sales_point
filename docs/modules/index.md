@@ -1,8 +1,16 @@
 # Módulos del Sistema
 
-Documentación de los módulos funcionales de NEXO POS.
+Documentación de los módulos funcionales de Delta POS.
 
 ---
+
+## Precios, promociones y cuentas por pagar
+
+| Módulo | Entrada del panel | Referencia |
+| --- | --- | --- |
+| Listas de precios | `/admin/price_lists` | [Expediente de listas de precios](../quality/modules/price-lists.md) |
+| Promociones | `/admin/promotions` | [Expediente de promociones](../quality/modules/promotions.md) |
+| Cuentas por pagar | `/admin/account_payables` | [Flujo de facturación y pagos](accounts-payable.md) |
 
 ## 📦 Catálogo de Módulos
 
@@ -23,7 +31,7 @@ Documentación de los módulos funcionales de NEXO POS.
 
 ## 📚 Índice de Módulos
 
-### [Productos](modules/products.md)
+### [Productos](./products.md)
 
 **Controlador:** `Admin::ProductsController`
 
@@ -47,7 +55,7 @@ DELETE /admin/products/:id
 
 ---
 
-### [Categorías](modules/categories.md)
+### [Categorías](./categories.md)
 
 **Controlador:** `Admin::CategoriesController`
 
@@ -69,7 +77,7 @@ DELETE /admin/categories/:id
 
 ---
 
-### [Idiomas](modules/languages.md)
+### [Idiomas](./languages.md)
 
 **Controlador:** `Admin::LanguagesController`
 
@@ -92,7 +100,7 @@ GET    /admin/languages/content  # API para selector
 
 ---
 
-### [Dashboard](modules/dashboard.md)
+### [Dashboard](./dashboard.md)
 
 **Controlador:** `Admin::DashboardController`
 
@@ -111,7 +119,7 @@ POST /admin/dashboard/preferences
 
 ---
 
-### [Usuarios y Roles](modules/users.md)
+### [Usuarios y Roles](./users.md)
 
 **Controladores:** `SystemRolesController`
 
@@ -132,7 +140,7 @@ role_type: { system: 'system', branch: 'branch' }
 
 ---
 
-### [Comunicaciones](modules/communications.md)
+### [Comunicaciones](./communications.md)
 
 **Controladores:** `ConversationsController`, `MessagesController`
 
@@ -152,7 +160,7 @@ POST   /conversations/:id/messages
 
 ---
 
-### [Notificaciones](modules/notifications.md)
+### [Notificaciones](./notifications.md)
 
 **Gem:** `noticed`
 
@@ -174,7 +182,7 @@ POST /notifications/mark_all_read
 
 ---
 
-### [Solicitudes Demo](modules/demo-requests.md)
+### [Solicitudes Demo](./demo-requests.md)
 
 **Controlador:** `DemoRequestsController`
 
