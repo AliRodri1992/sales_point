@@ -27,6 +27,9 @@ ko:
         catalogs: 카탈로그
         languages: 언어
         categories: 카테고리
+        commercial: 영업 관리
+        price_lists: 가격 목록
+        promotions: 프로모션
         section_admin: 관리
         reports: 보고서
         settings: 설정

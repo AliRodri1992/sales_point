@@ -12,7 +12,9 @@ module Products
     end
 
     def eligible?
-      quota_available? && @promotion.promotion_conditions.group_by(&:kind).all? do |kind, conditions|
+      return false unless @promotion.organization_id == @product.organization_id && quota_available?
+
+      @promotion.promotion_conditions.group_by(&:kind).all? do |kind, conditions|
         matches_group?(kind, conditions)
       end
     end
@@ -20,11 +22,24 @@ module Products
     private
 
     def matches_group?(kind, conditions)
-      if %w[product category].include?(kind)
-        conditions.any? { |condition| matches?(condition) }
-      else
-        conditions.all? { |condition| matches?(condition) }
+      case kind
+      when 'product', 'excluded_product' then match_targets?(conditions, :product, @product.id)
+      when 'category', 'excluded_category' then match_targets?(conditions, :category, @product.category_id)
+      else conditions.all? { |condition| matches?(condition) }
       end
+    end
+
+    def match_targets?(conditions, association, wanted_id)
+      targets = conditions.map { |condition| condition.public_send(association) }
+      if conditions.first.kind.start_with?('excluded_')
+        targets.all? { |target| usable_target?(target) && target.id != wanted_id }
+      else
+        targets.any? { |target| usable_target?(target) && target.id == wanted_id }
+      end
+    end
+
+    def usable_target?(target)
+      target&.active? && target.deleted_at.nil? && target.organization_id == @promotion.organization_id
     end
 
     def quota_available?
@@ -38,8 +53,6 @@ module Products
 
     def matches?(condition)
       case condition.kind
-      when 'product' then condition.product_id == @product.id
-      when 'category' then condition.category_id == @product.category_id
       when 'min_quantity' then @quantity >= condition.quantity
       when 'min_subtotal' then @subtotal >= condition.amount
       when 'customer_segment' then @segment.present? && condition.customer_segment == @segment

@@ -1,0 +1,81 @@
+<% title = t(@record.persisted? ? 'admin.price_lists_ui.edit' : 'admin.price_lists_ui.create') %>
+<% content_for :title, title %>
+<% margin = policy(@record).view_margin? %>
+<div class="catalog-workspace">
+  <header class="catalog-header">
+    <div><p class="catalog-eyebrow"><%= t('admin.catalog_design.price_lists') %></p><h1><%= title %></h1>
+      <p><%= @record.persisted? ? @record.name : t('admin.price_lists_ui.draft_hint') %></p>
+    </div>
+    <%= link_to t('admin.catalog_design.back'), catalog_back_path(PriceList), class: 'catalog-button' %>
+  </header>
+  <%= form_with model: [:admin, @record], html: { novalidate: true }, class: 'catalog-main',
+                data: { controller: 'price-list-editor', action: 'price-list-lookup:selected->price-list-editor#add',
+                        price_list_editor_locale_value: I18n.locale,
+                        price_list_editor_limit_value: t('admin.price_lists_ui.limit'),
+                        price_list_editor_places_value: price_list_currency_places } do |form| %>
+    <%= catalog_errors(@record) %>
+    <section class="catalog-card !overflow-visible">
+      <%= catalog_heading(t('admin.catalog_design.general'), t('admin.price_lists_ui.general_hint'), icon: 'tag') %>
+      <div class="catalog-card-body catalog-fields">
+        <%= catalog_field(form, :name, label: required_field_label(t('admin.catalog_design.name')), maxlength: 100, aria: { required: true }) %>
+        <%= catalog_field(form, :code, readonly: true, placeholder: t('admin.price_lists_ui.auto_code')) %>
+        <% if @record.persisted? %>
+          <%= catalog_field(form, :currency, readonly: true) %>
+        <% else %>
+          <div class="relative" data-controller="delta-select" data-searchable="true" data-search-placeholder="<%= t('admin.price_lists_ui.search_currency') %>">
+            <%= catalog_select(form, :currency, Currency.active.order(:code).pluck(:code, :code),
+                               label: required_field_label(t('admin.catalog_design.currency')), include_blank: false) %>
+          </div>
+        <% end %>
+        <%= catalog_field(form, :customer_segment, maxlength: 100, placeholder: t('admin.price_lists_ui.all_segments')) %>
+        <%= catalog_field(form, :priority, type: :number_field, label: t('admin.price_lists_ui.priority'), step: 1) %>
+        <div class="self-end">
+          <%= form.label :default_list, class: 'flex min-h-11 items-center gap-3 text-sm font-semibold' do %>
+            <%= form.check_box :default_list, class: 'size-5 accent-[var(--brand-on-white)]' %>
+            <%= t('admin.price_lists_ui.default_list') %>
+          <% end %>
+          <%= error_message_for(@record, :default_list) %>
+        </div>
+      </div>
+    </section>
+    <section class="catalog-card">
+      <%= catalog_heading(t('admin.price_lists_ui.period'), t('admin.price_lists_ui.period_hint', zone: Time.zone.name), icon: 'calendar') %>
+      <div class="catalog-card-body catalog-fields">
+        <%= catalog_field(form, :starts_at, type: :datetime_local_field) %>
+        <%= catalog_field(form, :ends_at, type: :datetime_local_field) %>
+      </div>
+    </section>
+    <section class="catalog-card !overflow-visible">
+      <%= catalog_heading(t('admin.catalog_design.price_list_items'), t('admin.price_lists_ui.items_hint'), icon: 'currency-dollar') %>
+      <div class="catalog-card-body">
+        <%= render 'admin/price_lists/lookup', input_id: 'price-list-product-search', label: t('admin.price_lists_ui.add_product'), selected: nil %>
+        <p class="catalog-hint" role="status" tabindex="-1" data-price-list-editor-target="notice"></p>
+        <%= error_message_for(@record, :price_list_items, label: t('admin.catalog_design.price_list_items')) %>
+        <div class="mt-4 divide-y divide-slate-200" data-price-list-editor-target="rows">
+          <%= form.fields_for :price_list_items, include_id: false do |item_form| %>
+            <%= render 'admin/price_lists/item_fields', f: item_form, margin: margin %>
+          <% end %>
+        </div>
+        <p class="catalog-hint" data-price-list-editor-target="empty" <%= 'hidden' if @record.price_list_items.any? %>><%= t('admin.price_lists_ui.no_items') %></p>
+        <template data-price-list-editor-target="template">
+          <%= form.fields_for :price_list_items, PriceListItem.new, child_index: 'NEW_ROW', include_id: false do |item_form| %>
+            <%= render 'admin/price_lists/item_fields', f: item_form, margin: margin %>
+          <% end %>
+        </template>
+      </div>
+    </section>
+    <% if @record.persisted? %>
+      <div class="catalog-card catalog-card-body catalog-field">
+        <%= label_tag :price_change_reason, t('admin.catalog_design.price_change_reason') %>
+        <%= text_area_tag :price_change_reason, params[:price_change_reason], maxlength: 1000, rows: 2,
+                          aria: { describedby: 'price-change-reason-hint price_list_price_change_reason_error', invalid: @record.errors[:price_change_reason].any? } %>
+        <p class="catalog-hint" id="price-change-reason-hint"><%= t('admin.price_lists_ui.reason_hint') %></p>
+        <%= error_message_for(@record, :price_change_reason, label: t('admin.catalog_design.price_change_reason')) %>
+      </div>
+    <% end %>
+    <footer class="catalog-footer">
+      <%= link_to t('admin.catalog_design.cancel'), @record.persisted? && policy(@record).show? ? admin_price_list_path(@record) : catalog_back_path(PriceList), class: 'catalog-button' %>
+      <%= form.submit t('admin.catalog_design.save'), class: 'catalog-button catalog-button-primary', data: { turbo_submits_with: t('admin.action_loader.processing') } %>
+    </footer>
+  <% end %>
+</div>

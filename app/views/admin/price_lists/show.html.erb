@@ -1,0 +1,112 @@
+<% content_for :title, @record.name %>
+<% items = @record.price_list_items.to_a %>
+<% margin = policy(@record).view_margin? %>
+<div class="catalog-workspace">
+  <header class="catalog-header">
+    <div>
+      <p class="catalog-eyebrow"><%= t('admin.catalog_design.price_lists') %></p>
+      <h1><%= @record.name %></h1>
+      <p class="flex flex-wrap items-center gap-3"><span class="font-mono"><%= @record.code %></span><%= price_list_status(@record) %></p>
+    </div>
+    <div class="catalog-actions">
+      <%= link_to t('admin.catalog_design.back'), catalog_back_path(PriceList), class: 'catalog-button' %>
+      <% if price_list_editable?(@record) %>
+        <%= link_to t('admin.catalog_design.edit'), edit_admin_price_list_path(@record), class: 'catalog-button catalog-button-primary' %>
+      <% end %>
+    </div>
+  </header>
+  <div class="catalog-main">
+    <%= catalog_errors(@record) %>
+    <%= error_message_for(@record, :status, label: t('admin.catalog_design.status')) %>
+    <section class="catalog-card">
+      <%= catalog_heading(t('admin.catalog_design.general'), t('admin.price_lists_ui.general_hint'), icon: 'tag') %>
+      <dl class="catalog-card-body grid grid-cols-1 gap-5 text-sm sm:grid-cols-2 xl:grid-cols-4">
+        <% [[t('admin.catalog_design.currency'), @record.currency],
+            [t('admin.catalog_design.customer_segment'), @record.customer_segment.presence || t('admin.price_lists_ui.all_segments')],
+            [t('admin.price_lists_ui.period'), price_list_period(@record)],
+            [t('admin.price_lists_ui.priority'), @record.priority],
+            [t('admin.price_lists_ui.default_list'), t(@record.default_list? ? 'admin.catalog_design.yes_option' : 'admin.catalog_design.no_option')],
+            [t('admin.catalog_design.products'), items.map(&:product_id).uniq.size]].each do |label, value| %>
+          <div><dt class="catalog-label"><%= label %></dt><dd class="break-words"><%= value %></dd></div>
+        <% end %>
+      </dl>
+      <% actions = %w[activate pause resume duplicate archive].select { |action| policy(@record).public_send("#{action}?") && @record.transition_available?(action) } %>
+      <% if actions.any? %>
+        <div class="catalog-actions border-t border-slate-100 px-4 py-3 sm:px-6">
+          <% actions.each do |action| %>
+            <%= button_to t("admin.price_lists_ui.actions.#{action}"), transition_admin_price_list_path(@record), method: :patch,
+                          params: { commercial_action: action }, class: 'catalog-button',
+                          form: { data: { turbo_confirm: t("admin.price_lists_ui.confirm.#{action}", name: @record.name) } } %>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+    <section class="catalog-card">
+      <%= catalog_heading(t('admin.catalog_design.price_list_items'), t('admin.catalog_design.price_list_help'), icon: 'currency-dollar') %>
+      <% if items.any? %>
+        <ul class="divide-y divide-slate-100">
+          <% items.each do |item| %>
+            <% product = price_list_product(item) %>
+            <li class="grid gap-4 px-4 py-4 text-sm sm:px-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+              <div>
+                <strong class="break-words"><%= product&.name %></strong>
+                <div class="catalog-hint"><%= [product&.sku.presence || product&.code, item.product_variant&.name, item.product_presentation&.name].compact.join(' · ') %></div>
+                <div class="catalog-hint"><%= price_list_period(item) %></div>
+              </div>
+              <dl class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div><dt class="catalog-label"><%= t('admin.price_lists_ui.base_price') %></dt><dd><%= price_list_money(product&.price && product.price * price_list_units(item, product), price_list_base_currency) %></dd></div>
+                <div><dt class="catalog-label"><%= t('admin.price_lists_ui.list_price') %></dt><dd class="font-semibold"><%= price_list_money(item.price, @record.currency) %></dd></div>
+                <% if margin %><div><dt class="catalog-label"><%= t('admin.catalog_design.margin') %></dt><dd><%= price_list_margin(item, product, @record.currency) %></dd></div><% end %>
+                <div><dt class="catalog-label"><%= t('admin.price_lists_ui.min_qty') %></dt><dd><%= number_with_precision(item.minimum_quantity, precision: 6, strip_insignificant_zeros: true) %></dd></div>
+              </dl>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="catalog-card-body text-sm"><%= t('admin.price_lists_ui.no_items') %></p>
+      <% end %>
+    </section>
+    <%= render 'admin/shared/commercial_overlaps', record: @record %>
+    <%= render 'admin/shared/commercial_preview', record: @record, preview_url: preview_admin_price_list_path(@record, format: :json), lookup_url: products_lookup_admin_price_lists_path(format: :json) %>
+    <% if policy(@record).history? %>
+      <section class="catalog-card">
+        <%= catalog_heading(t('admin.catalog_design.price_history'), t('admin.price_lists_ui.history_hint'), icon: 'clock') %>
+        <% if @price_history.any? %>
+          <ol class="divide-y divide-slate-100">
+            <% @price_history.each do |event| %>
+              <li class="grid gap-3 px-4 py-4 text-sm sm:px-6 md:grid-cols-2">
+                <div><strong><%= event.product&.name %></strong>
+                  <p class="catalog-hint"><%= l(event.created_at.in_time_zone, format: :short) %> · <%= event.actor&.display_name %></p>
+                </div>
+                <div><strong class="tabular-nums">
+                  <%= price_list_money(event.previous_price, event.currency) %>
+                  <span aria-label="<%= t('admin.price_lists_ui.changed_to') %>">→</span>
+                  <%= price_list_money(event.new_price, event.currency) %>
+                </strong><p class="catalog-hint break-words"><%= event.reason %></p></div>
+              </li>
+            <% end %>
+          </ol>
+        <% else %>
+          <p class="catalog-card-body text-sm"><%= t('admin.catalog_design.no_price_history') %></p>
+        <% end %>
+      </section>
+      <% if @history.any? %>
+        <section class="catalog-card catalog-card-body">
+          <h2 class="font-jakarta font-bold"><%= t('admin.price_lists_ui.activity') %></h2>
+          <ol class="mt-2 divide-y divide-slate-100">
+            <% @history.each do |entry| %>
+              <li class="flex flex-wrap items-baseline justify-between gap-2 py-3 text-sm">
+                <div><strong><%= price_list_activity_label(entry) %></strong>
+                  <% if entry.event == 'price_list.item_retired' && entry.details['reason'].present? %>
+                    <p class="catalog-hint"><%= entry.details['reason'] %></p>
+                  <% end %>
+                </div>
+                <span class="text-xs text-slate-600"><%= [l(entry.created_at.in_time_zone, format: :short), entry.actor&.display_name].compact.join(' · ') %></span>
+              </li>
+            <% end %>
+          </ol>
+        </section>
+      <% end %>
+    <% end %>
+  </div>
+</div>

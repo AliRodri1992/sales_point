@@ -71,7 +71,7 @@ RSpec.describe 'Commercial transaction integrity' do
     writer = Products::SavePriceList.new(list:, actor: administrator, reason: 'x' * 1001,
                                          attributes: { price_list_items_attributes: [{ id: item.id, price: 80 }] })
     expect(writer.call).to be(false)
-    expect(list.errors[:base]).to be_present
+    expect(list.errors[:price_change_reason]).to be_present
     expect(item.reload.price).to eq(90)
     expect(item.price_change_events).to be_empty
   end

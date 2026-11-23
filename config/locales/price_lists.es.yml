@@ -1,0 +1,78 @@
+{
+  "es": {
+    "admin": {
+      "price_lists_ui": {
+        "create": "Nueva lista de precios",
+        "edit": "Editar lista de precios",
+        "directory": "Directorio de listas de precios",
+        "empty_directory": "Todavía no hay listas de precios",
+        "draft_hint": "Guarda el borrador, revisa los precios y actívalo cuando esté listo.",
+        "name_or_code": "Nombre o código de lista",
+        "auto_code": "Se asigna al guardar",
+        "general_hint": "Define la moneda, el segmento y la prioridad de estos precios.",
+        "search_currency": "Buscar monedas",
+        "period": "Vigencia",
+        "period_hint": "La vigencia incluye el inicio y excluye el fin. Zona horaria: %{zone}.",
+        "open_period": "Sin límites de fecha",
+        "from": "Desde %{date}",
+        "until": "Hasta %{date}",
+        "all_currencies": "Todas las monedas",
+        "all_periods": "Todas las vigencias",
+        "all_segments": "Todos los clientes",
+        "priority": "Prioridad",
+        "default_list": "Lista de precios predeterminada",
+        "items_hint": "Agrega un producto e indica su precio. Define las opciones y la cantidad mínima en cada fila.",
+        "no_items": "Esta lista de precios no tiene productos.",
+        "add_product": "Agregar un producto",
+        "lookup_hint": "Nombre, SKU o código de barras",
+        "searching": "Buscando productos…",
+        "no_products": "Ningún producto coincide con la búsqueda.",
+        "search_failed": "No se pudo buscar. Edita la búsqueda para volver a intentarlo.",
+        "limit": "Guarda los cambios antes de agregar más filas. Cada envío admite hasta 50 filas.",
+        "base_price": "Precio base",
+        "list_price": "Precio de lista",
+        "remove": "Quitar",
+        "row_options": "Opciones, cantidad y vigencia",
+        "min_qty": "Unidades base mínimas",
+        "reason_hint": "Indica el motivo al cambiar un precio guardado, ajustar sus fechas o retirar una fila.",
+        "history_hint": "Los 50 cambios de precio más recientes, incluidas las filas retiradas.",
+        "changed_to": "cambió a",
+        "status": {
+          "draft": "Borrador",
+          "scheduled": "Programada",
+          "active": "Activa",
+          "paused": "En pausa",
+          "expired": "Vencida",
+          "archived": "Archivada"
+        },
+        "validity": {
+          "current": "Vigente en este momento",
+          "upcoming": "Próxima a iniciar",
+          "ended": "Vigencia finalizada"
+        },
+        "actions": {
+          "activate": "Activar",
+          "pause": "Pausar",
+          "resume": "Reanudar",
+          "duplicate": "Duplicar",
+          "archive": "Archivar"
+        },
+        "confirm": {
+          "activate": "¿Activar «%{name}» durante su vigencia?",
+          "pause": "¿Pausar la aplicación de precios de «%{name}»?",
+          "resume": "¿Reanudar la aplicación de precios de «%{name}»?",
+          "duplicate": "¿Crear una copia en borrador de «%{name}»?",
+          "archive": "¿Archivar «%{name}» de forma definitiva? Se conservará su historial."
+        },
+        "matching": "Listas encontradas",
+        "products_covered": "Productos incluidos",
+        "currencies": "Monedas",
+        "activity": "Actividad de la lista",
+        "item_retired": "Fila de precio retirada",
+        "updated": "Lista actualizada",
+        "created": "Lista creada",
+        "changed": "Lista modificada"
+      }
+    }
+  }
+}

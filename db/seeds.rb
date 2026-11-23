@@ -814,5 +814,5 @@ end
 # Communication module permissions and immutable initial template versions.
 load Rails.root.join('db/seeds/email_catalog.rb')
 
-# Independent CRUD actions for the administration catalogs.
+# Independent actions for the administration catalogs and commercial modules.
 GranularPermissionCatalog.sync!

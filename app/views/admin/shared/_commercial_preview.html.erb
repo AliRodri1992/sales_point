@@ -1,0 +1,77 @@
+<section class="catalog-card" aria-labelledby="commercial-preview-heading"
+         data-controller="commercial-preview"
+         data-commercial-preview-url-value="<%= preview_url %>"
+         data-commercial-preview-lookup-url-value="<%= lookup_url %>"
+         data-commercial-preview-searching-value="<%= t('admin.commercial_preview.searching') %>"
+         data-commercial-preview-empty-value="<%= t('admin.commercial_preview.empty') %>"
+         data-commercial-preview-error-value="<%= t('admin.commercial_preview.error') %>"
+         data-commercial-preview-calculating-value="<%= t('admin.commercial_preview.calculating') %>"
+         data-commercial-preview-none-value="<%= t('admin.commercial_preview.none') %>">
+  <%= catalog_heading(t('admin.commercial_preview.title'), t('admin.commercial_preview.subtitle'),
+                      icon: 'calculator', id: 'commercial-preview-heading') %>
+  <div class="catalog-card-body space-y-5">
+    <div class="catalog-field relative">
+      <%= label_tag 'commercial-preview-product', t('admin.commercial_preview.product') %>
+      <div class="relative">
+        <%= text_field_tag :preview_search, nil, id: 'commercial-preview-product', type: 'search', autocomplete: 'off',
+                           placeholder: t('admin.commercial_preview.placeholder'),
+                           aria: { controls: 'commercial-preview-results' },
+                           data: { commercial_preview_target: 'search', action: 'input->commercial-preview#search keydown.esc->commercial-preview#dismiss keydown.down->commercial-preview#focusResults' } %>
+        <%= delta_icon('magnifying-glass', class: 'absolute right-3 top-3 size-4 text-slate-400 pointer-events-none') %>
+      </div>
+      <div id="commercial-preview-results" data-commercial-preview-target="results" hidden
+           class="absolute inset-x-0 top-full z-20 max-h-56 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg"></div>
+      <p data-commercial-preview-target="lookupStatus" aria-live="polite" class="text-xs text-slate-500"></p>
+    </div>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="catalog-field">
+        <%= label_tag 'commercial-preview-quantity', t('admin.commercial_preview.quantity') %>
+        <%= number_field_tag :preview_quantity, 1, id: 'commercial-preview-quantity', min: '0.000001', step: '0.000001',
+                             data: { commercial_preview_target: 'quantity', action: 'input->commercial-preview#invalidate' } %>
+      </div>
+      <div class="catalog-field">
+        <%= label_tag 'commercial-preview-segment', t('admin.commercial_preview.segment') %>
+        <%= text_field_tag :preview_segment, record.respond_to?(:customer_segment) ? record.customer_segment : nil,
+                           id: 'commercial-preview-segment', maxlength: 100,
+                           data: { commercial_preview_target: 'segment', action: 'input->commercial-preview#invalidate' } %>
+      </div>
+      <div class="catalog-field">
+        <%= label_tag 'commercial-preview-customer', t('admin.commercial_preview.customer') %>
+        <%= text_field_tag :preview_customer, nil, id: 'commercial-preview-customer', maxlength: 100,
+                           autocomplete: 'off', placeholder: t('admin.commercial_preview.customer_placeholder'),
+                           data: { commercial_preview_target: 'customer', action: 'input->commercial-preview#invalidate' } %>
+      </div>
+      <div class="catalog-field">
+        <%= label_tag 'commercial-preview-at', t('admin.commercial_preview.at') %>
+        <%= text_field_tag :preview_at, (record.starts_at || Time.current).in_time_zone.ceil.strftime('%Y-%m-%dT%H:%M:%S'),
+                           id: 'commercial-preview-at', type: 'datetime-local', step: 1,
+                           data: { commercial_preview_target: 'at', action: 'change->commercial-preview#invalidate' } %>
+      </div>
+      <% %w[variant presentation].each do |kind| %>
+        <div class="catalog-field">
+          <%= label_tag "commercial-preview-#{kind}", t("admin.commercial_preview.#{kind}") %>
+          <div class="relative" data-controller="delta-select" data-searchable="true" data-search-placeholder="<%= t('admin.commercial_preview.search_options') %>">
+            <%= select_tag "preview_#{kind}", options_for_select([[t('admin.commercial_preview.none'), '']]),
+                           id: "commercial-preview-#{kind}",
+                           data: { commercial_preview_target: kind, action: 'change->commercial-preview#invalidate' } %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div class="flex flex-wrap items-center gap-3">
+      <button type="button" data-action="commercial-preview#calculate" data-commercial-preview-target="calculate"
+              class="catalog-button catalog-button-primary disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+        <%= delta_icon('calculator', class: 'size-4') %><%= t('admin.commercial_preview.calculate') %>
+      </button>
+      <p data-commercial-preview-target="status" role="status" aria-live="polite" class="text-sm text-slate-600"></p>
+    </div>
+    <dl data-commercial-preview-target="summary" hidden class="grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-4">
+      <% %w[unit_price subtotal discount total].each do |attribute| %>
+        <div class="min-w-0 <%= 'text-emerald-800' if attribute == 'total' %>">
+          <dt class="text-xs font-medium"><%= t("admin.commercial_preview.#{attribute}") %></dt>
+          <dd data-commercial-preview-target="amount" data-amount="<%= attribute %>" class="break-words text-lg font-semibold"></dd>
+        </div>
+      <% end %>
+    </dl>
+  </div>
+</section>

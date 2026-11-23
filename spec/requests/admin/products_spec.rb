@@ -825,6 +825,10 @@ RSpec.describe 'Admin::Products', type: :request do
 
     it 'explains a segment-mismatched price list in the quote response' do
       product = create(:product, organization:)
+      role = user.system_roles.sole
+      %w[price_lists.access price_lists.show].each do |code|
+        create(:system_role_permission, system_role: role, permission: Permission.find_by!(code:))
+      end
       attributes = { name: 'Wholesale', code: 'WHS-QUO', currency: 'MXN',
                      status: 'active', customer_segment: 'wholesale' }
       create(:currency, code: 'MXN')

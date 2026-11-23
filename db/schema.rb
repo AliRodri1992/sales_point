@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_23_000110) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -938,8 +938,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
     t.bigint "price_list_item_id"
     t.bigint "actor_id", null: false
     t.bigint "approved_by_id"
-    t.decimal "previous_price", precision: 12, scale: 2
-    t.decimal "new_price", precision: 12, scale: 2, null: false
+    t.decimal "previous_price", precision: 18, scale: 8
+    t.decimal "new_price", precision: 18, scale: 8, null: false
     t.string "currency", limit: 3, null: false
     t.string "status", default: "pending", null: false
     t.text "reason", null: false
@@ -961,12 +961,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
     t.bigint "product_id", null: false
     t.bigint "product_variant_id"
     t.bigint "product_presentation_id"
-    t.decimal "price", precision: 12, scale: 2, null: false
+    t.decimal "price", precision: 18, scale: 8, null: false
     t.datetime "starts_at"
     t.datetime "ends_at"
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "minimum_quantity", precision: 18, scale: 6, default: "0.0", null: false
     t.index ["organization_id", "id"], name: "index_price_list_items_on_organization_id_and_id", unique: true
     t.index ["organization_id", "product_id", "id"], name: "idx_list_item_tenant_product", unique: true
     t.index ["organization_id"], name: "index_price_list_items_on_organization_id"
@@ -975,8 +976,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
     t.index ["product_presentation_id"], name: "index_price_list_items_on_product_presentation_id"
     t.index ["product_variant_id"], name: "index_price_list_items_on_product_variant_id"
     t.check_constraint "ends_at IS NULL OR starts_at IS NULL OR ends_at > starts_at", name: "price_item_dates"
+    t.check_constraint "minimum_quantity >= 0::numeric", name: "price_item_minimum_quantity"
     t.check_constraint "price >= 0::numeric", name: "list_item_positive_price"
-    t.exclusion_constraint "price_list_id WITH =, product_id WITH =, COALESCE(product_variant_id, (0)::bigint) WITH =, COALESCE(product_presentation_id, (0)::bigint) WITH =, tsrange(starts_at, ends_at, '[)'::text) WITH &&", where: "deleted_at IS NULL", using: :gist, deferrable: :deferred, name: "commercial_price_periods"
+    t.exclusion_constraint "price_list_id WITH =, product_id WITH =, COALESCE(product_variant_id, (0)::bigint) WITH =, COALESCE(product_presentation_id, (0)::bigint) WITH =, minimum_quantity WITH =, tsrange(starts_at, ends_at, '[)'::text) WITH &&", where: "deleted_at IS NULL", using: :gist, deferrable: :deferred, name: "commercial_price_periods"
   end
 
   create_table "price_lists", force: :cascade do |t|
@@ -991,6 +993,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "priority", default: 0, null: false
+    t.boolean "default_list", default: false, null: false
     t.index ["organization_id", "code"], name: "index_price_lists_on_organization_id_and_code", unique: true
     t.index ["organization_id", "id"], name: "index_price_lists_on_organization_id_and_id", unique: true
     t.index ["organization_id"], name: "index_price_lists_on_organization_id"
@@ -1106,7 +1110,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
     t.bigint "organization_id", null: false
     t.bigint "promotion_id", null: false
     t.string "kind", default: "percentage", null: false
-    t.decimal "value", precision: 12, scale: 4, null: false
+    t.decimal "value", precision: 18, scale: 8, null: false
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -1122,7 +1126,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
     t.bigint "product_id"
     t.bigint "category_id"
     t.decimal "quantity", precision: 18, scale: 6
-    t.decimal "amount", precision: 12, scale: 2
+    t.decimal "amount", precision: 18, scale: 8
     t.string "customer_segment", limit: 100
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
@@ -1140,7 +1144,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
     t.string "idempotency_key", limit: 100, null: false
     t.string "customer_reference", limit: 100
     t.decimal "quantity", precision: 18, scale: 6, null: false
-    t.decimal "discount", precision: 12, scale: 2, null: false
+    t.decimal "discount", precision: 18, scale: 8, null: false
     t.jsonb "snapshot", default: {}, null: false
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
@@ -1166,11 +1170,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
     t.datetime "deleted_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "priority", default: 0, null: false
+    t.decimal "maximum_discount", precision: 18, scale: 8
+    t.string "combination_mode", default: "best_price", null: false
+    t.bigint "price_list_id"
     t.index ["organization_id", "code"], name: "index_promotions_on_organization_id_and_code", unique: true
     t.index ["organization_id", "id"], name: "index_promotions_on_organization_id_and_id", unique: true
     t.index ["organization_id"], name: "index_promotions_on_organization_id"
+    t.index ["price_list_id"], name: "index_promotions_on_price_list_id"
     t.check_constraint "(usage_limit IS NULL OR usage_limit > 0) AND (customer_limit IS NULL OR customer_limit > 0)", name: "promotion_positive_limits"
+    t.check_constraint "combination_mode::text = ANY (ARRAY['best_price'::character varying, 'exclusive'::character varying]::text[])", name: "promotion_combination_modes"
     t.check_constraint "ends_at IS NULL OR starts_at IS NULL OR ends_at > starts_at", name: "promotion_dates"
+    t.check_constraint "maximum_discount IS NULL OR maximum_discount > 0::numeric", name: "promotion_positive_cap"
   end
 
   create_table "purchase_approvals", force: :cascade do |t|
@@ -2637,6 +2648,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_170000) do
   add_foreign_key "promotion_redemptions", "promotions"
   add_foreign_key "promotion_redemptions", "promotions", column: ["organization_id", "promotion_id"], primary_key: ["organization_id", "id"]
   add_foreign_key "promotions", "organizations"
+  add_foreign_key "promotions", "price_lists", column: ["organization_id", "price_list_id"], primary_key: ["organization_id", "id"]
   add_foreign_key "purchase_approvals", "organizations"
   add_foreign_key "purchase_approvals", "purchase_orders"
   add_foreign_key "purchase_approvals", "users", column: "decided_by_id"

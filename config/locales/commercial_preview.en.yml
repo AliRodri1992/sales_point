@@ -1,0 +1,30 @@
+en:
+  admin:
+    commercial_preview:
+      title: Price simulator
+      subtitle: Test a product and quantity without saving a sale or consuming a promotion.
+      product: Product
+      placeholder: Search by name, SKU, code or barcode
+      quantity: Quantity
+      segment: Customer segment (optional)
+      customer: Customer reference (optional)
+      customer_placeholder: Internal customer identifier
+      at: Simulation date and time
+      variant: Variant
+      presentation: Presentation
+      none: None
+      search_options: Search options…
+      searching: Searching products…
+      empty: No matching active products.
+      error: The preview is unavailable. Check the selection and try again.
+      calculating: Calculating…
+      calculate: Calculate preview
+      unit_price: Unit price
+      subtotal: Subtotal
+      discount: Discount
+      total: Final total
+      overlaps: Potential commercial overlap
+      overlaps_hint: Up to five active records share a validity window. Test the price to confirm which rule applies.
+      priority: "Priority: %{value}"
+    commercial:
+      below_cost_forbidden: You do not have permission to set a price below cost.

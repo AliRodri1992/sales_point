@@ -27,6 +27,9 @@ es:
         catalogs: Catálogos
         languages: Idiomas
         categories: Categorías
+        commercial: Comercial
+        price_lists: Listas de precios
+        promotions: Promociones
         section_admin: Administración
         reports: Reportes
         settings: Configuración

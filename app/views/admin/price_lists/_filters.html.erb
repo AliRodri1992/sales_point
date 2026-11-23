@@ -1,0 +1,61 @@
+<% filters = price_list_filter_values %>
+<% labels = { 'search' => t('admin.catalog_design.search'), 'status' => t('admin.catalog_design.status'),
+              'currency' => t('admin.catalog_design.currency'), 'customer_segment' => t('admin.catalog_design.customer_segment'),
+              'validity' => t('admin.price_lists_ui.period'), 'product_id' => t('admin.catalog_design.product_id') } %>
+<section class="products-filter-panel" aria-label="<%= t('admin.catalog_design.filter') %>">
+  <%= form_with url: admin_price_lists_path, method: :get, class: 'grid min-w-0 gap-3' do %>
+    <% %w[per_page sort direction].each do |key| %>
+      <%= hidden_field_tag key, params[key] if params[key].is_a?(String) && params[key].present? %>
+    <% end %>
+    <div class="grid min-w-0 gap-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto] md:items-end">
+      <div class="catalog-field">
+        <%= label_tag :price_lists_search, labels['search'] %>
+        <%= search_field_tag :search, filters['search'], id: :price_lists_search, maxlength: 100, placeholder: t('admin.price_lists_ui.name_or_code') %>
+      </div>
+      <div class="catalog-field">
+        <%= label_tag :price_lists_status, labels['status'] %>
+        <div class="relative" data-controller="delta-select">
+          <%= select_tag :status, options_for_select([[t('admin.catalog_design.all_statuses'), '']] + price_list_statuses.map { |state| [t("admin.price_lists_ui.status.#{state}"), state] }, params[:status]), id: :price_lists_status %>
+        </div>
+      </div>
+      <%= button_tag t('admin.catalog_design.filter'), type: :submit, name: nil, class: 'catalog-button catalog-button-primary' %>
+    </div>
+    <details class="products-filters__advanced" <%= 'open' if (filters.keys - %w[search status]).any? %>>
+      <summary>
+        <%= delta_icon('adjustments-horizontal', class: 'size-4') %>
+        <span class="products-filters__advanced-title"><%= t('admin.catalog_design.advanced_filters') %></span>
+        <%= delta_icon('chevron-down', class: 'size-4 products-filters__chevron') %>
+      </summary>
+      <div class="catalog-fields mt-3">
+        <div class="catalog-field">
+          <%= label_tag :price_lists_currency, labels['currency'] %>
+          <div class="relative" data-controller="delta-select" data-searchable="true" data-search-placeholder="<%= t('admin.catalog_design.search') %>">
+            <%= select_tag :currency, options_for_select([[t('admin.price_lists_ui.all_currencies'), '']] + price_list_currency_places.keys.sort.map { |code| [code, code] }, params[:currency]), id: :price_lists_currency %>
+          </div>
+        </div>
+        <div class="catalog-field">
+          <%= label_tag :price_lists_segment, labels['customer_segment'] %>
+          <%= text_field_tag :customer_segment, filters['customer_segment'], id: :price_lists_segment, maxlength: 100 %>
+        </div>
+        <%= render 'admin/price_lists/lookup', input_id: 'price_lists_product_filter', label: labels['product_id'], selected: @selected_product, filter: true %>
+        <div class="catalog-field">
+          <%= label_tag :price_lists_validity, labels['validity'] %>
+          <div class="relative" data-controller="delta-select">
+            <%= select_tag :validity, options_for_select([[t('admin.price_lists_ui.all_periods'), '']] + %w[current upcoming ended].map { |value| [t("admin.price_lists_ui.validity.#{value}"), value] }, params[:validity]), id: :price_lists_validity %>
+          </div>
+        </div>
+      </div>
+    </details>
+  <% end %>
+  <% if filters.any? %>
+    <nav class="products-filter-chips" aria-label="<%= t('admin.catalog_design.product_active_filters') %>">
+      <% filters.each do |key, value| %>
+        <%= link_to admin_price_lists_path(request.query_parameters.except(key, 'page')), class: 'products-filter-chip',
+                    aria: { label: t('admin.catalog_design.product_remove_filter', filter: "#{labels.fetch(key)} · #{value}") } do %>
+          <%= labels.fetch(key) %> · <%= value %> <%= delta_icon('x-mark', class: 'size-3.5') %>
+        <% end %>
+      <% end %>
+      <%= link_to t('admin.catalog_design.product_clear_all'), admin_price_lists_path, class: 'products-filter-chips__clear' %>
+    </nav>
+  <% end %>
+</section>

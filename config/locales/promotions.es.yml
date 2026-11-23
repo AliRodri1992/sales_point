@@ -1,0 +1,165 @@
+{
+  "es": {
+    "admin": {
+      "promotion_campaigns": {
+        "index_intro": "Consulta los descuentos, la elegibilidad y los límites de uso de tus campañas.",
+        "new": "Nueva campaña",
+        "edit": "Editar %{name}",
+        "save": "Guardar campaña",
+        "saving": "Guardando…",
+        "empty": "Aún no hay campañas.",
+        "no_matches": "Ninguna campaña coincide con estos filtros.",
+        "results": {
+          "one": "%{count} campaña",
+          "other": "%{count} campañas"
+        },
+        "columns": {
+          "campaign": "Campaña",
+          "benefit": "Descuento",
+          "audience": "Público",
+          "validity": "Vigencia",
+          "usage": "Uso",
+          "status": "Estado"
+        },
+        "status": {
+          "draft": "Borrador",
+          "scheduled": "Programada",
+          "active": "Activa",
+          "paused": "En pausa",
+          "exhausted": "Agotada",
+          "expired": "Vencida",
+          "archived": "Archivada"
+        },
+        "used_of": "%{used} de %{limit}",
+        "redemptions": "Canjes",
+        "uses": {
+          "one": "%{count} uso",
+          "other": "%{count} usos"
+        },
+        "all_customers": "Toda la clientela",
+        "open_period": "Sin límite de fechas",
+        "no_benefit": "Sin beneficio configurado",
+        "applied_filters": "Filtros aplicados",
+        "remove_filter": "Quitar filtro de %{field}, %{value}",
+        "filters": {
+          "search": "Nombre o código de campaña",
+          "status": "Estado",
+          "currency": "Moneda",
+          "benefit_kind": "Tipo de descuento",
+          "customer_segment": "Segmento de clientes",
+          "product_id": "Producto incluido",
+          "category_id": "Categoría incluida",
+          "validity": "Vigencia",
+          "usage": "Disponibilidad de usos"
+        },
+        "validity": {
+          "current": "Dentro del periodo",
+          "upcoming": "Próxima",
+          "ended": "Finalizada"
+        },
+        "usage": {
+          "available": "Con usos disponibles",
+          "exhausted": "Límite alcanzado"
+        },
+        "sort_label": "Ordenar",
+        "order_label": "Sentido del orden",
+        "sort": {
+          "name": "Nombre de campaña",
+          "code": "Código de campaña",
+          "currency": "Moneda",
+          "starts_at": "Fecha de inicio",
+          "ends_at": "Fecha de fin",
+          "created_at": "Fecha de creación"
+        },
+        "direction": {
+          "asc": "Ascendente",
+          "desc": "Descendente"
+        },
+        "lookup": {
+          "products": "Buscar productos",
+          "categories": "Buscar categorías",
+          "currencies": "Buscar monedas",
+          "lists": "Buscar listas de precios",
+          "empty": "Sin coincidencias.",
+          "loading": "Buscando…",
+          "error": "No se pudo buscar. Modifica la búsqueda para reintentar.",
+          "found": "Resultados encontrados · %{count}"
+        },
+        "unavailable": "No disponible",
+        "sections": {
+          "general": "Datos de campaña",
+          "benefit": "Beneficio de descuento",
+          "conditions": "Condiciones de aplicación",
+          "validity": "Periodo de vigencia",
+          "limits": "Límites de uso"
+        },
+        "general_hint": "Elige un nombre y la moneda con la que se calcularán los descuentos.",
+        "generated_code": "Se asigna al guardar",
+        "date_hint": "La zona horaria es %{zone}. La campaña termina a la hora indicada. Deja las fechas vacías para no limitar el periodo.",
+        "limits_hint": "Deja los límites vacíos para permitir usos ilimitados. El límite por cliente requiere identificar al cliente al canjear.",
+        "add_benefit": "Añadir beneficio",
+        "cap": "Descuento máximo por línea",
+        "mode": "Combinación de promociones",
+        "modes": {
+          "best_price": "Mejor descuento",
+          "exclusive": "Exclusiva"
+        },
+        "priority": "Prioridad",
+        "priority_hint": "Las campañas exclusivas tienen preferencia. La mayor prioridad decide entre exclusivas o entre descuentos normales iguales.",
+        "conditions_hint": "Se admite cualquier producto y cualquier categoría incluidos. También se debe cumplir cada regla adicional. Las exclusiones tienen preferencia.",
+        "conditions": {
+          "min_subtotal": "Subtotal mínimo por línea",
+          "excluded_product": "Producto excluido",
+          "excluded_category": "Categoría excluida"
+        },
+        "price_list": "Lista de precios aplicable",
+        "all_lists": "Cualquier lista o precio base",
+        "exclude_selections": "Excluir los próximos productos o categorías seleccionados",
+        "line_rule": "Regla adicional de aplicación",
+        "add_rule": "Añadir regla",
+        "row_limit": "Alcanzaste el límite de filas. Guarda las bajas antes de añadir más.",
+        "already_selected": "Ya está seleccionado.",
+        "added": "Se añadió %{name}.",
+        "removed": "Se quitó la fila.",
+        "no_conditions": "Se aplica a todos los productos y clientes.",
+        "history": "Historial de campaña",
+        "no_history": "Aún no hay actividad registrada.",
+        "updated": "Campaña actualizada",
+        "events": {
+          "activate": "Campaña activada",
+          "pause": "Campaña en pausa",
+          "resume": "Campaña reanudada",
+          "archive": "Campaña archivada",
+          "duplicate": "Borrador duplicado",
+          "create": "Borrador creado",
+          "update": "Campaña actualizada"
+        },
+        "actions_title": "Acciones de la campaña",
+        "actions": {
+          "activate": "Activar",
+          "pause": "Pausar",
+          "resume": "Reanudar",
+          "archive": "Archivar",
+          "duplicate": "Duplicar"
+        },
+        "confirm": {
+          "activate": "¿Activar %{name} durante el periodo configurado?",
+          "pause": "¿Pausar %{name} y suspender sus descuentos?",
+          "resume": "¿Reanudar los descuentos de %{name}?",
+          "archive": "¿Archivar %{name} definitivamente y conservar su historial?",
+          "duplicate": "¿Crear un borrador a partir de %{name} con el contador de usos en cero?"
+        }
+      }
+    },
+    "activerecord": {
+      "attributes": {
+        "promotion": {
+          "maximum_discount": "Descuento máximo por línea",
+          "combination_mode": "Combinación de promociones",
+          "price_list": "Lista de precios aplicable",
+          "priority": "Prioridad"
+        }
+      }
+    }
+  }
+}

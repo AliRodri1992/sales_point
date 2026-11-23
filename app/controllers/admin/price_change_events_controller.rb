@@ -17,8 +17,9 @@ module Admin
 
     def scoped_price_event
       raise Pundit::NotAuthorizedError unless current_user.admin?
+      raise ActiveRecord::RecordNotFound unless current_organization
 
-      current_organization&.price_change_events&.find(params[:id]) || raise(ActiveRecord::RecordNotFound)
+      current_organization.price_change_events.where(price_list_item_id: nil).find(params[:id])
     end
   end
 end

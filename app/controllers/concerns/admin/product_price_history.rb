@@ -6,6 +6,7 @@ module Admin
 
     def load_price_history
       scope = @product.price_change_events.includes(:actor, :approved_by)
+      scope = scope.where(price_list_item_id: nil) unless policy(PriceList).history?
       @total_count = scope.count
       @per_page = table_page_size_for('product_price_history')
       @total_pages = [(@total_count.to_f / @per_page).ceil, 1].max

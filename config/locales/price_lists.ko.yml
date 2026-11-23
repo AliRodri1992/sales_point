@@ -1,0 +1,78 @@
+{
+  "ko": {
+    "admin": {
+      "price_lists_ui": {
+        "create": "가격표 만들기",
+        "edit": "가격표 수정",
+        "directory": "가격표 목록",
+        "empty_directory": "등록된 가격표가 없습니다",
+        "draft_hint": "초안을 저장하고 가격을 검토한 후 활성화하세요.",
+        "name_or_code": "이름 또는 가격표 코드",
+        "auto_code": "저장 시 자동 부여",
+        "general_hint": "가격에 적용할 통화, 고객군 및 우선순위를 설정하세요.",
+        "search_currency": "통화 검색",
+        "period": "유효 기간",
+        "period_hint": "시작 시각은 포함하고 종료 시각은 제외합니다. 시간대는 %{zone}입니다.",
+        "open_period": "기간 제한 없음",
+        "from": "%{date}부터",
+        "until": "%{date}까지",
+        "all_currencies": "모든 통화",
+        "all_periods": "모든 기간",
+        "all_segments": "전체 고객",
+        "priority": "우선순위",
+        "default_list": "기본 가격표",
+        "items_hint": "상품을 추가하고 가격을 입력하세요. 각 행에서 옵션과 최소 수량을 설정할 수 있습니다.",
+        "no_items": "이 가격표에 상품이 없습니다.",
+        "add_product": "상품 추가",
+        "lookup_hint": "상품명, SKU 또는 바코드",
+        "searching": "상품 검색 중…",
+        "no_products": "검색 결과가 없습니다.",
+        "search_failed": "상품 검색에 실패했습니다. 검색어를 수정해서 다시 시도하세요.",
+        "limit": "상품 행은 한 번에 50개까지 저장할 수 있습니다. 변경 사항을 먼저 저장하세요.",
+        "base_price": "기준 가격",
+        "list_price": "가격표 가격",
+        "remove": "제거",
+        "row_options": "옵션, 수량 및 유효 기간",
+        "min_qty": "최소 기본 단위 수량",
+        "reason_hint": "저장된 가격이나 유효 기간을 변경하거나 행을 삭제할 때 사유를 입력하세요.",
+        "history_hint": "삭제된 행을 포함한 최근 가격 변경 50건입니다.",
+        "changed_to": "변경 후",
+        "status": {
+          "draft": "초안",
+          "scheduled": "예약됨",
+          "active": "활성",
+          "paused": "일시 중지",
+          "expired": "만료됨",
+          "archived": "보관됨"
+        },
+        "validity": {
+          "current": "현재 유효",
+          "upcoming": "시작 예정",
+          "ended": "기간 종료"
+        },
+        "actions": {
+          "activate": "활성화",
+          "pause": "일시 중지",
+          "resume": "재개",
+          "duplicate": "복제",
+          "archive": "보관"
+        },
+        "confirm": {
+          "activate": "유효 기간 동안 ‘%{name}’을 활성화할까요?",
+          "pause": "‘%{name}’ 가격 적용을 일시 중지할까요?",
+          "resume": "‘%{name}’ 가격 적용을 재개할까요?",
+          "duplicate": "‘%{name}’의 초안 사본을 만들까요?",
+          "archive": "‘%{name}’을 영구 보관할까요? 이력은 계속 조회할 수 있습니다."
+        },
+        "matching": "검색된 가격표",
+        "products_covered": "포함된 상품",
+        "currencies": "통화",
+        "activity": "가격표 활동",
+        "item_retired": "가격 행 삭제",
+        "updated": "가격표 업데이트",
+        "created": "가격표 생성",
+        "changed": "가격표 변경"
+      }
+    }
+  }
+}

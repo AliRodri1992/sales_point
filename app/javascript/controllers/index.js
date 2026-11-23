@@ -218,6 +218,21 @@ application.register("nested-catalog", NestedCatalogController)
 import CommercialConditionController from "./commercial_condition_controller"
 application.register("commercial-condition", CommercialConditionController)
 
+import CommercialPreviewController from "./commercial_preview_controller"
+application.register("commercial-preview", CommercialPreviewController)
+
+import PriceListLookupController from "./price_list_lookup_controller"
+application.register("price-list-lookup", PriceListLookupController)
+
+import PriceListEditorController from "./price_list_editor_controller"
+application.register("price-list-editor", PriceListEditorController)
+
+import PromotionEditorController from "./promotion_editor_controller"
+application.register("promotion-editor", PromotionEditorController)
+
+import PromotionLookupController from "./promotion_lookup_controller"
+application.register("promotion-lookup", PromotionLookupController)
+
 import ProductQuoteController from "./product_quote_controller"
 application.register("product-quote", ProductQuoteController)
 

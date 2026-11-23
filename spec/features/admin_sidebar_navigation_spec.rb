@@ -134,6 +134,23 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     expect(page).to have_no_css('#adminSidebarFlyout', wait: 1)
   end
 
+  scenario 'opens Commercial with the keyboard in the collapsed sidebar' do
+    user.update!(sidebar_collapsed: true)
+    visit admin_dashboard_path
+    expect(page).to have_css('#sidebarToggle[data-sidebar-ready="true"]')
+
+    summary = find('#sidebarCommercial > summary[aria-label="Commercial"]')
+    summary.send_keys(:enter)
+    within '#adminSidebarFlyout' do
+      expect(page).to have_link('Price lists', href: admin_price_lists_path)
+      expect(page).to have_link('Promotions', href: admin_promotions_path)
+      expect(page).to have_no_link(href: admin_products_path)
+      find_link('Price lists').send_keys(:escape)
+    end
+    expect(page).to have_no_css('#adminSidebarFlyout')
+    expect(page).to have_css('#sidebarCommercial > summary:focus')
+  end
+
   scenario 'keeps the sidebar drawer within the viewport across mobile and tablet sizes' do
     [320, 375, 390, 768].each do |width|
       page.driver.browser.manage.window.resize_to(width, 900)

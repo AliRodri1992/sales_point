@@ -1,0 +1,30 @@
+ko:
+  admin:
+    commercial_preview:
+      title: 가격 시뮬레이터
+      subtitle: 판매를 저장하거나 프로모션을 사용하지 않고 상품과 수량을 확인하세요.
+      product: 상품
+      placeholder: 이름, SKU, 코드 또는 바코드로 검색
+      quantity: 수량
+      segment: 고객 그룹 (선택 사항)
+      customer: 고객 참조 번호 (선택 사항)
+      customer_placeholder: 내부 고객 식별자
+      at: 시뮬레이션 날짜 및 시간
+      variant: 상품 옵션
+      presentation: 포장 단위
+      none: 없음
+      search_options: 옵션 검색…
+      searching: 상품 검색 중…
+      empty: 일치하는 활성 상품이 없습니다.
+      error: 시뮬레이션을 사용할 수 없습니다. 선택 항목을 확인하고 다시 시도하세요.
+      calculating: 계산 중…
+      calculate: 미리 계산하기
+      unit_price: 단가
+      subtotal: 소계
+      discount: 할인
+      total: 최종 합계
+      overlaps: 상업 규칙 중복 가능성
+      overlaps_hint: 최대 다섯 개의 활성 규칙이 유효 기간을 공유합니다. 적용할 규칙을 확인하려면 가격을 미리 계산하세요.
+      priority: "우선순위: %{value}"
+    commercial:
+      below_cost_forbidden: 원가보다 낮은 가격을 설정할 권한이 없습니다.

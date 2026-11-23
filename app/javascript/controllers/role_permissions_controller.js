@@ -43,7 +43,7 @@ export default class extends Controller {
     const input = event?.target
     const code = input?.dataset?.permissionCode
     const prefix = code?.split(".")[0]
-    const dependent = ["languages", "products", "customers", "users", "categories"]
+    const dependent = ["languages", "products", "customers", "users", "categories", "price_lists", "promotions"]
 
     if (code?.endsWith(".access") && !input.checked && dependent.includes(prefix)) {
       this.permissionTargets.forEach(permission => {

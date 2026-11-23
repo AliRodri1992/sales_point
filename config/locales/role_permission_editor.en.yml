@@ -30,6 +30,8 @@ en:
           employees: Employees
           reports: Reports
           products: Products
+          price_lists: Price lists
+          promotions: Promotions
           categories: Categories
           branches: Branches
           languages: Languages
@@ -62,6 +64,12 @@ en:
           geocode: Geocode
           prefer: Set preferred
           activate: Activate
+          pause: Pause
+          resume: Resume
+          duplicate: Duplicate
+          history: View history
+          view_margin: View margins
+          authorize_below_cost: Authorize below-cost prices
           suspend: Suspend
           reactivate: Reactivate
           invite: Invite

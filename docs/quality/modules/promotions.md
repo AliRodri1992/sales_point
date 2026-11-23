@@ -58,3 +58,10 @@ Este registro incorpora **PROMOTIONS-001** como defecto de frontera observado de
 
 - **PROMOTIONS-001:** la prueba `spec/services/products/promotion_targets_spec.rb` reprodujo la aceptación de referencias inactivas en [Products CI #45085475017](https://github.com/AliRodri1992/sales_point/actions/runs/45085475017), SHA `311c0dbc`. El modelo valida organización y estado en nuevas asignaciones sin eliminar referencias históricas. Verificación de esta adecuación: pendiente de CI del nuevo SHA.
 - **PROMOTIONS-002 · P1 · PROPIO:** el evaluador aplicaba `all?` a todas las condiciones; dos productos o categorías alternativos impedían cualquier descuento. La misma ejecución reprodujo dos descuentos esperados de 20 que eran 0. Se agrupan por tipo: OR dentro de producto/categoría, AND para las demás condiciones y entre tipos. Verificación: pendiente de CI del nuevo SHA.
+
+### Implementación comercial integrada
+
+- Menú Comercial y permisos propios, pantallas de campañas separadas de Productos, filtros, selección de productos/categorías activos, exclusiones y consulta de historial.
+- Estados efectivos, códigos automáticos, transiciones auditadas, límite total y por cliente, descuento máximo, prioridad, lista objetivo y modo exclusivo o mejor precio. No se habilita acumulación ni cálculo de carrito sin una API compatible de redención múltiple.
+- Simulador no mutante y advertencias de vigencias potencialmente coincidentes. La simulación no consume usos ni sustituye la verificación transaccional del límite.
+- Evidencia prevista: `spec/models/commercial_lifecycle_spec.rb`, `spec/services/products/commercial_rules_spec.rb`, `spec/services/products/promotion_concurrency_spec.rb`, `spec/services/commercial/overlaps_spec.rb`, `spec/requests/admin/commercial_workflows_spec.rb` y las pruebas de navegador de campañas y simulador. Aceptación pendiente de CI del SHA integrado.

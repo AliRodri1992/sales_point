@@ -57,8 +57,17 @@ Rails.application.routes.draw do
     end
     resources :units_of_measure
     resources :product_images, only: :create
-    resources :price_lists
-    resources :promotions
+    concern :commercial_workflow do
+      collection { get :products_lookup }
+      member do
+        patch :transition
+        get :preview
+      end
+    end
+    resources :price_lists, concerns: :commercial_workflow
+    resources :promotions, concerns: :commercial_workflow do
+      collection { get :categories_lookup }
+    end
     resources :price_change_events, only: :update
     resources :products do
       member { get :quote }

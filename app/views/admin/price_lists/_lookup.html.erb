@@ -1,0 +1,19 @@
+<div class="relative min-w-0" data-controller="price-list-lookup"
+     data-price-list-lookup-url-value="<%= products_lookup_admin_price_lists_path(format: :json) %>"
+     data-price-list-lookup-loading-value="<%= t('admin.price_lists_ui.searching') %>"
+     data-price-list-lookup-empty-value="<%= t('admin.price_lists_ui.no_products') %>"
+     data-price-list-lookup-failed-value="<%= t('admin.price_lists_ui.search_failed') %>"
+     data-action="focusout->price-list-lookup#leave keydown->price-list-lookup#navigate">
+  <div class="catalog-field">
+    <%= label_tag input_id, label %>
+    <%= search_field_tag nil, selected&.name, id: input_id, maxlength: 100, autocomplete: 'off',
+                         placeholder: t('admin.price_lists_ui.lookup_hint'), aria: { controls: "#{input_id}-results" },
+                         data: { price_list_lookup_target: 'search', action: 'input->price-list-lookup#search' } %>
+  </div>
+  <% if local_assigns[:filter] %>
+    <%= hidden_field_tag :product_id, selected&.id, data: { price_list_lookup_target: 'selection' } %>
+  <% end %>
+  <p class="catalog-hint" role="status" aria-live="polite" data-price-list-lookup-target="status"></p>
+  <div id="<%= input_id %>-results" class="mt-1 max-h-60 overflow-y-auto rounded-lg border border-slate-200 bg-white"
+       data-price-list-lookup-target="results" hidden></div>
+</div>

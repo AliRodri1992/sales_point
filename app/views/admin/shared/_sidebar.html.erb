@@ -234,6 +234,49 @@
 
     <% end %>
 
+    <% price_lists_visible = policy(PriceList).index? %>
+    <% promotions_visible = policy(Promotion).index? %>
+    <% if price_lists_visible || promotions_visible %>
+      <% commercial_active = sidebar_section_open?('price_lists', 'promotions') %>
+      <div class="mb-6">
+        <details id="sidebarCommercial" class="sidebar-catalog" data-section-active="<%= commercial_active %>"<%= ' open' if commercial_active %>>
+          <summary
+            class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+            aria-label="<%= t('admin.shared.sidebar.commercial') %>"
+            data-tooltip="<%= t('admin.shared.sidebar.commercial') %>"
+          >
+            <%= sidebar_navigation_icon(:commercial) %>
+            <span class="sidebar-label flex-1"><%= t('admin.shared.sidebar.commercial') %></span>
+            <%= delta_icon('chevron-down', class: 'sidebar-chevron size-4 text-slate-400') %>
+          </summary>
+
+          <div class="sidebar-submenu ml-3 mt-1 space-y-1 border-l border-slate-200 pl-3">
+            <% if price_lists_visible %>
+              <%= link_to admin_price_lists_path,
+                          data: { tooltip: t('admin.shared.sidebar.price_lists') },
+                          aria: { label: t('admin.shared.sidebar.price_lists'),
+                                  current: sidebar_item_active?('price_lists') ? 'page' : 'false' },
+                          class: sidebar_link_classes('price_lists', variant: :submenu) do %>
+                <%= sidebar_navigation_icon(:price_lists, class_name: 'size-4') %>
+                <span class="sidebar-label"><%= t('admin.shared.sidebar.price_lists') %></span>
+              <% end %>
+            <% end %>
+
+            <% if promotions_visible %>
+              <%= link_to admin_promotions_path,
+                          data: { tooltip: t('admin.shared.sidebar.promotions') },
+                          aria: { label: t('admin.shared.sidebar.promotions'),
+                                  current: sidebar_item_active?('promotions') ? 'page' : 'false' },
+                          class: sidebar_link_classes('promotions', variant: :submenu) do %>
+                <%= sidebar_navigation_icon(:promotions, class_name: 'size-4') %>
+                <span class="sidebar-label"><%= t('admin.shared.sidebar.promotions') %></span>
+              <% end %>
+            <% end %>
+          </div>
+        </details>
+      </div>
+    <% end %>
+
     <div class="mb-6">
       <p class="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
         <%= t('admin.shared.sidebar.section_admin') %>

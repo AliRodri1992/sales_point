@@ -1,0 +1,165 @@
+{
+  "ko": {
+    "admin": {
+      "promotion_campaigns": {
+        "index_intro": "캠페인별 할인 혜택, 적용 조건, 사용 한도를 확인하세요.",
+        "new": "새 캠페인",
+        "edit": "%{name} 수정",
+        "save": "캠페인 저장",
+        "saving": "저장 중…",
+        "empty": "아직 캠페인이 없습니다.",
+        "no_matches": "조건에 맞는 캠페인이 없습니다.",
+        "results": {
+          "one": "캠페인 %{count}개",
+          "other": "캠페인 %{count}개"
+        },
+        "columns": {
+          "campaign": "캠페인",
+          "benefit": "할인",
+          "audience": "대상 고객",
+          "validity": "적용 기간",
+          "usage": "사용 현황",
+          "status": "상태"
+        },
+        "status": {
+          "draft": "초안",
+          "scheduled": "예정",
+          "active": "진행 중",
+          "paused": "일시 중지",
+          "exhausted": "한도 소진",
+          "expired": "기간 만료",
+          "archived": "보관됨"
+        },
+        "used_of": "%{limit}회 중 %{used}회 사용",
+        "redemptions": "사용 횟수",
+        "uses": {
+          "one": "%{count}회 사용",
+          "other": "%{count}회 사용"
+        },
+        "all_customers": "모든 고객",
+        "open_period": "기간 제한 없음",
+        "no_benefit": "설정된 혜택 없음",
+        "applied_filters": "적용된 필터",
+        "remove_filter": "%{field} 필터 해제, %{value}",
+        "filters": {
+          "search": "캠페인 이름 또는 코드",
+          "status": "상태",
+          "currency": "통화",
+          "benefit_kind": "할인 유형",
+          "customer_segment": "고객 그룹",
+          "product_id": "포함 상품",
+          "category_id": "포함 카테고리",
+          "validity": "적용 기간",
+          "usage": "사용 가능 여부"
+        },
+        "validity": {
+          "current": "현재 적용 기간",
+          "upcoming": "시작 전",
+          "ended": "종료됨"
+        },
+        "usage": {
+          "available": "사용 가능",
+          "exhausted": "한도 도달"
+        },
+        "sort_label": "정렬",
+        "order_label": "정렬 방향",
+        "sort": {
+          "name": "캠페인 이름",
+          "code": "캠페인 코드",
+          "currency": "통화",
+          "starts_at": "시작일",
+          "ends_at": "종료일",
+          "created_at": "생성일"
+        },
+        "direction": {
+          "asc": "오름차순",
+          "desc": "내림차순"
+        },
+        "lookup": {
+          "products": "상품 검색",
+          "categories": "카테고리 검색",
+          "currencies": "통화 검색",
+          "lists": "가격표 검색",
+          "empty": "검색 결과가 없습니다.",
+          "loading": "검색 중…",
+          "error": "검색하지 못했습니다. 검색어를 변경해 다시 시도하세요.",
+          "found": "검색 결과 %{count}개"
+        },
+        "unavailable": "사용할 수 없음",
+        "sections": {
+          "general": "캠페인 정보",
+          "benefit": "할인 혜택",
+          "conditions": "적용 조건",
+          "validity": "적용 기간",
+          "limits": "사용 한도"
+        },
+        "general_hint": "캠페인 이름과 할인 계산에 사용할 통화를 선택하세요.",
+        "generated_code": "저장 시 자동 생성",
+        "date_hint": "시간대는 %{zone}입니다. 지정한 종료 시각이 되면 캠페인이 종료됩니다. 기간 제한이 없으면 날짜를 비워 두세요.",
+        "limits_hint": "제한 없이 사용하려면 비워 두세요. 고객별 한도를 설정하면 사용 시 고객 ID가 필요합니다.",
+        "add_benefit": "혜택 추가",
+        "cap": "품목별 최대 할인액",
+        "mode": "프로모션 적용 방식",
+        "modes": {
+          "best_price": "최대 할인",
+          "exclusive": "단독 적용"
+        },
+        "priority": "우선순위",
+        "priority_hint": "단독 캠페인이 먼저 적용됩니다. 단독 캠페인끼리 경쟁하거나 일반 할인액이 같으면 우선순위가 높은 캠페인을 적용합니다.",
+        "conditions_hint": "포함된 상품 중 하나, 포함된 카테고리 중 하나에 해당해야 합니다. 추가 조건은 모두 충족해야 하며 제외 조건이 우선합니다.",
+        "conditions": {
+          "min_subtotal": "품목별 최소 소계",
+          "excluded_product": "제외 상품",
+          "excluded_category": "제외 카테고리"
+        },
+        "price_list": "대상 가격표",
+        "all_lists": "모든 가격표 또는 기본 가격",
+        "exclude_selections": "이후 선택하는 상품 또는 카테고리 제외",
+        "line_rule": "추가 적용 조건",
+        "add_rule": "조건 추가",
+        "row_limit": "행 한도에 도달했습니다. 삭제한 행을 저장한 후 추가하세요.",
+        "already_selected": "이미 선택했습니다.",
+        "added": "%{name} 추가됨.",
+        "removed": "행을 삭제했습니다.",
+        "no_conditions": "모든 상품과 고객에게 적용됩니다.",
+        "history": "캠페인 이력",
+        "no_history": "아직 기록된 활동이 없습니다.",
+        "updated": "캠페인 변경",
+        "events": {
+          "activate": "캠페인 활성화",
+          "pause": "캠페인 일시 중지",
+          "resume": "캠페인 재개",
+          "archive": "캠페인 보관",
+          "duplicate": "초안 복제",
+          "create": "초안 생성",
+          "update": "캠페인 변경"
+        },
+        "actions_title": "캠페인 작업",
+        "actions": {
+          "activate": "활성화",
+          "pause": "일시 중지",
+          "resume": "재개",
+          "archive": "보관",
+          "duplicate": "복제"
+        },
+        "confirm": {
+          "activate": "설정한 기간 동안 %{name} 캠페인을 활성화할까요?",
+          "pause": "%{name} 캠페인을 일시 중지하고 할인 적용을 멈출까요?",
+          "resume": "%{name}의 할인을 재개할까요?",
+          "archive": "%{name} 캠페인을 영구 보관하고 이력을 유지할까요?",
+          "duplicate": "%{name} 캠페인을 복제해 사용 횟수가 0인 초안을 만들까요?"
+        }
+      }
+    },
+    "activerecord": {
+      "attributes": {
+        "promotion": {
+          "maximum_discount": "품목별 최대 할인액",
+          "combination_mode": "프로모션 적용 방식",
+          "price_list": "대상 가격표",
+          "priority": "우선순위"
+        }
+      }
+    }
+  }
+}

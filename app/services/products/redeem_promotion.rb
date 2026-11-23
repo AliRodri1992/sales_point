@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'digest'
+
 module Products
   # Called when an external sale is committed, never when a quote is previewed.
   class RedeemPromotion
@@ -15,6 +17,7 @@ module Products
 
     def call
       @product.with_lock do
+        lock_idempotency_key
         previous = PromotionRedemption.find_by(organization_id: @product.organization_id, idempotency_key: @key)
         return consistent_previous(previous) if previous
 
@@ -29,6 +32,13 @@ module Products
     end
 
     private
+
+    # Products have separate locks, but a caller's operation reference is unique across its tenant.
+    def lock_idempotency_key
+      identifier = Digest::SHA256.digest("promotion-redemption/#{@product.organization_id}/#{@key}").unpack1('q>')
+      sql = PromotionRedemption.sanitize_sql_array(['SELECT pg_advisory_xact_lock(?)', identifier])
+      PromotionRedemption.lease_connection.execute(sql)
+    end
 
     def quote
       Quote.new(product: @product, customer_reference: @customer, **@options).call
@@ -59,10 +69,25 @@ module Products
     end
 
     def redemption_snapshot(result)
-      context_snapshot.merge('unit_price' => result.unit_price.to_s('F'), 'total' => result.total.to_s('F'),
-                             'currency' => result.currency, 'promotion_code' => result.promotion.code,
-                             'discount' => result.discount.to_s('F'), 'benefits' => benefit_snapshot(result),
-                             'conditions' => condition_snapshot(result))
+      context_snapshot.merge(line_snapshot(result), rule_snapshot(result))
+    end
+
+    def rule_snapshot(result)
+      {
+        'promotion_code' => result.promotion.code, 'priority' => result.promotion.priority,
+        'combination_mode' => result.promotion.combination_mode,
+        'maximum_discount' => result.promotion.maximum_discount,
+        'benefits' => benefit_snapshot(result), 'conditions' => condition_snapshot(result)
+      }
+    end
+
+    def line_snapshot(result)
+      item = result.price_list_item
+      { 'unit_price' => result.unit_price.to_s('F'), 'quantity' => result.quantity.to_s('F'),
+        'base_units' => result.base_units.to_s('F'), 'subtotal' => result.subtotal.to_s('F'),
+        'discount' => result.discount.to_s('F'), 'total' => result.total.to_s('F'), 'currency' => result.currency,
+        'price_list_item_id' => item&.id, 'resolved_price_list_id' => item&.price_list_id || @options[:price_list]&.id,
+        'minimum_quantity' => item&.minimum_quantity }
     end
 
     def benefit_snapshot(result)

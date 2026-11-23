@@ -2,7 +2,7 @@
 
 module SystemRoles
   class PermissionSelection
-    DEPENDENT_PREFIXES = %w[languages products customers users categories].freeze
+    DEPENDENT_PREFIXES = %w[languages products customers users categories price_lists promotions].freeze
 
     attr_reader :ids, :error_key
 

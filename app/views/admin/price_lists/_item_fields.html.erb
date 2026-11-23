@@ -1,0 +1,58 @@
+<% item = f.object %>
+<% product = price_list_product(item) %>
+<% units = price_list_units(item, product) %>
+<% base_currency = price_list_base_currency %>
+<% rejected_removal = item.marked_for_destruction? || (item.persisted? && item.deleted_at.present?) %>
+<fieldset class="min-w-0 py-4" data-price-list-row data-persisted="<%= item.persisted? %>" data-changed="<%= item.changed? || item.errors.any? %>"
+          data-base-price="<%= product&.price %>" data-base-currency="<%= base_currency %>"
+          data-units="<%= units %>" <%= tag.attributes(data: { cost: product&.cost }) if margin && product %>
+          <%= 'hidden' if rejected_removal %>>
+  <legend class="sr-only" data-row-product><%= product&.name %></legend>
+  <%= f.hidden_field :id if item.persisted? %>
+  <%= f.hidden_field :product_id, data: { row_product_id: true } %>
+  <%= f.hidden_field :_destroy, value: rejected_removal ? 1 : 0, data: { row_destroy: true } %>
+  <%= catalog_errors(item) %>
+  <div class="grid min-w-0 items-end gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(12rem,2fr)_minmax(7rem,1fr)_minmax(7rem,1fr)_auto_auto]">
+    <div class="min-w-0 self-center"><strong class="break-words text-sm" data-row-product><%= product&.name || t('admin.catalog_design.product_id') %></strong>
+      <p class="catalog-hint font-mono" data-row-code><%= product&.sku.presence || product&.code %></p>
+      <%= error_message_for(item, :product, label: t('admin.catalog_design.product_id'), error_id: "#{f.field_id(:product_id)}_error") %>
+    </div>
+    <div><span class="catalog-label"><%= t('admin.price_lists_ui.base_price') %></span>
+      <output class="inline-flex min-h-11 items-center text-sm tabular-nums" data-row-base><%= price_list_money(product&.price && product.price * units, base_currency) %></output>
+    </div>
+    <%= catalog_field(f, :price, type: :number_field, label: required_field_label(t('admin.price_lists_ui.list_price')), min: 0, step: 'any',
+                      aria: { required: true }, data: { row_price: true, action: 'input->price-list-editor#refreshRow' }) %>
+    <% if margin %>
+      <div><span class="catalog-label"><%= t('admin.catalog_design.margin') %></span>
+        <output class="inline-flex min-h-11 items-center text-sm tabular-nums" data-row-margin><%= price_list_margin(item, product, @record.currency) %></output>
+      </div>
+    <% end %>
+    <button type="button" class="catalog-button justify-self-start" data-action="price-list-editor#remove">
+      <%= delta_icon('x-mark', class: 'size-4') %><%= t('admin.price_lists_ui.remove') %>
+    </button>
+  </div>
+  <details class="mt-2" <%= 'open' if item.errors.any? %>>
+    <summary class="w-fit cursor-pointer py-3 text-xs font-semibold text-[var(--brand-on-white)]"><%= t('admin.price_lists_ui.row_options') %></summary>
+    <div class="catalog-fields">
+      <% if item.persisted? %>
+        <div><span class="catalog-label"><%= t('admin.catalog_design.product_variant_id') %></span><%= item.product_variant&.name || '—' %></div>
+        <div><span class="catalog-label"><%= t('admin.catalog_design.product_presentation_id') %></span><%= item.product_presentation&.name || '—' %></div>
+        <%= catalog_field(f, :minimum_quantity, type: :number_field, label: t('admin.price_lists_ui.min_qty'), step: 'any', readonly: true) %>
+      <% else %>
+        <% variants = product&.product_variants.to_a.select { |option| option.active? && !option.deleted_at } %>
+        <% presentations = product&.product_presentations.to_a.select { |option| option.active? && !option.deleted_at } %>
+        <div class="relative" data-controller="delta-select">
+          <%= catalog_select(f, :product_variant_id, variants.map { |option| [option.name, option.id] }) %>
+          <%= error_message_for(item, :product_variant, label: t('admin.catalog_design.product_variant_id'), error_id: "#{f.field_id(:product_variant_id)}_reference_error") %>
+        </div>
+        <div class="relative" data-controller="delta-select" data-action="change->price-list-editor#refreshRow">
+          <%= catalog_select(f, :product_presentation_id, presentations.map { |option| [option.name, option.id, { data: { units: option.units } }] }) %>
+          <%= error_message_for(item, :product_presentation, label: t('admin.catalog_design.product_presentation_id'), error_id: "#{f.field_id(:product_presentation_id)}_reference_error") %>
+        </div>
+        <%= catalog_field(f, :minimum_quantity, type: :number_field, label: t('admin.price_lists_ui.min_qty'), min: 0, step: 'any') %>
+      <% end %>
+      <%= catalog_field(f, :starts_at, type: :datetime_local_field) %>
+      <%= catalog_field(f, :ends_at, type: :datetime_local_field) %>
+    </div>
+  </details>
+</fieldset>

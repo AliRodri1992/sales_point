@@ -88,13 +88,12 @@ RSpec.describe 'Commercial catalog administration', type: :request do
     document = Nokogiri::HTML(response.body)
     form = document.at_css('form[action="/admin/price_lists"]')
     expect(form['novalidate']).to be_present
-    %w[price_list_name price_list_code].each do |field|
-      expect(document.at_css("label[for='#{field}'] .text-rose-600")).to be_present
-      expect(document.at_css("##{field}")['required']).to be_nil
-    end
+    expect(document.at_css("label[for='price_list_name'] .text-rose-600")).to be_present
+    expect(document.at_css('#price_list_name')['required']).to be_nil
+    expect(form.at_css('input[name="price_list[code]"]:not([readonly]):not([disabled])')).to be_nil
   end
 
-  it 'shows name and code errors beside each field without a duplicate summary' do
+  it 'shows the required name error beside its field without a duplicate summary' do
     post admin_price_lists_path, params: { price_list: { name: '', code: '', currency: 'MXN', status: 'draft' } }
 
     expect(response).to have_http_status(:unprocessable_content)
@@ -102,7 +101,7 @@ RSpec.describe 'Commercial catalog administration', type: :request do
     expect(document.at_css('.catalog-error')).to be_nil
     expect(document.text).not_to include(I18n.t('admin.catalog_design.fix_errors'))
     expect(document.at_css('#price_list_name_error')).to be_present
-    expect(document.at_css('#price_list_code_error')).to be_present
+    expect(document.at_css('#price_list_code_error')).to be_nil
   end
 
   it 'previews prices without consuming promotions or accepting a foreign option' do

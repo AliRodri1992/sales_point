@@ -1,0 +1,165 @@
+{
+  "en": {
+    "admin": {
+      "promotion_campaigns": {
+        "index_intro": "Review campaign discounts, eligibility and redemption limits.",
+        "new": "New campaign",
+        "edit": "Edit %{name}",
+        "save": "Save campaign",
+        "saving": "Saving…",
+        "empty": "No campaigns yet.",
+        "no_matches": "No campaigns match these filters.",
+        "results": {
+          "one": "%{count} campaign",
+          "other": "%{count} campaigns"
+        },
+        "columns": {
+          "campaign": "Campaign",
+          "benefit": "Discount",
+          "audience": "Audience",
+          "validity": "Validity",
+          "usage": "Usage",
+          "status": "Status"
+        },
+        "status": {
+          "draft": "Draft",
+          "scheduled": "Scheduled",
+          "active": "Active",
+          "paused": "Paused",
+          "exhausted": "Exhausted",
+          "expired": "Expired",
+          "archived": "Archived"
+        },
+        "used_of": "%{used} of %{limit}",
+        "redemptions": "Redemptions",
+        "uses": {
+          "one": "%{count} use",
+          "other": "%{count} uses"
+        },
+        "all_customers": "All customers",
+        "open_period": "No date limits",
+        "no_benefit": "No benefit configured",
+        "applied_filters": "Applied filters",
+        "remove_filter": "Remove %{field} filter, %{value}",
+        "filters": {
+          "search": "Campaign name or code",
+          "status": "Status",
+          "currency": "Currency",
+          "benefit_kind": "Discount type",
+          "customer_segment": "Customer segment",
+          "product_id": "Included product",
+          "category_id": "Included category",
+          "validity": "Validity",
+          "usage": "Usage availability"
+        },
+        "validity": {
+          "current": "Within date range",
+          "upcoming": "Upcoming",
+          "ended": "Ended"
+        },
+        "usage": {
+          "available": "Uses remaining",
+          "exhausted": "Limit reached"
+        },
+        "sort_label": "Sort",
+        "order_label": "Sort direction",
+        "sort": {
+          "name": "Campaign name",
+          "code": "Campaign code",
+          "currency": "Currency",
+          "starts_at": "Start date",
+          "ends_at": "End date",
+          "created_at": "Creation date"
+        },
+        "direction": {
+          "asc": "Ascending",
+          "desc": "Descending"
+        },
+        "lookup": {
+          "products": "Search products",
+          "categories": "Search categories",
+          "currencies": "Search currencies",
+          "lists": "Search price lists",
+          "empty": "No matches.",
+          "loading": "Searching…",
+          "error": "Search failed. Edit the search to retry.",
+          "found": "Results found · %{count}"
+        },
+        "unavailable": "Unavailable",
+        "sections": {
+          "general": "Campaign details",
+          "benefit": "Discount benefit",
+          "conditions": "Eligibility",
+          "validity": "Validity period",
+          "limits": "Usage limits"
+        },
+        "general_hint": "Choose a name and the currency used to calculate discounts.",
+        "generated_code": "Assigned when saved",
+        "date_hint": "Times are in %{zone}. The campaign ends at the specified time. Leave dates blank for an open period.",
+        "limits_hint": "Leave limits blank for unlimited use. A per-customer limit requires a customer ID at redemption.",
+        "add_benefit": "Add benefit",
+        "cap": "Maximum line discount",
+        "mode": "Promotion combination",
+        "modes": {
+          "best_price": "Best discount",
+          "exclusive": "Exclusive"
+        },
+        "priority": "Priority",
+        "priority_hint": "Exclusive campaigns take precedence. Higher priority wins between exclusive campaigns or equal standard discounts.",
+        "conditions_hint": "Any included product and any included category may match. Each additional rule must also match. Exclusions always take precedence.",
+        "conditions": {
+          "min_subtotal": "Minimum line subtotal",
+          "excluded_product": "Excluded product",
+          "excluded_category": "Excluded category"
+        },
+        "price_list": "Target price list",
+        "all_lists": "Any price list or base price",
+        "exclude_selections": "Exclude the next products or categories selected",
+        "line_rule": "Additional eligibility rule",
+        "add_rule": "Add rule",
+        "row_limit": "Row limit reached. Save removals before adding more.",
+        "already_selected": "Already selected.",
+        "added": "Added %{name}.",
+        "removed": "Row removed.",
+        "no_conditions": "All products and customers qualify.",
+        "history": "Campaign history",
+        "no_history": "No activity recorded yet.",
+        "updated": "Campaign updated",
+        "events": {
+          "activate": "Campaign activated",
+          "pause": "Campaign paused",
+          "resume": "Campaign resumed",
+          "archive": "Campaign archived",
+          "duplicate": "Draft duplicated",
+          "create": "Draft created",
+          "update": "Campaign updated"
+        },
+        "actions_title": "Campaign actions",
+        "actions": {
+          "activate": "Activate",
+          "pause": "Pause",
+          "resume": "Resume",
+          "archive": "Archive",
+          "duplicate": "Duplicate"
+        },
+        "confirm": {
+          "activate": "Activate %{name} for its configured period?",
+          "pause": "Pause %{name} and suspend its discounts?",
+          "resume": "Resume discounts for %{name}?",
+          "archive": "Archive %{name} permanently and retain its history?",
+          "duplicate": "Create a new draft from %{name} with a fresh usage count?"
+        }
+      }
+    },
+    "activerecord": {
+      "attributes": {
+        "promotion": {
+          "maximum_discount": "Maximum line discount",
+          "combination_mode": "Promotion combination",
+          "price_list": "Target price list",
+          "priority": "Priority"
+        }
+      }
+    }
+  }
+}

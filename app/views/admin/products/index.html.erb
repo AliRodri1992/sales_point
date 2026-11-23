@@ -14,7 +14,6 @@
     <% end %>
   </header>
 
-<nav class="catalog-nav" aria-label="<%= t('admin.catalog_design.commercial') %>"><% if policy(PriceList).index? %><%= link_to t('admin.catalog_design.price_lists'), admin_price_lists_path %><% end %><% if policy(Promotion).index? %><%= link_to t('admin.catalog_design.promotions'), admin_promotions_path %><% end %></nav>
 <%= render 'filters' %>
 <div class="delta-skeleton-region" data-controller="skeleton-loading"
      data-skeleton-loading-region-value="admin_products_list" aria-busy="false"

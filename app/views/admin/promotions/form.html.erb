@@ -1,0 +1,62 @@
+<% title = @record.persisted? ? campaign_text('edit', name: @record.name) : campaign_text('new') %>
+<% content_for :title, title %>
+<div class="catalog-workspace">
+  <header class="catalog-header">
+    <div>
+      <p class="catalog-eyebrow"><%= t('admin.catalog_design.promotions') %></p>
+      <h1><%= title %></h1>
+    </div>
+    <%= link_to t('admin.catalog_design.back'), catalog_back_path(Promotion), class: 'catalog-button' %>
+  </header>
+  <%= form_with model: [:admin, @record], html: { novalidate: true }, class: 'catalog-main',
+                data: { controller: 'promotion-editor', action: 'promotion-lookup:pick->promotion-editor#pick',
+                        promotion_editor_limit_value: campaign_text('row_limit'),
+                        promotion_editor_duplicate_value: campaign_text('already_selected'),
+                        promotion_editor_added_value: campaign_text('added', name: '__NAME__'),
+                        promotion_editor_removed_value: campaign_text('removed') } do |form| %>
+    <%= catalog_errors(@record) %>
+    <section class="catalog-card !overflow-visible" aria-labelledby="campaign-general-title">
+      <%= catalog_heading(campaign_text('sections.general'), campaign_text('general_hint'), id: 'campaign-general-title', icon: 'tag') %>
+      <div class="catalog-card-body catalog-fields">
+        <%= catalog_field(form, :name, label: required_field_label(t('admin.catalog_design.name')), maxlength: 100, aria: { required: true }) %>
+        <div>
+          <span class="catalog-label"><%= t('admin.catalog_design.code') %></span>
+          <p class="py-2 text-sm text-slate-600"><%= @record.persisted? ? @record.code : campaign_text('generated_code') %></p>
+        </div>
+        <% if @record.persisted? %>
+          <div>
+            <span class="catalog-label"><%= t('admin.catalog_design.currency') %></span>
+            <p class="py-2 text-sm"><%= @record.currency %></p>
+            <%= error_message_for(@record, :currency) %>
+          </div>
+        <% else %>
+          <div data-controller="delta-select" data-searchable="true" data-search-placeholder="<%= campaign_text('lookup.currencies') %>">
+            <%= catalog_select(form, :currency, campaign_currency_options, include_blank: false, label: required_field_label(t('admin.catalog_design.currency'))) %>
+          </div>
+        <% end %>
+      </div>
+    </section>
+    <%= render 'benefits', form: form %>
+    <%= render 'conditions', form: form %>
+    <section class="catalog-card !overflow-visible" aria-labelledby="campaign-validity-title">
+      <%= catalog_heading(campaign_text('sections.validity'), campaign_text('date_hint', zone: Time.zone.name), id: 'campaign-validity-title', icon: 'calendar') %>
+      <div class="catalog-card-body catalog-fields">
+        <% %i[starts_at ends_at].each do |field| %>
+          <%= catalog_field(form, field, type: :datetime_local_field, step: 1, value: @record.public_send(field)&.in_time_zone&.strftime('%Y-%m-%dT%H:%M:%S')) %>
+        <% end %>
+      </div>
+    </section>
+    <section class="catalog-card !overflow-visible" aria-labelledby="campaign-limits-title">
+      <%= catalog_heading(campaign_text('sections.limits'), campaign_text('limits_hint'), id: 'campaign-limits-title', icon: 'chart-bar') %>
+      <div class="catalog-card-body catalog-fields">
+        <% %i[usage_limit customer_limit].each do |field| %>
+          <%= catalog_field(form, field, type: :number_field, min: 1, step: 1) %>
+        <% end %>
+      </div>
+    </section>
+    <footer class="catalog-footer">
+      <%= link_to t('admin.catalog_design.cancel'), @record.persisted? && policy(@record).show? ? admin_promotion_path(@record) : catalog_back_path(Promotion), class: 'catalog-button' %>
+      <%= form.submit campaign_text('save'), class: 'catalog-button catalog-button-primary', data: { turbo_submits_with: campaign_text('saving') } %>
+    </footer>
+  <% end %>
+</div>

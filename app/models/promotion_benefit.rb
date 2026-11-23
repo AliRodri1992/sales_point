@@ -10,9 +10,9 @@ class PromotionBenefit < ApplicationRecord
   before_validation :inherit_organization
   validate :same_organization
 
-  def discount_for(subtotal)
+  def discount_for(subtotal, precision: 2)
     amount = percentage? ? subtotal * value / 100 : value
-    [amount.round(2), subtotal].min
+    [amount.round(precision), subtotal].min
   end
 
   private

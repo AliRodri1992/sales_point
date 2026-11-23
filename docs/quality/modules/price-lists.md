@@ -49,3 +49,10 @@ No se han trasladado ni inventado hallazgos en esta apertura. **Esto no signific
 - **Dictamen:** NO CERRADO. Al auditar, agregar comandos, fecha, resultados reales y enlaces de ejecución.
 
 Política: [Estándar modular](../module-quality-standard.md) · [Plantilla ampliada](../module-audit-template.md).
+
+### Desarrollo comercial — 2026-11-22
+
+- Espacio propio en el menú Comercial, permisos independientes, pantallas de búsqueda, creación, consulta y edición, filtros avanzados y selección de productos activos desde un buscador.
+- Código autogenerado, estados efectivos, transiciones auditadas, duplicación como borrador, precios por cantidad, lista predeterminada y por segmento, prioridad y resolución sin conversión implícita de moneda.
+- Autorización explícita para precios por debajo del costo, historial con motivo y retiro no destructivo de partidas, advertencias de coincidencias y simulador sin mutaciones.
+- Evidencia de regresión prevista: `spec/models/commercial_lifecycle_spec.rb`, `spec/services/products/commercial_rules_spec.rb`, `spec/services/products/price_list_retirement_spec.rb`, `spec/services/commercial/overlaps_spec.rb`, `spec/requests/admin/commercial_workflows_spec.rb` y las pruebas de navegador del módulo y simulador. La aceptación sigue pendiente de los resultados del SHA integrado en GitHub Actions.

@@ -3,12 +3,13 @@
 module RolePermissionCatalogHelper
   PERMISSION_MODULES = %w[
     dashboard sales cash_register inventory customers suppliers employees reports products
-    categories branches languages roles users purchases accounts_payable
+    categories branches languages roles users purchases accounts_payable price_lists promotions
   ].freeze
   PERMISSION_ACTIONS = %w[
     access index list show view create update edit destroy delete archive restore manage
     approve receive returns pay reveal review set_primary geocode prefer activate suspend
     reactivate block unblock invite resend_invitation publish preview send_test versions
+    pause resume duplicate history view_margin authorize_below_cost
   ].freeze
 
   def permission_module_key(permission)

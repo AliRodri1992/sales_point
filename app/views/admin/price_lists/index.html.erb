@@ -1,0 +1,92 @@
+<% content_for :title, t('admin.catalog_design.price_lists') %>
+<% columns = { 'name' => t('admin.catalog_design.name'), 'code' => t('admin.catalog_design.code'),
+               'currency' => t('admin.catalog_design.currency'), 'starts_at' => t('admin.catalog_design.starts_at'),
+               'ends_at' => t('admin.catalog_design.ends_at') } %>
+<div class="catalog-workspace catalog-list-workspace">
+  <header class="catalog-header">
+    <div><p class="catalog-eyebrow"><%= t('admin.catalog_design.commercial') %></p>
+      <h1><%= t('admin.catalog_design.price_lists') %></h1>
+      <p><%= t('admin.catalog_design.price_lists_intro') %></p>
+    </div>
+    <% if policy(PriceList).create? %>
+      <%= link_to new_admin_price_list_path, class: 'catalog-button catalog-button-primary' do %>
+        <%= delta_icon('plus', class: 'size-4') %><%= t('admin.price_lists_ui.create') %>
+      <% end %>
+    <% end %>
+  </header>
+  <%= render 'admin/price_lists/filters' %>
+  <section class="catalog-list-directory" aria-labelledby="price-list-directory">
+    <dl class="grid grid-cols-1 gap-4 border-b border-slate-100 px-4 py-4 sm:grid-cols-3 sm:px-6">
+      <% [[t('admin.price_lists_ui.matching'), @total_count], [t('admin.price_lists_ui.products_covered'), @coverage_metrics.fetch(:products)],
+          [t('admin.price_lists_ui.currencies'), @coverage_metrics.fetch(:currencies)]].each do |label, count| %>
+        <div class="flex items-baseline justify-between gap-3 sm:block">
+          <dt class="text-xs font-semibold text-slate-600"><%= label %></dt>
+          <dd class="font-jakarta text-2xl font-bold tabular-nums"><%= number_with_delimiter(count) %></dd>
+        </div>
+      <% end %>
+    </dl>
+    <header class="catalog-list-directory-heading">
+      <div><h2 id="price-list-directory"><%= t('admin.price_lists_ui.directory') %></h2>
+
+      </div>
+      <%= render 'admin/shared/catalog_mobile_sort', columns: columns, frame: '_top' if @records.any? %>
+    </header>
+    <% if @records.any? %>
+      <div class="catalog-list-desktop-table">
+        <table class="catalog-list-table">
+          <caption class="sr-only"><%= t('admin.price_lists_ui.directory') %></caption>
+          <thead><tr>
+            <% %w[name code currency].each do |key| %>
+              <th scope="col"><%= sort_link(key, columns.fetch(key)) %></th>
+            <% end %>
+            <th scope="col"><%= t('admin.catalog_design.products') %></th>
+            <th scope="col"><%= t('admin.catalog_design.customer_segment') %></th>
+            <th scope="col"><%= sort_link('starts_at', columns.fetch('starts_at')) %> / <%= sort_link('ends_at', columns.fetch('ends_at')) %></th>
+            <th scope="col"><%= t('admin.catalog_design.status') %></th>
+          </tr></thead>
+          <tbody>
+            <% @records.each do |record| %>
+              <tr>
+                <th scope="row" class="text-left"><%= render 'admin/price_lists/identity', record: record %></th>
+                <td class="font-mono text-xs"><%= record.code %></td>
+                <td><%= record.currency %></td>
+                <td class="tabular-nums"><%= @product_counts.fetch(record.id, 0) %></td>
+                <td><%= record.customer_segment.presence || t('admin.price_lists_ui.all_segments') %></td>
+                <td><%= price_list_period(record) %></td>
+                <td><%= price_list_status(record) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <ul class="catalog-list-mobile-list" aria-label="<%= t('admin.price_lists_ui.directory') %>">
+        <% @records.each do |record| %>
+          <li class="catalog-list-mobile-card">
+            <div class="catalog-list-mobile-card-heading">
+              <div class="min-w-0"><%= render 'admin/price_lists/identity', record: record %>
+                <p class="catalog-hint font-mono"><%= record.code %></p>
+              </div>
+              <%= price_list_status(record) %>
+            </div>
+            <dl class="catalog-list-mobile-facts">
+              <div><dt><%= t('admin.catalog_design.currency') %></dt><dd><%= record.currency %></dd></div>
+              <div><dt><%= t('admin.catalog_design.products') %></dt><dd><%= @product_counts.fetch(record.id, 0) %></dd></div>
+              <div><dt><%= t('admin.catalog_design.customer_segment') %></dt><dd><%= record.customer_segment.presence || t('admin.price_lists_ui.all_segments') %></dd></div>
+              <div><dt><%= t('admin.price_lists_ui.period') %></dt><dd><%= price_list_period(record) %></dd></div>
+            </dl>
+          </li>
+        <% end %>
+      </ul>
+      <%= render 'admin/shared/catalog_pagination', key: 'price_lists', total_pages: @total_pages,
+                 current_page: @current_page, per_page_label: t('admin.products.index.pagination.per_page_label'), frame: '_top' %>
+    <% else %>
+      <div class="catalog-list-empty-state">
+        <%= delta_icon('tag', class: 'size-7 text-[var(--brand-on-white)]') %>
+        <h3><%= t(price_list_filter_values.any? ? 'admin.catalog_design.no_results' : 'admin.price_lists_ui.empty_directory') %></h3>
+        <% if price_list_filter_values.any? %>
+          <%= link_to t('admin.catalog_design.product_clear_all'), admin_price_lists_path, class: 'catalog-button' %>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+</div>

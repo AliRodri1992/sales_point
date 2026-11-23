@@ -11,7 +11,12 @@ export default class extends Controller {
     this.abort = new AbortController()
     const url = new URL(this.urlValue, window.location.origin)
     url.searchParams.set("quantity", this.quantityTarget.value)
-    const options = { variant_id: this.variantTarget.value, presentation_id: this.presentationTarget.value, price_list_id: this.priceListTarget.value, customer_segment: this.segmentTarget.value }
+    const options = {
+      variant_id: this.variantTarget.value,
+      presentation_id: this.presentationTarget.value,
+      price_list_id: this.hasPriceListTarget ? this.priceListTarget.value : null,
+      customer_segment: this.segmentTarget.value
+    }
     Object.entries(options).forEach(([key, value]) => { if (value) url.searchParams.set(key, value) })
     try {
       const response = await fetch(url, { headers: { Accept: "application/json" }, signal: this.abort.signal })

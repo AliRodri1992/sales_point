@@ -1,0 +1,30 @@
+es:
+  admin:
+    commercial_preview:
+      title: Simulador de precios
+      subtitle: Prueba un producto y una cantidad sin guardar una venta ni consumir una promoción.
+      product: Producto
+      placeholder: Busca por nombre, SKU, código o código de barras
+      quantity: Cantidad
+      segment: Segmento del cliente (opcional)
+      customer: Referencia del cliente (opcional)
+      customer_placeholder: Identificador interno del cliente
+      at: Fecha y hora de simulación
+      variant: Variante
+      presentation: Presentación
+      none: Ninguna
+      search_options: Buscar opciones…
+      searching: Buscando productos…
+      empty: No hay productos activos que coincidan.
+      error: La simulación no está disponible. Revisa la selección e inténtalo de nuevo.
+      calculating: Calculando…
+      calculate: Calcular simulación
+      unit_price: Precio unitario
+      subtotal: Subtotal
+      discount: Descuento
+      total: Total final
+      overlaps: Posible coincidencia comercial
+      overlaps_hint: Hasta cinco registros activos comparten una vigencia. Simula el precio para confirmar qué regla aplica.
+      priority: "Prioridad: %{value}"
+    commercial:
+      below_cost_forbidden: No tienes permiso para establecer un precio inferior al costo.

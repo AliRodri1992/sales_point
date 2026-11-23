@@ -1,0 +1,4 @@
+<% state = record.effective_status.to_s %>
+<span class="catalog-status <%= 'catalog-status-inactive' unless state == 'active' %>">
+  <%= campaign_text("status.#{state}") %>
+</span>

@@ -19,6 +19,31 @@ RSpec.describe BreadcrumbsHelper, type: :helper do
     allow(helper).to receive(:params).and_return(controller: 'admin/branches', action: 'edit')
     expect(helper.breadcrumb_items[2]).to include(label: 'Viewed office', path: helper.admin_branch_path(viewed))
   end
+
+  describe 'commercial module breadcrumbs' do
+    let(:organization) { create(:organization) }
+
+    before { create(:currency, code: 'MXN') }
+
+    it 'links to the price list instead of the product catalog from editing' do
+      list = organization.price_lists.create!(name: 'Wholesale', code: 'WHOLESALE', currency: 'MXN')
+      allow(helper.controller).to receive(:view_assigns).and_return('record' => list)
+      allow(helper).to receive(:params).and_return(controller: 'admin/price_lists', action: 'edit')
+
+      expect(helper.breadcrumb_items[-3][:path]).to eq(helper.admin_price_lists_path)
+      expect(helper.breadcrumb_items[-2]).to eq(label: 'Wholesale', path: helper.admin_price_list_path(list))
+    end
+
+    it 'identifies the viewed promotion in its own catalog' do
+      promotion = organization.promotions.create!(name: 'Summer', code: 'SUMMER', currency: 'MXN')
+      allow(helper.controller).to receive(:view_assigns).and_return('record' => promotion)
+      allow(helper).to receive(:params).and_return(controller: 'admin/promotions', action: 'show')
+
+      expect(helper.breadcrumb_items[-2][:path]).to eq(helper.admin_promotions_path)
+      expect(helper.breadcrumb_items.last).to eq(label: 'Summer')
+    end
+  end
+
   describe 'email communication breadcrumbs' do
     let(:email_template) { EmailTemplate.new(id: 42, name: 'Order confirmation') }
 

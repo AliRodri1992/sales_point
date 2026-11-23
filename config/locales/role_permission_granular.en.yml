@@ -116,3 +116,75 @@ en:
         users_restore:
           description: Allows restoring archived users. Requires a super-administrator
             account.
+        price_lists_access:
+          name: Access · Price lists
+          description: Enables access to the module. Each operation also requires its own permission.
+        price_lists_index:
+          name: List · Price lists
+          description: Allows viewing and filtering the list of records.
+        price_lists_show:
+          name: View details · Price lists
+          description: Allows viewing an individual record.
+        price_lists_create:
+          name: Create · Price lists
+          description: Allows creating draft records.
+        price_lists_update:
+          name: Edit · Price lists
+          description: Allows editing existing records.
+        price_lists_archive:
+          name: Archive · Price lists
+          description: Allows archiving records while retaining their history.
+        price_lists_activate:
+          name: Activate · Price lists
+          description: Allows activating eligible drafts.
+        price_lists_pause:
+          name: Pause · Price lists
+          description: Allows pausing active or scheduled records.
+        price_lists_resume:
+          name: Resume · Price lists
+          description: Allows resuming eligible paused records.
+        price_lists_duplicate:
+          name: Duplicate · Price lists
+          description: Allows creating a draft copy of a record.
+        price_lists_history:
+          name: View history · Price lists
+          description: Allows viewing the record’s change history.
+        price_lists_view_margin:
+          name: View margins · Price lists
+          description: Allows viewing product costs and margins in the price list module.
+        price_lists_authorize_below_cost:
+          name: Authorize below-cost prices · Price lists
+          description: Allows explicitly approving prices below cost.
+        promotions_access:
+          name: Access · Promotions
+          description: Enables access to the module. Each operation also requires its own permission.
+        promotions_index:
+          name: List · Promotions
+          description: Allows viewing and filtering the list of records.
+        promotions_show:
+          name: View details · Promotions
+          description: Allows viewing an individual record.
+        promotions_create:
+          name: Create · Promotions
+          description: Allows creating draft records.
+        promotions_update:
+          name: Edit · Promotions
+          description: Allows editing existing records.
+        promotions_archive:
+          name: Archive · Promotions
+          description: Allows archiving records while retaining their history.
+        promotions_activate:
+          name: Activate · Promotions
+          description: Allows activating eligible drafts.
+        promotions_pause:
+          name: Pause · Promotions
+          description: Allows pausing active or scheduled records.
+        promotions_resume:
+          name: Resume · Promotions
+          description: Allows resuming eligible paused records.
+        promotions_duplicate:
+          name: Duplicate · Promotions
+          description: Allows creating a draft copy of a record.
+        promotions_history:
+          name: View history · Promotions
+          description: Allows viewing the record’s change history.

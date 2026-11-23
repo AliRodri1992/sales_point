@@ -31,6 +31,8 @@ es:
           employees: Empleados
           reports: Reportes
           products: Productos
+          price_lists: Listas de precios
+          promotions: Promociones
           categories: Categorías
           branches: Sucursales
           languages: Idiomas
@@ -63,6 +65,12 @@ es:
           geocode: Geolocalizar
           prefer: Marcar preferente
           activate: Activar
+          pause: Pausar
+          resume: Reanudar
+          duplicate: Duplicar
+          history: Ver historial
+          view_margin: Ver márgenes
+          authorize_below_cost: Autorizar precios por debajo del costo
           suspend: Suspender
           reactivate: Reactivar
           invite: Invitar

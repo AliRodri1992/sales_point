@@ -14,6 +14,7 @@
 
 - `feature/fixes` only; no force push, protected branch changes or skipped hooks/CI. Check remote head before publishing; validate exact SHA using Actions, not assumed local tools.
 - Delta Emerald, existing components, inline original SVG, es/en/ko, tenant isolation, Pundit, server validations, no external dependencies. Preserve historical references, existing APIs and permanent quality IDs.
+- Delivery adjustment: implement Tasks 2–5 together and publish one integrated revision. The user will pull that revision locally. CI validation follows the integrated commit; the checklist does not certify a passing test run until evidence is available.
 
 ## Review Focus
 
@@ -29,10 +30,10 @@
 
 **Interfaces:** `Products::PromotionEligibility#eligible?` returns Boolean; `Products::Quote#call` remains unchanged, `PromotionCondition` model validates associations.
 
-- [ ] Add regression specs: product A or B qualifies, C does not; quantity and category remain mandatory, retired/inactive/foreign or global targets cannot be newly assigned; unaffected historical records remain readable.
-- [ ] Validate red through GitHub Actions; confirm failures specifically represent the missing behavior.
-- [ ] Implement grouped OR validation within product/category kinds; AND across groups and other conditions. Validate new/reassigned target state and organization, preserve same-tenant historical identities on unchanged edits. Record PROMOTIONS-001 in quality log.
-- [ ] Validate green in RSpec and RuboCop on exact SHA. Commit only the scope justified by these specs.
+- [x] Add regression specs: product A or B qualifies, C does not; quantity and category remain mandatory, retired/inactive/foreign or global targets cannot be newly assigned; unaffected historical records remain readable.
+- [x] Validate red through GitHub Actions; confirm failures specifically represent the missing behavior.
+- [x] Implement grouped OR validation within product/category kinds; AND across groups and other conditions. Validate new/reassigned target state and organization, preserve same-tenant historical identities on unchanged edits. Record PROMOTIONS-001 in quality log.
+- [x] Validate green in focused RSpec and RuboCop on `ac10883`. Final integrated regression suite remains a separate gate.
 
 ### Task 2 — Lifecycle and codes
 

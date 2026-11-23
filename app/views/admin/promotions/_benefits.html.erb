@@ -1,0 +1,26 @@
+<section id="campaign-benefits" class="catalog-card !overflow-visible" aria-labelledby="campaign-benefits-title">
+  <%= catalog_heading(campaign_text('sections.benefit'), t('admin.catalog_design.promotion_benefits_hint'), icon: 'receipt-percent', id: 'campaign-benefits-title') %>
+  <div class="catalog-card-body space-y-5">
+    <%= error_message_for(form.object, :promotion_benefits) %>
+    <div data-promotion-editor-target="benefits" class="divide-y divide-slate-100">
+      <%= form.fields_for :promotion_benefits, include_id: false do |row| %>
+        <%= render 'benefit_row', form: row %>
+      <% end %>
+    </div>
+    <template data-promotion-editor-target="benefitTemplate">
+      <%= form.fields_for :promotion_benefits, PromotionBenefit.new(kind: 'percentage'), child_index: 'NEW_RECORD', include_id: false do |row| %>
+        <%= render 'benefit_row', form: row %>
+      <% end %>
+    </template>
+    <button type="button" class="catalog-button" data-action="promotion-editor#addBenefit" data-promotion-editor-target="addBenefit">
+      <%= delta_icon('plus', class: 'size-4') %><%= campaign_text('add_benefit') %>
+    </button>
+    <p class="text-sm text-slate-600 empty:hidden" role="status" data-promotion-editor-target="benefitNotice"></p>
+    <div class="catalog-fields border-t border-slate-100 pt-5">
+      <%= catalog_field(form, :maximum_discount, type: :number_field, min: 0, step: 'any', label: campaign_text('cap')) %>
+      <%= catalog_select(form, :combination_mode, campaign_choices('modes', %w[best_price exclusive]), label: campaign_text('mode'), include_blank: false) %>
+      <%= catalog_field(form, :priority, type: :number_field, step: 1, label: campaign_text('priority')) %>
+      <p class="catalog-hint self-center"><%= campaign_text('priority_hint') %></p>
+    </div>
+  </div>
+</section>

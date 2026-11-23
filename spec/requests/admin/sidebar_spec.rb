@@ -4,10 +4,10 @@ require 'rails_helper'
 
 RSpec.describe 'Admin sidebar', type: :request do
   let(:user) { create(:user) }
+  let(:role) { create(:system_role, :system, name: 'ZZZ Catalog reader', code: 'catalog_reader') }
 
   before do
     create(:organization_membership, user:)
-    role = create(:system_role, :system, name: 'ZZZ Catalog reader', code: 'catalog_reader')
     create(:user_role, user:, system_role: role)
     %w[products.access products.index].each do |code|
       permission = create(:permission, code:)
@@ -79,6 +79,53 @@ RSpec.describe 'Admin sidebar', type: :request do
     doc = Nokogiri::HTML(response.body)
     expect(doc.at_css('#adminSidebar nav svg[data-sidebar-icon="dashboard"]')).to be_present
     expect(doc.at_css('#adminSidebar nav svg[data-sidebar-icon="catalogs"]')).to be_present
+  end
+
+  it 'omits Commercial when the user only lists Products' do
+    get admin_dashboard_path
+
+    sidebar = Nokogiri::HTML(response.body).at_css('#adminSidebar')
+    expect(sidebar.at_css('svg[data-sidebar-icon="commercial"]')).to be_nil
+  end
+
+  it 'opens an independent Commercial group and exposes only its authorized link' do
+    %w[price_lists.access price_lists.index].each do |code|
+      permission = create(:permission, code:)
+      create(:system_role_permission, system_role: role, permission:)
+    end
+
+    get admin_price_lists_path
+
+    expect(response).to have_http_status(:ok)
+    sidebar = Nokogiri::HTML(response.body).at_css('#adminSidebar')
+    group = sidebar.at_css('svg[data-sidebar-icon="commercial"]').ancestors('details').first
+    expect(group.has_attribute?('open')).to be(true)
+    expect(group['data-section-active']).to eq('true')
+    expect(group.at_css('summary')['aria-label']).to be_present
+    expect(group.at_css("a[href='#{admin_price_lists_path}']")['aria-current']).to eq('page')
+    expect(group.at_css("a[href='#{admin_promotions_path}']")).to be_nil
+    expect(group.at_css("a[href='#{admin_products_path}']")).to be_nil
+  end
+
+  it 'keeps commercial references contextual on the product detail' do
+    %w[products.show price_lists.access price_lists.index promotions.access promotions.index].each do |code|
+      permission = create(:permission, code:)
+      create(:system_role_permission, system_role: role, permission:)
+    end
+    organization = user.organization_memberships.first.organization
+    product = create(:product, organization:)
+
+    get admin_products_path
+    content = Nokogiri::HTML(response.body).at_css('#adminDashboardContent')
+    expect(content.at_css("a[href='#{admin_price_lists_path}']")).to be_nil
+    expect(content.at_css("a[href='#{admin_promotions_path}']")).to be_nil
+
+    get admin_product_path(product)
+    expect(response).to have_http_status(:ok)
+    content = Nokogiri::HTML(response.body).at_css('#adminDashboardContent')
+    expect(content.at_css("a[href='#{admin_price_lists_path(product_id: product.id)}']")).to be_present
+    expect(content.at_css("a[href='#{admin_promotions_path(product_id: product.id)}']")).to be_present
+    expect(content.at_css('[data-controller="product-quote"]')).to be_present
   end
 
   describe 'topbar accessibility regressions' do

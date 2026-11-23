@@ -35,6 +35,20 @@ RSpec.describe 'Role permission privilege boundaries', type: :request do
     expect(SystemRole.find_by(name: 'New special')).to be_nil
   end
 
+  it 'requires each commercial action to be paired with its own module access' do
+    price_list_access = create(:permission, code: 'price_lists.access')
+    promotion_access = create(:permission, code: 'promotions.access')
+    archive = create(:permission, code: 'promotions.archive')
+
+    patch permissions_system_role_path(role), params: { permission_ids: [price_list_access.id, archive.id] }
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(role.permissions.reload).not_to include(archive)
+
+    patch permissions_system_role_path(role), params: { permission_ids: [promotion_access.id, archive.id] }
+    expect(response).to redirect_to(system_role_path(role))
+    expect(role.permissions.reload).to match_array([promotion_access, archive])
+  end
+
   it 'records permission additions and removals with the acting user' do
     patch permissions_system_role_path(role), params: { permission_ids: [access.id, action.id] }
     expect(response).to redirect_to(system_role_path(role))

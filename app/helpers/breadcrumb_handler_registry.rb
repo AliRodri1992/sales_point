@@ -3,6 +3,8 @@
 module BreadcrumbHandlerRegistry
   HANDLERS = {
     'admin/products' => :product_breadcrumb_items,
+    'admin/price_lists' => :price_list_breadcrumb_items,
+    'admin/promotions' => :promotion_breadcrumb_items,
     'admin/dashboard' => :dashboard_breadcrumb_items,
     'admin/languages' => :language_breadcrumb_items,
     'admin/categories' => :category_breadcrumb_items,

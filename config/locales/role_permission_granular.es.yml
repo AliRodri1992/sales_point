@@ -128,3 +128,75 @@ es:
         users_restore:
           description: Permite restaurar usuarios archivados. Requiere una cuenta
             superadministradora.
+        price_lists_access:
+          name: Acceder · Listas de precios
+          description: Habilita el acceso al módulo. Cada operación requiere su propio permiso.
+        price_lists_index:
+          name: Listar · Listas de precios
+          description: Permite consultar y filtrar la lista de registros.
+        price_lists_show:
+          name: Ver detalles · Listas de precios
+          description: Permite consultar un registro individual.
+        price_lists_create:
+          name: Crear · Listas de precios
+          description: Permite crear borradores.
+        price_lists_update:
+          name: Editar · Listas de precios
+          description: Permite editar registros existentes.
+        price_lists_archive:
+          name: Archivar · Listas de precios
+          description: Permite archivar registros y conservar su historial.
+        price_lists_activate:
+          name: Activar · Listas de precios
+          description: Permite activar borradores que cumplan los requisitos.
+        price_lists_pause:
+          name: Pausar · Listas de precios
+          description: Permite pausar registros activos o programados.
+        price_lists_resume:
+          name: Reanudar · Listas de precios
+          description: Permite reanudar registros pausados que cumplan los requisitos.
+        price_lists_duplicate:
+          name: Duplicar · Listas de precios
+          description: Permite crear un borrador a partir de un registro.
+        price_lists_history:
+          name: Ver historial · Listas de precios
+          description: Permite consultar el historial de cambios del registro.
+        price_lists_view_margin:
+          name: Ver márgenes · Listas de precios
+          description: Permite consultar costos y márgenes en el módulo de listas de precios.
+        price_lists_authorize_below_cost:
+          name: Autorizar precios por debajo del costo · Listas de precios
+          description: Permite aprobar explícitamente precios por debajo del costo.
+        promotions_access:
+          name: Acceder · Promociones
+          description: Habilita el acceso al módulo. Cada operación requiere su propio permiso.
+        promotions_index:
+          name: Listar · Promociones
+          description: Permite consultar y filtrar la lista de registros.
+        promotions_show:
+          name: Ver detalles · Promociones
+          description: Permite consultar un registro individual.
+        promotions_create:
+          name: Crear · Promociones
+          description: Permite crear borradores.
+        promotions_update:
+          name: Editar · Promociones
+          description: Permite editar registros existentes.
+        promotions_archive:
+          name: Archivar · Promociones
+          description: Permite archivar registros y conservar su historial.
+        promotions_activate:
+          name: Activar · Promociones
+          description: Permite activar borradores que cumplan los requisitos.
+        promotions_pause:
+          name: Pausar · Promociones
+          description: Permite pausar registros activos o programados.
+        promotions_resume:
+          name: Reanudar · Promociones
+          description: Permite reanudar registros pausados que cumplan los requisitos.
+        promotions_duplicate:
+          name: Duplicar · Promociones
+          description: Permite crear un borrador a partir de un registro.
+        promotions_history:
+          name: Ver historial · Promociones
+          description: Permite consultar el historial de cambios del registro.

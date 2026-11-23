@@ -1,0 +1,78 @@
+{
+  "en": {
+    "admin": {
+      "price_lists_ui": {
+        "create": "New price list",
+        "edit": "Edit price list",
+        "directory": "Price list directory",
+        "empty_directory": "No price lists yet",
+        "draft_hint": "Save your draft, review the prices and activate it when ready.",
+        "name_or_code": "Name or list code",
+        "auto_code": "Assigned on save",
+        "general_hint": "Set the currency, audience and priority for these prices.",
+        "search_currency": "Search currencies",
+        "period": "Validity period",
+        "period_hint": "The start is inclusive and the end is exclusive. Times use %{zone}.",
+        "open_period": "No date limits",
+        "from": "From %{date}",
+        "until": "Until %{date}",
+        "all_currencies": "All currencies",
+        "all_periods": "All periods",
+        "all_segments": "All customers",
+        "priority": "Priority",
+        "default_list": "Default price list",
+        "items_hint": "Add a product, then enter its price. Set options and quantity breaks on each row.",
+        "no_items": "No products in this price list.",
+        "add_product": "Add a product",
+        "lookup_hint": "Product name, SKU or barcode",
+        "searching": "Searching products…",
+        "no_products": "No matching products.",
+        "search_failed": "Product search failed. Edit your search to try again.",
+        "limit": "Save your changes before adding more rows. Each submission accepts up to 50 rows.",
+        "base_price": "Base price",
+        "list_price": "List price",
+        "remove": "Remove",
+        "row_options": "Options, quantity and validity",
+        "min_qty": "Minimum base units",
+        "reason_hint": "Enter a reason when changing a saved price, its dates, or retiring a row.",
+        "history_hint": "The latest 50 price changes, including retired rows.",
+        "changed_to": "changed to",
+        "status": {
+          "draft": "Draft",
+          "scheduled": "Scheduled",
+          "active": "Active",
+          "paused": "Paused",
+          "expired": "Expired",
+          "archived": "Archived"
+        },
+        "validity": {
+          "current": "Currently in period",
+          "upcoming": "Starts in the future",
+          "ended": "Period ended"
+        },
+        "actions": {
+          "activate": "Activate",
+          "pause": "Pause",
+          "resume": "Resume",
+          "duplicate": "Duplicate",
+          "archive": "Archive"
+        },
+        "confirm": {
+          "activate": "Activate “%{name}” for its validity period?",
+          "pause": "Pause pricing from “%{name}”?",
+          "resume": "Resume pricing from “%{name}”?",
+          "duplicate": "Create a draft copy of “%{name}”?",
+          "archive": "Permanently archive “%{name}”? Its history will remain available."
+        },
+        "matching": "Matching lists",
+        "products_covered": "Products covered",
+        "currencies": "Currencies",
+        "activity": "List activity",
+        "item_retired": "Price row retired",
+        "updated": "List updated",
+        "created": "List created",
+        "changed": "List changed"
+      }
+    }
+  }
+}

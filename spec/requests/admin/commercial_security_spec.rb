@@ -86,7 +86,8 @@ RSpec.describe 'Commercial request security', type: :request do
   end
 
   it 'filters and clamps commercial listings without returning foreign records' do
-    list = organization.price_lists.create!(name: 'Retail selected', code: 'RETAIL', currency: 'MXN', status: 'active')
+    list = organization.price_lists.create!(name: 'Retail selected', code: 'RETAIL', currency: 'MXN',
+                                            status: 'active', price_list_items_attributes: [{ product:, price: 45 }])
     organization.price_lists.create!(name: 'Draft excluded', code: 'DRAFT', currency: 'MXN')
     get admin_price_lists_path(search: 'selected', status: 'active', page: 999)
     expect(response).to have_http_status(:ok)
@@ -97,12 +98,12 @@ RSpec.describe 'Commercial request security', type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
-  it 'keeps validation errors on an active promotion without a benefit' do
-    post admin_promotions_path, params: { promotion: { name: 'Missing benefit', code: 'MISSING',
-                                                       currency: 'MXN', status: 'active' } }
+  it 'keeps a benefit-free draft unchanged when activation fails' do
+    promotion = organization.promotions.create!(name: 'Missing benefit', currency: 'MXN')
+    patch transition_admin_promotion_path(promotion), params: { commercial_action: 'activate' }
     expect(response).to have_http_status(:unprocessable_content)
     expect(response.body).to include('Missing benefit')
-    expect(organization.promotions).to be_empty
+    expect(promotion.reload).to be_draft
   end
 
   it 'prefills the organization currency and retains it while editing an inactive currency' do
@@ -183,6 +184,6 @@ RSpec.describe 'Commercial request security', type: :request do
                                     promotion_benefits_attributes: [{ kind: 'percentage', value: 10 }])
     get quote_admin_product_path(product)
     expect(response).to have_http_status(:ok)
-    expect(response.parsed_body).to include('total' => '90.0', 'promotion' => 'Ten percent')
+    expect(response.parsed_body).to include('total' => '90.0', 'promotion' => nil)
   end
 end

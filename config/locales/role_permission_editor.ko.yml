@@ -29,6 +29,8 @@ ko:
           employees: 직원
           reports: 보고서
           products: 상품
+          price_lists: 가격 목록
+          promotions: 프로모션
           categories: 카테고리
           branches: 지점
           languages: 언어
@@ -61,6 +63,12 @@ ko:
           geocode: 위치 확인
           prefer: 우선 지정
           activate: 활성화
+          pause: 일시 중지
+          resume: 재개
+          duplicate: 복제
+          history: 변경 이력 보기
+          view_margin: 마진 보기
+          authorize_below_cost: 원가 미만 가격 승인
           suspend: 일시 중지
           reactivate: 재활성화
           invite: 초대

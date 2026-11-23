@@ -27,6 +27,9 @@ en:
         catalogs: Catalogs
         languages: Languages
         categories: Categories
+        commercial: Commercial
+        price_lists: Price lists
+        promotions: Promotions
         section_admin: Administration
         reports: Reports
         settings: Settings

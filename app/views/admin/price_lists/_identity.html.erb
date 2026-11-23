@@ -1,0 +1,5 @@
+<% if policy(record).show? %>
+  <%= link_to record.name, admin_price_list_path(record), class: 'inline-flex min-h-11 items-center break-words font-semibold text-[var(--brand-on-white)] hover:underline' %>
+<% else %>
+  <strong class="break-words"><%= record.name %></strong>
+<% end %>
