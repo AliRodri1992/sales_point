@@ -4,7 +4,9 @@
 <div class="catalog-workspace promotion-workspace promotion-editor-workspace">
   <header class="catalog-header">
     <%= render 'module_heading', eyebrow: t('admin.catalog_design.commercial'), title: title, intro: campaign_text('editor.intro') %>
-    <%= link_to campaign_text('editor.back'), back_path, class: 'catalog-button' %>
+    <div class="catalog-actions promotion-heading-actions">
+      <%= link_to campaign_text('editor.back'), back_path, class: 'catalog-button' %>
+    </div>
   </header>
   <%= form_with model: [:admin, @record], url: @record.persisted? ? admin_promotion_path(@record, campaign_navigation_params) : admin_promotions_path(campaign_navigation_params),
                 html: { novalidate: true }, class: 'catalog-main promotion-form',

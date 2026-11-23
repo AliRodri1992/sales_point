@@ -165,6 +165,39 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
     within('#campaign-results') { expect(page).to have_link('Spring') }
   end
 
+  scenario 'matches v3 title icons, active KPI, mobile header actions, and borderless conditions' do
+    campaign = organization.promotions.create!(name: 'Autumn offer', currency: 'MXN')
+    visit admin_promotions_path
+
+    expect(page).to have_css('.promotion-metric--active .promotion-metric-icon svg')
+    expect(page.evaluate_script(
+      "getComputedStyle(document.querySelector('.promotion-metric--active .promotion-metric-icon')).backgroundColor"
+    )).to eq('rgb(236, 253, 245)')
+    expect(page.evaluate_script(
+      "getComputedStyle(document.querySelector('.promotion-module-icon')).backgroundColor"
+    )).to eq('rgb(209, 250, 229)')
+
+    visit admin_promotion_path(campaign)
+    page.current_window.resize_to(390, 900)
+    expect(page).to have_css('.promotion-heading-actions .catalog-button', count: 2)
+    expect(page.evaluate_script(
+      "getComputedStyle(document.querySelector('.promotion-heading-actions')).justifyContent"
+    )).to eq('flex-start')
+    expect(page.evaluate_script(
+      "Math.round(document.querySelector('.promotion-module-icon').getBoundingClientRect().width)"
+    )).to eq(43)
+
+    visit edit_admin_promotion_path(campaign)
+    click_button 'Add condition'
+    expect(page).to have_css('.promotion-condition-row')
+    expect(page.evaluate_script(
+      "getComputedStyle(document.querySelector('.promotion-condition-row')).borderTopWidth"
+    )).to eq('0px')
+    expect(page.evaluate_script(
+      "getComputedStyle(document.querySelector('.promotion-heading-actions')).justifyContent"
+    )).to eq('flex-start')
+  end
+
   scenario 'uses the catalog pagination controls for both commercial directories' do
     %i[promotions price_lists].each do |resource|
       12.times do |index|

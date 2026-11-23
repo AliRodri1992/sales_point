@@ -10,7 +10,7 @@
 .promotion-directory-workspace .promotion-metrics { grid-template-columns: repeat(4,minmax(0,1fr)); gap: .75rem; }
 .promotion-directory-workspace .promotion-metric { border-radius: .75rem; padding: 1rem; }
 .promotion-directory-workspace .promotion-metric strong { margin-top: .25rem; font-size: 1.6875rem; }
-.promotion-directory-workspace .promotion-metric[aria-current="true"] { border-color: var(--brand); background: color-mix(in srgb, var(--brand-light) 35%, white); box-shadow: none; }
+.promotion-directory-workspace .promotion-metric[aria-current="true"] { border-color: #34d399; background: color-mix(in srgb, #ecfdf5 40%, white); box-shadow: none; }
 .promotion-directory-workspace .promotion-metric--paused .promotion-metric-icon { color:#92400e; }
 .promotion-directory-filters { overflow: visible; border-radius: .75rem; box-shadow: 0 2px 7px #0f172a04; padding: 1rem; margin-bottom: 1.25rem; }
 .promotion-filter-heading { display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin-bottom: .75rem; }
@@ -221,4 +221,22 @@
   .promotion-directory-table tbody { grid-template-columns:minmax(0,1fr); }
   .promotion-advanced-fields { grid-template-columns:minmax(0,1fr); }
   .promotion-directory-heading { flex-wrap:wrap; }
+}
+
+/* The active KPI keeps the v3 checkmark and its pale emerald square, independent of theme. */
+.promotion-directory-workspace .promotion-metric--active .promotion-metric-icon {
+  background: #ecfdf5;
+  color: #047857;
+  border-radius: 8px;
+}
+.promotion-directory-workspace .promotion-metric--active .promotion-metric-icon svg {
+  display: block;
+  width: 21px;
+  height: 21px;
+}
+@media (max-width: 1279px) {
+  .promotion-directory-workspace .promotion-metric--active .promotion-metric-icon svg {
+    width: 17px;
+    height: 17px;
+  }
 }

@@ -1,7 +1,7 @@
 /* Promotion screens extend the existing Delta Emerald catalog system. */
 .promotion-workspace { max-width: 1600px; min-width: 0; }
 @media (min-width: 1024px) { .promotion-workspace { padding-inline: 6px; } }
-.promotion-module-icon { display: grid; place-items: center; flex-shrink: 0; width: 54px; height: 54px; border-radius: .75rem; background: var(--brand-light); color: var(--brand-on-white); }
+.promotion-module-icon { display: grid; place-items: center; flex-shrink: 0; width: 54px; height: 54px; border-radius: .75rem; background: #d1fae5; color: #065f46; }
 .promotion-module-icon svg { width: 27px; height: 27px; }
 .promotion-module-heading .promotion-module-icon { margin-top: 5px; }
 .promotion-module-heading .catalog-eyebrow { font-size: 10px; letter-spacing: .14em; margin-bottom: .25rem; }
@@ -15,7 +15,7 @@
 .promotion-metric strong { display: block; margin-top: .375rem; font-family: var(--font-jakarta); font-size: 1.625rem; font-weight: 700; line-height: 1.2; color: #0f172a; font-variant-numeric: tabular-nums; }
 .promotion-metric-icon { display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: .5rem; color: #475569; background: #f1f5f9; }
 .promotion-metric-icon svg { width: 21px; height: 21px; }
-.promotion-metric--active .promotion-metric-icon { color: var(--brand-on-white); background: var(--brand-light); }
+.promotion-metric--active .promotion-metric-icon { color: #047857; background: #ecfdf5; }
 .promotion-metric--scheduled .promotion-metric-icon { color: #1d4ed8; background: #eff6ff; }
 .promotion-metric--paused .promotion-metric-icon { color: #92400e; background: #fffbeb; }
 .promotion-directory-row { transition: background-color .15s; }
@@ -92,7 +92,7 @@
   .promotion-metric { padding: .875rem; gap: .375rem; }
   .promotion-metric strong { font-size: 1.375rem; }
   .promotion-metric-icon { width: 34px; height: 34px; }
-  .promotion-module-icon { width: 44px; height: 44px; }
+  .promotion-module-icon { width: 43px; height: 43px; }
   .promotion-module-icon svg { width: 23px; height: 23px; }
   .promotion-workspace .promotion-module-heading h1 { font-size: 24px; }
   .promotion-module-heading { gap: 11px; }
@@ -117,3 +117,62 @@
 .promotion-workspace [data-promotion-lookup-target="results"] [role="option"][aria-selected="true"] { background:#059669; color:#fff; }
 .promotion-help-trigger { min-width:30px; min-height:30px; width:30px; height:30px; }
 .promotion-detail :is(.catalog-card,.promotion-detail-footer-grid), .promotion-form .catalog-card { min-width:0; }
+
+/* Faithful title icon and action buttons from promotions prototype v3. */
+.promotion-workspace .promotion-module-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 54px;
+  width: 54px;
+  height: 54px;
+  margin-top: 5px;
+  border-radius: 12px;
+  background: #d1fae5;
+  color: #065f46;
+}
+.promotion-workspace .promotion-module-icon svg { display: block; width: 27px; height: 27px; }
+.promotion-workspace .promotion-heading-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+.promotion-workspace .promotion-heading-actions .catalog-button {
+  min-height: 41px;
+  border-radius: 8px;
+  padding: 8px 16px;
+  white-space: nowrap;
+}
+.promotion-workspace .promotion-heading-actions .catalog-button-primary {
+  background: #059669;
+  border-color: #059669;
+  box-shadow: 0 2px 5px #0596691c;
+}
+.promotion-workspace .promotion-heading-actions .catalog-button-primary:hover {
+  background: #047857;
+  border-color: #047857;
+}
+@media (max-width: 740px) {
+  .promotion-workspace .promotion-module-icon {
+    flex-basis: 43px;
+    width: 43px;
+    height: 43px;
+  }
+  .promotion-workspace .promotion-module-icon svg { width: 23px; height: 23px; }
+  .promotion-workspace.promotion-detail > .catalog-header,
+  .promotion-workspace.promotion-editor-workspace > .catalog-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    margin-bottom: 17px;
+  }
+  .promotion-workspace .promotion-heading-actions {
+    width: 100%;
+    justify-content: flex-start;
+    align-self: stretch;
+  }
+}

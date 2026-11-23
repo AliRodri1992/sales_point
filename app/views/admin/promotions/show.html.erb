@@ -3,7 +3,7 @@
 <div class="catalog-workspace promotion-workspace promotion-detail">
   <header class="catalog-header">
     <%= render 'module_heading', eyebrow: campaign_text('detail.eyebrow'), title: @record.name, record: @record %>
-    <div class="catalog-actions">
+    <div class="catalog-actions promotion-heading-actions">
       <%= render 'back_button' %>
       <% if policy(@record).update? && !%w[archived exhausted expired].include?(@record.effective_status.to_s) %>
         <%= link_to edit_admin_promotion_path(@record, campaign_navigation_params), class: 'catalog-button catalog-button-primary' do %>

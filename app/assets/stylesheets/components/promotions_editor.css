@@ -52,3 +52,42 @@
   .promotion-form .catalog-footer > * { width:100%; }
   .promotion-form .promotion-editor-row { gap:.5rem; padding:.625rem; }
 }
+
+/* Condition and value controls belong directly to the section, without an inner box. */
+.promotion-form .promotion-condition-row {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 12px;
+}
+.promotion-form .promotion-condition-row .promotion-editor-remove {
+  border: 0;
+  background: transparent;
+}
+.promotion-form .promotion-condition-row .promotion-editor-remove:hover {
+  background: #f1f5f9;
+}
+.promotion-form .promotion-condition-row .promotion-editor-remove:focus-visible {
+  outline: 2px solid #059669;
+  outline-offset: 2px;
+}
+/* Use the editor's actual space, including a partially minimized desktop window. */
+@container promotion-editor (max-width: 740px) {
+  .promotion-editor-workspace > .catalog-header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    margin-bottom: 17px;
+  }
+  .promotion-editor-workspace .promotion-heading-actions {
+    display: flex;
+    width: 100%;
+    align-self: stretch;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+}
