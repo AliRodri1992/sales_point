@@ -349,4 +349,9 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.user_status_badge('unknown')).to include('bg-slate-100', 'text-slate-600')
     end
   end
+
+  it 'uses the localized administrator label when the assigned role has no display name' do
+    user = instance_double(User, display_role_name: '', admin?: true)
+    expect(helper.sidebar_role_label(user)).to eq(I18n.t('admin.shared.sidebar.role_admin'))
+  end
 end

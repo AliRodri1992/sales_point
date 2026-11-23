@@ -136,4 +136,19 @@ RSpec.describe 'Audited users listing', type: :request do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('Membership history is visible')
   end
+
+  it 'sorts by status in the current organization independently of global account status' do
+    pending = create(:user, email: 'sort-local-pending@example.com')
+    suspended = create(:user, email: 'sort-local-suspended@example.com')
+    create(:organization_membership, user: pending, organization:, account_status: :pending)
+    create(:organization_membership, user: suspended, organization:, account_status: :suspended)
+    create(:organization_membership, user: pending, account_status: :active)
+
+    get admin_users_path, params: { sort: 'users.status', direction: 'desc' }
+    expect(response).to have_http_status(:ok)
+    rows = Nokogiri::HTML(response.body).css('tr[data-skeleton-record]').map(&:text)
+    expect(rows.first).to include(suspended.email)
+    expect(rows.second).to include(pending.email)
+    expect(rows.size).to eq(3)
+  end
 end

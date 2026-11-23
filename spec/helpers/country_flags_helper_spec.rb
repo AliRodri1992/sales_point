@@ -24,4 +24,8 @@ RSpec.describe CountryFlagsHelper, type: :helper do
 
     expect(helper.country_flag_asset_path(country)).to be_nil
   end
+
+  it 'omits the flag before the user has selected a country' do
+    expect(helper.country_flag_asset_path(nil)).to be_nil
+  end
 end

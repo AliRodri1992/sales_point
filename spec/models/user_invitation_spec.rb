@@ -141,4 +141,13 @@ RSpec.describe UserInvitation, type: :model do
     expect { described_class.issue!(user:, organization:) }.to raise_error(ArgumentError, 'Membership required')
     expect(described_class.where(user:)).to be_empty
   end
+
+  it 'keeps a pending membership unchanged when an existing account supplies an invalid token or identity' do
+    user.update!(status: :active)
+    invitation = described_class.issue!(user:, organization:)
+    expect(invitation.accept_existing!(token: invitation.raw_token, signed_in_user: nil)).to be(false)
+    expect(invitation.accept_existing!(token: 'invalid', signed_in_user: user)).to be(false)
+    expect(invitation.reload.accepted_at).to be_nil
+    expect(user.organization_memberships.find_by!(organization:)).to be_account_pending
+  end
 end

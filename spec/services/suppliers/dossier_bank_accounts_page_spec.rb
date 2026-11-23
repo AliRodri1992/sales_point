@@ -105,4 +105,16 @@ RSpec.describe Suppliers::DossierBankAccountsPage do
     expect(page.accounts.map(&:bank_name)).to eq(['Banco 100% Proveedor'])
     expect(page.total_count).to eq(1)
   end
+
+  it 'shows inactive accounts separately from archived and active accounts' do
+    inactive = create_account(name: 'Former bank', digits: '1100')
+    inactive.update!(status: 'inactive')
+    create_account(name: 'Current bank', digits: '2200')
+    create_account(name: 'Archived bank', digits: '3300', deleted_at: Time.current)
+
+    page = described_class.new(supplier:, status: 'inactive').call
+
+    expect(page.accounts).to contain_exactly(inactive)
+    expect(page.banks).to eq(['Former bank'])
+  end
 end

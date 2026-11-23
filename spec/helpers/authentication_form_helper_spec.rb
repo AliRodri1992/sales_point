@@ -32,4 +32,9 @@ RSpec.describe AuthenticationFormHelper, type: :helper do
       expect(helper.authentication_document_url(:terms)).to be_nil
     end
   end
+
+  it 'uses the local privacy notice if the configured URL cannot be parsed' do
+    allow(ENV).to receive(:fetch).with('DELTA_POS_PRIVACY_URL', '').and_return('https://[invalid')
+    expect(helper.authentication_document_url(:privacy)).to eq(privacy_path)
+  end
 end

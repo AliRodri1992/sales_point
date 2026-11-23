@@ -95,4 +95,12 @@ RSpec.describe 'Admin table page preferences', type: :request do
     patch admin_table_page_preference_path('suppliers'), params: { per_page: 25 }
     expect(response).to redirect_to(new_user_session_path)
   end
+
+  it 'rejects a preference from an account with no organization' do
+    sign_in other_user
+    expect do
+      patch admin_table_page_preference_path('suppliers'), params: { per_page: 10 }
+    end.not_to change(TablePagePreference, :count)
+    expect(response).to have_http_status(:forbidden)
+  end
 end

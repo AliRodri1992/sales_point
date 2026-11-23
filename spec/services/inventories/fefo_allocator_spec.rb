@@ -65,4 +65,32 @@ RSpec.describe Inventories::FefoAllocator do
     end.to raise_error(ArgumentError, /No unexpired stock/)
     expect(inventory.reload.stock).to eq(5)
   end
+
+  it 'refuses an explicitly selected expired lot without deducting stock' do
+    earlier.update!(expires_on: Date.yesterday)
+    expect do
+      described_class.consume_lot!(inventory:, lot: earlier, quantity: 1, user:)
+    end.to raise_error(ArgumentError, /Lot is not available/)
+    expect(earlier.reload.quantity).to eq(2)
+    expect(inventory.reload.stock).to eq(5)
+    expect(inventory.inventory_movements).to be_empty
+  end
+
+  context 'with a serialized product' do
+    let(:product) { create(:product, tracking_mode: 'serial') }
+    let(:inventory) { create(:inventory, organization: product.organization, product:, stock: 5) }
+
+    it 'sells the allocated serial and keeps the other serial available' do
+      first, second = %w[SERIAL-1 SERIAL-2].map do |number|
+        earlier.inventory_serials.create!(organization: inventory.organization, serial_number: number)
+      end
+
+      described_class.call(inventory:, quantity: 1, user:)
+
+      expect(first.reload).to be_sold
+      expect(second.reload).to be_available
+      expect(earlier.reload.quantity).to eq(1)
+      expect(inventory.reload.stock).to eq(4)
+    end
+  end
 end

@@ -156,4 +156,14 @@ RSpec.describe Users::StatusTransition do
     expect(described_class.allowed_targets(user, organization:)).to be_empty
     expect(described_class.allowed_targets(user, organization: create(:organization))).to be_empty
   end
+
+  ['not a date', '2099-13-01'].each do |date|
+    it "returns a field error for invalid review date #{date} on form submission" do
+      form = described_class.new(user:, actor:, organization:, target: 'suspended', reason: 'Review',
+                                 details: { review_at: date })
+      expect(form.call).to be(false)
+      expect(form.errors[:review_at]).to include(I18n.t('user_status_form.review_date_future'))
+      expect(membership.reload).to be_account_active
+    end
+  end
 end

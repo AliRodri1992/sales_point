@@ -83,4 +83,30 @@ RSpec.describe Branches::LifecycleRequirements do
     expect(requirements.suspension_blockers).to include(:last_active_branch)
     expect(requirements.closure_blockers).to include(:last_active_branch)
   end
+
+  it 'reports missing setup for a branch before its organization or address is assigned' do
+    requirements = described_class.new(branch: Branch.new)
+    expect(requirements.blockers_for(:active)).to contain_exactly(:organization, :address, :currency,
+                                                                 :name, :code, :team)
+    expect(requirements.suspension_blockers).to be_empty
+  end
+
+  it 'scopes pending purchasing blockers to the branch and removes them as the documents are resolved' do
+    supplier = create(:supplier, organization:)
+    request = PurchaseRequest.create!(organization:, branch:, requested_by: actor)
+    order = PurchaseOrder.create!(organization:, branch:, supplier:, currency: supplier.currency, requested_by: actor)
+    receipt = GoodsReceipt.create!(organization:, branch:, purchase_order: order, received_by: actor,
+                                   received_at: Time.current, idempotency_key: 'closing-receipt')
+    purchase_return = PurchaseReturn.create!(organization:, goods_receipt: receipt, requested_by: actor)
+    requirements = described_class.new(branch:, actor:)
+    other_branch = create(:branch, organization:, name: 'Second office')
+
+    expect(requirements.closure_blockers).to contain_exactly(:pending_requests, :pending_orders, :pending_returns)
+    expect(described_class.new(branch: other_branch, actor:).closure_blockers).to be_empty
+
+    request.update!(status: :cancelled)
+    order.update!(status: :closed)
+    purchase_return.update!(status: :cancelled)
+    expect(requirements.closure_blockers).to be_empty
+  end
 end

@@ -171,4 +171,41 @@ RSpec.describe UserRole, type: :model do
       expect { assignment.valid? }.not_to raise_error
     end
   end
+
+  it 'uses the selected organization when a global role holder belongs to two organizations' do
+    user = create(:user)
+    selected = create(:organization_membership, user:).organization
+    other = create(:organization_membership, user:).organization
+    role = create(:system_role, :system)
+    CurrentOrganizationAccess.set(organization: selected, enforce_tenant: true) do
+      assignment = create(:user_role, user:, system_role: role)
+      expect(assignment.reload.organization).to eq(selected)
+      expect(user.role?(role.code, organization: other)).to be(false)
+    end
+  end
+
+  it 'rejects an explicit organization that differs from the branch even with both memberships' do
+    branch = create(:branch)
+    user = create(:user)
+    create(:organization_membership, user:, organization: branch.organization)
+    other = create(:organization_membership, user:).organization
+    assignment = build(:user_role, user:, organization: other, branch:, system_role: create(:system_role, :branch))
+    expect(assignment).to be_invalid
+    expect(assignment.errors.of_kind?(:organization, :invalid)).to be(true)
+  end
+
+  it 'checks the persisted branch again when an assignment was built before archival' do
+    branch = create(:branch)
+    user = create(:user)
+    create(:organization_membership, user:, organization: branch.organization)
+    assignment = build(:user_role, user:, branch:, system_role: create(:system_role, :branch))
+    expect(assignment).to be_valid
+    # Simulate a competing archive after the assignment cached its branch.
+    # rubocop:disable-next Rails/SkipsModelValidations
+    Branch.find(branch.id).update_column(:deleted_at, Time.current)
+
+    expect { assignment.save! }.to raise_error(ActiveRecord::RecordInvalid)
+    expect(assignment.errors.of_kind?(:branch, :invalid)).to be(true)
+    expect(user.user_roles).to be_empty
+  end
 end

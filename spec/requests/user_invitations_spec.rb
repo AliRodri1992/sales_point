@@ -83,4 +83,27 @@ RSpec.describe 'User invitation activation', type: :request do
     expect(user.reload).to be_pending
     expect(invitation.reload).to be_usable
   end
+
+  %i[pending active].each do |status|
+    it "returns gone if an invitation is revoked during acceptance for a #{status} account" do
+      if status == :active
+        user.update!(status:)
+        create(:organization_membership, user:, account_status: :active)
+        sign_in user
+      end
+      invitation = UserInvitation.issue!(user:, organization:)
+      acceptance = status == :active ? :accept_existing! : :accept!
+      allow_any_instance_of(UserInvitation).to receive(acceptance).and_wrap_original do |original, **args|
+        invitation.update!(revoked_at: Time.current)
+        original.call(**args)
+      end
+
+      patch accept_user_invitation_path(token: invitation.raw_token), params: {
+        invitation: { password: 'newpassword123', password_confirmation: 'newpassword123' }
+      }
+      expect(response).to have_http_status(:gone)
+      expect(invitation.reload.accepted_at).to be_nil
+      expect(user.organization_memberships.find_by!(organization:)).to be_account_pending
+    end
+  end
 end

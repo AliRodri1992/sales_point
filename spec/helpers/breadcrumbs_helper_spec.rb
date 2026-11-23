@@ -91,4 +91,14 @@ RSpec.describe BreadcrumbsHelper, type: :helper do
       end
     end
   end
+
+  it 'uses the product edit label when an unsuccessful update has no product assigned' do
+    allow(helper).to receive(:params).and_return(controller: 'admin/products', action: 'update')
+    expect(helper.breadcrumb_items.last).to eq(label: I18n.t('admin.products.edit.label'))
+  end
+
+  it 'shows an unlinked fallback for an unassigned client on the edit page' do
+    allow(helper).to receive(:params).and_return(controller: 'admin/clients', action: 'edit')
+    expect(helper.breadcrumb_items[-2]).to eq(label: I18n.t('admin.clients.edit.title', name: ''), path: nil)
+  end
 end

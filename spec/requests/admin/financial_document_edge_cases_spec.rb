@@ -167,4 +167,38 @@ RSpec.describe 'Financial document edge cases', type: :request do
     expect(response.parsed_body.fetch('clabe')).to eq('032180000118359719')
     expect(FinancialAuditEvent.where(event: 'bank_account.revealed', subject_id: account.id)).to exist
   end
+
+  it 'serves the stored invoice PDF as a private download with a server-selected filename' do
+    record = invoice
+    pdf = "%PDF-1.4\nfinancial statement\n%%EOF"
+    record.pdf_document.attach(io: StringIO.new(pdf), filename: 'upload.pdf',
+                               content_type: 'application/pdf', identify: false)
+
+    get download_pdf_admin_supplier_invoice_path(record)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.media_type).to eq('application/pdf')
+    expect(response.headers.fetch('Cache-Control')).to include('no-store')
+    expect(response.headers.fetch('Content-Disposition')).to include('attachment', "invoice-#{record.id}.pdf")
+    expect(response.body).to eq(pdf)
+  end
+
+  it 'returns an empty payment bank selection for an unknown currency' do
+    get bank_accounts_admin_supplier_payments_path, params: { supplier_id: supplier.id, currency_id: -1 }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.parsed_body.fetch('accounts')).to be_empty
+  end
+
+  it 're-renders invalid payments without retaining accounts for an unknown currency' do
+    expect do
+      post admin_supplier_payments_path, params: {
+        supplier_payment: { supplier_id: supplier.id, currency_id: -1, amount: 25, paid_on: Date.current }
+      }
+    end.not_to change(SupplierPayment, :count)
+
+    expect(response).to have_http_status(:unprocessable_content)
+    options = Nokogiri::HTML(response.body).css('#supplier_payment_supplier_bank_account_id option')
+    expect(options.map { |option| option['value'] }).to eq([''])
+  end
 end

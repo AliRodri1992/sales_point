@@ -98,4 +98,25 @@ RSpec.describe EmailTemplates::Dispatcher do
       recipient: 'example@example.org', values: { recipient_name: 'Example' }
     )
   end
+
+  it 'uses the global sender locale for a tenant without sender settings' do
+    EmailSenderSetting.create!(from_address: 'notice@platform.test', default_locale: 'ko')
+    korean = template.dup
+    korean.assign_attributes(locale: 'ko', published_version: nil, status: 'draft')
+    korean.save!
+    korean.new_draft!(actor: nil).publish!(actor: nil)
+
+    expect(EmailTemplates::DeliveryJob).to receive(:perform_later) do |ciphertext|
+      expect(EmailTemplates::EncryptedPayload.decrypt(ciphertext)[:template_id]).to eq(korean.id)
+    end
+    described_class.call(key: template.key, recipient: 'buyer@example.org', values: {},
+                         organization: create(:organization))
+  end
+
+  it 'defaults a platform notification to Spanish when no sender is configured' do
+    expect(EmailTemplates::DeliveryJob).to receive(:perform_later) do |ciphertext|
+      expect(EmailTemplates::EncryptedPayload.decrypt(ciphertext)[:template_id]).to eq(template.id)
+    end
+    described_class.call(key: template.key, recipient: 'buyer@example.org', values: {})
+  end
 end

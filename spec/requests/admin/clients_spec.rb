@@ -350,4 +350,26 @@ RSpec.describe 'Admin clients', type: :request do
       expect(response.body).to include(I18n.t('admin.clients.errors.duplicate'))
     end
   end
+
+  it 'combines the zero-credit and missing RFC filters and clamps an excessive page' do
+    create(:client, organization:, name: 'Cash customer', credit_limit: 0, rfc: nil)
+    create(:client, organization:, name: 'Credit customer', credit_limit: 50, rfc: nil)
+    create(:client, organization:, name: 'Registered customer', credit_limit: 0)
+
+    get admin_clients_path, params: { credit: 'no', rfc: 'no', page: 99 }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Cash customer')
+    expect(response.body).not_to include('Credit customer', 'Registered customer')
+  end
+
+  it 'saves a nested phone with the same tenant as the client' do
+    post admin_clients_path, params: { client: { code: 'PHONE', name: 'Phone customer',
+                                                phones_attributes: [{ number: '5512345678', country_code: 'MX',
+                                                                     kind: 'mobile' }] } }
+
+    expect(response).to redirect_to(admin_clients_path)
+    client = organization.clients.find_by!(code: 'PHONE')
+    expect(client.phones.sole.organization).to eq(organization)
+  end
 end

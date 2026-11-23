@@ -141,4 +141,10 @@ RSpec.describe Suppliers::CalendarBoard do
     expect(board.items_on(date).pluck(:record)).to include(another)
     expect(board.items_on(date).pluck(:record)).not_to include(original)
   end
+
+  it 'selects the first visible day when the focus falls outside the displayed month' do
+    board = described_class.new(supplier:, month: '2026-10', day: '2026-12-05')
+
+    expect(board.selected_date).to eq(Date.new(2026, 9, 28))
+  end
 end

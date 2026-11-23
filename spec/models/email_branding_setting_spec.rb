@@ -42,4 +42,10 @@ RSpec.describe EmailBrandingSetting, type: :model do
     expect(setting.errors[:support_url]).to be_present
     expect(setting.errors[:privacy_url]).to be_present
   end
+
+  it 'reports the format error without calculating contrast for an invalid button color' do
+    setting = described_class.new(display_name: 'Shop', button_color: 'green')
+    expect(setting).not_to be_valid
+    expect(setting.errors.details[:button_color].pluck(:error)).to eq([:invalid])
+  end
 end

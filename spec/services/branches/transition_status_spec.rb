@@ -67,6 +67,7 @@ RSpec.describe Branches::TransitionStatus do
   it 'protects the address of a permanently closed branch from edits and deletion' do
     described_class.call(branch:, actor:, to: 'closed', reason: 'Site closed permanently')
 
+    expect(branch.reload).to be_valid
     address = branch.address
     expect(address.update(city: 'Another city')).to be(false)
     expect(address.errors[:base]).to be_present
@@ -80,5 +81,22 @@ RSpec.describe Branches::TransitionStatus do
     expect do
       described_class.call(branch:, actor:, to: 'active', reason: 'Attempt to reopen')
     end.to raise_error(described_class::InvalidTransition)
+  end
+
+  it 'rejects an anonymous transition before changing the branch or its history' do
+    expect do
+      described_class.call(branch:, actor: nil, to: 'suspended', reason: 'Maintenance')
+    end.to raise_error(described_class::InvalidTransition) { |error| expect(error.code).to eq('not_authorized') }
+    expect(branch.reload).to be_active
+    expect(branch.branch_status_transitions.count).to eq(1)
+  end
+
+  it 'identifies a missing currency when activating a preparing branch' do
+    office = create(:branch, organization:, operational_state: 'preparing', name: 'Office in preparation')
+    expect do
+      described_class.call(branch: office, actor:, to: 'active', reason: 'Opening')
+    end.to raise_error(described_class::InvalidTransition) { |error| expect(error.code).to eq('missing_currency') }
+    expect(office.reload).to be_preparing
+    expect(office.branch_status_transitions.count).to eq(1)
   end
 end

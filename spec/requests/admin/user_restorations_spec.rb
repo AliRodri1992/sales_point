@@ -142,4 +142,13 @@ RSpec.describe 'Admin archived user restoration', type: :request do
     get admin_user_restorations_path
     expect(response).to have_http_status(:forbidden)
   end
+
+  it 'reports a failed invitation after the account restoration has been committed' do
+    allow(Users::InvitationDeliveryJob).to receive(:perform_later).and_raise(IOError, 'Queue unavailable')
+    post admin_user_restoration_path(user), params: { reason: 'Authorized review' }
+    expect(response).to redirect_to(admin_user_path(user))
+    expect(flash[:alert]).to eq(I18n.t('admin.users.status_management.invitation_delivery_failed'))
+    expect(user.reload).to be_pending
+    expect(user.user_invitations.sole.delivery_status).to eq('failed')
+  end
 end

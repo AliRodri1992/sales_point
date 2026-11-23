@@ -55,4 +55,21 @@ RSpec.describe 'Email settings policies' do
     expect(EmailSettingAuditPolicy.new(user, EmailSettingAudit).index?).to be(false)
     expect(EmailSettingAuditPolicy::Scope.new(user, EmailSettingAudit).resolve).to be_empty
   end
+
+  it 'denies anonymous access to sender and branding settings and both audit logs' do
+    expect(EmailSenderSettingPolicy.new(nil, EmailSenderSetting.new).update?).to be_falsey
+    expect(EmailBrandingSettingPolicy.new(nil, EmailBrandingSetting.new).update?).to be_falsey
+    expect(EmailSettingAuditPolicy.new(nil, EmailSettingAudit).index?).to be_falsey
+    expect(EmailTemplateAuditPolicy.new(nil, EmailTemplateAudit).index?).to be_falsey
+  end
+
+  it 'includes global audit entries for a super administrator while respecting tenant memberships' do
+    role.update!(code: 'super_admin')
+    attributes = { actor: user, setting_type: 'sender', changeset: { 'display_name' => %w[A B] } }
+    global = EmailSettingAudit.create!(**attributes)
+    local = EmailSettingAudit.create!(organization:, **attributes)
+    EmailSettingAudit.create!(organization: foreign_organization, **attributes)
+
+    expect(EmailSettingAuditPolicy::Scope.new(user, EmailSettingAudit).resolve).to contain_exactly(global, local)
+  end
 end

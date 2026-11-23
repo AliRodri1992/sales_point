@@ -35,4 +35,13 @@ RSpec.describe GeocodeAddressJob, type: :job do
       expect(logger).to have_received(:error).with('[GeocodeAddressJob] Fatal: fatal geocoding error')
     end
   end
+
+  it 'passes the queued fingerprint to the service so a stale address can be detected' do
+    service = instance_double(AddressGeocodingService, call: true)
+    allow(AddressGeocodingService).to receive(:new).with(42, 'previous-fingerprint').and_return(service)
+
+    described_class.perform_now(42, 'previous-fingerprint')
+
+    expect(service).to have_received(:call).once
+  end
 end

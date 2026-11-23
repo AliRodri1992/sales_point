@@ -60,4 +60,11 @@ RSpec.describe EmailTemplate, type: :model do
     expect(template.category).to eq('transactional')
     expect(template.errors[:subject]).to be_present
   end
+
+  it 'reports missing name and category when both identity fields are null' do
+    template = described_class.new(name: nil, category: nil)
+    expect(template).not_to be_valid
+    expect(template.errors.of_kind?(:name, :blank)).to be(true)
+    expect(template.errors.of_kind?(:category, :blank)).to be(true)
+  end
 end

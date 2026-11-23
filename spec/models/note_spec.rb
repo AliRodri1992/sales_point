@@ -96,4 +96,20 @@ RSpec.describe Note, type: :model do
       described_class.transaction(requires_new: true) { duplicate.save!(validate: false) }
     end.to raise_error(ActiveRecord::RecordNotUnique)
   end
+
+  it 'reads the general note from a preloaded collection containing other kinds' do
+    branch.note_entries.create!(body: 'Inspection memo', kind: 'inspection', organization:)
+    branch.note_body = '  Receiving area  '
+    branch.save!
+    owner = Branch.includes(:note_entries).find(branch.id)
+
+    expect(owner.note_body).to eq('Receiving area')
+    expect(owner.note_entries.size).to eq(2)
+  end
+
+  it 'leaves the tenant unresolved while a contact has no owner' do
+    contact = Contact.new
+    expect(contact.note_organization).to be_nil
+    expect(described_class.new(body: 'Incomplete').tap(&:valid?).errors[:notable]).to be_present
+  end
 end

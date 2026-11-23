@@ -180,4 +180,18 @@ RSpec.describe 'Admin user statuses', type: :request do
     expect(response).to have_http_status(:unprocessable_content)
     expect(target.reload).to be_active
   end
+
+  it 'reports invitation failure after unblocking a previously pending customer' do
+    target.update!(user_type: :customer, status: :pending)
+    target.organization_memberships.find_by!(organization:).update!(account_status: :pending)
+    patch admin_user_status_path(target), params: { transition: 'blocked', reason: 'Review' }
+    allow(Users::InvitationDeliveryJob).to receive(:perform_later).and_raise(IOError, 'Queue unavailable')
+    patch admin_user_status_path(target), params: {
+      transition: 'pending', reason: 'Review complete', resolution: 'Identity confirmed'
+    }
+    expect(response).to redirect_to(admin_user_path(target))
+    expect(flash[:alert]).to eq(I18n.t('admin.users.status_management.invitation_delivery_failed'))
+    expect(target.reload).to be_pending
+    expect(target.user_invitations.sole.delivery_status).to eq('failed')
+  end
 end

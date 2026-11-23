@@ -1377,4 +1377,19 @@ RSpec.describe 'Admin email templates', type: :request do
     expect(document.at_css(deactivate_action)).to be_nil
     expect(document.text).to include(I18n.t('admin.email_templates.origins.system'))
   end
+
+  it 'shows the hourly limit at the recipient field and preserves the delivery audit count' do
+    template = create_template(organization:)
+    template.new_draft!(actor: administrator).publish!(actor: administrator)
+    EmailTemplates::TestDelivery::LIMIT_PER_HOUR.times { template.audit!(action: 'test_queued', actor: administrator) }
+
+    expect do
+      post send_test_admin_email_template_path(template), params: { email: administrator.email }
+    end.not_to have_enqueued_job(EmailTemplates::TestDeliveryJob)
+
+    expect(response).to have_http_status(:unprocessable_content)
+    error = Nokogiri::HTML(response.body).at_css('#email_templates_test_recipient_email_error')
+    expect(error.text).to include(I18n.t('admin.email_templates.test_limit_reached'))
+    expect(template.audits.where(action: 'test_queued').count).to eq(EmailTemplates::TestDelivery::LIMIT_PER_HOUR)
+  end
 end

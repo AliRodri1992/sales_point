@@ -53,4 +53,14 @@ RSpec.describe 'Categories organization isolation', type: :request do
     expect(condition).not_to be_valid
     expect(condition.errors[:category]).to be_present
   end
+
+  it 'clamps both ends of the page range without dropping the filtered categories' do
+    category = create(:category, organization:, name: 'Visible on the boundary pages')
+    [-2, 99].each do |page|
+      get admin_categories_path, params: { page:, search: category.code }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(category.name)
+    end
+  end
 end

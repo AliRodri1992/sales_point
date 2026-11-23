@@ -96,4 +96,14 @@ RSpec.describe 'Admin user invitation delivery', type: :request do
     expect { resend }.not_to change(UserInvitation, :count)
     expect(response).to have_http_status(:forbidden)
   end
+
+  it 'explains when membership eligibility changes before a resend is issued' do
+    allow(Users::InvitationDispatcher).to receive(:call).and_wrap_original do |original, **args|
+      user.organization_memberships.find_by!(organization:).update!(account_status: :suspended)
+      original.call(**args)
+    end
+    expect { resend }.not_to change(UserInvitation, :count)
+    expect(response).to redirect_to(admin_user_path(user))
+    expect(flash[:alert]).to eq(I18n.t('admin.users.ui.invitation_not_ready'))
+  end
 end

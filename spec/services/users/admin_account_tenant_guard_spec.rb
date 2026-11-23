@@ -50,4 +50,14 @@ RSpec.describe Users::AdminAccountTenantGuard do
     expect(target.reload).not_to be_admin
     expect(candidate.reload).to be_admin
   end
+
+  it 'refuses to create an employee on behalf of a delegated user' do
+    actor = create(:user)
+    create(:organization_membership, user: actor, organization:)
+    employee = build(:user, user_type: :employee)
+    writer = Users::AdminAccountWriter.new(user: employee, organization:, actor:, attributes: {})
+    expect(writer.save).to be(false)
+    expect(employee.errors[:user_type]).to include(I18n.t('admin.users.ui.delegated_employee_restricted'))
+    expect(employee).not_to be_persisted
+  end
 end

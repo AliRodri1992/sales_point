@@ -225,4 +225,65 @@ RSpec.describe Inventories::ApplyMovement do
     expect(inventory.reload.stock).to eq(10)
     expect(inventory.inventory_movements.count).to eq(0)
   end
+
+  it 'allows opening balance adjustments but rejects sales while a branch is preparing' do
+    branch = create(:branch, operational_state: 'preparing')
+    inventory = create(:inventory, organization: branch.organization, branch:)
+    described_class.call(inventory:, quantity: 3, kind: 'adjustment')
+
+    expect do
+      described_class.call(inventory:, quantity: -1, kind: 'sale')
+    end.to raise_error(ActiveRecord::RecordInvalid)
+    expect(inventory.reload.stock).to eq(3)
+    expect(inventory.inventory_movements.pluck(:kind)).to eq(['adjustment'])
+  end
+
+  it 'rejects adjustments after closure even if they would reopen an empty balance' do
+    inventory = create(:inventory, stock: 0)
+    admin = suspend_branch(inventory.branch)
+    Branches::TransitionStatus.call(branch: inventory.branch, actor: admin, to: 'closed', reason: 'Retirement')
+
+    expect do
+      described_class.call(inventory:, quantity: 2, kind: 'adjustment', user: admin)
+    end.to raise_error(ActiveRecord::RecordInvalid)
+    expect(inventory.reload.stock).to eq(0)
+    expect(inventory.inventory_movements).to be_empty
+  end
+
+  it 'rejects reconciliation at a suspended branch after organization deactivation' do
+    inventory = create(:inventory, stock: 2)
+    admin = suspend_branch(inventory.branch)
+    inventory.organization.update!(status: 'inactive')
+
+    expect do
+      described_class.call(inventory:, quantity: -1, kind: 'adjustment', user: admin)
+    end.to raise_error(ActiveRecord::RecordInvalid)
+    expect(inventory.reload.stock).to eq(2)
+  end
+
+  it 'depletes and then reopens the same lot on stock reconciliation' do
+    inventory = create(:inventory, stock: 2)
+    lot = inventory.inventory_lots.create!(organization: inventory.organization, quantity: 2, code: 'RECONCILE')
+
+    described_class.call(inventory:, quantity: -2, kind: 'adjustment', inventory_lot: lot)
+    expect(lot.reload).to have_attributes(status: 'depleted', quantity: 0)
+    expect(inventory.reload.stock).to eq(0)
+
+    described_class.call(inventory:, quantity: 3, kind: 'adjustment', inventory_lot: lot)
+    expect(lot.reload).to have_attributes(status: 'available', quantity: 3)
+    expect(inventory.reload.stock).to eq(3)
+  end
+
+  it 'rejects a suspended-branch supplier return without its original receipt line' do
+    inventory = create(:inventory, stock: 2)
+    admin = suspend_branch(inventory.branch)
+    source = PurchaseReturnItem.new
+    allow(source).to receive(:persisted?).and_return(true)
+
+    expect do
+      described_class.call(inventory:, quantity: -1, kind: 'return', source:, user: admin)
+    end.to raise_error(ActiveRecord::RecordInvalid)
+    expect(inventory.reload.stock).to eq(2)
+    expect(inventory.inventory_movements).to be_empty
+  end
 end

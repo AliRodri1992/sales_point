@@ -212,4 +212,34 @@ RSpec.describe Branch, type: :model do
     expect(branch.errors[:operational_status]).to be_present
     expect(branch.reload).to be_active
   end
+
+  it 'requires an organization before an active branch is operational' do
+    branch = build(:branch, organization: nil)
+    expect(branch).not_to be_operationally_active
+  end
+
+  it 'protects active team and terminal assignments from direct deactivation' do
+    branch = create(:branch)
+    create(:branch, organization: branch.organization, name: 'Second branch')
+    user = create(:user)
+    create(:organization_membership, organization: branch.organization, user:)
+    create(:user_role, branch:, user:, system_role: create(:system_role, :branch))
+    create(:terminal, branch:)
+
+    expect(branch.update(status: false, operational_status: 'suspended')).to be(false)
+    expect(branch.errors[:status]).to include(I18n.t('admin.branch_workspace.active_team_block'),
+                                             I18n.t('admin.branch_workspace.active_operations_block'))
+    expect(branch.errors[:status]).not_to include(I18n.t('admin.branch_workspace.last_active_block'))
+    expect(branch.reload).to be_active
+  end
+
+  it 'preserves preparing branches with retired terminal history' do
+    branch = create(:branch, operational_state: 'preparing')
+    terminal = create(:terminal, branch:, status: 'inactive')
+    terminal.update!(deleted_at: Time.current)
+
+    expect(branch.update(deleted_at: Time.current)).to be(false)
+    expect(branch.errors[:base]).to include(I18n.t('admin.catalog_design.branch_has_history'))
+    expect(branch.reload.deleted_at).to be_nil
+  end
 end

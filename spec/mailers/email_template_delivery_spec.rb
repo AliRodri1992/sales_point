@@ -195,4 +195,37 @@ RSpec.describe 'Published email template delivery', type: :mailer do
     expect(message.reply_to).to eq(['support@shop.test'])
     expect(message.from).to eq(['noreply@shop.test'])
   end
+
+  it 'keeps real support links and disables placeholder mail links in a versioned test message' do
+    template.update!(html_body: '<a href="https://shop.test/help">Help</a>' \
+                                '<a href="mailto:help@example.org">Sample</a>')
+    publish
+    message = EmailTemplateTestMailer.sample(template.id, 'preview@example.org', template.published_version_id).message
+    anchors = Nokogiri::HTML(message.html_part.body.decoded).css('a')
+
+    expect(anchors.map(&:text)).to eq(%w[Help Sample])
+    expect(anchors.pluck('href')).to eq(['https://shop.test/help', nil])
+  end
+
+  it 'rejects a queued tenant template addressed from another organization' do
+    template.update!(organization: create(:organization))
+    publish
+    other = create(:organization)
+    expect do
+      EmailTemplates::TransactionalMailer.notification(template.id, 'buyer@example.org', {}, other.id).message
+    end.to raise_error(ActiveRecord::RecordNotFound, 'Email template tenant mismatch')
+  end
+
+  it 'uses snapshotted sender and reply-to headers without accepting other envelope fields' do
+    publish
+    headers = { 'from' => 'old@shop.test', 'reply_to' => 'reply@shop.test', 'bcc' => 'archive@shop.test' }
+    message = EmailTemplates::TransactionalMailer.notification(
+      template.id, 'buyer@example.org', { recipient_name: 'Buyer' }, nil,
+      { version_id: template.published_version_id, sender_headers: headers }
+    ).message
+
+    expect(message.from).to eq(['old@shop.test'])
+    expect(message.reply_to).to eq(['reply@shop.test'])
+    expect(message.bcc).to be_blank
+  end
 end

@@ -219,4 +219,24 @@ RSpec.describe 'Admin::UnitsOfMeasure', type: :request do
     expect(response.body).to include('status=inactive', 'sort=code')
     expect(response.body).to include(I18n.t('admin.units_of_measure.index.no_results'))
   end
+
+  it 'filters whole units independently of fractional units' do
+    create(:unit_of_measure, organization:, sat_unit_key: sat, name: 'Whole pieces', decimal_precision: 0)
+    create(:unit_of_measure, organization:, sat_unit_key: sat, name: 'Fractional weights', decimal_precision: 3)
+
+    get admin_units_of_measure_path, params: { fractional: 'no' }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('Whole pieces')
+    expect(response.body).not_to include('Fractional weights')
+  end
+
+  it 'denies a signed-in account with no organization access to the directory' do
+    sign_out user
+    sign_in create(:user)
+
+    get admin_units_of_measure_path
+
+    expect(response).to have_http_status(:forbidden)
+  end
 end

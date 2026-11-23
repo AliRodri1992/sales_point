@@ -92,4 +92,37 @@ RSpec.describe 'Inventory administration controller paths', type: :request do
     get admin_branch_inventories_path(foreign_branch)
     expect(response).to have_http_status(:not_found)
   end
+
+  it 'rejects new rows and threshold changes while operations are suspended' do
+    stock = create(:inventory, organization:, branch:, stock: 3)
+    Branches::TransitionStatus.call(branch:, actor:, to: 'suspended', reason: 'Maintenance')
+
+    expect do
+      post admin_branch_inventories_path(branch), params: { inventory: { product_id: product.id } }
+    end.not_to change(Inventory, :count)
+    expect(response).to have_http_status(:forbidden)
+
+    patch admin_branch_inventory_path(branch, stock), params: { inventory: { min_stock: 2 } }
+    expect(response).to have_http_status(:forbidden)
+    expect(stock.reload.min_stock).to eq(10)
+  end
+
+  it 'rejects branch access when the signed-in user has no organization' do
+    sign_out actor
+    sign_in create(:user)
+
+    get admin_branch_inventories_path(branch)
+
+    expect(response).to have_http_status(:forbidden)
+  end
+
+  it 'returns a quantity error when the adjustment exceeds the balance' do
+    stock = create(:inventory, organization:, branch:, stock: 1)
+    post adjust_admin_branch_inventory_path(branch, stock), params: { quantity: -2 }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include(I18n.t('admin.branch_lifecycle.inventory_quantity_rejected'))
+    expect(stock.reload.stock).to eq(1)
+    expect(stock.inventory_movements).to be_empty
+  end
 end

@@ -77,4 +77,12 @@ RSpec.describe 'Onboarding scoped interface', type: :request do
     end.not_to change(Employee, :count)
     expect(response).to have_http_status(:forbidden)
   end
+
+  it 'keeps the recovery form available when the organization lacks a branch for the register' do
+    expect do
+      patch admin_onboarding_path(step: 3, intent: 'terminal'), params: { recovery: { name: 'Register' } }
+    end.not_to change(Terminal, :count)
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body).to include(I18n.t('admin.onboarding_ui.feedback.incomplete'))
+  end
 end

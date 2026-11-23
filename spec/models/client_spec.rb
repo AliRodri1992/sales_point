@@ -160,4 +160,13 @@ RSpec.describe Client, type: :model do
       expect(client.sat_fiscal_regime).to be_nil
     end
   end
+
+  it 'restricts organization lookups to their owner, including when the owner is absent' do
+    organization = create(:organization)
+    owned = create(:client, organization:)
+    create(:client, organization: create(:organization))
+
+    expect(described_class.for_organization(organization)).to contain_exactly(owned)
+    expect(described_class.for_organization(nil)).to be_empty
+  end
 end

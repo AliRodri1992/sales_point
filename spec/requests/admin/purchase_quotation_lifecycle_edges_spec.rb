@@ -62,4 +62,14 @@ RSpec.describe 'Purchase quotation lifecycle authorization and validation', type
     expect(response).to redirect_to(admin_purchase_quotation_path(record))
     expect(record.reload).to be_submitted
   end
+
+  it 'refuses rejection of a draft quotation without changing its state' do
+    record = quotation
+
+    post reject_admin_purchase_quotation_path(record)
+
+    expect(response).to redirect_to(admin_purchase_quotation_path(record))
+    expect(flash[:alert]).to be_present
+    expect(record.reload).to be_draft
+  end
 end

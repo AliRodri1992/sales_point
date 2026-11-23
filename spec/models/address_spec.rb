@@ -330,4 +330,12 @@ RSpec.describe Address, type: :model do
     expect(address.addressable).to be_a(Branch)
     expect(address.addressable.reload.address).to eq(address)
   end
+
+  it 'formats a partial address before a country or owner has been selected' do
+    address = described_class.new(street: 'Reforma', city: 'Puebla', primary: true)
+    expect(address.full_address).to eq('Reforma, Puebla')
+    expect(address.geocoding_query).to eq('Reforma, Puebla')
+    expect(address).not_to be_valid
+    expect(address.errors[:primary]).to be_empty
+  end
 end

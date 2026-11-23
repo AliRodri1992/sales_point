@@ -164,4 +164,17 @@ RSpec.describe 'Reviewed role status changes', type: :request do
     patch status_system_role_path(role), params: { target: 'inactive' }
     expect(response).to have_http_status(:forbidden)
   end
+
+  it 'renders the reason error and preserves the role when a reviewed change omits its reason' do
+    change_status('inactive', reason: '')
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(role.reload).to be_active
+    expect(role.status_events).to be_empty
+  end
+
+  it 'opens an editable role with its assigned permissions' do
+    get edit_system_role_path(role)
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(role.name, permission.code)
+  end
 end

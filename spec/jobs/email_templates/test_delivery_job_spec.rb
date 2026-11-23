@@ -42,4 +42,13 @@ RSpec.describe EmailTemplates::TestDeliveryJob, type: :job do
     expect(template.audits.where(action: 'test_delivered', actor:)).to exist
     expect(template.audits.where(action: 'test_failed', actor:)).not_to exist
   end
+
+  it 'preserves the missing-template error when a queued test outlives its template' do
+    missing_id = template.id
+    template.destroy!
+    expect do
+      described_class.perform_now(missing_id, actor.id, 'recipient@example.org')
+    end.to raise_error(ActiveRecord::RecordNotFound)
+    expect(EmailTemplateAudit.where(action: 'test_failed')).not_to exist
+  end
 end

@@ -157,4 +157,15 @@ RSpec.describe Language, type: :model do
       expect(Language.not_deleted.count).to eq(3)
     end
   end
+
+  it 'returns field errors and leaves the archived row intact when restoration fails' do
+    archived = create(:language, code: 'fr', flag_iso: 'fr', name: 'French')
+    archived.update!(deleted_at: Time.current)
+    candidate = build(:language, code: 'fr', flag_iso: '123', name: 'Replacement')
+
+    expect(described_class.restore_retired(candidate)).to be(false)
+    expect(candidate.errors[:flag_iso]).to be_present
+    expect(described_class.with_deleted.find(archived.id)).to have_attributes(name: 'French', flag_iso: 'fr')
+    expect(described_class.not_deleted.where(code: 'fr')).not_to exist
+  end
 end

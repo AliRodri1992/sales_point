@@ -36,4 +36,24 @@ RSpec.describe CatalogPolicy do
       end
     end
   end
+
+  { ClientPolicy => :client, UnitOfMeasurePolicy => :unit_of_measure }.each do |policy_class, factory|
+    it "isolates #{factory} records and returns an empty scope without a selected organization" do
+      organization = create(:organization)
+      member = create(:user)
+      create(:organization_membership, organization:, user: member)
+      owned = create(factory, organization:)
+      create(factory, organization: create(:organization))
+      retired = create(factory, organization:)
+      retired.update!(deleted_at: Time.current)
+      policy_scope = policy_class::Scope.new(member, owned.class)
+
+      CurrentOrganizationAccess.set(organization:) do
+        expect(policy_scope.resolve).to contain_exactly(owned)
+      end
+      CurrentOrganizationAccess.set(organization: nil) do
+        expect(policy_scope.resolve).to be_empty
+      end
+    end
+  end
 end

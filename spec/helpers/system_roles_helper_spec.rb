@@ -13,4 +13,9 @@ RSpec.describe SystemRolesHelper, type: :helper do
     role = build(:system_role, code: 'cashier', name: 'Cajero')
     expect(helper.system_role_name(role)).to eq('Cashier')
   end
+
+  it 'uses the module icon for products and the default icon for a custom module' do
+    expect(helper.permission_icon(build(:permission, module_name: 'Productos'))).to eq('cube')
+    expect(helper.permission_icon(build(:permission, module_name: 'Custom'))).to eq('key')
+  end
 end

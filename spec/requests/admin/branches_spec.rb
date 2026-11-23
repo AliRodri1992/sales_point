@@ -767,4 +767,36 @@ RSpec.describe 'Admin::Branches', type: :request do
     expect(form['data-confirm-record']).to eq(branch.name)
     expect(form['data-turbo-confirm']).to eq(I18n.t('admin.branch_workspace.remove_confirmation'))
   end
+
+  it 'retains field errors and the edit form when an update encounters a concurrent uniqueness conflict' do
+    branch = create(:branch, :registration_placeholder, organization:)
+    existing = create(:branch, organization:, name: 'Existing office')
+    allow_any_instance_of(Branch).to receive(:update) do |record, attributes|
+      record.assign_attributes(attributes)
+      raise ActiveRecord::RecordNotUnique
+    end
+
+    patch admin_branch_path(branch), params: { branch: { name: existing.name } }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('#branch_name_error').text).to include(I18n.t('errors.messages.taken'))
+    expect(document.at_css('#branch_name')['value']).to eq(existing.name)
+    expect(document.at_css('input[name="branch[address_attributes][street]"]')).to be_present
+    expect(branch.reload.name).not_to eq(existing.name)
+  end
+
+  it 'shows the model validation error and retains the submitted reason when a transition fails during save' do
+    branch = create(:branch, organization:)
+    branch.errors.add(:base, 'Branch data changed during the transition')
+    allow(Branches::TransitionStatus).to receive(:call).and_raise(ActiveRecord::RecordInvalid.new(branch))
+
+    patch transition_status_admin_branch_path(branch), params: { to_status: 'closed', reason: 'Lease expired' }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    expect(document.css('[role="alert"]').map(&:text).join).to include('Branch data changed during the transition')
+    expect(document.at_css('textarea[name="reason"]').text.strip).to eq('Lease expired')
+    expect(branch.reload).to be_active
+  end
 end

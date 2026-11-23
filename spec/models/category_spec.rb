@@ -97,4 +97,13 @@ RSpec.describe Category, type: :model do
       expect(Category.not_deleted.count).to eq(3)
     end
   end
+
+  it 'restricts organization lookups to their owner, including when the owner is absent' do
+    organization = create(:organization)
+    owned = create(:category, organization:)
+    create(:category, organization: create(:organization))
+
+    expect(described_class.for_organization(organization)).to contain_exactly(owned)
+    expect(described_class.for_organization(nil)).to be_empty
+  end
 end

@@ -105,4 +105,15 @@ RSpec.describe 'Admin user organization and role boundaries', type: :request do
     expect(response).to redirect_to(new_user_session_path)
     expect(User.find_by(email: 'orphan@example.com')).to be_nil
   end
+
+  it 'keeps a newly created customer available for retry if invitation delivery fails' do
+    allow(Users::InvitationDeliveryJob).to receive(:perform_later).and_raise(IOError, 'Queue unavailable')
+    post admin_users_path, params: { user: { email: 'queue-retry@example.com', user_type: 'customer' } }
+
+    customer = User.find_by!(email: 'queue-retry@example.com')
+    expect(response).to redirect_to(admin_user_path(customer))
+    expect(flash[:alert]).to eq(I18n.t('admin.users.status_management.invitation_delivery_failed'))
+    expect(customer.organization_memberships.find_by!(organization:)).to be_account_pending
+    expect(customer.user_invitations.sole.delivery_status).to eq('failed')
+  end
 end

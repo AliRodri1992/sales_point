@@ -340,4 +340,19 @@ RSpec.describe Product, type: :model do
       end.to raise_error(ActiveRecord::RecordNotUnique)
     end
   end
+
+  it 'retains a valid SAT unit on a product' do
+    key = create(:sat_unit_key)
+    product = create(:product, sat_unit_key: key)
+
+    expect(product.reload.sat_unit_key).to eq(key)
+  end
+
+  it 'rejects a product SKU already held by a new variant on that product' do
+    product = build(:product, sku: 'SHARED-SKU')
+    product.product_variants.build(name: 'Blue', sku: 'shared-sku')
+
+    expect(product).not_to be_valid
+    expect(product.errors.of_kind?(:sku, :taken)).to be(true)
+  end
 end

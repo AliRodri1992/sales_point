@@ -56,4 +56,8 @@ RSpec.describe EmailTemplatesQuery do
     organization_results = described_class.new(filtered_scope, origin: 'organization').call
     expect(organization_results).to contain_exactly(organization_template)
   end
+
+  it 'excludes both organization-authored and customized templates from the global scope' do
+    expect(described_class.new(filtered_scope, scope: 'global').call).to contain_exactly(global)
+  end
 end

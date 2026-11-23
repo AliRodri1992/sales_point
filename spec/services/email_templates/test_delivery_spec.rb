@@ -71,4 +71,12 @@ RSpec.describe EmailTemplates::TestDelivery do
     end.to raise_error(ArgumentError, /Unable to enqueue/)
     expect(template.audits.where(action: 'test_queued', actor:)).not_to exist
   end
+
+  it 'rejects malformed recipients before they can be queued or audited' do
+    expect(EmailTemplates::TestDeliveryJob).not_to receive(:perform_later)
+    expect do
+      described_class.call(template:, actor:, recipient: 'multiple recipients')
+    end.to raise_error(ArgumentError, 'Invalid recipient')
+    expect(template.audits.where(action: 'test_queued')).not_to exist
+  end
 end

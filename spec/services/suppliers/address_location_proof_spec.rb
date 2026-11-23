@@ -91,4 +91,10 @@ RSpec.describe Suppliers::AddressLocationProof do
     expect(verified(latitude: 19.75, longitude: -99.1803, reason: 'x' * 251, reviewed: '1'))
       .to be(false)
   end
+
+  it 'rejects an issued proposal whose confidence is outside the supported range' do
+    proof = described_class.issue(address:, supplier:, user:, coordinates: { latitude:, longitude:, confidence: 1.1 })
+
+    expect(described_class.confidence(token: proof, address:, supplier:, user:)).to be_nil
+  end
 end

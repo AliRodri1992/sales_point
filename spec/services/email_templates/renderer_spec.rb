@@ -157,4 +157,12 @@ RSpec.describe EmailTemplates::Renderer do
     expect(html).to include('Hola &lt;Pat&gt; &amp; gracias')
     expect(html).not_to include('<Pat>')
   end
+
+  it 'rejects malformed addresses supplied for a declared support email' do
+    source = template('<p>{{support_email}}</p>')
+    source.allowed_variables = %w[recipient_name support_email]
+    expect do
+      described_class.new(source:, values: { recipient_name: 'Buyer', support_email: 'Help Desk' }).render
+    end.to raise_error(ArgumentError, 'Invalid support email')
+  end
 end

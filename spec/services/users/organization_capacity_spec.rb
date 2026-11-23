@@ -46,4 +46,12 @@ RSpec.describe Users::OrganizationCapacity do
     organization.update!(membership_plan: nil)
     expect(described_class.new(organization:).limit).to be_nil
   end
+
+  it 'removes the seat cap when the plan disables its users-limit feature' do
+    plan.membership_plan_features.find_by!(membership_feature: MembershipFeature.find_by!(key: 'users_limit'))
+        .update!(enabled: false)
+    capacity = described_class.new(organization:)
+    expect(capacity.limit).to be_nil
+    expect { capacity.ensure_available!(additional: 3) }.not_to raise_error
+  end
 end

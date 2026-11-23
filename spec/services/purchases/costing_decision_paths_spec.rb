@@ -82,4 +82,12 @@ RSpec.describe 'Purchase landed cost allocation decision paths' do
     result = Purchases::Costing.landed_cost(**data)
     expect(result).to eq(11)
   end
+
+  it 'uses the batch quantity total to allocate freight on a zero-value order' do
+    totals = { order_goods: 0.to_d, order_quantity: 8.to_d }
+
+    weight = Purchases::Costing.weight_in_order(order(total: 0, quantity: 8), entry, 0.to_d, totals:)
+
+    expect(weight).to eq(0.25)
+  end
 end

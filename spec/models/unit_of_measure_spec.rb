@@ -84,4 +84,13 @@ RSpec.describe UnitOfMeasure, type: :model do
     expect(unit.update(name: 'Archived unit label')).to be(true)
     expect(unit.reload.name).to eq('Archived unit label')
   end
+
+  it 'restricts organization lookups to their owner, including when the owner is absent' do
+    organization = create(:organization)
+    owned = create(:unit_of_measure, organization:)
+    create(:unit_of_measure, organization: create(:organization))
+
+    expect(described_class.for_organization(organization)).to contain_exactly(owned)
+    expect(described_class.for_organization(nil)).to be_empty
+  end
 end

@@ -20,4 +20,10 @@ RSpec.describe EmailTemplates::TestRecipient do
     expect(other).not_to be_valid
     expect(other.errors[:email]).to be_present
   end
+
+  it 'rejects a valid address when there is no requesting user' do
+    recipient = described_class.new(email: 'staff@example.com')
+    expect(recipient).not_to be_valid
+    expect(recipient.errors.of_kind?(:email, :invalid)).to be(true)
+  end
 end

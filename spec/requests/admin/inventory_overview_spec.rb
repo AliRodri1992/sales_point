@@ -123,6 +123,10 @@ RSpec.describe 'Inventory overview and branch operations', type: :request do
     sign_out admin
     sign_in employee
 
+    get admin_inventory_overview_path, params: { branch_id: branch.id }
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('PRODUCTO GLOBAL')
+
     get admin_branch_inventories_path(branch)
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('PRODUCTO GLOBAL')
@@ -137,5 +141,47 @@ RSpec.describe 'Inventory overview and branch operations', type: :request do
     get admin_inventory_overview_path
 
     expect(response).to have_http_status(:forbidden)
+  end
+
+  context 'when viewing stock in multiple branches' do
+    let(:north) { create(:branch, organization:, name: 'North') }
+
+    before do
+      [
+        ['Gasket', branch, 6, 2.days.ago],
+        ['Bolt', north, 0, 1.day.ago],
+        ['Washer', north, 1, 3.days.ago]
+      ].each do |name, office, stock, updated_at|
+        product = create(:product, organization:, name:)
+        create(:inventory, organization:, branch: office, product:, stock:, min_stock: 2, updated_at:)
+      end
+    end
+
+    def inventory_names(**filters)
+      get admin_inventory_overview_path, params: filters
+      expect(response).to have_http_status(:ok)
+      rows = Nokogiri::HTML(response.body).css('[aria-labelledby="inventory-results-title"] tbody tr')
+      rows.map { |row| row.at_css('td span').text }
+    end
+
+    {
+      'branch' => %w[Bolt Washer Gasket],
+      'stock_asc' => %w[Bolt Washer Gasket],
+      'stock_desc' => %w[Gasket Washer Bolt],
+      'updated' => %w[Bolt Gasket Washer]
+    }.each do |sort, names|
+      it "orders the inventory directory by #{sort}" do
+        expect(inventory_names(sort:)).to eq(names)
+      end
+    end
+
+    it 'limits results to the selected branch' do
+      expect(inventory_names(branch_id: north.id)).to eq(%w[Bolt Washer])
+    end
+
+    it 'distinguishes out-of-stock products from available stock above its minimum' do
+      expect(inventory_names(status: 'out')).to eq(['Bolt'])
+      expect(inventory_names(status: 'available')).to eq(['Gasket'])
+    end
   end
 end

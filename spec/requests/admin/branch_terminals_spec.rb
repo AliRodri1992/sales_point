@@ -113,4 +113,22 @@ RSpec.describe 'Branch terminal administration', type: :request do
     expect(response).to have_http_status(:not_found)
     expect(branch.terminals.count).to eq(0)
   end
+
+  it 'rejects terminal setup at a suspended branch and reports the transition error' do
+    paused = create(:branch, organization:, operational_state: 'suspended')
+    post add_terminal_admin_branch_path(paused), params: { terminal: { name: 'New register' } }
+
+    expect(response).to redirect_to(admin_branch_path(paused))
+    expect(flash[:alert]).to eq(I18n.t('admin.branch_lifecycle.errors.invalid_transition'))
+    expect(paused.terminals).to be_empty
+  end
+
+  it 'rejects unsupported terminal statuses and leaves the register inactive' do
+    terminal = create(:terminal, branch:, status: 'inactive')
+    patch change_terminal_admin_branch_path(branch), params: { terminal_id: terminal.id, terminal_status: 'retired' }
+
+    expect(response).to redirect_to(admin_branch_path(branch, anchor: 'branch-detail-operations'))
+    expect(flash[:alert]).to eq(I18n.t('admin.branch_lifecycle.errors.invalid_transition'))
+    expect(terminal.reload).to be_inactive
+  end
 end
