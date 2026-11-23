@@ -182,6 +182,12 @@
 }
 @media (max-width:1023px) {
   .promotion-directory-workspace .promotion-metrics { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .promotion-directory-workspace .promotion-filter-grid { grid-template-columns:minmax(0,1fr) minmax(148px,.8fr) auto auto; }
+  .promotion-directory-workspace .promotion-filter-search { grid-row:1; grid-column:1; }
+  .promotion-directory-workspace .promotion-filter-status { grid-row:1; grid-column:2; }
+  .promotion-directory-workspace .promotion-directory-advanced { grid-row:1; grid-column:3; }
+  .promotion-directory-workspace .promotion-filter-submit { grid-row:1; grid-column:4; }
+  .promotion-directory-workspace .promotion-advanced-fields { grid-row:2; }
 }
 @media (max-width:740px) {
   .promotion-directory-workspace .promotion-directory-heading { flex-direction:column; align-items:stretch; gap:.9375rem; margin-bottom:1.0625rem; }
