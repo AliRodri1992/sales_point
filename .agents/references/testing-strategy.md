@@ -17,3 +17,12 @@
 - `ruby script/audit_module_quality.rb`.
 
 Estos comandos no se han ejecutado durante la creación de estas referencias.
+
+## Matriz de pruebas según impacto
+- Vista/JavaScript: specs de sistema/browser, navegación, estados carga/vacío/error, teclado/foco, 320/390/768/1440 px, zoom 200 % y es/en/ko.
+- Controladores y policies: requests y policies para 401/403/404/422, roles y aislamiento organizacional.
+- Modelos y servicios: límites, transacciones, N+1 y regresiones de contratos públicos.
+- Jobs: idempotencia, reintentos, timeout, fallos y recuperación.
+- Configuración y CI: sintaxis y ejecución de jobs sobre el SHA final; un YAML válido no demuestra un pipeline verde.
+- Medir cobertura de líneas y ramas desde SimpleCov real; priorizar casos significativos, no cobertura artificial.
+- Registrar comando, entorno, SHA, resultado, evidencia, pruebas no ejecutadas y motivo.
