@@ -209,7 +209,7 @@ RSpec.describe 'Independent commercial catalog workflows', type: :request do
     get admin_promotions_path
     expect(response).to have_http_status(:ok)
     actions = Nokogiri::HTML(response.body).at_css('[data-promotion-row-actions]')
-    expect(actions.css('a').map { |link| link['href'] }).to eq([admin_promotion_path(offer)])
+    expect(actions.css('a').pluck('href')).to eq([admin_promotion_path(offer)])
     expect(actions.css('form')).to be_empty
     delete admin_promotion_path(offer)
     expect(response).to have_http_status(:forbidden)
