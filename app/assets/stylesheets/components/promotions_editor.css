@@ -36,3 +36,19 @@
   .promotion-editor-row > [data-controller="delta-select"] { grid-column: 1 / -1; }
   .promotion-form .catalog-card-heading, .promotion-form .catalog-card-body { padding: 1rem; }
 }
+
+/* Editor layout follows usable application width, not only the browser window. */
+.promotion-editor-workspace { container:promotion-editor / inline-size; }
+@container promotion-editor (max-width:960px) {
+  .promotion-form .promotion-editor-layout { grid-template-columns:minmax(0,1fr); }
+}
+@container promotion-editor (max-width:740px) {
+  .promotion-form .catalog-fields { grid-template-columns:minmax(0,1fr); }
+  .promotion-form .promotion-editor-row { grid-template-columns:minmax(0,1fr) auto; }
+  .promotion-form .promotion-editor-row > [data-controller="delta-select"] { grid-column:1/-1; }
+  .promotion-form .catalog-footer { flex-wrap:wrap; justify-content:flex-end; gap:.5rem; }
+}
+@container promotion-editor (max-width:390px) {
+  .promotion-form .catalog-footer > * { width:100%; }
+  .promotion-form .promotion-editor-row { gap:.5rem; padding:.625rem; }
+}

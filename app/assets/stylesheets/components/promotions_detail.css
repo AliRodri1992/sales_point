@@ -42,3 +42,16 @@
   .promotion-detail .catalog-card-heading, .promotion-detail .catalog-card-body { padding: 1rem; }
   .promotion-detail-offer > strong { font-size: 1.75rem; }
 }
+
+/* Detail cards follow the source layout as the actual available content area changes. */
+.promotion-detail { container:promotion-detail / inline-size; }
+@container promotion-detail (max-width:1120px) {
+  .promotion-detail-preview .catalog-card-body { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .promotion-preview-product { grid-column:1/-1; }
+}
+@container promotion-detail (max-width:740px) {
+  .promotion-detail-grid, .promotion-detail-footer-grid,
+  .promotion-detail-preview .catalog-card-body { grid-template-columns:minmax(0,1fr); }
+  .promotion-preview-product { grid-column:auto; }
+  .promotion-detail .catalog-header .catalog-actions { display:flex; flex-wrap:wrap; gap:.5rem; }
+}

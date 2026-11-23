@@ -154,7 +154,7 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
       expect(page).to have_link('Autumn')
       expect(page).to have_no_link('Spring')
     end
-    [320, 390, 768, 1440].each do |width|
+    [320, 390, 540, 640, 740, 768, 900, 1023, 1099, 1240, 1440].each do |width|
       page.current_window.resize_to(width, 900)
       expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
     end

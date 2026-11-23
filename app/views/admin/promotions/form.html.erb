@@ -1,7 +1,7 @@
 <% title = campaign_text(@record.persisted? ? 'editor.edit' : 'editor.new') %>
 <% back_path = @record.persisted? && policy(@record).show? ? admin_promotion_path(@record, campaign_navigation_params) : catalog_back_path(Promotion) %>
 <% content_for :title, title %>
-<div class="catalog-workspace promotion-workspace">
+<div class="catalog-workspace promotion-workspace promotion-editor-workspace">
   <header class="catalog-header">
     <%= render 'module_heading', eyebrow: t('admin.catalog_design.commercial'), title: title, intro: campaign_text('editor.intro') %>
     <%= link_to campaign_text('editor.back'), back_path, class: 'catalog-button' %>

@@ -69,7 +69,8 @@
 .promotion-date-nav { min-width: 36px; color: var(--brand-on-white); }
 .promotion-date-day:hover, .promotion-date-nav:hover { background: var(--brand-light); color: var(--brand-on-white); }
 .promotion-date-day[aria-current="date"] { box-shadow: inset 0 0 0 1px var(--brand); }
-.promotion-date-day[aria-pressed="true"] { background: var(--brand-on-white); color: #fff; font-weight: 700; }
+.promotion-date-day[aria-pressed="true"] { background: #059669; color: #fff; font-weight: 700; }
+.promotion-date-day[aria-pressed="true"]:is(:hover,:focus-visible) { background: #047857; color: #fff; }
 .promotion-form .catalog-footer { border: 1px solid #e2e8f0; }
 .promotion-editor-layout { display: grid; grid-template-columns: minmax(0,1.7fr) minmax(270px,1fr); align-items: start; gap: 1.25rem; }
 .promotion-editor-column { display: grid; min-width: 0; gap: 1.25rem; }
@@ -101,3 +102,18 @@
   .promotion-metric { align-items: flex-start; flex-direction: column-reverse; }
   .promotion-metric strong { overflow-wrap: anywhere; }
 }
+
+/* Last approved v3: Emerald search/select presentation for remote product/category results. */
+.promotion-workspace .promotion-lookup-control { position:relative; min-width:0; }
+.promotion-workspace .promotion-lookup-control input[type="search"] { width:100%; min-width:0; padding-inline:2.25rem; border-radius:.5rem; }
+.promotion-workspace .promotion-lookup-control .promotion-lookup-leading,
+.promotion-workspace .promotion-lookup-control .promotion-lookup-chevron { position:absolute; top:50%; transform:translateY(-50%); pointer-events:none; width:16px; height:16px; color:#64748b; }
+.promotion-workspace .promotion-lookup-control .promotion-lookup-leading { left:.75rem; }
+.promotion-workspace .promotion-lookup-control .promotion-lookup-chevron { right:.75rem; color:var(--brand-on-white); }
+.promotion-workspace .promotion-lookup-control:focus-within .promotion-lookup-chevron { color:var(--brand); }
+.promotion-workspace [data-promotion-lookup-target="results"] { z-index:65; border:1px solid #e2e8f0; border-radius:.5rem; background:white; box-shadow:0 12px 28px #0f172a1a; }
+.promotion-workspace [data-promotion-lookup-target="results"] [role="option"] { min-width:0; width:100%; overflow-wrap:anywhere; color:#334155; }
+.promotion-workspace [data-promotion-lookup-target="results"] [role="option"]:is(:hover,:focus-visible) { background:#d1fae5; color:#065f46; outline-color:var(--brand); }
+.promotion-workspace [data-promotion-lookup-target="results"] [role="option"][aria-selected="true"] { background:#059669; color:#fff; }
+.promotion-help-trigger { min-width:30px; min-height:30px; width:30px; height:30px; }
+.promotion-detail :is(.catalog-card,.promotion-detail-footer-grid), .promotion-form .catalog-card { min-width:0; }

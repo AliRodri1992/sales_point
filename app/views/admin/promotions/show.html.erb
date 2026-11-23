@@ -45,9 +45,9 @@
       <div class="catalog-card-body">
         <dl class="catalog-definition">
           <% if @record.promotion_conditions.any? %>
-            <% @record.promotion_conditions.group_by(&:kind).each do |kind, conditions| %>
-              <div><dt><%= campaign_condition_label(kind) %></dt>
-                <dd><%= conditions.map { |condition| campaign_condition_value(condition, @record.currency, precision) }.join(', ') %></dd>
+            <% @record.promotion_conditions.each do |condition| %>
+              <div><dt><%= campaign_condition_label(condition.kind) %></dt>
+                <dd><%= campaign_condition_value(condition, @record.currency, precision) %></dd>
               </div>
             <% end %>
           <% else %>

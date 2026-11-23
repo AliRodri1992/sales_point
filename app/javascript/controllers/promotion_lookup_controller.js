@@ -17,6 +17,7 @@ export default class extends Controller {
     this.cancel()
     this.resultsTarget.replaceChildren()
     this.resultsTarget.hidden = true
+    this.queryTarget.setAttribute("aria-expanded", "false")
     this.resultsTarget.removeAttribute("aria-busy")
     this.statusTarget.textContent = ""
   }
@@ -43,6 +44,7 @@ export default class extends Controller {
       if (request.signal.aborted) return
       this.resultsTarget.replaceChildren(...items.map((item) => this.result(item)))
       this.resultsTarget.hidden = !items.length
+      this.queryTarget.setAttribute("aria-expanded", String(items.length > 0))
       this.statusTarget.textContent = items.length ? this.foundValue.replace("__COUNT__", items.length) : this.emptyValue
     } catch {
       if (!request.signal.aborted) this.statusTarget.textContent = this.errorValue
@@ -53,8 +55,11 @@ export default class extends Controller {
 
   result(item) {
     const li = document.createElement("li")
+    li.setAttribute("role", "presentation")
     const button = document.createElement("button")
     button.type = "button"
+    button.setAttribute("role", "option")
+    button.setAttribute("aria-selected", "false")
     button.className = "block min-h-11 w-full px-3 py-2 text-left text-sm hover:bg-emerald-50 focus:bg-emerald-50"
     button.textContent = [item.name, item.sku || item.code].filter(Boolean).join(" · ")
     button.addEventListener("click", () => this.choose(item))
