@@ -79,9 +79,8 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     expect(page).to have_css('#sidebarCloseButton:focus')
     find('#sidebarCloseButton').click
     expect_sidebar_toggle_focused
-    expect(page.evaluate_script('window.sidebarFocusTransfers')).to eq([
-      ['sidebarCloseButton', false, false], ['sidebarToggle', false, false]
-    ])
+    expected_transfers = [['sidebarCloseButton', false, false], ['sidebarToggle', false, false]]
+    expect(page.evaluate_script('window.sidebarFocusTransfers')).to eq(expected_transfers)
     expect(page).to have_css('#adminSidebar[inert]', visible: :all)
     expect(page).to have_no_css('#adminDashboardContent[inert]', visible: :all)
   end
