@@ -8,16 +8,21 @@ module Admin
       render json: quote_payload(product_quote)
     rescue ActiveRecord::RecordNotFound
       render json: { error: t('admin.catalog_design.invalid_quote') }, status: :not_found
+    rescue ActionController::ParameterMissing
+      render json: { error: t('admin.catalog_design.invalid_quote') }, status: :bad_request
     rescue ArgumentError => e
-      message_key = case e.message
-                    when 'Invalid price list' then 'admin.catalog_design.invalid_price_list'
-                    when 'No price in the selected currency' then 'admin.catalog_design.price_currency_unavailable'
-                    else 'admin.catalog_design.invalid_quote'
-                    end
-      render json: { error: t(message_key) }, status: :unprocessable_content
+      render json: { error: t(quote_error_key(e)) }, status: :unprocessable_content
     end
 
     private
+
+    def quote_error_key(error)
+      case error.message
+      when 'Invalid price list' then 'admin.catalog_design.invalid_price_list'
+      when 'No price in the selected currency' then 'admin.catalog_design.price_currency_unavailable'
+      else 'admin.catalog_design.invalid_quote'
+      end
+    end
 
     def quote_payload(result)
       promotion = result.promotion

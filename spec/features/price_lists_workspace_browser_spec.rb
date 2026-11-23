@@ -96,17 +96,17 @@ RSpec.describe 'Price lists workspace', type: :feature, js: true do
   end
 
   scenario 'keeps filtered lists and removable criteria accessible on mobile and desktop' do
-    organization.price_lists.create!(name: 'Tea wholesale', currency: 'MXN', customer_segment: 'Wholesale')
-    organization.price_lists.create!(name: 'Coffee retail', currency: 'MXN', customer_segment: 'Retail')
+    wholesale = organization.price_lists.create!(name: 'Tea wholesale', currency: 'MXN', customer_segment: 'Wholesale')
+    retail = organization.price_lists.create!(name: 'Coffee retail', currency: 'MXN', customer_segment: 'Retail')
     [1440, 768, 390, 320].each do |width|
       page.driver.browser.manage.window.resize_to(width, 960)
       visit admin_price_lists_path(customer_segment: 'Wholesale')
       expect(page).to have_css('details[open]')
-      expect(page).to have_text('Tea wholesale')
-      expect(page).to have_no_text('Coffee retail')
+      expect(page).to have_link(href: admin_price_list_path(wholesale), text: /\ATea wholesale\z/i)
+      expect(page).to have_no_link(href: admin_price_list_path(retail))
       expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
     end
     within('.products-filter-chips') { find('.products-filter-chip', text: 'Wholesale').click }
-    expect(page).to have_text('Coffee retail')
+    expect(page).to have_link(href: admin_price_list_path(retail), text: /\ACoffee retail\z/i)
   end
 end

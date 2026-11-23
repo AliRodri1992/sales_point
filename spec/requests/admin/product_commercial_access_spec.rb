@@ -69,7 +69,11 @@ RSpec.describe 'Commercial access from Products', type: :request do
       get quote_admin_product_path(product), params: options
 
       expect(response).to have_http_status(:bad_request)
+      expect(response.parsed_body).to include('error' => I18n.t('admin.catalog_design.invalid_quote'))
     end
+
+    get quote_admin_product_path(product)
+    expect(response).to have_http_status(:ok)
   end
 
   it 'keeps the automatic discount but requires promotion detail permission to disclose its name' do

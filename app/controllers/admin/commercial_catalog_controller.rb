@@ -69,17 +69,18 @@ module Admin
         permissions = policy(resource_class)
         raise Pundit::NotAuthorizedError unless permissions.index? || permissions.show? ||
                                                 permissions.create? || permissions.update?
+      elsif (action = permission_action)
+        authorize(@record || resource_class, "#{action}?")
       else
-        authorize(@record || resource_class, "#{permission_action}?")
+        head :bad_request
       end
     end
 
     def permission_action
       return 'show' if action_name == 'preview'
       return action_name unless action_name == 'transition'
-      return params[:commercial_action] if TRANSITIONS.include?(params[:commercial_action])
 
-      raise ActionController::BadRequest, 'Invalid commercial action'
+      params[:commercial_action] if TRANSITIONS.include?(params[:commercial_action])
     end
 
     def perform_transition(action)

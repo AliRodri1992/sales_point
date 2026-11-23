@@ -27,10 +27,10 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
     expect(page).to have_no_field('promotion_code')
     expect(page).to have_no_select('promotion_status', visible: :all)
     fill_in 'Search products', with: 'Forest'
-    find_button(/Forest honey/).send_keys(:enter)
+    find('#campaign-product-search-results button', text: 'Forest honey').send_keys(:enter)
     fill_in 'Search categories', with: 'Seasonal'
-    click_button(/Seasonal groceries/)
-    within('[data-condition-kind="category"]') { click_button(/Remove/) }
+    find('#campaign-category-search-results button', text: 'Seasonal groceries').click
+    within('[data-condition-kind="category"]') { click_button 'Remove row' }
     click_button 'Add benefit'
     within('#campaign-benefits') { fill_in 'Value', with: '15' }
     click_button 'Save campaign'
@@ -66,7 +66,7 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
 
     find('summary', text: 'Advanced filters').click
     fill_in 'Search products', with: 'Cedar'
-    click_button(/Cedar soap/)
+    find('#campaign-product-search-results button', text: 'Cedar soap').click
     click_button 'Apply filters'
     expect(page).to have_current_path(/product_id=#{product.id}/)
     within('#campaign-results') do
@@ -91,7 +91,7 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
       expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
     end
 
-    within('nav[aria-label="Applied filters"]') { click_link(/Autumn/) }
+    within('nav[aria-label="Applied filters"]') { find('a', text: 'Autumn').click }
     expect(page).to have_no_current_path(/search=/)
     expect(page).to have_current_path(/status=draft/)
     within('#campaign-results') { expect(page).to have_link('Spring') }
