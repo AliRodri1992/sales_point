@@ -31,6 +31,13 @@ es:
       models:
         promotion:
           attributes:
+            promotion_conditions:
+              too_many: "superan el máximo permitido (%{count})."
+              repeated_rule: "no pueden repetir una regla de cantidad, subtotal o segmento."
+              duplicate_target: "no pueden repetir el mismo producto o categoría."
+              contradictory_target: "no pueden incluir y excluir el mismo producto o categoría."
+            promotion_benefits:
+              too_many: "superan el máximo permitido (%{count})."
             ends_at:
               after_start: "debe ser posterior a la de inicio."
         price_list:
