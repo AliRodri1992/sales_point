@@ -23,19 +23,28 @@ module Products
     def rejection_reason
       return :organization unless @promotion.organization_id == @product.organization_id
 
+      quota_rejection_reason || condition_rejection_reason
+    end
+
+    private
+
+    def quota_rejection_reason
       redemptions = @promotion.promotion_redemptions
       return :usage_limit if @promotion.usage_limit && redemptions.count >= @promotion.usage_limit
-      if @promotion.customer_limit
-        return :customer_required if @customer.blank?
-        return :customer_limit if redemptions.where(customer_reference: @customer).count >= @promotion.customer_limit
-      end
+      return nil unless @promotion.customer_limit
+      return :customer_required if @customer.blank?
+
+      return :customer_limit if redemptions.where(customer_reference: @customer).count >= @promotion.customer_limit
+
+      nil
+    end
+
+    def condition_rejection_reason
       @promotion.promotion_conditions.group_by(&:kind).each do |kind, conditions|
         return kind.to_sym unless matches_group?(kind, conditions)
       end
       nil
     end
-
-    private
 
     def matches_group?(kind, conditions)
       case kind
