@@ -41,6 +41,21 @@ RSpec.describe 'Shared system role tenant isolation', type: :request do
     expect(response.body).not_to include('Permission change history', 'Status history')
   end
 
+  it 'offers the read-only workspace for a custom role used in another organization' do
+    get system_roles_path
+    expect(response).to have_http_status(:ok)
+    path = system_role_path(shared_role)
+    card = Nokogiri::HTML(response.body).at_css("[data-role-card][href='#{path}']")
+    expect(card.text).to include('View permissions')
+
+    get path
+    expect(response).to have_http_status(:ok)
+    workspace = Nokogiri::HTML(response.body).at_css('[data-permissions-mode="view"]')
+    expect(workspace).to be_present
+    expect(workspace.at_css("#permission_#{permission.id}[disabled]")).to be_present
+    expect(workspace.css('input[role="switch"]:not([disabled])')).to be_empty
+  end
+
   it 'allows editing a role assigned only in its own organization' do
     local = create(:system_role, :system, code: 'single_tenant_workspace')
     create(:user_role, organization: own, user: actor, system_role: local)

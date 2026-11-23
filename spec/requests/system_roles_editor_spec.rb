@@ -76,6 +76,26 @@ RSpec.describe 'System role editor', type: :request do
     expect(role.permissions).to contain_exactly(permission)
   end
 
+  it 'keeps the submitted update pending when a role field fails validation' do
+    saved = create(:permission, code: 'suppliers.contacts.view', module_name: 'Proveedores')
+    create(:system_role_permission, system_role: role, permission: saved)
+
+    patch system_role_path(role), params: {
+      system_role: { name: '', description: 'Pending description' }, permission_ids: [permission.id]
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(document.at_css('#system_role_name[aria-describedby="system_role_name_error"]')).to be_present
+    expect(document.at_css('#system_role_name_error[role="alert"]').text).to include("can't be blank")
+    expect(document.at_css('#system_role_description').text.strip).to eq('Pending description')
+    expect(document.at_css("#permission_#{permission.id}[checked]")).to be_present
+    expect(document.at_css("#permission_#{saved.id}:not([checked])")).to be_present
+    pending = document.at_css('[data-permissions-mode="edit"] [data-role-permissions-target="pending"]')
+    expect(pending).to be_present
+    expect(pending.text).to match(/\b2\b/)
+    expect(role.permissions.reload).to contain_exactly(saved)
+  end
+
   it 'rejects inactive, missing and malformed permission ids without partially removing access' do
     create(:system_role_permission, system_role: role, permission:)
     inactive = create(:permission, status: :inactive)

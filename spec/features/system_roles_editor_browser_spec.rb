@@ -7,8 +7,12 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
 
   let(:admin) { create(:user, :english) }
   let!(:role) { create(:system_role, :system, name: 'Operations', code: 'operations') }
-  let!(:view_permission) { create(:permission, code: 'suppliers.contacts.view', module_name: 'Proveedores') }
-  let!(:create_permission) { create(:permission, code: 'suppliers.contacts.create', module_name: 'Proveedores') }
+  let!(:view_permission) do
+    create(:permission, code: 'suppliers.contacts.view', name: 'View supplier contacts', module_name: 'Proveedores')
+  end
+  let!(:create_permission) do
+    create(:permission, code: 'suppliers.contacts.create', name: 'Create supplier contacts', module_name: 'Proveedores')
+  end
   let!(:other_permission) { create(:permission, code: 'sales.access', module_name: 'Ventas') }
 
   before do
@@ -21,6 +25,110 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
   after do
     page.driver.browser.manage.window.resize_to(1400, 900)
     Warden.test_reset!
+  end
+
+  scenario 'opens a locally assigned role in the editable permissions workspace' do
+    create(:user_role, user: admin, system_role: role)
+
+    visit system_role_path(role)
+
+    expect(page).to have_css('[data-permissions-mode="edit"]')
+    expect(page).to have_css('h1', text: 'Manage permissions', exact_text: true)
+    expect(page).to have_unchecked_field("permission_#{view_permission.id}")
+  end
+
+  scenario 'opens a protected role in the read-only permissions workspace' do
+    visit system_role_path(admin.system_roles.first)
+
+    expect(page).to have_css('[data-permissions-mode="view"]')
+    expect(page).to have_css('h1', text: 'View permissions', exact_text: true)
+    expect(page).to have_field("permission_#{view_permission.id}", disabled: true)
+    expect(page).to have_no_button('Save permissions', disabled: :all)
+    expect(page).to have_no_button('Discard changes', disabled: :all)
+    expect(page).to have_no_css('[data-bulk-state]', visible: :all)
+
+    click_button 'Unassigned'
+    fill_in 'Search modules or actions', with: 'suppliers.contacts.view'
+    expect(page).to have_field("permission_#{view_permission.id}", disabled: true)
+    expect(page).to have_no_css("#permission_#{create_permission.id}")
+  end
+
+  scenario 'expands the full permission matrix without overflowing a narrow viewport' do
+    irregular = create(:permission, code: 'suppliers.contacts.set_primary', module_name: 'Proveedores')
+    group = 'details[data-role-permissions-target="group"]'
+    page.driver.browser.manage.window.resize_to(390, 844)
+    visit system_role_path(role)
+
+    expect(page).to have_button('Collapse all')
+    click_button 'Collapse all'
+    expect(page).to have_no_css("#{group}[open]")
+    click_button 'Expand all'
+    expect(page).to have_css("#{group}[open]", count: 2)
+    expect(page).to have_unchecked_field("permission_#{irregular.id}")
+    expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
+  end
+
+  scenario 'counts permission differences and returns to zero when a change is reverted' do
+    visit system_role_path(role)
+    pending = '[data-role-permissions-target="pending"]'
+
+    expect(page).to have_css(pending, text: /\b0\b/)
+    check "permission_#{view_permission.id}"
+    expect(page).to have_css(pending, text: /\b1\b/)
+    uncheck "permission_#{view_permission.id}"
+    expect(page).to have_css(pending, text: /\b0\b/)
+  end
+
+  scenario 'reviews permission differences before persisting them to the authorized history' do
+    create(:system_role_permission, system_role: role, permission: view_permission)
+    visit system_role_path(role)
+    uncheck "permission_#{view_permission.id}"
+    check "permission_#{create_permission.id}"
+    expect(page).to have_css('[data-role-permissions-target="pending"]', text: /\b2\b/)
+
+    click_button 'Save permissions'
+    within '[role="dialog"]' do
+      expect(page).to have_text('Create supplier contacts').and have_text('suppliers.contacts.create')
+      expect(page).to have_text('View supplier contacts').and have_text('suppliers.contacts.view')
+      click_button 'Back to permissions'
+    end
+    expect(page).to have_no_button('Confirm changes')
+    expect(page).to have_checked_field("permission_#{create_permission.id}")
+    expect(page).to have_unchecked_field("permission_#{view_permission.id}")
+    expect(role.permissions.reload).to contain_exactly(view_permission)
+
+    click_button 'Save permissions'
+    click_button 'Confirm changes'
+
+    within '#permission-history' do
+      expect(page).to have_text('Added: suppliers.contacts.create')
+      expect(page).to have_text('Removed: suppliers.contacts.view')
+    end
+    expect(role.permissions.reload).to contain_exactly(create_permission)
+    expect(role.permission_audit_events.count).to eq(1)
+    expect(SystemRoleNotification.where(record: role).count).to eq(1)
+  end
+
+  scenario 'discards pending permission and metadata changes in place' do
+    create(:system_role_permission, system_role: role, permission: view_permission)
+    visit system_role_path(role)
+    fill_in 'system_role_name', with: 'Unsaved name'
+    fill_in 'system_role_description', with: 'Unsaved description'
+    uncheck "permission_#{view_permission.id}"
+    check "permission_#{create_permission.id}"
+
+    expect(page).to have_button('Discard changes')
+    click_button 'Discard changes'
+
+    expect(page).to have_current_path(system_role_path(role))
+    expect(page).to have_field('system_role_name', with: 'Operations')
+    expect(page).to have_field('system_role_description', with: role.description)
+    expect(page).to have_checked_field("permission_#{view_permission.id}")
+    expect(page).to have_unchecked_field("permission_#{create_permission.id}")
+    expect(page).to have_css('[data-role-permissions-target="pending"]', text: /\b0\b/)
+    expect(role.reload.name).to eq('Operations')
+    expect(role.permissions.reload).to contain_exactly(view_permission)
+    expect(SystemRoleNotification.where(record: role)).to be_empty
   end
 
   scenario 'selects a module, retains hidden selections and persists them together' do

@@ -19,6 +19,43 @@ RSpec.describe 'Visible-only bulk permission selection', type: :feature, js: tru
 
   after { Warden.test_reset! }
 
+  it 'filters assigned and unassigned permissions without changing the selection' do
+    create(:system_role_permission, system_role: role, permission: hidden_permission)
+    visit system_role_path(role)
+
+    expect(page).to have_css('button[data-filter-state="all"][aria-pressed="true"]')
+    click_button 'Assigned'
+    expect(page).to have_css('button[data-filter-state="assigned"][aria-pressed="true"]')
+    expect(page).to have_checked_field("permission_#{hidden_permission.id}")
+    expect(page).to have_no_css("#permission_#{visible.id}")
+
+    click_button 'Unassigned'
+    expect(page).to have_css('button[data-filter-state="unassigned"][aria-pressed="true"]')
+    expect(page).to have_unchecked_field("permission_#{visible.id}")
+    expect(page).to have_no_css("#permission_#{hidden_permission.id}")
+
+    click_button 'All'
+    expect(page).to have_checked_field("permission_#{hidden_permission.id}")
+    expect(page).to have_unchecked_field("permission_#{visible.id}")
+  end
+
+  it 'revokes grants matching both filters while keeping a hidden grant in the module' do
+    create(:system_role_permission, system_role: role, permission: visible)
+    create(:system_role_permission, system_role: role, permission: hidden_permission)
+    visit system_role_path(role)
+    expect(page).to have_css('button[data-filter-state="assigned"]')
+    click_button 'Assigned'
+    fill_in 'Search modules or actions', with: 'suppliers.contacts.create'
+    expect(page).to have_no_css("#permission_#{hidden_permission.id}")
+    find('button[data-bulk-state="revoke"]').click
+
+    expect(page).to have_text('No permissions match your search.')
+    fill_in 'Search modules or actions', with: ''
+    click_button 'All'
+    expect(page).to have_unchecked_field("permission_#{visible.id}")
+    expect(page).to have_checked_field("permission_#{hidden_permission.id}")
+  end
+
   it 'announces access permissions enabled outside the visible search results' do
     access = create(:permission, code: 'languages.access', module_name: 'Languages')
     edit = create(:permission, code: 'languages.update', module_name: 'Languages')
