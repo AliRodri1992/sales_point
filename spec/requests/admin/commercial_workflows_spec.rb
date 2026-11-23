@@ -42,6 +42,32 @@ RSpec.describe 'Independent commercial catalog workflows', type: :request do
     expect(events.order(:id).pluck(:event)).to eq(%w[promotion.create promotion.update])
   end
 
+  it 'audits nested promotion benefit and condition edits without exposing values' do
+    post admin_promotions_path, params: { promotion: {
+      name: 'Audited promotion', currency: 'MXN',
+      promotion_benefits_attributes: { '0' => { kind: 'percentage', value: 10 } },
+      promotion_conditions_attributes: { '0' => { kind: 'min_quantity', quantity: 2 } }
+    } }
+    record = organization.promotions.sole
+    benefit = record.promotion_benefits.sole
+    condition = record.promotion_conditions.sole
+    created = FinancialAuditEvent.where(subject_type: 'Promotion', subject_id: record.id).order(:id).last
+    expect(created.details.fetch('associations').fetch('promotion_benefits').fetch('created')).to include(benefit.id)
+    expect(created.details.fetch('associations').fetch('promotion_conditions').fetch('created')).to include(condition.id)
+
+    patch admin_promotion_path(record), params: { promotion: {
+      promotion_benefits_attributes: { '0' => { id: benefit.id, kind: 'percentage', value: 15 } },
+      promotion_conditions_attributes: { '0' => { id: condition.id, _destroy: '1' } }
+    } }
+    expect(response).to have_http_status(:see_other)
+    updated = FinancialAuditEvent.where(subject_type: 'Promotion', subject_id: record.id).order(:id).last
+    associations = updated.details.fetch('associations')
+    expect(associations.fetch('promotion_benefits').fetch('updated'))
+      .to include(include('id' => benefit.id, 'fields' => ['value']))
+    expect(associations.fetch('promotion_conditions').fetch('removed')).to include(condition.id)
+    expect(updated.details.to_s).not_to include('15.0')
+  end
+
   it 'runs explicit lifecycle operations and prevents updates to archived data' do
     patch transition_admin_promotion_path(offer), params: { commercial_action: 'activate' }
     expect(offer.reload).to be_active

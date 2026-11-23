@@ -136,12 +136,45 @@ module Admin
 
     def persist_with_audit?
       action = @record.new_record? ? 'create' : 'update'
+      old_children = promotion_audit_snapshot if @record.is_a?(Promotion)
       return false unless persist_record
 
       fields = @record.saved_changes.keys - %w[id created_at updated_at organization_id]
-      FinancialAuditEvent.record!(organization: current_organization, actor: current_user, details: { fields: },
+      details = { fields: }
+      if old_children
+        details[:associations] = promotion_audit_changes(old_children, promotion_audit_snapshot)
+      end
+      FinancialAuditEvent.record!(organization: current_organization, actor: current_user, details:,
                                   event: "#{resource_class.model_name.singular}.#{action}", subject: @record)
       true
+    end
+
+    # Record which children changed without duplicating customer segments or other form values
+    # in the audit log. The immutable audit entry already identifies actor and timestamp.
+    def promotion_audit_snapshot
+      {
+        promotion_benefits: @record.promotion_benefits.reload.index_by(&:id).transform_values do |benefit|
+          benefit.attributes.slice('kind', 'value')
+        end,
+        promotion_conditions: @record.promotion_conditions.reload.index_by(&:id).transform_values do |condition|
+          condition.attributes.slice('kind', 'product_id', 'category_id', 'quantity', 'amount', 'customer_segment')
+        end
+      }
+    end
+
+    def promotion_audit_changes(before, after)
+      before.to_h.each_with_object({}) do |(association, previous), changes|
+        current = after.fetch(association)
+        created = current.keys - previous.keys
+        removed = previous.keys - current.keys
+        updated = (previous.keys & current.keys).filter_map do |id|
+          fields = (previous.fetch(id).keys | current.fetch(id).keys).select do |field|
+            previous.fetch(id)[field] != current.fetch(id)[field]
+          end
+          { id:, fields: } if fields.any?
+        end
+        changes[association] = { created:, removed:, updated: } if created.any? || removed.any? || updated.any?
+      end
     end
 
     def success_path(record)
