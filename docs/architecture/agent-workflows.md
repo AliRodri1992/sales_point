@@ -30,3 +30,19 @@
 
 ## Entrega
 Registrar rama, SHA, archivos modificados, pruebas ejecutadas/no ejecutadas, hallazgos, riesgos y enlace a CI. Los commits de documentación no prueban comportamiento del sistema.
+
+## Selección por superficie, riesgo y evidencia
+| Señal | Skills pertinentes | Evidencia esperada |
+|---|---|---|
+| ERB, Tailwind, Stimulus, modales y ayuda contextual | `ui-ux-designer`, `design-system-engineer`, `accessibility-specialist`; `testing-specialist` para regresiones | Inventario antes/después, estados, teclado y responsive |
+| Modelos, controladores, políticas y negocio | `rails-architect`, `testing-specialist`; sumar seguridad o base de datos según impacto | Contratos, permisos, casos negativos y specs |
+| Migraciones, índices y catálogos | `database-specialist`, `testing-specialist` | Fuente de datos real, integridad y reversibilidad |
+| Sidekiq, Redis y jobs | `background-jobs-specialist`, `testing-specialist` | Idempotencia, reintentos, errores y recuperación |
+| CI, releases y dependencias | `devops-engineer`, `git-workflow-specialist`, `testing-specialist` | Logs, checks y resultados para el SHA |
+
+### Contrato de revisión
+1. Leer `AGENTS.md`, estándar y expediente del módulo; confirmar rama y SHA.
+2. Documentar skills elegidas y motivo; no activar todas por disponibilidad.
+3. Inventariar campos, acciones, catálogos, permisos, traducciones, estados y pruebas antes de cambiar.
+4. Revisar el diff y las regresiones; incorporar `code-reviewer` para cambios de riesgo elevado.
+5. Registrar resultados ejecutados y pendientes. Cuando se exija reporte antes de publicar, presentarlo antes del push.
