@@ -21,9 +21,16 @@ export default class extends Controller {
     if (this.hasTabTarget) this.activateTab(this.initialTabValue)
     if (this.hasDialogTarget && typeof this.dialogTarget.showModal === "function") {
       this.savedPermissionIds = new Set(this.savedPermissionIdsValue.map(String))
+      this.historyIndex = window.history.state?.turbo?.restorationIndex
+      this.popstateGuard = event => this.guardHistory(event)
+      window.addEventListener("popstate", this.popstateGuard, { capture: true })
       this.discardTarget.hidden = false
       this.refreshPending()
     }
+  }
+
+  disconnect() {
+    if (this.popstateGuard) window.removeEventListener("popstate", this.popstateGuard, { capture: true })
   }
 
   differences() {
@@ -77,6 +84,24 @@ export default class extends Controller {
     event.preventDefault()
     this.pendingDestination = event.detail.url
     if (!this.discardDialogTarget.open) this.discardDialogTarget.showModal()
+  }
+
+  guardHistory(event) {
+    if (this.restoringHistory) {
+      event.stopImmediatePropagation()
+      this.restoringHistory = false
+      if (this.pendingDestination && !this.discardDialogTarget.open) this.discardDialogTarget.showModal()
+      return
+    }
+    const destinationIndex = event.state?.turbo?.restorationIndex
+    if (!this.isDirty() || destinationIndex === undefined || this.historyIndex === undefined) return
+    const distance = this.historyIndex - destinationIndex
+    if (distance === 0) return
+
+    event.stopImmediatePropagation()
+    this.pendingDestination = window.location.href
+    this.restoringHistory = true
+    window.history.go(distance)
   }
 
   guardUnload(event) {

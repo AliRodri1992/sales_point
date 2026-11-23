@@ -6,7 +6,7 @@ ko:
         help: 모듈별로 이 역할에 필요한 작업을 선택하세요. 관리 권한에는 여러 작업이 포함될 수 있습니다.
         selected: 선택됨
         search: 모듈 또는 작업 검색
-        search_placeholder: '예: 공급업체, 생성, 업데이트…'
+        search_placeholder: 모듈, 작업 또는 코드 검색…
         results: 개 권한 검색됨
         no_results: 검색과 일치하는 권한이 없습니다.
         empty: 사용 가능한 활성 권한이 없습니다.

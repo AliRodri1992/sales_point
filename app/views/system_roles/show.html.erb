@@ -13,6 +13,9 @@
 <% workspace_title = t(read_only ? 'admin.system_roles.catalog.view_permissions' : 'admin.system_roles.index.manage_permissions') %>
 <% content_for :system_role_breadcrumb_label, workspace_title %>
 <% content_for :title, "#{workspace_title} | #{role_name}" %>
+<% unless read_only %>
+  <% content_for :head do %><meta name="turbo-cache-control" content="no-cache"><% end %>
+<% end %>
 
 <div class="mx-auto max-w-[92rem]" data-permissions-mode="<%= read_only ? 'view' : 'edit' %>">
   <header class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

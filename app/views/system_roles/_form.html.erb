@@ -28,7 +28,7 @@
               class: creating ? 'pb-24 sm:pb-0' : 'role-editor-surface' do |form| %>
   <%= hidden_field_tag 'permission_ids[]', '', disabled: read_only %>
   <% unless creating %>
-    <%= render 'system_roles/permission_identity', role_name: role_name, role_description: role_description, show_history: show_history %>
+    <%= render 'system_roles/permission_identity', role_name: role_name, role_description: role_description, show_history: show_history, history_active: history_active %>
     <div id="role-permissions-panel" role="tabpanel" aria-labelledby="role-permissions-tab" data-role-permissions-target="panel" <%= 'hidden' if history_active %>>
   <% end %>
   <% @system_role.errors[:base].uniq.each do |message| %>
@@ -114,7 +114,7 @@
     <div class="<%= reviewing ? 'role-editor-footer' : 'z-10 mt-6 flex rounded-xl border border-slate-200 bg-white shadow-sm sm:pr-40' %> <%= footer_layout %>">
       <% if reviewing %>
         <div class="flex min-w-0 items-center gap-3" data-role-permissions-target="pending" role="status" aria-atomic="true">
-          <span class="role-editor-change-icon"><%= delta_icon('role-editor-shield', class: 'size-5') %></span>
+          <span class="role-editor-change-icon"><%= delta_icon('shield-check', class: 'size-5') %></span>
           <div class="min-w-0">
             <p class="text-sm font-semibold text-slate-800"><span data-role-permissions-target="pendingCount" class="tabular-nums"><%= pending_count %></span> <span data-role-permissions-target="pendingLabel"><%= t('admin.system_roles.catalog.pending_permissions') %></span></p>
             <p class="text-xs text-slate-600" data-role-permissions-target="pendingBreakdown"><%= t('admin.system_roles.workspace.saved') %></p>
@@ -133,7 +133,7 @@
         <% end %>
         <% if reviewing %>
           <%= form.button type: :submit, class: 'role-editor-save', data: { role_permissions_target: 'save', turbo_submits_with: t('admin.system_roles.catalog.saving') } do %>
-            <%= delta_icon('role-editor-check', class: 'size-4') %><%= t('admin.system_roles.workspace.review_save') %>
+            <%= delta_icon('check', class: 'size-4') %><%= t('admin.system_roles.workspace.review_save') %>
             <span data-role-permissions-target="saveCount" class="role-editor-save-count" aria-hidden="true" hidden></span>
           <% end %>
         <% else %>

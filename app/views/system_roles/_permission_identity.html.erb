@@ -11,21 +11,21 @@
         <p class="mt-2 break-words text-sm leading-5 text-slate-600"><%= role_description.presence || t('admin.system_roles.index.no_description') %></p>
       </div>
     </div>
-    <span class="role-editor-context"><%= delta_icon('role-editor-shield', class: 'size-4') %><%= t('admin.system_roles.workspace.context') %></span>
+    <span class="role-editor-context"><%= delta_icon('shield-check', class: 'size-4') %><%= t('admin.system_roles.workspace.context') %></span>
   </div>
   <div class="role-editor-meta">
     <span><%= delta_icon('building-office-2', class: 'size-4') %><%= t("admin.system_roles.types.#{@system_role.role_type}") %></span>
-    <span><%= delta_icon('role-editor-users', class: 'size-4') %><%= t('admin.system_roles.workspace.assigned_users', count: role_workspace_user_count(@system_role)) %></span>
-    <span><%= delta_icon('role-editor-clock', class: 'size-4') %><%= t('admin.system_roles.workspace.updated', date: l(role_workspace_updated_at(@system_role), format: :short)) %></span>
+    <span><%= delta_icon('user-group', class: 'size-4') %><%= t('admin.system_roles.workspace.assigned_users', count: role_workspace_user_count(@system_role)) %></span>
+    <span><%= delta_icon('clock', class: 'size-4') %><%= t('admin.system_roles.workspace.updated', date: l(role_workspace_updated_at(@system_role), format: :short)) %></span>
   </div>
   <div role="tablist" aria-label="<%= t('admin.system_roles.workspace.tabs') %>" class="role-editor-tabs" data-action="keydown->role-permissions#tabKeydown">
-    <button type="button" id="role-permissions-tab" role="tab" aria-selected="true" aria-controls="role-permissions-panel"
+    <button type="button" id="role-permissions-tab" role="tab" aria-selected="<%= !history_active %>" aria-controls="role-permissions-panel" tabindex="<%= history_active ? -1 : 0 %>"
             data-role-permissions-target="tab" data-action="role-permissions#selectTab">
-      <%= delta_icon('role-editor-key', class: 'size-4') %><%= t('admin.system_roles.workspace.permissions_tab') %>
+      <%= delta_icon('key', class: 'size-4') %><%= t('admin.system_roles.workspace.permissions_tab') %>
       <span class="role-editor-tab-count" data-role-permissions-target="tabCount"><%= @assigned_permission_ids.size %></span>
     </button>
     <% if show_history %>
-      <button type="button" id="role-history-tab" role="tab" aria-selected="false" aria-controls="role-history-panel" tabindex="-1"
+      <button type="button" id="role-history-tab" role="tab" aria-selected="<%= history_active %>" aria-controls="role-history-panel" tabindex="<%= history_active ? 0 : -1 %>"
               data-role-permissions-target="tab" data-action="role-permissions#selectTab">
         <%= delta_icon('role-editor-history', class: 'size-4') %><%= t('admin.system_roles.workspace.history_tab') %>
       </button>

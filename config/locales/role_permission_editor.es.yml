@@ -7,7 +7,7 @@ es:
           Los permisos de administración pueden incluir varias acciones.
         selected: seleccionados
         search: Buscar módulo o acción
-        search_placeholder: Ej. proveedores, crear, actualizar…
+        search_placeholder: Buscar módulo, acción o código…
         results: permisos encontrados
         no_results: No hay permisos que coincidan con tu búsqueda.
         empty: No hay permisos activos disponibles.

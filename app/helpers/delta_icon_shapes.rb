@@ -3,12 +3,7 @@
 # Original 24x24 vector drawings for Delta POS.
 module DeltaIconShapes
   ICON_SHAPES = {
-    'role-editor-shield' => 'M12 2 4 5v7c0 5 4 8 8 10 4-2 8-5 8-10V5z|M8 12l3 3 5-6',
-    'role-editor-users' => 'c:9,8,3|M2 20v-2a7 7 0 0 1 14 0v2|M16 5a3 3 0 0 1 0 6|M19 14a6 6 0 0 1 3 6',
-    'role-editor-clock' => 'c:12,12,9|M12 6v6l4 2',
-    'role-editor-key' => 'c:8,8,5|M12 12l9 9|M16 16l3-3|M18 18l3-3',
     'role-editor-history' => 'M3 12a9 9 0 1 0 3-7|M3 3v6h6|M12 7v5l4 2',
-    'role-editor-check' => 'M4 12l5 5L20 6',
     'banknotes' => 'r:3,6,18,12,2|c:12,12,3|M6 9h1|M17 15h1',
     'bars-3' => 'M4 6h16|M4 12h16|M4 18h16',
     'bell' => 'M7 17V10a5 5 0 0 1 10 0v7l2 2H5l2-2|M10 21h4',
