@@ -9,6 +9,43 @@
         "saving": "Saving…",
         "empty": "No campaigns yet.",
         "no_matches": "No campaigns match these filters.",
+        "directory_title": "Promotion directory",
+        "filter_title": "Search filters",
+        "metrics": {
+          "title": "Organization promotion overview",
+          "total": "Total promotions",
+          "active": "Active",
+          "scheduled": "Scheduled",
+          "paused": "Paused"
+        },
+        "row_actions": {
+          "show": "View",
+          "delete": "Delete (archive)"
+        },
+        "calendar": {
+          "open": "Open calendar",
+          "previous": "Previous month",
+          "next": "Next month",
+          "clear": "Clear",
+          "today": "Today",
+          "time_hint": "Select a day and adjust the time directly in the date field."
+        },
+        "help": {
+          "label": "Help: %{title}",
+          "close": "Close help",
+          "how_to": "How to use",
+          "filters": { "purpose": "Find campaigns by name, code, status and conditions.", "usage": "Choose filters, select Apply filters, and remove individual filters to broaden the search." },
+          "directory": { "purpose": "Review promotions, validity periods and recorded usage.", "usage": "Use the actions to view, edit or archive according to your permissions. Archiving retains history." },
+          "general": { "purpose": "Identify the campaign and set the discount currency.", "usage": "Enter a recognizable name. The code is assigned automatically on save." },
+          "benefit": { "purpose": "Set the discount amount and how the promotion is prioritized.", "usage": "Add a percentage or fixed amount. Set a per-line cap or priority if needed." },
+          "conditions": { "purpose": "Determine which products, categories and customers are eligible.", "usage": "Search for products or categories, add rules and exclusions. With no conditions, all are eligible." },
+          "validity": { "purpose": "Control when the campaign can apply.", "usage": "Set the start and end dates and times; leave dates blank for an unlimited period." },
+          "limits": { "purpose": "Control how many times the campaign can be redeemed.", "usage": "Set a total or per-customer limit. Leave a limit blank for unlimited redemptions." },
+          "actions": { "purpose": "Manage the promotion lifecycle.", "usage": "Activate, pause, resume, duplicate or archive according to the status and available permissions." },
+          "preview": { "purpose": "Simulate a price with real rules without consuming redemptions.", "usage": "Select a product, quantity, date and customer context, then calculate the price." },
+          "overlaps": { "purpose": "Warns about other promotions that may overlap this campaign.", "usage": "Review overlapping campaigns and their priorities before activation." },
+          "history": { "purpose": "Records operations performed on the promotion.", "usage": "Review dates, changes and the people responsible for the available actions." }
+        },
         "results": {
           "one": "%{count} campaign",
           "other": "%{count} campaigns"
@@ -19,7 +56,8 @@
           "audience": "Audience",
           "validity": "Validity",
           "usage": "Usage",
-          "status": "Status"
+          "status": "Status",
+          "actions": "Actions"
         },
         "status": {
           "draft": "Draft",

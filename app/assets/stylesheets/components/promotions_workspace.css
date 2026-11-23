@@ -1,0 +1,66 @@
+/* Promotion screens extend the existing Delta Emerald catalog system. */
+.promotion-workspace { max-width: 1600px; min-width: 0; }
+.promotion-module-icon { display: grid; place-items: center; flex-shrink: 0; width: 52px; height: 52px; border-radius: 1rem; background: var(--brand-light); color: var(--brand-on-white); }
+.promotion-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+.promotion-metric { display: flex; justify-content: space-between; align-items: center; gap: .75rem; padding: 1.125rem; border: 1px solid #e2e8f0; border-radius: 1rem; background: #fff; min-width: 0; }
+.promotion-metric:hover, .promotion-metric[aria-current="true"] { border-color: var(--brand); }
+.promotion-metric[aria-current="true"] { box-shadow: inset 0 0 0 1px var(--brand); }
+.promotion-metric-label { display: block; font-size: .75rem; font-weight: 600; color: #64748b; overflow-wrap: anywhere; }
+.promotion-metric strong { display: block; margin-top: .375rem; font-family: var(--font-jakarta); font-size: 1.625rem; font-weight: 700; line-height: 1.2; color: #0f172a; font-variant-numeric: tabular-nums; }
+.promotion-metric-icon { display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; border-radius: .75rem; color: #475569; background: #f1f5f9; }
+.promotion-metric--active .promotion-metric-icon { color: var(--brand-on-white); background: var(--brand-light); }
+.promotion-metric--scheduled .promotion-metric-icon { color: #1d4ed8; background: #eff6ff; }
+.promotion-metric--paused .promotion-metric-icon { color: #92400e; background: #fffbeb; }
+.promotion-directory-row { transition: background-color .15s; }
+.promotion-directory-row:hover { background: #f8fafc; }
+.promotion-row-actions { flex-wrap: wrap; justify-content: flex-start; }
+.promotion-row-actions .catalog-list-icon-button { width: 40px; height: 40px; border: 1px solid #e2e8f0; background: #fff; }
+.promotion-row-actions .catalog-list-icon-button:hover { border-color: var(--brand); background: var(--brand-light); }
+.promotion-row-actions .catalog-list-icon-button--danger:hover { border-color: #fecdd3; background: #fff1f2; color: #be123c; }
+.promotion-detail-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.25rem; align-items: stretch; }
+.promotion-full { grid-column: 1 / -1; min-width: 0; }
+.promotion-detail-grid > section { min-width: 0; }
+.promotion-section-heading { align-items: flex-start; }
+.promotion-section-heading .catalog-icon { color: var(--brand-on-white); background: var(--brand-light); }
+.promotion-section-heading h2 { overflow-wrap: anywhere; }
+.promotion-help { position: relative; flex-shrink: 0; }
+.promotion-help-trigger { display: inline-grid; place-items: center; min-width: 36px; min-height: 36px; color: #64748b; border-radius: .625rem; background: transparent; cursor: pointer; }
+.promotion-help-trigger:hover, .promotion-help-trigger[aria-expanded="true"] { background: var(--brand-light); color: var(--brand-on-white); }
+.promotion-help-panel { position: fixed; z-index: 70; overflow-y: auto; width: min(21rem, calc(100vw - 16px)); border: 1px solid #cbd5e1; border-radius: .875rem; padding: 1rem; background: #fff; box-shadow: 0 12px 30px #0f172a1a; font-size: .8125rem; color: #334155; line-height: 1.55; overflow-wrap: anywhere; text-align: left; }
+.promotion-help-panel p { color: inherit; font-size: inherit; line-height: inherit; }
+.promotion-date { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
+.promotion-date-enhanced { grid-template-columns: minmax(0, 1fr) 44px; gap: .375rem; }
+.promotion-date-enhanced input[type="datetime-local"] { min-width: 0; accent-color: var(--brand); }
+.promotion-date-enhanced input[type="datetime-local"]::-webkit-calendar-picker-indicator { display: none; }
+.promotion-date-enhanced input[type="datetime-local"]::selection { background: var(--brand); color: #fff; }
+.promotion-date-trigger { padding: 0; width: 44px; margin-top: 1.75rem; color: var(--brand-on-white); }
+.promotion-date-trigger[aria-expanded="true"] { border-color: var(--brand); background: var(--brand-light); }
+.promotion-date-panel { position: fixed; z-index: 75; width: min(20rem, calc(100vw - 16px)); overflow-y: auto; padding: .875rem; border: 1px solid #cbd5e1; border-radius: .875rem; background: #fff; box-shadow: 0 12px 30px #0f172a1a; }
+.promotion-date-grid { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 2px; margin-top: .75rem; }
+.promotion-date-weekday { font-size: .6875rem; text-align: center; color: #64748b; overflow: hidden; }
+.promotion-date-nav, .promotion-date-day { display: grid; place-items: center; min-height: 36px; background: #fff; border-radius: .5rem; font-size: .8125rem; cursor: pointer; }
+.promotion-date-nav { min-width: 36px; color: var(--brand-on-white); }
+.promotion-date-day:hover, .promotion-date-nav:hover { background: var(--brand-light); color: var(--brand-on-white); }
+.promotion-date-day[aria-current="date"] { box-shadow: inset 0 0 0 1px var(--brand); }
+.promotion-date-day[aria-pressed="true"] { background: var(--brand-on-white); color: #fff; font-weight: 700; }
+.promotion-form .catalog-footer { border: 1px solid #e2e8f0; }
+.promotion-status--scheduled { background: #eff6ff; color: #1d4ed8; }
+.promotion-status--paused { background: #fffbeb; color: #92400e; }
+.promotion-status--exhausted, .promotion-status--expired { background: #fff1f2; color: #9f1239; }
+.promotion-status-dot { width: .4rem; height: .4rem; border-radius: 50%; background: currentColor; align-self: center; flex-shrink: 0; }
+@media (max-width: 1279px) {
+  .promotion-directory-row td:last-child { grid-column: 1 / -1; }
+  .promotion-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .promotion-detail-grid { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .promotion-metric { padding: .875rem; gap: .375rem; }
+  .promotion-metric strong { font-size: 1.375rem; }
+  .promotion-metric-icon { width: 34px; height: 34px; }
+  .promotion-module-icon { width: 44px; height: 44px; }
+}
+@media (max-width: 379px) {
+  .promotion-metrics { gap: .5rem; }
+  .promotion-metric { align-items: flex-start; flex-direction: column-reverse; }
+  .promotion-metric strong { overflow-wrap: anywhere; }
+}

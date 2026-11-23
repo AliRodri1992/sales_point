@@ -1,5 +1,6 @@
 <section id="campaign-conditions" class="catalog-card !overflow-visible" aria-labelledby="campaign-conditions-title">
-  <%= catalog_heading(campaign_text('sections.conditions'), campaign_text('conditions_hint'), id: 'campaign-conditions-title', icon: 'funnel') %>
+  <%= render 'section_heading', title: campaign_text('sections.conditions'), subtitle: campaign_text('conditions_hint'),
+             id: 'campaign-conditions-title', icon: 'funnel', section: 'conditions' %>
   <div class="catalog-card-body space-y-5">
     <% unless @target_lists.nil? %>
       <div class="catalog-field">
@@ -24,8 +25,10 @@
     <div class="grid items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
       <div class="catalog-field">
         <%= label_tag :campaign_rule, campaign_text('line_rule') %>
-        <%= select_tag :campaign_rule, options_for_select(PromotionsHelper::RULE_FIELDS.keys.map { |kind| [campaign_condition_label(kind), kind] }),
-                       name: nil, data: { promotion_editor_target: 'rule' } %>
+        <div data-controller="delta-select">
+          <%= select_tag :campaign_rule, options_for_select(PromotionsHelper::RULE_FIELDS.keys.map { |kind| [campaign_condition_label(kind), kind] }),
+                         name: nil, data: { promotion_editor_target: 'rule' } %>
+        </div>
       </div>
       <button type="button" class="catalog-button" data-action="promotion-editor#addRule" data-promotion-editor-target="addRule">
         <%= delta_icon('plus', class: 'size-4') %><%= campaign_text('add_rule') %>

@@ -162,6 +162,69 @@ RSpec.describe 'Independent commercial catalog workflows', type: :request do
     expect(response.body).to include(offer.name)
   end
 
+  it 'shows a scoped promotion overview and the same percentage icon in the sidebar and heading' do
+    offer.update!(status: 'active')
+    organization.promotions.create!(name: 'Paused campaign', currency: 'MXN', status: 'paused')
+    organization.promotions.create!(name: 'Future campaign', currency: 'MXN', status: 'active',
+                                    starts_at: 2.days.from_now,
+                                    promotion_benefits_attributes: [{ kind: 'percentage', value: 10 }])
+    Promotion.create!(organization: create(:organization), name: 'Foreign campaign', currency: 'MXN')
+    get admin_promotions_path, params: { status: 'active', per_page: 5 }
+    document = Nokogiri::HTML(response.body)
+    expect(document.css('[data-campaign-metric] strong').map { |node| node.text.strip }).to eq(%w[3 1 1 1])
+    expect(document.at_css('[data-campaign-metric="active"]')['aria-current']).to eq('true')
+    sidebar = document.at_css('svg[data-sidebar-icon="promotions"]')
+    heading = document.at_css('svg[data-promotion-icon]')
+    expect(sidebar.element_children.map(&:to_html)).to eq(heading.element_children.map(&:to_html))
+    expect(heading.css('circle').size).to eq(2)
+  end
+
+  it 'offers permitted row actions and archives without deleting the promotion' do
+    offer
+    get admin_promotions_path
+    document = Nokogiri::HTML(response.body)
+    actions = document.at_css('[data-promotion-row-actions]')
+    expect(actions.at_css("a[href='#{admin_promotion_path(offer)}']")).to be_present
+    expect(actions.at_css("a[href='#{edit_admin_promotion_path(offer)}']")).to be_present
+    expect(actions.at_css('input[name="_method"]')['value']).to eq('delete')
+    expect { delete admin_promotion_path(offer) }.not_to change(Promotion, :count)
+    expect(offer.reload).to be_archived
+    get admin_promotions_path
+    actions = Nokogiri::HTML(response.body).at_css('[data-promotion-row-actions]')
+    expect(actions.css('a').size).to eq(1)
+    expect(actions.css('form')).to be_empty
+  end
+
+  it 'does not render edit or archive operations for a promotion reader' do
+    offer
+    reader = create(:user, :english)
+    create(:organization_membership, user: reader, organization:)
+    role = create(:system_role, :system)
+    create(:user_role, user: reader, system_role: role)
+    GranularPermissionCatalog.sync!
+    %w[promotions.access promotions.index promotions.show].each do |code|
+      create(:system_role_permission, system_role: role, permission: Permission.find_by!(code:))
+    end
+    sign_in reader
+    get admin_promotions_path
+    expect(response).to have_http_status(:ok)
+    actions = Nokogiri::HTML(response.body).at_css('[data-promotion-row-actions]')
+    expect(actions.css('a').map { |link| link['href'] }).to eq([admin_promotion_path(offer)])
+    expect(actions.css('form')).to be_empty
+    delete admin_promotion_path(offer)
+    expect(response).to have_http_status(:forbidden)
+    expect(offer.reload).to be_draft
+  end
+
+  it 'keeps the directory context when saving a promotion and going back' do
+    context = { search: 'Draft', status: 'draft', sort: 'name', direction: 'desc', page: 2, per_page: 5 }
+    patch admin_promotion_path(offer, context), params: { promotion: { name: 'Draft reviewed' } }
+    expect(response).to redirect_to(admin_promotion_path(offer, context))
+    follow_redirect!
+    link = Nokogiri::HTML(response.body).css('a.catalog-button').find { |node| node.text.strip == 'Back to list' }
+    expect(link['href']).to eq(admin_promotions_path(context))
+  end
+
   %i[price_lists promotions].each do |resource|
     it "paginates #{resource} with the catalog footer and retains filters and sorting" do
       12.times do |index|

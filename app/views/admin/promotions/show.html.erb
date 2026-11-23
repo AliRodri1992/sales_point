@@ -1,19 +1,12 @@
 <% content_for :title, @record.name %>
 <% precision = campaign_currency_places.fetch(@record.currency, 2) %>
-<div class="catalog-workspace">
+<div class="catalog-workspace promotion-workspace">
   <header class="catalog-header">
-    <div>
-      <p class="catalog-eyebrow"><%= t('admin.catalog_design.promotions') %></p>
-      <h1><%= @record.name %></h1>
-      <div class="mt-2 flex flex-wrap items-center gap-3">
-        <span class="text-sm text-slate-600"><%= @record.code %> · <%= @record.currency %></span>
-        <%= render 'badge', record: @record %>
-      </div>
-    </div>
+    <%= render 'module_heading', eyebrow: t('admin.catalog_design.promotions'), title: @record.name, record: @record %>
     <div class="catalog-actions">
-      <%= link_to t('admin.catalog_design.back'), catalog_back_path(Promotion), class: 'catalog-button' %>
+      <%= render 'back_button' %>
       <% if policy(@record).update? && !%w[archived exhausted expired].include?(@record.effective_status.to_s) %>
-        <%= link_to edit_admin_promotion_path(@record), class: 'catalog-button catalog-button-primary' do %>
+        <%= link_to edit_admin_promotion_path(@record, campaign_navigation_params), class: 'catalog-button catalog-button-primary' do %>
           <%= delta_icon('pencil', class: 'size-4') %><%= t('admin.catalog_design.edit') %>
         <% end %>
       <% end %>
@@ -22,10 +15,10 @@
 
   <%= catalog_errors(@record) %>
   <%= error_message_for(@record, :status, label: campaign_text('filters.status')) %>
-  <div class="catalog-layout">
-    <div class="catalog-main">
-      <section class="catalog-card" aria-labelledby="campaign-offer-title">
-        <header class="catalog-card-heading"><h2 id="campaign-offer-title"><%= campaign_text('sections.benefit') %></h2></header>
+  <div class="promotion-detail-grid">
+      <section class="catalog-card !overflow-visible" aria-labelledby="campaign-offer-title">
+        <%= render 'section_heading', title: campaign_text('sections.benefit'), subtitle: t('admin.catalog_design.promotion_benefits_hint'),
+                   icon: 'promotion-percent', id: 'campaign-offer-title', section: 'benefit' %>
         <div class="catalog-card-body">
           <% if @record.promotion_benefits.any? %>
             <ul class="mb-5 grid gap-3 sm:grid-cols-2">
@@ -47,8 +40,9 @@
         </div>
       </section>
 
-      <section class="catalog-card">
-        <%= catalog_heading(campaign_text('sections.conditions'), campaign_text('conditions_hint'), icon: 'funnel') %>
+      <section class="catalog-card !overflow-visible" aria-labelledby="campaign-conditions-title">
+        <%= render 'section_heading', title: campaign_text('sections.conditions'), subtitle: campaign_text('conditions_hint'),
+                   icon: 'funnel', id: 'campaign-conditions-title', section: 'conditions' %>
         <div class="catalog-card-body">
           <% if @record.promotion_conditions.any? %>
             <dl class="catalog-definition">
@@ -71,19 +65,24 @@
         </div>
       </section>
 
-      <section class="catalog-card">
-        <%= catalog_heading(campaign_text('sections.validity'), campaign_text('date_hint', zone: Time.zone.name), icon: 'calendar') %>
+      <section class="catalog-card !overflow-visible" aria-labelledby="campaign-validity-title">
+        <%= render 'section_heading', title: campaign_text('sections.validity'), subtitle: campaign_text('date_hint', zone: Time.zone.name),
+                   icon: 'calendar', id: 'campaign-validity-title', section: 'validity' %>
         <dl class="catalog-card-body catalog-definition">
           <% %i[starts_at ends_at].each do |field| %>
             <div><dt><%= t("admin.catalog_design.#{field}") %></dt><dd><%= campaign_date(@record.public_send(field), format: :long) %></dd></div>
           <% end %>
         </dl>
       </section>
-      <%= render 'admin/shared/commercial_overlaps', record: @record %>
-      <%= render 'admin/shared/commercial_preview', record: @record, preview_url: preview_admin_promotion_path(@record, format: :json), lookup_url: products_lookup_admin_promotions_path(format: :json) %>
+      <%= render 'usage_and_actions', record: @record %>
+      <%= render 'admin/shared/commercial_overlaps', record: @record, promotion_help: true %>
+      <div class="promotion-full">
+        <%= render 'admin/shared/commercial_preview', record: @record, preview_url: preview_admin_promotion_path(@record, format: :json), lookup_url: products_lookup_admin_promotions_path(format: :json), promotion_help: true %>
+      </div>
       <% if policy(@record).history? %>
-        <section class="catalog-card">
-          <header class="catalog-card-heading"><h2><%= campaign_text('history') %></h2></header>
+        <section class="catalog-card promotion-full !overflow-visible" aria-labelledby="campaign-history-title">
+          <%= render 'section_heading', title: campaign_text('history'), subtitle: nil,
+                     icon: 'clock', id: 'campaign-history-title', section: 'history' %>
           <% if @history.any? %>
             <ol class="divide-y divide-slate-100 px-4 sm:px-6">
               <% @history.each do |entry| %>
@@ -100,32 +99,5 @@
           <% end %>
         </section>
       <% end %>
-    </div>
-    <aside class="catalog-aside">
-      <section class="catalog-card catalog-card-body">
-        <h2><%= campaign_text('sections.limits') %></h2>
-        <div class="my-4"><%= render 'usage', record: @record %></div>
-        <dl class="catalog-definition">
-          <% %i[usage_limit customer_limit].each do |field| %>
-            <div><dt><%= t("admin.catalog_design.#{field}") %></dt>
-              <dd><%= @record.public_send(field) || t('admin.catalog_design.no_limit') %></dd>
-            </div>
-          <% end %>
-        </dl>
-      </section>
-      <% actions = campaign_available_actions(@record) %>
-      <% if actions.any? %>
-        <section class="catalog-card catalog-card-body">
-          <h2><%= campaign_text('actions_title') %></h2>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <% actions.each do |action| %>
-              <%= button_to campaign_text("actions.#{action}"), transition_admin_promotion_path(@record),
-                            method: :patch, params: { commercial_action: action }, class: 'catalog-button',
-                            form: { data: { turbo_confirm: campaign_text("confirm.#{action}", name: @record.name) } } %>
-            <% end %>
-          </div>
-        </section>
-      <% end %>
-    </aside>
   </div>
 </div>

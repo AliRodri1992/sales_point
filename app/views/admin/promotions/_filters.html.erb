@@ -2,6 +2,10 @@
 <% selected_labels = { 'product_id' => @selected_product&.name, 'category_id' => @selected_category&.name } %>
 <% chips = filters.slice(*PromotionsHelper::CAMPAIGN_FILTERS) %>
 <%= form_with url: admin_promotions_path, method: :get, class: 'catalog-card !overflow-visible mb-4 p-4 sm:p-5', role: 'search' do %>
+  <div class="mb-4 flex items-center gap-2">
+    <h2 class="font-jakarta text-sm font-bold"><%= campaign_text('filter_title') %></h2>
+    <%= render 'section_help', section: 'filters', title: campaign_text('filter_title') %>
+  </div>
   <% %i[sort direction per_page].each do |field| %>
     <%= hidden_field_tag field, filters[field] if filters[field].present? %>
   <% end %>
@@ -12,8 +16,10 @@
     </div>
     <div class="catalog-field">
       <%= label_tag :campaign_status, campaign_text('filters.status') %>
-      <%= select_tag :status, options_for_select(campaign_choices('status', PromotionsHelper::CAMPAIGN_STATES), filters[:status]),
-                     id: 'campaign_status', include_blank: t('admin.catalog_design.all_statuses') %>
+      <div data-controller="delta-select">
+        <%= select_tag :status, options_for_select(campaign_choices('status', PromotionsHelper::CAMPAIGN_STATES), filters[:status]),
+                       id: 'campaign_status', include_blank: t('admin.catalog_design.all_statuses') %>
+      </div>
     </div>
     <%= button_tag t('admin.catalog_design.filter'), name: nil, class: 'catalog-button catalog-button-primary' %>
   </div>
@@ -29,8 +35,10 @@
       <% PromotionsHelper::FILTER_OPTIONS.except(:status).each do |key, values| %>
         <div class="catalog-field">
           <%= label_tag "campaign_#{key}", campaign_text("filters.#{key}") %>
-          <%= select_tag key, options_for_select(values.map { |value| [campaign_filter_value(key, value), value] }, filters[key]),
-                         id: "campaign_#{key}", include_blank: t('admin.catalog_design.all_options') %>
+          <div data-controller="delta-select">
+            <%= select_tag key, options_for_select(values.map { |value| [campaign_filter_value(key, value), value] }, filters[key]),
+                           id: "campaign_#{key}", include_blank: t('admin.catalog_design.all_options') %>
+          </div>
         </div>
       <% end %>
       <div class="catalog-field">

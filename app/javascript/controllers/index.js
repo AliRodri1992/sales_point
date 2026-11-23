@@ -229,6 +229,10 @@ application.register("price-list-editor", PriceListEditorController)
 
 import PromotionEditorController from "./promotion_editor_controller"
 application.register("promotion-editor", PromotionEditorController)
+import PromotionHelpController from "./promotion_help_controller"
+application.register("promotion-help", PromotionHelpController)
+import PromotionDateController from "./promotion_date_controller"
+application.register("promotion-date", PromotionDateController)
 
 import PromotionLookupController from "./promotion_lookup_controller"
 application.register("promotion-lookup", PromotionLookupController)

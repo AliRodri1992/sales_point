@@ -9,6 +9,43 @@
         "saving": "Guardando…",
         "empty": "Aún no hay campañas.",
         "no_matches": "Ninguna campaña coincide con estos filtros.",
+        "directory_title": "Directorio de promociones",
+        "filter_title": "Filtros de búsqueda",
+        "metrics": {
+          "title": "Resumen de promociones de la organización",
+          "total": "Total de promociones",
+          "active": "Activas",
+          "scheduled": "Programadas",
+          "paused": "Pausadas"
+        },
+        "row_actions": {
+          "show": "Mostrar",
+          "delete": "Eliminar (archivar)"
+        },
+        "calendar": {
+          "open": "Abrir calendario",
+          "previous": "Mes anterior",
+          "next": "Mes siguiente",
+          "clear": "Limpiar",
+          "today": "Hoy",
+          "time_hint": "Selecciona el día y ajusta la hora directamente en el campo de fecha."
+        },
+        "help": {
+          "label": "Ayuda: %{title}",
+          "close": "Cerrar ayuda",
+          "how_to": "Cómo se usa",
+          "filters": { "purpose": "Localiza campañas mediante su nombre, código, estado y condiciones.", "usage": "Elige los filtros, pulsa Aplicar filtros y retira los filtros individuales cuando quieras ampliar la búsqueda." },
+          "directory": { "purpose": "Consulta las promociones, su vigencia y el uso registrado.", "usage": "Usa las acciones para mostrar, editar o archivar según tus permisos. Archivar conserva el historial." },
+          "general": { "purpose": "Identifica la campaña y define la moneda de sus descuentos.", "usage": "Escribe un nombre reconocible. Al guardar se asigna el código automáticamente." },
+          "benefit": { "purpose": "Define cuánto se descuenta y cómo se prioriza la promoción.", "usage": "Añade un porcentaje o importe fijo. Configura un tope por línea o prioridad si lo necesitas." },
+          "conditions": { "purpose": "Determina cuáles productos, categorías y clientes pueden recibir el descuento.", "usage": "Busca los productos o categorías, añade reglas y exclusiones. Sin condiciones se aplica a todos." },
+          "validity": { "purpose": "Controla cuándo puede aplicarse la campaña.", "usage": "Define la fecha y hora de inicio y fin; deja fechas vacías para no limitar el periodo." },
+          "limits": { "purpose": "Controla cuántas veces se puede canjear la campaña.", "usage": "Indica un límite total o por cliente. Una cantidad vacía significa sin límite." },
+          "actions": { "purpose": "Gestiona el ciclo de vida de la promoción.", "usage": "Activa, pausa, reanuda, duplica o archiva según el estado y los permisos disponibles." },
+          "preview": { "purpose": "Simula un precio aplicando las reglas reales sin consumir usos.", "usage": "Selecciona un producto, cantidad, fecha y contexto del cliente; después calcula el precio." },
+          "overlaps": { "purpose": "Advierte de otras promociones que podrían coincidir con esta campaña.", "usage": "Revisa las coincidencias y sus prioridades antes de activar." },
+          "history": { "purpose": "Registra las operaciones realizadas sobre la promoción.", "usage": "Consulta las fechas, los cambios y las personas responsables de las acciones disponibles." }
+        },
         "results": {
           "one": "%{count} campaña",
           "other": "%{count} campañas"
@@ -19,7 +56,8 @@
           "audience": "Público",
           "validity": "Vigencia",
           "usage": "Uso",
-          "status": "Estado"
+          "status": "Estado",
+          "actions": "Acciones"
         },
         "status": {
           "draft": "Borrador",

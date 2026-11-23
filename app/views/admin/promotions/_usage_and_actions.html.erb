@@ -1,0 +1,30 @@
+<section class="catalog-card !overflow-visible" aria-labelledby="campaign-limits-title">
+  <%= render 'section_heading', title: campaign_text('sections.limits'), subtitle: campaign_text('limits_hint'),
+             icon: 'users', id: 'campaign-limits-title', section: 'limits' %>
+  <div class="catalog-card-body">
+    <div class="mb-5"><%= render 'usage', record: record %></div>
+    <dl class="catalog-definition">
+      <% %i[usage_limit customer_limit].each do |field| %>
+        <div><dt><%= t("admin.catalog_design.#{field}") %></dt>
+          <dd><%= record.public_send(field) || t('admin.catalog_design.no_limit') %></dd>
+        </div>
+      <% end %>
+    </dl>
+    <% actions = campaign_available_actions(record) %>
+    <% if actions.any? %>
+      <div class="mt-6 border-t border-slate-100 pt-4">
+        <div class="flex items-center gap-2">
+          <h3 class="text-sm font-semibold"><%= campaign_text('actions_title') %></h3>
+          <%= render 'section_help', section: 'actions', title: campaign_text('actions_title') %>
+        </div>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <% actions.each do |action| %>
+            <%= button_to campaign_text("actions.#{action}"), transition_admin_promotion_path(record, campaign_navigation_params),
+                          method: :patch, params: { commercial_action: action }, class: 'catalog-button',
+                          form: { data: { turbo_confirm: campaign_text("confirm.#{action}", name: record.name) } } %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>

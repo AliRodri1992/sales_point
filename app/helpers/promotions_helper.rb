@@ -19,6 +19,10 @@ module PromotionsHelper
     params.permit(*CAMPAIGN_FILTERS, :sort, :direction, :per_page).to_h.compact_blank
   end
 
+  def campaign_navigation_params
+    campaign_filters.merge(params.permit(:page).to_h.compact_blank)
+  end
+
   def campaign_choices(group, values)
     values.map { |value| [campaign_text("#{group}.#{value}"), value] }
   end

@@ -56,6 +56,8 @@ module DeltaIconShapes
     'identification' => 'r:3,4,18,16,2|c:9,10,2|M6 16c0-3 6-3 6 0|M15 9h4|M15 13h4',
     'inbox' => 'M5 4h14l3 11v5H2v-5z|M2 15h6l2 3h4l2-3h6',
     'information-circle' => 'c:12,12,9|M12 11v5|M12 7.5v.5',
+    'question-circle' => 'c:12,12,9|M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.3-3 4|M12 17h.01',
+    'promotion-percent' => 'M5 19l14-14|c:7,7,3|c:17,17,3',
     'key' => 'c:8,10,5|M12 13l9 9|M16 17l2-2|M18 19l2-2',
     'language' => 'c:12,12,9|M3 12h18|M12 3c-5 5-5 13 0 18|M12 3c5 5 5 13 0 18|M5 7h14|M5 17h14',
     'light-bulb' => 'M9 17c-.3-2-3-3-3-7a6 6 0 0 1 12 0c0 4-2.7 5-3 7z|M9 20h6|M10 22h4',

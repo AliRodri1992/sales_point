@@ -1,4 +1,4 @@
-<section class="catalog-card" aria-labelledby="commercial-preview-heading"
+<section class="catalog-card <%= '!overflow-visible' if local_assigns[:promotion_help] %>" aria-labelledby="commercial-preview-heading"
          data-controller="commercial-preview"
          data-commercial-preview-url-value="<%= preview_url %>"
          data-commercial-preview-lookup-url-value="<%= lookup_url %>"
@@ -7,8 +7,13 @@
          data-commercial-preview-error-value="<%= t('admin.commercial_preview.error') %>"
          data-commercial-preview-calculating-value="<%= t('admin.commercial_preview.calculating') %>"
          data-commercial-preview-none-value="<%= t('admin.commercial_preview.none') %>">
-  <%= catalog_heading(t('admin.commercial_preview.title'), t('admin.commercial_preview.subtitle'),
-                      icon: 'calculator', id: 'commercial-preview-heading') %>
+  <% if local_assigns[:promotion_help] %>
+    <%= render 'admin/promotions/section_heading', title: t('admin.commercial_preview.title'), subtitle: t('admin.commercial_preview.subtitle'),
+               icon: 'calculator', id: 'commercial-preview-heading', section: 'preview' %>
+  <% else %>
+    <%= catalog_heading(t('admin.commercial_preview.title'), t('admin.commercial_preview.subtitle'),
+                        icon: 'calculator', id: 'commercial-preview-heading') %>
+  <% end %>
   <div class="catalog-card-body space-y-5">
     <div class="catalog-field relative">
       <%= label_tag 'commercial-preview-product', t('admin.commercial_preview.product') %>
@@ -41,12 +46,14 @@
                            autocomplete: 'off', placeholder: t('admin.commercial_preview.customer_placeholder'),
                            data: { commercial_preview_target: 'customer', action: 'input->commercial-preview#invalidate' } %>
       </div>
-      <div class="catalog-field">
-        <%= label_tag 'commercial-preview-at', t('admin.commercial_preview.at') %>
-        <%= text_field_tag :preview_at, (record.starts_at || Time.current).in_time_zone.ceil.strftime('%Y-%m-%dT%H:%M:%S'),
-                           id: 'commercial-preview-at', type: 'datetime-local', step: 1,
-                           data: { commercial_preview_target: 'at', action: 'change->commercial-preview#invalidate' } %>
-      </div>
+      <%= render layout: 'admin/promotions/date_picker', locals: { field_id: 'commercial-preview-at', enabled: local_assigns[:promotion_help] } do %>
+        <div class="catalog-field">
+          <%= label_tag 'commercial-preview-at', t('admin.commercial_preview.at') %>
+          <%= text_field_tag :preview_at, (record.starts_at || Time.current).in_time_zone.ceil.strftime('%Y-%m-%dT%H:%M:%S'),
+                             id: 'commercial-preview-at', type: 'datetime-local', step: 1,
+                             data: { commercial_preview_target: 'at', action: 'change->commercial-preview#invalidate' } %>
+        </div>
+      <% end %>
       <% %w[variant presentation].each do |kind| %>
         <div class="catalog-field">
           <%= label_tag "commercial-preview-#{kind}", t("admin.commercial_preview.#{kind}") %>

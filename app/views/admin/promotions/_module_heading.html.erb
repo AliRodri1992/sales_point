@@ -1,0 +1,16 @@
+<div class="flex min-w-0 items-start gap-3">
+  <span class="promotion-module-icon" aria-hidden="true">
+    <%= delta_icon('promotion-percent', class: 'size-7', data: { promotion_icon: true }) %>
+  </span>
+  <div class="min-w-0">
+    <p class="catalog-eyebrow"><%= eyebrow %></p>
+    <h1><%= title %></h1>
+    <% if local_assigns[:intro].present? %><p><%= intro %></p><% end %>
+    <% if local_assigns[:record] %>
+      <div class="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-600">
+        <span><%= record.code %> · <%= record.currency %></span>
+        <%= render 'badge', record: record %>
+      </div>
+    <% end %>
+  </div>
+</div>

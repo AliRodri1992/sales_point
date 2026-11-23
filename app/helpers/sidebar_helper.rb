@@ -15,7 +15,7 @@ module SidebarHelper
     catalogs: 'rectangle-stack',
     commercial: 'briefcase',
     price_lists: 'list-bullet',
-    promotions: 'receipt-percent',
+    promotions: 'promotion-percent',
     languages: 'language',
     products: 'cube',
     categories: 'tag',

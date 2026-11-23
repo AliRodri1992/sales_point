@@ -27,7 +27,32 @@ module Admin
     def prepare_index(_scope)
       @selected_category = current_organization.categories.find_by(id: params.permit(:category_id)[:category_id])
       @usage_counts = @records.index_by(&:id).transform_values(&:usage_count)
+      @promotion_metrics = promotion_metrics
     end
+
+    def promotion_metrics
+      scope = commercial_scope
+      at = Time.current
+      metrics = { 'total' => scope.count }
+      %w[active scheduled paused].each do |status|
+        metrics[status] = CommercialCatalogQuery.new(scope, { status: }, at:).call.count
+      end
+      metrics
+    end
+
+    def catalog_back_path(model)
+      return super unless model == Promotion && policy(Promotion).index?
+
+      admin_promotions_path(promotion_navigation_params)
+    end
+
+    def success_path(record)
+      return super unless policy(record).show?
+
+      admin_promotion_path(record, promotion_navigation_params)
+    end
+
+    def promotion_navigation_params = params.permit(*FILTERS, :per_page, :page).to_h.compact_blank
 
     def prepare_show
       super

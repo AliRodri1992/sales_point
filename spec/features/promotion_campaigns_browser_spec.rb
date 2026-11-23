@@ -77,6 +77,38 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
     expect(page).to have_field('Search products', with: 'Cedar soap')
   end
 
+  scenario 'opens section help, closes it with Escape and uses the same back button in detail and edit' do
+    campaign = organization.promotions.create!(name: 'Readable campaign', currency: 'MXN')
+    visit admin_promotion_path(campaign)
+    expect(page).to have_link('Back to list', count: 1)
+    help = first('button[data-section-help-trigger]')
+    help.click
+    expect(page).to have_css('[data-section-help-panel]', visible: true)
+    help.send_keys(:escape)
+    expect(page).to have_no_css('[data-section-help-panel]', visible: true)
+
+    visit edit_admin_promotion_path(campaign)
+    expect(page).to have_link('Back to list', count: 1)
+    expect(page).to have_css('[data-controller="delta-select"] select#promotion_combination_mode', visible: :all)
+    expect(page).to have_css('[data-controller="promotion-date"] input#promotion_starts_at', visible: :all)
+  end
+
+  scenario 'selects an emerald calendar day without losing the existing time or seconds' do
+    visit new_admin_promotion_path
+    page.execute_script("document.getElementById('promotion_starts_at').value = '2027-05-08T14:22:37'")
+    within('[data-controller="promotion-date"]', match: :first) do
+      find('button[data-promotion-date-target="trigger"]').click
+      expect(page).to have_css('[data-date="2027-05-08"][aria-pressed="true"]')
+      expect(page).to have_css('[data-date="2027-05-08"]:focus')
+      find('[data-date="2027-05-09"]').click
+      expect(find('#promotion_starts_at').value).to eq('2027-05-09T14:22:37')
+      find('button[data-promotion-date-target="trigger"]').click
+      expect(page).to have_css('[data-date="2027-05-09"][aria-pressed="true"]')
+      click_button 'Clear'
+      expect(find('#promotion_starts_at').value).to be_blank
+    end
+  end
+
   scenario 'shows removable URL filters and fits mobile and desktop widths' do
     organization.promotions.create!(name: 'Autumn', currency: 'MXN')
     organization.promotions.create!(name: 'Spring', currency: 'MXN')

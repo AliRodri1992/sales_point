@@ -1,27 +1,29 @@
-<tr class="grid grid-cols-2 gap-x-3 gap-y-3 px-4 py-4 align-top lg:table-row lg:p-0">
-  <td class="col-span-2 break-words lg:max-w-64 lg:px-4 lg:py-4">
+<tr class="promotion-directory-row grid grid-cols-2 gap-x-3 gap-y-3 px-4 py-4 align-middle xl:table-row xl:p-0">
+  <td class="col-span-2 break-words xl:max-w-64 xl:px-4 xl:py-4">
     <% if policy(record).show? %>
-      <%= link_to record.name, admin_promotion_path(record), class: 'rounded font-semibold text-[var(--brand-on-white)] underline-offset-4 hover:underline' %>
+      <%= link_to record.name, admin_promotion_path(record, campaign_navigation_params), class: 'rounded font-semibold text-[var(--brand-on-white)] underline-offset-4 hover:underline' %>
     <% else %>
       <strong><%= record.name %></strong>
     <% end %>
     <span class="mt-1 block text-xs text-slate-600"><%= record.code %> · <%= record.currency %></span>
   </td>
-  <td class="min-w-0 lg:px-4 lg:py-4">
-    <span class="catalog-label lg:hidden"><%= campaign_text('columns.benefit') %></span>
-    <% if record.promotion_benefits.any? %>
-      <%= record.promotion_benefits.map { |benefit| campaign_benefit_label(benefit, record.currency, precision) }.join(' / ') %>
-    <% else %>
-      <%= campaign_text('no_benefit') %>
-    <% end %>
+  <td class="min-w-0 xl:px-4 xl:py-4">
+    <span class="catalog-label xl:hidden"><%= campaign_text('columns.benefit') %></span>
+    <strong class="text-[var(--brand-on-white)]">
+      <% if record.promotion_benefits.any? %>
+        <%= record.promotion_benefits.map { |benefit| campaign_benefit_label(benefit, record.currency, precision) }.join(' / ') %>
+      <% else %>
+        <%= campaign_text('no_benefit') %>
+      <% end %>
+    </strong>
   </td>
-  <td class="min-w-0 break-words lg:max-w-56 lg:px-4 lg:py-4">
-    <span class="catalog-label lg:hidden"><%= campaign_text('columns.audience') %></span>
+  <td class="min-w-0 break-words xl:max-w-56 xl:px-4 xl:py-4">
+    <span class="catalog-label xl:hidden"><%= campaign_text('columns.audience') %></span>
     <% segments = record.promotion_conditions.select(&:kind_customer_segment?).map(&:customer_segment) %>
     <%= segments.presence&.join(', ') || campaign_text('all_customers') %>
   </td>
-  <td class="min-w-0 lg:px-4 lg:py-4">
-    <span class="catalog-label lg:hidden"><%= campaign_text('columns.validity') %></span>
+  <td class="min-w-0 xl:px-4 xl:py-4">
+    <span class="catalog-label xl:hidden"><%= campaign_text('columns.validity') %></span>
     <% if record.starts_at || record.ends_at %>
       <% %i[starts_at ends_at].each do |field| %>
         <span class="block text-xs"><%= t("admin.catalog_design.#{field}") %> · <%= campaign_date(record.public_send(field)) %></span>
@@ -30,9 +32,10 @@
       <%= campaign_text('open_period') %>
     <% end %>
   </td>
-  <td class="min-w-0 lg:px-4 lg:py-4">
-    <span class="catalog-label lg:hidden"><%= campaign_text('columns.usage') %></span>
+  <td class="min-w-0 xl:px-4 xl:py-4">
+    <span class="catalog-label xl:hidden"><%= campaign_text('columns.usage') %></span>
     <%= render 'usage', record: record %>
   </td>
-  <td class="col-span-2 lg:px-4 lg:py-4"><%= render 'badge', record: record %></td>
+  <td class="min-w-0 xl:px-4 xl:py-4"><%= render 'badge', record: record %></td>
+  <td class="min-w-0 xl:px-4 xl:py-4"><%= render 'row_actions', record: record %></td>
 </tr>

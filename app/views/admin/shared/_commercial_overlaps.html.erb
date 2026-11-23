@@ -1,11 +1,16 @@
 <% if policy(record.class).index? && policy(record.class).show? %>
   <% overlapping = Commercial::Overlaps.new(record).call %>
   <% if overlapping.any? %>
-    <section class="rounded-xl border border-amber-200 bg-amber-50 p-4" aria-labelledby="commercial-overlaps-heading">
+    <section class="rounded-xl border border-amber-200 bg-amber-50 p-4 <%= 'promotion-full' if local_assigns[:promotion_help] %>" aria-labelledby="commercial-overlaps-heading">
       <div class="flex items-start gap-3">
         <%= delta_icon('exclamation-triangle', class: 'size-5 shrink-0 text-amber-700') %>
         <div class="min-w-0 flex-1">
-          <h2 id="commercial-overlaps-heading" class="text-sm font-semibold text-amber-900"><%= t('admin.commercial_preview.overlaps') %></h2>
+          <div class="flex items-center gap-2">
+            <h2 id="commercial-overlaps-heading" class="text-sm font-semibold text-amber-900"><%= t('admin.commercial_preview.overlaps') %></h2>
+            <% if local_assigns[:promotion_help] %>
+              <%= render 'admin/promotions/section_help', section: 'overlaps', title: t('admin.commercial_preview.overlaps') %>
+            <% end %>
+          </div>
           <p class="mt-1 text-sm text-amber-800"><%= t('admin.commercial_preview.overlaps_hint') %></p>
           <ul class="mt-3 space-y-2 text-sm text-amber-900">
             <% overlapping.each do |candidate| %>
