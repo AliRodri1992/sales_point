@@ -187,9 +187,10 @@ RSpec.describe 'Independent commercial catalog workflows', type: :request do
                                     promotion_benefits_attributes: [{ kind: 'fixed_amount', value: 20 }])
     get admin_promotions_path
     document = Nokogiri::HTML(response.body)
-    expect(document.css('.promotion-metric-icon svg path').pluck('d')).to eq([
+    expected_metric_paths = [
       'M3 3h9l10 10-9 9L3 12z', 'm5 12 4 4L19 6', 'M7 3v4m10-4v4M3 10h18', 'M9 5v14M15 5v14'
-    ])
+    ]
+    expect(document.css('.promotion-metric-icon svg path').pluck('d')).to eq(expected_metric_paths)
     expect(document.css('.promotion-campaign-symbol svg path').pluck('d'))
       .to contain_exactly('m5 19 14-14', 'M5 12h1m12 0h1')
     expect(document.at_css('[data-promotion-row-actions] svg path')['d'])

@@ -13,8 +13,8 @@ module PromotionsHelper
   ACTION_ICONS = { 'activate' => 'play', 'resume' => 'play', 'pause' => 'pause',
                    'archive' => 'archive', 'duplicate' => 'copy' }.freeze
 
-  def promotion_icon(name, **options)
-    delta_icon("promotion-#{name}", stroke_width: 1.7, focusable: false, **options)
+  def promotion_icon(name, **)
+    delta_icon("promotion-#{name}", stroke_width: 1.7, focusable: false, **)
   end
 
   def campaign_text(key, **)
