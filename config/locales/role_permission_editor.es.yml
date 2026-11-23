@@ -12,15 +12,35 @@ es:
         no_results: No hay permisos que coincidan con tu búsqueda.
         empty: No hay permisos activos disponibles.
         access_hint: 'Las acciones que requieren acceso al módulo seleccionan automáticamente el permiso Acceder.'
-        auto_added_access: 'También se seleccionaron permisos de acceso necesarios, aunque estén ocultos por el filtro: %{permissions}.'
-        select_visible: 'Seleccionar visibles: %{module}'
-        select_module: 'Seleccionar todo: %{module}'
+        auto_added_access: 'También se concedieron los permisos de acceso necesarios: %{permissions}.'
+        auto_removed_actions: 'También se revocaron las acciones que requieren este acceso: %{permissions}.'
+        granted: Concedido
+        not_granted: No concedido
+        granted_total: Permisos concedidos
+        filter_label: Filtrar por asignación
+        filter_all: Todos
+        filter_assigned: Asignados
+        filter_unassigned: Sin asignar
+        expand_all: Expandir todo
+        collapse_all: Contraer todo
+        clear_filters: Limpiar filtros
+        grant_visible: Conceder visibles
+        revoke_visible: Revocar visibles
+        bulk_scope: '%{action} · %{module}'
         save_hint: Los cambios se aplican al guardar.
+        pending_permissions: Cambios de permisos pendientes
+        pending_details: También se guardarán los datos del rol.
+        discard_changes: Descartar cambios
+        review_title: Revisar cambios
+        no_permission_changes: No hay cambios de permisos.
+        back_to_permissions: Volver a permisos
+        confirm_changes: Confirmar cambios
         saving: Guardando…
         new_subtitle: Define el rol y sus accesos, organizados por módulo y acción.
         edit_subtitle: Consulta los accesos y actualiza los datos y permisos de este
           rol.
         view_permissions: Ver permisos
+        view_subtitle: Consulta los permisos de este rol en modo de solo lectura.
         modules:
           dashboard: Panel principal
           sales: Ventas

@@ -11,14 +11,34 @@ ko:
         no_results: 검색과 일치하는 권한이 없습니다.
         empty: 사용 가능한 활성 권한이 없습니다.
         access_hint: '모듈 접근이 필요한 작업을 선택하면 접근 권한이 자동으로 선택됩니다.'
-        auto_added_access: '검색 필터에 표시되지 않지만 필요한 접근 권한도 자동 선택되었습니다: %{permissions}.'
-        select_visible: '보이는 항목 선택: %{module}'
-        select_module: '전체 선택: %{module}'
+        auto_added_access: '필요한 접근 권한도 자동으로 부여했습니다: %{permissions}.'
+        auto_removed_actions: '이 접근 권한이 필요한 작업 권한도 회수했습니다: %{permissions}.'
+        granted: 부여됨
+        not_granted: 미부여
+        granted_total: 부여된 권한
+        filter_label: 할당 상태로 필터링
+        filter_all: 전체
+        filter_assigned: 할당됨
+        filter_unassigned: 미할당
+        expand_all: 모두 펼치기
+        collapse_all: 모두 접기
+        clear_filters: 필터 초기화
+        grant_visible: 표시된 권한 부여
+        revoke_visible: 표시된 권한 회수
+        bulk_scope: '%{module} · %{action}'
         save_hint: 저장하면 변경 사항이 적용됩니다.
+        pending_permissions: 저장 대기 중인 권한 변경
+        pending_details: 역할 정보도 함께 저장됩니다.
+        discard_changes: 변경 사항 취소
+        review_title: 변경 사항 검토
+        no_permission_changes: 권한 변경 사항이 없습니다.
+        back_to_permissions: 권한으로 돌아가기
+        confirm_changes: 변경 사항 확인
         saving: 저장 중…
         new_subtitle: 모듈과 작업별로 역할과 접근 권한을 설정하세요.
         edit_subtitle: 접근 권한을 확인하고 역할 정보와 권한을 수정하세요.
         view_permissions: 권한 보기
+        view_subtitle: 읽기 전용 모드에서 이 역할의 권한을 확인하세요.
         modules:
           dashboard: 대시보드
           sales: 판매

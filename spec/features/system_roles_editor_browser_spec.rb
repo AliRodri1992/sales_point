@@ -48,8 +48,11 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     expect(page).to have_no_css('[data-bulk-state]', visible: :all)
 
     click_button 'Unassigned'
+    expect(page).to have_text('No permissions match your search.')
+
+    click_button 'Assigned'
     fill_in 'Search modules or actions', with: 'suppliers.contacts.view'
-    expect(page).to have_field("permission_#{view_permission.id}", disabled: true)
+    expect(page).to have_checked_field("permission_#{view_permission.id}", disabled: true)
     expect(page).to have_no_css("#permission_#{create_permission.id}")
   end
 
@@ -65,7 +68,10 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     click_button 'Expand all'
     expect(page).to have_css("#{group}[open]", count: 2)
     expect(page).to have_unchecked_field("permission_#{irregular.id}")
-    expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
+    [320, 390, 768, 1440].each do |width|
+      page.driver.browser.manage.window.resize_to(width, 900)
+      expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
+    end
   end
 
   scenario 'counts permission differences and returns to zero when a change is reverted' do
@@ -73,10 +79,13 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     pending = '[data-role-permissions-target="pending"]'
 
     expect(page).to have_css(pending, text: /\b0\b/)
+    expect(page).to have_button('Save permissions', disabled: true)
     check "permission_#{view_permission.id}"
     expect(page).to have_css(pending, text: /\b1\b/)
+    expect(page).to have_button('Save permissions', disabled: false)
     uncheck "permission_#{view_permission.id}"
     expect(page).to have_css(pending, text: /\b0\b/)
+    expect(page).to have_button('Save permissions', disabled: true)
   end
 
   scenario 'reviews permission differences before persisting them to the authorized history' do
@@ -88,8 +97,10 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
 
     click_button 'Save permissions'
     within '[role="dialog"]' do
-      expect(page).to have_text('Create supplier contacts').and have_text('suppliers.contacts.create')
-      expect(page).to have_text('View supplier contacts').and have_text('suppliers.contacts.view')
+      expect(page).to have_css('section[aria-labelledby="permission-review-added"] li',
+                               text: 'Create supplier contacts suppliers.contacts.create', exact_text: true)
+      expect(page).to have_css('section[aria-labelledby="permission-review-removed"] li',
+                               text: 'View supplier contacts suppliers.contacts.view', exact_text: true)
       click_button 'Back to permissions'
     end
     expect(page).to have_no_button('Confirm changes')
@@ -133,19 +144,24 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
 
   scenario 'selects a module, retains hidden selections and persists them together' do
     visit system_role_path(role)
-    check 'Select visible: Suppliers'
+    click_button 'Grant visible · Suppliers'
+    expect(page).to have_css('button[aria-label="Revoke visible · Suppliers"]:focus')
     expect(page).to have_checked_field("permission_#{view_permission.id}")
     expect(page).to have_checked_field("permission_#{create_permission.id}")
     expect(page).to have_unchecked_field("permission_#{other_permission.id}")
     expect(page).to have_css('[data-role-permissions-target="total"]', text: '2')
 
     uncheck "permission_#{create_permission.id}"
-    group_selector = '[data-select-group][aria-label="Select visible: Suppliers"]'
-    expect(find(group_selector).evaluate_script('this.indeterminate')).to be(true)
+    within find('summary', text: 'Suppliers') do
+      expect(page).to have_css('[data-group-count]', text: '1', exact_text: true)
+    end
+    expect(page).to have_button('Grant visible · Suppliers', disabled: false)
+    expect(page).to have_button('Revoke visible · Suppliers', disabled: false)
     fill_in 'Search modules or actions', with: 'Sales'
     expect(page).to have_no_css("#permission_#{view_permission.id}")
     check "permission_#{other_permission.id}"
     click_button 'Save permissions'
+    click_button 'Confirm changes'
     expect(page).to have_css('.swal2-popup')
     expect(page).to have_current_path(system_role_path(role))
     expect(role.permissions.reload).to contain_exactly(view_permission, other_permission)
@@ -158,7 +174,7 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
     fill_in 'Search modules or actions', with: 'no-matching-permissions'
     expect(page).to have_text('No permissions match your search.')
-    fill_in 'Search modules or actions', with: ''
+    click_button 'Clear filters'
     expect(page).to have_css("#permission_#{view_permission.id}")
 
     visit system_role_path(admin.system_roles.first)
@@ -175,6 +191,7 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     expect(page).to have_checked_field("permission_#{access.id}")
     expect(page).to have_css('[data-role-permissions-target="total"]', text: '2')
     click_button 'Save permissions'
+    click_button 'Confirm changes'
     expect(page).to have_css('.swal2-popup')
     expect(role.permissions.reload).to contain_exactly(permission, access)
   end

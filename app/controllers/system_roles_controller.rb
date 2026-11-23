@@ -91,7 +91,7 @@ class SystemRolesController < ApplicationController
     redirect_to system_role_path(@system_role),
                 flash: { swal_message: t('admin.system_roles.update_permissions.success') }
   rescue ActiveRecord::RecordInvalid
-    @system_role.status = @system_role.status_in_database
+    @system_role.assign_attributes(attributes.merge(status: @system_role.status_in_database))
     load_permissions
     load_status_history
     load_permission_history

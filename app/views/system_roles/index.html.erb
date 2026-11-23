@@ -56,7 +56,7 @@
           </span>
 
           <span class="inline-flex items-center gap-1 text-sm font-semibold text-emerald-700">
-            <%= t(system_role.protected_permissions? || system_role.deprecated? ? 'admin.system_roles.catalog.view_permissions' : 'admin.system_roles.index.manage_permissions') %>
+            <%= t(policy(system_role).update? ? 'admin.system_roles.index.manage_permissions' : 'admin.system_roles.catalog.view_permissions') %>
             <%= delta_icon('arrow-right', class: 'size-4') %>
           </span>
         </div>

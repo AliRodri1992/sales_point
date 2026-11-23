@@ -12,14 +12,34 @@ en:
         no_results: No permissions match your search.
         empty: No active permissions are available.
         access_hint: 'Actions requiring module access automatically select the Access permission.'
-        auto_added_access: 'Required access permissions were also selected, even though the filter hides them: %{permissions}.'
-        select_visible: 'Select visible: %{module}'
-        select_module: 'Select all: %{module}'
+        auto_added_access: 'Required access permissions were also granted: %{permissions}.'
+        auto_removed_actions: 'Actions that require this access were also revoked: %{permissions}.'
+        granted: Granted
+        not_granted: Not granted
+        granted_total: Permissions granted
+        filter_label: Filter by assignment
+        filter_all: All
+        filter_assigned: Assigned
+        filter_unassigned: Unassigned
+        expand_all: Expand all
+        collapse_all: Collapse all
+        clear_filters: Clear filters
+        grant_visible: Grant visible
+        revoke_visible: Revoke visible
+        bulk_scope: '%{action} · %{module}'
         save_hint: Changes take effect when you save.
+        pending_permissions: Pending permission changes
+        pending_details: Role details will also be saved.
+        discard_changes: Discard changes
+        review_title: Review changes
+        no_permission_changes: No permission changes.
+        back_to_permissions: Back to permissions
+        confirm_changes: Confirm changes
         saving: Saving…
         new_subtitle: Define the role and its access, organized by module and action.
         edit_subtitle: Review access and update this role’s details and permissions.
         view_permissions: View permissions
+        view_subtitle: Review this role’s permissions in read-only mode.
         modules:
           dashboard: Dashboard
           sales: Sales

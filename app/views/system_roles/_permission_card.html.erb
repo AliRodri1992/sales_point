@@ -1,20 +1,28 @@
-<div data-permission-row data-search="<%= [module_label, permission_resource_label(permission), permission_action_label(permission), permission_name(permission), permission_description(permission), permission.code].join(' ') %>">
-  <label for="permission_<%= permission.id %>" class="flex h-full min-h-24 cursor-pointer items-center justify-between gap-4 rounded-xl border border-slate-200 bg-white p-4 transition motion-reduce:transition-none hover:border-emerald-300 has-[:checked]:border-emerald-300 has-[:checked]:bg-emerald-50/50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-700 has-[:disabled]:cursor-default">
+<% resource_label = permission_resource_label(permission) %>
+<% action_label = permission_action_label(permission) %>
+<% name = permission_name(permission) %>
+<% description = permission_description(permission) %>
+<% prefix, action = permission.code.split('.', 2) %>
+<% access_code = "#{prefix}.access" if action.present? && SystemRoles::PermissionSelection::DEPENDENT_PREFIXES.include?(prefix) %>
+<div class="min-w-0" data-permission-row data-search="<%= [module_label, resource_label, action_label, name, description, permission.code].join(' ') %>">
+  <label for="permission_<%= permission.id %>" class="flex h-full min-h-11 cursor-pointer items-center justify-between gap-2 rounded-lg border border-transparent px-2 py-1.5 transition-colors motion-reduce:transition-none hover:border-slate-200 hover:bg-slate-50 has-[:checked]:border-emerald-100 has-[:checked]:bg-emerald-50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-700 has-[:disabled]:cursor-default">
     <span class="min-w-0 flex-1">
-      <span id="permission_<%= permission.id %>_label" class="block text-sm font-semibold text-slate-900"><%= permission_action_label(permission) %></span>
-      <span class="mt-1 block break-words text-xs font-medium text-slate-600"><%= permission_name(permission) %></span>
-      <span id="permission_<%= permission.id %>_description" class="mt-1 block break-words text-xs leading-5 text-slate-500"><%= permission_description(permission) %></span>
+      <span class="block break-words text-sm font-semibold leading-5 text-slate-900"><%= action_label %></span>
+      <% if name != action_label %>
+        <span class="block break-words text-xs leading-4 text-slate-600"><%= name %></span>
+      <% end %>
+      <span id="permission_<%= permission.id %>_description" class="block break-words text-xs leading-4 text-slate-600"><%= description %></span>
     </span>
     <span class="relative inline-flex shrink-0 items-center">
       <%= check_box_tag 'permission_ids[]', permission.id, assigned_ids.include?(permission.id),
                         id: "permission_#{permission.id}", disabled: read_only, role: 'switch',
-                        aria: { label: "#{permission_resource_label(permission)}: #{permission_action_label(permission)}",
+                        aria: { label: "#{resource_label}: #{action_label}",
                                 describedby: "permission_#{permission.id}_description" },
-                        data: { role_permissions_target: 'permission', permission_code: permission.code,
-                                action: 'change->role-permissions#refresh' },
+                        data: { role_permissions_target: 'permission', permission_code: permission.code, permission_name: name,
+                                permission_access: access_code, action: 'change->role-permissions#permissionChanged' },
                         class: 'peer sr-only' %>
-      <span aria-hidden="true" class="h-6 w-11 rounded-full bg-slate-300 transition-colors motion-reduce:transition-none peer-checked:bg-emerald-700 peer-focus-visible:ring-2 peer-focus-visible:ring-emerald-700 peer-focus-visible:ring-offset-2 peer-disabled:opacity-60"></span>
-      <span aria-hidden="true" class="pointer-events-none absolute left-1 size-4 rounded-full bg-white shadow-sm transition-transform motion-reduce:transition-none peer-checked:translate-x-5 peer-disabled:opacity-80"></span>
+      <span aria-hidden="true" class="h-5 w-9 rounded-full bg-slate-500 transition-colors motion-reduce:transition-none peer-checked:bg-emerald-700 peer-disabled:opacity-70"></span>
+      <span aria-hidden="true" class="pointer-events-none absolute left-[3px] size-3.5 rounded-full bg-white shadow-sm transition-transform motion-reduce:transition-none peer-checked:translate-x-4"></span>
     </span>
   </label>
 </div>

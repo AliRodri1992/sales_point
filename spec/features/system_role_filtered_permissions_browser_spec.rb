@@ -63,7 +63,7 @@ RSpec.describe 'Visible-only bulk permission selection', type: :feature, js: tru
     visit system_role_path(role)
     fill_in 'Search modules or actions', with: 'languages.update'
     expect(page).to have_no_css("#permission_#{access.id}")
-    check 'Select visible: Languages'
+    click_button 'Grant visible · Languages'
 
     expect(page).to have_checked_field("permission_#{edit.id}")
     expect(page).to have_checked_field("permission_#{access.id}", visible: :all)
@@ -72,9 +72,29 @@ RSpec.describe 'Visible-only bulk permission selection', type: :feature, js: tru
     expect(page).to have_css('[data-role-permissions-target="total"]', text: '2')
 
     click_button 'Save permissions'
+    click_button 'Confirm changes'
     expect(page).to have_css('.swal2-popup')
     expect(page).to have_current_path(system_role_path(role))
     expect(role.permissions.reload).to contain_exactly(access, edit)
+  end
+
+  it 'revokes dependent grants when a bulk action turns off their module access' do
+    access = create(:permission, code: 'languages.access', module_name: 'Languages')
+    edit = create(:permission, code: 'languages.update', module_name: 'Languages')
+    create(:system_role_permission, system_role: role, permission: access)
+    create(:system_role_permission, system_role: role, permission: edit)
+    create(:system_role_permission, system_role: role, permission: hidden_permission)
+    visit system_role_path(role)
+
+    fill_in 'Search modules or actions', with: 'languages.access'
+    expect(page).to have_no_css("#permission_#{edit.id}")
+    click_button 'Revoke visible · Languages'
+
+    expect(page).to have_unchecked_field("permission_#{access.id}")
+    expect(page).to have_unchecked_field("permission_#{edit.id}", visible: :all)
+    expect(page).to have_checked_field("permission_#{hidden_permission.id}", visible: :all)
+    expect(page).to have_css('[data-role-permissions-target="dependencyNotice"]', text: 'languages.update')
+    expect(page).to have_css('[data-role-permissions-target="total"]', text: '1', exact_text: true)
   end
 
   it 'selects only filtered permissions and leaves hidden permissions disabled' do
@@ -82,8 +102,9 @@ RSpec.describe 'Visible-only bulk permission selection', type: :feature, js: tru
     fill_in 'Search modules or actions', with: 'suppliers.contacts.create'
     expect(page).to have_css("#permission_#{visible.id}", visible: :all)
     expect(page).to have_no_css("#permission_#{hidden_permission.id}")
-    check 'Select visible: Suppliers'
+    click_button 'Grant visible · Suppliers'
     click_button 'Save permissions'
+    click_button 'Confirm changes'
     expect(page).to have_css('.swal2-popup')
     expect(page).to have_current_path(system_role_path(role))
     expect(role.permissions.reload).to contain_exactly(visible)

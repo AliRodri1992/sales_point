@@ -79,12 +79,16 @@ RSpec.describe 'System role editor', type: :request do
   it 'keeps the submitted update pending when a role field fails validation' do
     saved = create(:permission, code: 'suppliers.contacts.view', module_name: 'Proveedores')
     create(:system_role_permission, system_role: role, permission: saved)
+    role.update!(description: 'Saved description')
 
     patch system_role_path(role), params: {
       system_role: { name: '', description: 'Pending description' }, permission_ids: [permission.id]
     }
 
     expect(response).to have_http_status(:unprocessable_content)
+    identity = document.at_css('section[aria-labelledby="role-identity-title"]')
+    expect(identity.at_css('h2').text.strip).to eq('Operations')
+    expect(identity.at_css('p').text.strip).to eq('Saved description')
     expect(document.at_css('#system_role_name[aria-describedby="system_role_name_error"]')).to be_present
     expect(document.at_css('#system_role_name_error[role="alert"]').text).to include("can't be blank")
     expect(document.at_css('#system_role_description').text.strip).to eq('Pending description')
@@ -104,6 +108,24 @@ RSpec.describe 'System role editor', type: :request do
       expect(response).to have_http_status(:unprocessable_content)
       expect(role.permissions.reload).to contain_exactly(permission)
     end
+  end
+
+  it 'keeps submitted role details when a permission requires missing module access' do
+    dependent = create(:permission, code: 'languages.update', module_name: 'Languages')
+    create(:system_role_permission, system_role: role, permission:)
+    role.update!(description: 'Saved description')
+
+    patch system_role_path(role), params: {
+      system_role: { name: 'Pending name', description: 'Pending description' }, permission_ids: [dependent.id]
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(document.at_css('#system_role_permission_ids_error[role="alert"]').text).to include('Access permission')
+    expect(document.at_css('#system_role_name')['value']).to eq('Pending name')
+    expect(document.at_css('#system_role_description').text.strip).to eq('Pending description')
+    expect(document.at_css("#permission_#{dependent.id}[checked]")).to be_present
+    expect(role.reload).to have_attributes(name: 'Operations', description: 'Saved description')
+    expect(role.permissions).to contain_exactly(permission)
   end
 
   it 'accepts repeated ids once and supports removing then restoring a permission' do

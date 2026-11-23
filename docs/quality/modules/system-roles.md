@@ -1,13 +1,21 @@
 # Registro de calidad — Roles y permisos
 
 **Módulo y ruta principal:** Roles y permisos — `/system_roles`  
-**Estado:** SYSTEM_ROLES-001/011/012/013 IMPLEMENTADOS · CI FOCALIZADO VERDE (126/126) · CI GLOBAL PENDIENTE · NO CERRADO.  
+**Estado:** MEJORAS DEL EDITOR IMPLEMENTADAS · VERIFICACIÓN DE CI DEL EDITOR PENDIENTE · NO CERRADO.\
 **Fecha de auditoría:** 2026-11-09 (America/Mexico_City).  
 **Rama:** `feature/fixes`. **SHA de partida/auditado:** `d414ec7d6380dd75675836c05b501391c010365f`.  
 **SHA de aceptación:** PENDIENTE. **Responsable/revisor independiente:** PENDIENTE.  
 **Método:** AI Dev Suite — Ponytail Engineering, Impeccable, UI UX Pro Max. Inspección real de código por GitHub; no se ejecutó el detector CLI de terceros.
 
 > Este registro es la fuente de verdad de hallazgos del módulo. Lo observado en el código se distingue de las hipótesis y de pruebas pendientes. Un commit documental no equivale a una corrección ni al cierre de la auditoría. Conserva los IDs entre siguientes iteraciones.
+
+## Mejoras del editor — 2026-11-23
+
+- La vista de edición y la de consulta comparten la matriz de permisos y conservan las decisiones de Pundit. En la lista de roles se evalúa la política para cada tarjeta de la página. El costo de las consultas de política crece con las tarjetas paginadas y permite conservar la comprobación de aislamiento de cada rol.
+- La matriz conserva los códigos y las dependencias de permisos. La selección masiva actúa sobre los resultados visibles de cada módulo. El pie de edición calcula altas y bajas contra la selección persistida, incluso tras un 422. Descartar restaura la selección y los datos del rol en el navegador. La revisión enumera nombres localizados y códigos; la confirmación usa el envío de Rails y el aviso de Turbo. Ambos historiales conservan sus controles de autorización y su paginación.
+- [System Roles CI 45092134015](https://github.com/AliRodri1992/sales_point/actions/runs/45092134015), SHA `ec4ae601`, reprodujo 10 regresiones nuevas. Las 126 pruebas anteriores y RuboCop pasaron en esa ejecución. El resultado corresponde a la fase RED.
+- En el entorno local pasaron `npm run build:js`, `npm run build:css`, `I18N_STRICT_PARITY=1 python script/audit_i18n.py` (300 archivos y cero hallazgos de paridad completa) y `git diff --check`. El optimizador CSS informó un aviso de `@position-try` en la dependencia de telefonía.
+- `bash bin/overcommit-rspec` con los specs del editor, estados, seguridad, aislamiento y política se detuvo porque Docker no está instalado. RSpec, RuboCop, Brakeman y CI en el SHA de aceptación quedan pendientes. También quedan pendientes la revisión visual del entorno Rails en los cuatro anchos, zoom 200 %, teclado, movimiento reducido y locales es/en/ko.
 
 ## Adecuaciones publicadas — 2026-11-09 (seguimiento de la reauditoría)
 

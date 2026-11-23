@@ -35,12 +35,12 @@ module SystemRolesHelper
     MODULE_ICONS.fetch(permission.module_name.to_s.parameterize, DEFAULT_MODULE_ICON)
   end
 
-  def system_role_name(system_role)
-    translate_system_role(system_role, :name)
+  def system_role_name(system_role, persisted: false)
+    translate_system_role(system_role, :name, persisted:)
   end
 
-  def system_role_description(system_role)
-    translate_system_role(system_role, :description)
+  def system_role_description(system_role, persisted: false)
+    translate_system_role(system_role, :description, persisted:)
   end
 
   def permission_name(permission)
@@ -53,10 +53,10 @@ module SystemRolesHelper
 
   private
 
-  def translate_system_role(system_role, attribute)
+  def translate_system_role(system_role, attribute, persisted:)
     key = system_role.code.to_s.parameterize(separator: '_')
     lookup = "admin.system_roles.roles.#{key}.#{attribute}"
-    value = system_role.public_send(attribute)
+    value = persisted ? system_role.attribute_in_database(attribute) : system_role.public_send(attribute)
     defaults = I18n.available_locales.map { |locale| I18n.t(lookup, locale:, default: nil) }
     defaults.include?(value) ? t(lookup, default: value) : value
   end
