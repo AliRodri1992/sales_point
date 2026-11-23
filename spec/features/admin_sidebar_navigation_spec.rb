@@ -123,6 +123,7 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     page.driver.browser.manage.window.resize_to(375, 812)
     visit admin_dashboard_path
     expect(page).to have_css('#sidebarToggle[data-sidebar-ready="true"]')
+    record_sidebar_focus_events
     find('#sidebarToggle').click
 
     expect(page.evaluate_script("document.getElementById('adminDashboardContent').hasAttribute('inert')")).to be(true)

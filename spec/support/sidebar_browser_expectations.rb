@@ -3,6 +3,35 @@
 # Displays the saved-state and browser conditions whenever a collapse regression occurs.
 # This keeps asynchronous failures diagnosable without weakening the expectation.
 module SidebarBrowserExpectations
+  FOCUS_STATE_SCRIPT = <<~JS.freeze
+    (() => {
+      const element = document.activeElement
+      const toggle = document.getElementById('sidebarToggle')
+      return { tag: element?.tagName, id: element?.id, inert: element?.inert,
+        toggleInert: !!toggle?.closest('[inert]'), toggleVisibility: getComputedStyle(toggle).visibility,
+        toggleDisabled: toggle?.disabled, documentFocused: document.hasFocus(),
+        viewport: window.innerWidth, events: window.sidebarFocusTrace }
+    })()
+  JS
+
+  FOCUS_TRACE_SCRIPT = <<~JS.freeze
+    window.sidebarFocusTrace = []
+    const trace = (type, target) => {
+      const sidebar = document.getElementById('adminSidebar')
+      const content = document.getElementById('adminDashboardContent')
+      window.sidebarFocusTrace.push([type, target?.id || target?.tagName,
+        document.activeElement?.id || document.activeElement?.tagName,
+        sidebar.classList.contains('sidebar-open'), content.inert, sidebar.inert])
+    }
+    for (const event of ['pointerdown', 'pointerup', 'click', 'focusin', 'focusout']) {
+      document.addEventListener(event, e => trace(e.type, e.target), true)
+    }
+    document.addEventListener('click', e => {
+      if (!e.target.closest('#sidebarToggle, #sidebarCloseButton, #sidebarOverlay')) return
+      requestAnimationFrame(() => trace('frame', e.target))
+    }, true)
+  JS
+
   def sidebar_browser_state
     page.evaluate_script(<<~JS)
       (() => {
@@ -72,13 +101,12 @@ module SidebarBrowserExpectations
       page.evaluate_script("document.activeElement?.id === 'sidebarToggle'")
     end
   rescue Selenium::WebDriver::Error::TimeoutError
-    focused = page.evaluate_script(<<~JS)
-      (() => {
-        const element = document.activeElement
-        return { tag: element?.tagName, id: element?.id, inert: element?.inert }
-      })()
-    JS
+    focused = page.evaluate_script(FOCUS_STATE_SCRIPT)
     raise RSpec::Expectations::ExpectationNotMetError,
           "Drawer focus was not restored to the toggle: #{focused.inspect}"
+  end
+
+  def record_sidebar_focus_events
+    page.execute_script(FOCUS_TRACE_SCRIPT)
   end
 end
