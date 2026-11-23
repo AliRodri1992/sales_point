@@ -1,13 +1,13 @@
 <% content_for :title, @record.name %>
 <% precision = campaign_currency_places.fetch(@record.currency, 2) %>
-<div class="catalog-workspace promotion-workspace">
+<div class="catalog-workspace promotion-workspace promotion-detail">
   <header class="catalog-header">
-    <%= render 'module_heading', eyebrow: t('admin.catalog_design.promotions'), title: @record.name, record: @record %>
+    <%= render 'module_heading', eyebrow: campaign_text('detail.eyebrow'), title: @record.name, record: @record %>
     <div class="catalog-actions">
       <%= render 'back_button' %>
       <% if policy(@record).update? && !%w[archived exhausted expired].include?(@record.effective_status.to_s) %>
         <%= link_to edit_admin_promotion_path(@record, campaign_navigation_params), class: 'catalog-button catalog-button-primary' do %>
-          <%= promotion_icon('edit', class: 'size-4') %><%= t('admin.catalog_design.edit') %>
+          <%= promotion_icon('edit', class: 'size-4') %><%= campaign_text('detail.edit') %>
         <% end %>
       <% end %>
     </div>
@@ -16,88 +16,76 @@
   <%= catalog_errors(@record) %>
   <%= error_message_for(@record, :status, label: campaign_text('filters.status')) %>
   <div class="promotion-detail-grid">
-      <section class="catalog-card !overflow-visible" aria-labelledby="campaign-offer-title">
-        <%= render 'section_heading', title: campaign_text('sections.benefit'), subtitle: t('admin.catalog_design.promotion_benefits_hint'),
-                   icon: 'percent', id: 'campaign-offer-title', section: 'benefit' %>
-        <div class="catalog-card-body">
-          <% if @record.promotion_benefits.any? %>
-            <ul class="mb-5 grid gap-3 sm:grid-cols-2">
-              <% @record.promotion_benefits.each do |benefit| %>
-                <li class="promotion-offer-box">
-                  <span class="block font-jakarta text-2xl font-bold tabular-nums"><%= campaign_benefit_label(benefit, @record.currency, precision) %></span>
-                  <span class="text-xs text-slate-600"><%= t("admin.catalog_design.benefit_#{benefit.kind}") %></span>
-                </li>
-              <% end %>
-            </ul>
-          <% else %>
-            <p class="mb-5 text-sm text-slate-600"><%= campaign_text('no_benefit') %></p>
-          <% end %>
-          <dl class="catalog-definition">
-            <div><dt><%= campaign_text('mode') %></dt><dd><%= campaign_text("modes.#{@record.combination_mode}") %></dd></div>
-            <div><dt><%= campaign_text('priority') %></dt><dd><%= @record.priority %></dd></div>
-            <div><dt><%= campaign_text('cap') %></dt><dd><%= @record.maximum_discount ? campaign_money(@record.maximum_discount, @record.currency, precision) : t('admin.catalog_design.no_limit') %></dd></div>
-          </dl>
-        </div>
-      </section>
+    <section class="catalog-card !overflow-visible" aria-labelledby="campaign-offer-title">
+      <%= render 'section_heading', title: campaign_text('detail.benefit_title'), subtitle: campaign_text('detail.benefit_subtitle'),
+                 icon: 'percent', id: 'campaign-offer-title', section: 'benefit' %>
+      <div class="catalog-card-body">
+        <% if @record.promotion_benefits.any? %>
+          <div class="promotion-offer-box promotion-detail-offer">
+            <span><%= campaign_text('detail.benefit_label') %></span>
+            <strong><%= @record.promotion_benefits.map { |benefit| campaign_benefit_label(benefit, @record.currency, precision) }.join(' / ') %></strong>
+            <p><%= @record.promotion_benefits.map { |benefit| t("admin.catalog_design.benefit_#{benefit.kind}") }.join(' · ') %></p>
+          </div>
+        <% else %>
+          <p class="mb-5 text-sm text-slate-600"><%= campaign_text('no_benefit') %></p>
+        <% end %>
+        <dl class="catalog-definition">
+          <div><dt><%= campaign_text('mode') %></dt><dd><%= campaign_text("modes.#{@record.combination_mode}") %></dd></div>
+          <div><dt><%= campaign_text('priority') %></dt><dd><%= @record.priority %></dd></div>
+          <div><dt><%= campaign_text('cap') %></dt><dd><%= @record.maximum_discount ? campaign_money(@record.maximum_discount, @record.currency, precision) : t('admin.catalog_design.no_limit') %></dd></div>
+        </dl>
+      </div>
+    </section>
 
-      <%= render 'usage_and_actions', record: @record %>
-      <section class="catalog-card !overflow-visible" aria-labelledby="campaign-conditions-title">
-        <%= render 'section_heading', title: campaign_text('sections.conditions'), subtitle: campaign_text('conditions_hint'),
-                   icon: 'filter', id: 'campaign-conditions-title', section: 'conditions' %>
-        <div class="catalog-card-body">
+    <%= render 'usage_and_actions', record: @record %>
+
+    <section class="catalog-card !overflow-visible" aria-labelledby="campaign-conditions-title">
+      <%= render 'section_heading', title: campaign_text('detail.conditions_title'), subtitle: campaign_text('detail.conditions_subtitle'),
+                 icon: 'filter', id: 'campaign-conditions-title', section: 'conditions' %>
+      <div class="catalog-card-body">
+        <dl class="catalog-definition">
           <% if @record.promotion_conditions.any? %>
-            <dl class="catalog-definition">
-              <% @record.promotion_conditions.group_by(&:kind).each do |kind, conditions| %>
-                <div><dt><%= campaign_condition_label(kind) %></dt>
-                  <dd><%= conditions.map { |condition| campaign_condition_value(condition, @record.currency, precision) }.join(', ') %></dd>
-                </div>
-              <% end %>
-            </dl>
+            <% @record.promotion_conditions.group_by(&:kind).each do |kind, conditions| %>
+              <div><dt><%= campaign_condition_label(kind) %></dt>
+                <dd><%= conditions.map { |condition| campaign_condition_value(condition, @record.currency, precision) }.join(', ') %></dd>
+              </div>
+            <% end %>
           <% else %>
-            <p class="text-sm"><%= campaign_text('no_conditions') %></p>
+            <div><dt><%= campaign_text('detail.conditions_label') %></dt><dd><%= campaign_text('no_conditions') %></dd></div>
           <% end %>
           <% if policy(PriceList).index? %>
-            <dl class="catalog-definition mt-4">
-              <div><dt><%= campaign_text('price_list') %></dt>
-                <dd><%= @record.price_list_id ? (@record.price_list&.name || campaign_text('unavailable')) : campaign_text('all_lists') %></dd>
-              </div>
-            </dl>
+            <div><dt><%= campaign_text('price_list') %></dt>
+              <dd><%= @record.price_list_id ? (@record.price_list&.name || campaign_text('unavailable')) : campaign_text('all_lists') %></dd>
+            </div>
           <% end %>
-        </div>
-      </section>
+        </dl>
+      </div>
+    </section>
 
-      <section class="catalog-card !overflow-visible" aria-labelledby="campaign-validity-title">
-        <%= render 'section_heading', title: campaign_text('sections.validity'), subtitle: campaign_text('date_hint', zone: Time.zone.name),
-                   icon: 'calendar', id: 'campaign-validity-title', section: 'validity' %>
-        <dl class="catalog-card-body catalog-definition">
+    <section class="catalog-card !overflow-visible" aria-labelledby="campaign-validity-title">
+      <%= render 'section_heading', title: campaign_text('detail.validity_title'), subtitle: campaign_text('detail.validity_subtitle'),
+                 icon: 'calendar', id: 'campaign-validity-title', section: 'validity' %>
+      <div class="catalog-card-body">
+        <dl class="catalog-definition">
           <% %i[starts_at ends_at].each do |field| %>
             <div><dt><%= t("admin.catalog_design.#{field}") %></dt><dd><%= campaign_date(@record.public_send(field), format: :long) %></dd></div>
           <% end %>
         </dl>
-      </section>
-      <div class="promotion-full">
-        <%= render 'admin/shared/commercial_preview', record: @record, preview_url: preview_admin_promotion_path(@record, format: :json), lookup_url: products_lookup_admin_promotions_path(format: :json), promotion_help: true %>
+        <p class="catalog-hint mt-4"><%= campaign_text('date_hint', zone: Time.zone.name) %></p>
       </div>
-      <%= render 'admin/shared/commercial_overlaps', record: @record, promotion_help: true %>
-      <% if policy(@record).history? %>
-        <section class="catalog-card promotion-full !overflow-visible" aria-labelledby="campaign-history-title">
-          <%= render 'section_heading', title: campaign_text('history'), subtitle: nil,
-                     icon: 'clock', id: 'campaign-history-title', section: 'history' %>
-          <% if @history.any? %>
-            <ol class="divide-y divide-slate-100 px-4 sm:px-6">
-              <% @history.each do |entry| %>
-                <li class="flex flex-wrap justify-between gap-2 py-3 text-sm">
-                  <div><strong><%= campaign_text("events.#{entry.event.split('.').last}", default: campaign_text('updated')) %></strong>
-                    <% if entry.actor %><p class="catalog-hint"><%= entry.actor.display_name %></p><% end %>
-                  </div>
-                  <time datetime="<%= entry.created_at.iso8601 %>" class="text-xs text-slate-600"><%= campaign_date(entry.created_at, format: :long) %></time>
-                </li>
-              <% end %>
-            </ol>
-          <% else %>
-            <p class="catalog-card-body text-sm text-slate-600"><%= campaign_text('no_history') %></p>
-          <% end %>
-        </section>
-      <% end %>
+    </section>
+
+    <div class="promotion-full promotion-detail-preview">
+      <%= render 'admin/shared/commercial_preview', record: @record, preview_url: preview_admin_promotion_path(@record, format: :json), lookup_url: products_lookup_admin_promotions_path(format: :json), promotion_help: true %>
+    </div>
+
+    <% show_overlaps = policy(Promotion).index? && policy(Promotion).show? %>
+    <% show_history = policy(@record).history? %>
+    <% if show_overlaps || show_history %>
+      <div class="promotion-full promotion-detail-footer-grid">
+        <% if show_overlaps %><%= render 'detail_overlaps', record: @record %><% end %>
+        <% if show_history %><%= render 'detail_history', entries: @history %><% end %>
+      </div>
+    <% end %>
   </div>
 </div>

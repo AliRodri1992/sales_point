@@ -1,11 +1,12 @@
 <% used = @usage_counts.fetch(record.id, 0) %>
 <div class="min-w-0 text-sm tabular-nums">
   <% if record.usage_limit %>
-    <span><%= campaign_text('used_of', used: number_with_delimiter(used), limit: number_with_delimiter(record.usage_limit)) %></span>
-    <progress class="mt-1 block h-1.5 w-full max-w-32 accent-[var(--brand-on-white)]"
+    <span><%= number_with_delimiter(used) %> / <%= number_with_delimiter(record.usage_limit) %></span>
+    <progress class="promotion-detail-progress <%= 'is-full' if used >= record.usage_limit %>"
               aria-label="<%= campaign_text('redemptions') %>"
               value="<%= [used, record.usage_limit].min %>" max="<%= record.usage_limit %>"></progress>
   <% else %>
-    <%= campaign_text('uses', count: used) %>
+    <span><%= campaign_text('uses', count: used) %></span>
+    <span class="promotion-detail-usage-meta"><%= t('admin.catalog_design.no_limit') %></span>
   <% end %>
 </div>

@@ -1,5 +1,5 @@
-<tr class="promotion-directory-row grid grid-cols-2 gap-x-3 gap-y-3 px-4 py-4 align-middle xl:table-row xl:p-0">
-  <td class="col-span-2 break-words xl:max-w-64 xl:px-4 xl:py-4">
+<tr class="promotion-directory-row" role="row">
+  <td class="promotion-directory-identity" role="cell">
     <% primary_benefit = record.promotion_benefits.first %>
     <% symbol = primary_benefit.nil? ? 'tag' : (primary_benefit.percentage? ? 'percent' : 'money') %>
     <div class="promotion-campaign-name">
@@ -8,43 +8,46 @@
       </span>
       <div class="min-w-0">
         <% if policy(record).show? %>
-          <%= link_to record.name, admin_promotion_path(record, campaign_navigation_params), class: 'rounded font-semibold text-[var(--brand-on-white)] underline-offset-4 hover:underline' %>
+          <%= link_to record.name, admin_promotion_path(record, campaign_navigation_params), class: 'promotion-directory-name' %>
         <% else %>
           <strong><%= record.name %></strong>
         <% end %>
-        <span class="mt-1 block text-xs text-slate-600"><%= record.code %> · <%= record.currency %></span>
+        <span class="promotion-directory-meta"><%= record.code %> · <%= record.currency %></span>
       </div>
     </div>
   </td>
-  <td class="min-w-0 xl:px-4 xl:py-4">
-    <span class="catalog-label xl:hidden"><%= campaign_text('columns.benefit') %></span>
-    <strong class="text-[var(--brand-on-white)]">
+  <td class="promotion-directory-benefit" role="cell">
+    <span class="promotion-directory-mobile-label"><%= campaign_text('directory.columns.benefit') %></span>
+    <strong class="promotion-directory-benefit-value">
       <% if record.promotion_benefits.any? %>
         <%= record.promotion_benefits.map { |benefit| campaign_benefit_label(benefit, record.currency, precision) }.join(' / ') %>
       <% else %>
         <%= campaign_text('no_benefit') %>
       <% end %>
     </strong>
+    <% if record.promotion_benefits.any? %>
+      <span class="promotion-directory-meta"><%= record.promotion_benefits.map { |benefit| campaign_text("directory.choices.benefit_kind.#{benefit.kind}") }.uniq.join(' / ') %></span>
+    <% end %>
   </td>
-  <td class="min-w-0 break-words xl:max-w-56 xl:px-4 xl:py-4">
-    <span class="catalog-label xl:hidden"><%= campaign_text('columns.audience') %></span>
+  <td class="promotion-directory-audience" role="cell">
+    <span class="promotion-directory-mobile-label"><%= campaign_text('directory.columns.audience') %></span>
     <% segments = record.promotion_conditions.select(&:kind_customer_segment?).map(&:customer_segment) %>
     <%= segments.presence&.join(', ') || campaign_text('all_customers') %>
   </td>
-  <td class="min-w-0 xl:px-4 xl:py-4">
-    <span class="catalog-label xl:hidden"><%= campaign_text('columns.validity') %></span>
+  <td class="promotion-directory-validity" role="cell">
+    <span class="promotion-directory-mobile-label"><%= campaign_text('directory.columns.validity') %></span>
     <% if record.starts_at || record.ends_at %>
       <% %i[starts_at ends_at].each do |field| %>
-        <span class="block text-xs"><%= t("admin.catalog_design.#{field}") %> · <%= campaign_date(record.public_send(field)) %></span>
+        <span class="promotion-directory-date"><span><%= campaign_text("directory.dates.#{field}") %></span> <%= campaign_date(record.public_send(field)) %></span>
       <% end %>
     <% else %>
       <%= campaign_text('open_period') %>
     <% end %>
   </td>
-  <td class="min-w-0 xl:px-4 xl:py-4">
-    <span class="catalog-label xl:hidden"><%= campaign_text('columns.usage') %></span>
-    <%= render 'usage', record: record %>
+  <td class="promotion-directory-usage-cell" role="cell">
+    <span class="promotion-directory-mobile-label"><%= campaign_text('directory.columns.usage') %></span>
+    <%= render 'directory_usage', record: record %>
   </td>
-  <td class="min-w-0 xl:px-4 xl:py-4"><%= render 'badge', record: record %></td>
-  <td class="min-w-0 xl:px-4 xl:py-4"><%= render 'row_actions', record: record %></td>
+  <td class="promotion-directory-status" role="cell"><%= render 'badge', record: record %></td>
+  <td class="promotion-directory-actions" role="cell"><%= render 'row_actions', record: record %></td>
 </tr>

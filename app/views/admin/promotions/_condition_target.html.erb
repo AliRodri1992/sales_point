@@ -1,0 +1,27 @@
+<% resource = relation.to_s.pluralize %>
+<% field_id = form.field_id(relation, :search) %>
+<% label = campaign_text("lookup.#{resource}") %>
+<div class="catalog-field min-w-0" data-controller="promotion-lookup" data-action="change->promotion-editor#chooseTarget"
+     data-promotion-lookup-kind-value="<%= relation %>"
+     data-promotion-lookup-url-value="<%= relation == :product ? products_lookup_admin_promotions_path(format: :json) : categories_lookup_admin_promotions_path(format: :json) %>"
+     data-promotion-lookup-key-value="<%= resource %>"
+     data-promotion-lookup-empty-value="<%= campaign_text('lookup.empty') %>"
+     data-promotion-lookup-loading-value="<%= campaign_text('lookup.loading') %>"
+     data-promotion-lookup-error-value="<%= campaign_text('lookup.error') %>"
+     data-promotion-lookup-found-value="<%= campaign_text('lookup.found', count: '__COUNT__') %>">
+  <%= label_tag field_id, required_field_label(t('admin.catalog_design.value')) %>
+  <input type="search" id="<%= field_id %>" autocomplete="off"
+         placeholder="<%= label %>" aria-controls="<%= field_id %>-results" aria-label="<%= label %>"
+         aria-invalid="<%= form.object.errors[relation].any? %>"
+         <% if form.object.errors[relation].any? %>aria-describedby="<%= field_id %>_error"<% end %>
+         data-promotion-lookup-target="query"
+         data-action="input->promotion-lookup#queue keydown.down->promotion-lookup#first keydown.esc->promotion-lookup#close"
+         value="<%= campaign_target_name(form.object, relation) || (campaign_text('unavailable') if form.object.public_send("#{relation}_id")) %>">
+  <%= form.hidden_field "#{relation}_id", data: { promotion_lookup_target: 'selection' } %>
+  <p class="catalog-hint empty:hidden" role="status" data-promotion-lookup-target="status"></p>
+  <ul id="<%= field_id %>-results" aria-label="<%= label %>" hidden
+      class="mt-2 max-h-52 overflow-y-auto rounded-lg border border-slate-200 bg-white"
+      data-promotion-lookup-target="results"
+      data-action="keydown.esc->promotion-lookup#close keydown.up->promotion-lookup#previous keydown.down->promotion-lookup#next"></ul>
+  <%= error_message_for(form.object, relation, label: campaign_condition_label(form.object.kind), error_id: "#{field_id}_error") %>
+</div>

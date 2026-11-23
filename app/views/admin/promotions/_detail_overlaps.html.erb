@@ -1,0 +1,23 @@
+<section class="catalog-card !overflow-visible" aria-labelledby="commercial-overlaps-heading">
+  <%= render 'section_heading', title: campaign_text('detail.overlaps_title'), subtitle: campaign_text('detail.overlaps_subtitle'),
+             icon: 'calendar', id: 'commercial-overlaps-heading', section: 'overlaps' %>
+  <div class="catalog-card-body">
+    <% overlapping = Commercial::Overlaps.new(record).call %>
+    <% if overlapping.any? %>
+      <div class="promotion-overlap-warning">
+        <p class="text-sm"><%= t('admin.commercial_preview.overlaps_hint') %></p>
+        <ul class="mt-3 space-y-2 text-sm">
+          <% overlapping.each do |candidate| %>
+            <li class="flex flex-wrap items-center justify-between gap-2">
+              <%= link_to candidate.name, admin_promotion_path(candidate, campaign_navigation_params),
+                          class: 'font-semibold underline underline-offset-2 focus-visible:outline-amber-700' %>
+              <span class="text-xs"><%= t('admin.commercial_preview.priority', value: candidate.priority) %></span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% else %>
+      <p class="text-sm text-slate-600"><%= campaign_text('detail.overlaps_empty') %></p>
+    <% end %>
+  </div>
+</section>

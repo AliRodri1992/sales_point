@@ -1,0 +1,16 @@
+es:
+  admin:
+    promotion_campaigns:
+      help_examples:
+        filters: "Para recuperar el listado completo, selecciona Limpiar todo."
+        directory: "Eliminar archiva la promoción; no borra su historial."
+        general: "Ejemplo: Descuento de verano. La moneda no se modifica después del alta."
+        benefit: "Ejemplo: 10% de descuento con un máximo de 200 MXN."
+        conditions: "Ejemplo: solo bebidas y compras de 500 MXN o más."
+        validity: "Una campaña activa con inicio futuro se muestra como programada."
+        limits: "Ejemplo: 500 usos totales y uno por cliente."
+        status: "Los estados programada, vencida y agotada se calculan automáticamente."
+        actions: "Archivar conserva el historial e impide nuevas aplicaciones."
+        preview: "La simulación utiliza el motor real de precios y no consume redenciones."
+        overlaps: "Las coincidencias son advertencias; revisa las prioridades antes de activar."
+        history: "El sistema conserva los registros de auditoría de las acciones realizadas."

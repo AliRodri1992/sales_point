@@ -1,0 +1,39 @@
+{
+  "en": {
+    "admin": {
+      "promotion_campaigns": {
+        "directory": {
+          "intro": "Manage campaigns, define benefits, and control their validity and redemptions.",
+          "new": "New promotion",
+          "search_label": "Find a promotion",
+          "search_placeholder": "Promotion name or code...",
+          "segment_placeholder": "E.g. Wholesale",
+          "showing": "Showing %{shown} of %{total} promotions",
+          "no_results": "No matches",
+          "caption": "Directory of promotions and discounts",
+          "empty_title": "No promotions found",
+          "empty_hint": "Try another search or clear the applied filters.",
+          "clear_filters": "Clear filters",
+          "clear_all": "Clear all",
+          "rows_per_page": "Rows per page",
+          "sort_label": "Sort by",
+          "change_order": "Change order",
+          "order": { "asc": "Ascending order", "desc": "Descending order" },
+          "sort": { "name": "Name", "code": "Code", "currency": "Currency", "starts_at": "Start date", "ends_at": "End date", "created_at": "Creation date" },
+          "columns": { "campaign": "Promotion", "benefit": "Benefit", "audience": "Audience", "validity": "Validity", "usage": "Usage", "status": "Status", "actions": "Actions" },
+          "filter_labels": { "benefit_kind": "Benefit type", "validity": "Validity", "usage": "Usage availability" },
+          "choices": {
+            "benefit_kind": { "percentage": "Percentage", "fixed_amount": "Fixed amount" },
+            "validity": { "current": "Current", "upcoming": "Upcoming", "ended": "Ended" },
+            "usage": { "available": "Available", "exhausted": "Exhausted" }
+          },
+          "all": { "currency": "All currencies", "benefit_kind": "All benefits", "validity": "Any validity", "usage": "All", "product": "All products", "category": "All categories" },
+          "chips": { "search": "Search", "status": "Status", "currency": "Currency", "benefit_kind": "Benefit", "validity": "Validity", "usage": "Usage", "customer_segment": "Segment", "product_id": "Product", "category_id": "Category" },
+          "dates": { "starts_at": "From", "ends_at": "To" },
+          "edit_unavailable": "Cannot edit in this status",
+          "archive_unavailable": "Archived promotion"
+        }
+      }
+    }
+  }
+}

@@ -45,7 +45,7 @@ module DeltaIconsHelper
     accessibility = options.delete(:aria) || { hidden: true }
     {
       viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor',
-      stroke_width:, stroke_linecap: 'round', stroke_linejoin: 'round',
+      'stroke-width': stroke_width, 'stroke-linecap': 'round', 'stroke-linejoin': 'round',
       class: classes, aria: accessibility
     }.merge(options.except(:size, :variant, :library))
   end

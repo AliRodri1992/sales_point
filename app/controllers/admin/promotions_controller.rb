@@ -65,6 +65,7 @@ module Admin
     end
 
     def prepare_form
+      @record.promotion_benefits.build(kind: :percentage) if action_name == 'new' && @record.promotion_benefits.empty?
       return unless policy(PriceList).index?
 
       lists = current_organization.price_lists.with_deleted

@@ -1,0 +1,27 @@
+en:
+  admin:
+    promotion_campaigns:
+      detail:
+        eyebrow: Promotion details
+        back: Back to list
+        edit: Edit promotion
+        benefit_title: Benefit and configuration
+        benefit_subtitle: Defines how the discount is applied.
+        benefit_label: Commercial benefit
+        conditions_title: Conditions and audience
+        conditions_subtitle: Eligible products, categories and rules.
+        conditions_label: Conditions
+        validity_title: Validity
+        validity_subtitle: Period during which the promotion applies.
+        usage_title: Usage and limits
+        usage_subtitle: Redemption availability.
+        actions_title: Available actions
+        preview_title: Price preview
+        preview_subtitle: Simulate a transaction before activating the campaign.
+        preview_calculate: Calculate preview
+        preview_note: The simulation does not record a sale or consume promotion redemptions.
+        overlaps_title: Overlaps
+        overlaps_subtitle: Other promotions that may share the validity period.
+        overlaps_empty: No other active promotions with an overlapping validity period were found.
+        history_title: History
+        history_subtitle: Record of promotion changes and actions.

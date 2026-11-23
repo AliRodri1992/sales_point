@@ -20,7 +20,7 @@
         },
         "row_actions": {
           "show": "View",
-          "delete": "Delete (archive)"
+          "delete": "Delete"
         },
         "calendar": {
           "open": "Open calendar",
@@ -35,7 +35,7 @@
           "close": "Close help",
           "how_to": "How to use",
           "status": { "purpose": "Activation takes place from the detail screen.", "usage": "New promotions are saved as drafts. Open the detail screen to manage available transitions." },
-          "filters": { "purpose": "Find campaigns by name, code, status and conditions.", "usage": "Choose filters, select Apply filters, and remove individual filters to broaden the search." },
+          "filters": { "purpose": "Find promotions by name, code, status and conditions.", "usage": "Enter a name or code, select a status and open advanced filters if needed. Select Search to apply the criteria." },
           "directory": { "purpose": "Review promotions, validity periods and recorded usage.", "usage": "Use the actions to view, edit or archive according to your permissions. Archiving retains history." },
           "general": { "purpose": "Identify the campaign and set the discount currency.", "usage": "Enter a recognizable name. The code is assigned automatically on save." },
           "benefit": { "purpose": "Set the discount amount and how the promotion is prioritized.", "usage": "Add a percentage or fixed amount. Set a per-line cap or priority if needed." },

@@ -1,0 +1,8 @@
+<nav class="catalog-list-pagination-links" aria-label="<%= t('admin.catalog_directory.pagination') %>">
+  <%= render 'admin/promotions/page_arrow', page: current_page - 1, disabled: current_page == 1,
+             icon: 'chevron-left', label: t('admin.pagination.prev'), frame: frame %>
+  <%= safe_join(windowed_page_links(current_page, total_pages, frame: frame, window: 1,
+                                    url_options: { controller: controller_path, action: 'index', id: nil, format: nil }), ' ') %>
+  <%= render 'admin/promotions/page_arrow', page: current_page + 1, disabled: current_page == total_pages,
+             icon: 'chevron-right', label: t('admin.pagination.next'), frame: frame %>
+</nav>

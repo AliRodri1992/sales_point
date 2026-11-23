@@ -1,0 +1,44 @@
+/* Keep detail density aligned with the approved promotion workspace. */
+.promotion-detail .promotion-detail-grid,
+.promotion-detail .promotion-detail-footer-grid { gap: 1rem; }
+.promotion-detail .catalog-card-heading { padding: 1rem 1.25rem; }
+.promotion-detail .catalog-card-body { padding: 1.25rem; }
+.promotion-detail .catalog-definition { gap: 1rem 1.25rem; }
+.promotion-detail .catalog-definition dt { font-size: .75rem; text-transform: none; letter-spacing: normal; font-weight: 500; }
+.promotion-detail .catalog-definition dd { margin-top: .375rem; font-size: .875rem; font-weight: 600; }
+.promotion-detail .promotion-detail-offer { display: grid; gap: .25rem; margin-bottom: 1.25rem; color: #064e3b; }
+.promotion-detail-offer > span { font-size: .75rem; font-weight: 600; }
+.promotion-detail-offer > strong { font-family: var(--font-jakarta); font-size: 2rem; line-height: 1.3; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.promotion-detail-offer > p { color: #475569; font-size: .75rem; }
+.promotion-detail-usage { margin-bottom: 1.25rem; }
+.promotion-detail-usage > div { font-size: 1.125rem; font-weight: 700; }
+.promotion-detail-progress { --detail-progress-color: #10b981; display: block; appearance: none; border: 0; border-radius: 999px; overflow: hidden; background: #f1f5f9; color: var(--detail-progress-color); accent-color: var(--detail-progress-color); width: 100%; height: 7px; margin-top: .625rem; }
+.promotion-detail-progress.is-full { --detail-progress-color: #f59e0b; }
+.promotion-detail-progress::-webkit-progress-bar { background: #f1f5f9; border-radius: 999px; }
+.promotion-detail-progress::-webkit-progress-value { background: var(--detail-progress-color); border-radius: 999px; }
+.promotion-detail-progress::-moz-progress-bar { background: var(--detail-progress-color); border-radius: 999px; }
+.promotion-detail-usage-meta { display: block; margin-top: .25rem; color: #64748b; font-size: .6875rem; font-weight: 400; }
+.promotion-detail-footer-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.promotion-detail-footer-grid > section { min-width: 0; }
+.promotion-detail-footer-grid > section:only-child { grid-column: 1 / -1; }
+.promotion-detail-history > li:first-child { padding-top: 0; }
+.promotion-detail-history > li:last-child { padding-bottom: 0; }
+.promotion-detail-history li > div, .promotion-overlap-warning li > a { min-width: 0; overflow-wrap: anywhere; }
+.promotion-overlap-warning { padding: 1rem; border: 1px solid #fde68a; border-radius: .75rem; background: #fffbeb; color: #92400e; }
+.promotion-detail-preview .catalog-card-body { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .875rem; align-items: start; }
+.promotion-detail-preview .catalog-card-body > * { margin: 0; min-width: 0; }
+.promotion-preview-product { grid-column: span 2; }
+.promotion-detail-preview .promotion-preview-product input[type="search"] { padding-right: 2.5rem; }
+.promotion-preview-fields { display: contents; }
+.promotion-preview-actions, .promotion-preview-summary, .promotion-preview-note { grid-column: 1 / -1; }
+.promotion-preview-note { padding-top: .25rem; }
+
+@media (max-width: 1279px) {
+  .promotion-detail-preview .catalog-card-body { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .promotion-detail-footer-grid, .promotion-detail-preview .catalog-card-body { grid-template-columns: minmax(0, 1fr); }
+  .promotion-preview-product { grid-column: auto; }
+  .promotion-detail .catalog-card-heading, .promotion-detail .catalog-card-body { padding: 1rem; }
+  .promotion-detail-offer > strong { font-size: 1.75rem; }
+}

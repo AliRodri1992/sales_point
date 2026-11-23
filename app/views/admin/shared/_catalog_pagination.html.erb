@@ -12,7 +12,9 @@
     </div>
     <span aria-live="polite"><%= t('admin.catalog_directory.page', page: current_page, total: total_pages) %></span>
   </div>
-  <% if total_pages > 1 %>
+  <% if key == 'promotions' %>
+    <%= render 'admin/promotions/pagination_links', total_pages: total_pages, current_page: current_page, frame: frame %>
+  <% elsif total_pages > 1 %>
     <nav class="catalog-list-pagination-links <%= local_assigns[:links_class] %>" aria-label="<%= t('admin.catalog_directory.pagination') %>">
       <%= pagination_links(total_pages, frame: frame, window: 1, url_options: { controller: controller_path, action: 'index', id: nil, format: nil }) %>
     </nav>

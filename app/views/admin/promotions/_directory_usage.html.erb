@@ -1,0 +1,12 @@
+<% used = @usage_counts.fetch(record.id, 0) %>
+<div class="promotion-directory-usage">
+  <% if record.usage_limit %>
+    <strong><%= number_with_delimiter(used) %> / <%= number_with_delimiter(record.usage_limit) %></strong>
+    <progress class="promotion-directory-progress <%= 'is-full' if used >= record.usage_limit %>"
+              aria-label="<%= campaign_text('redemptions') %>"
+              value="<%= [used, record.usage_limit].min %>" max="<%= record.usage_limit %>"></progress>
+  <% else %>
+    <strong><%= campaign_text('uses', count: used) %></strong>
+    <span class="promotion-directory-meta"><%= t('admin.catalog_design.no_limit') %></span>
+  <% end %>
+</div>

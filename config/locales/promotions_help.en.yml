@@ -1,0 +1,16 @@
+en:
+  admin:
+    promotion_campaigns:
+      help_examples:
+        filters: "To restore the full directory, select Clear all."
+        directory: "Deleting archives the promotion without removing its history."
+        general: "Example: Summer discount. Currency cannot be changed after creation."
+        benefit: "Example: a 10% discount capped at MXN 200."
+        conditions: "Example: beverages only and purchases of MXN 500 or more."
+        validity: "An active campaign with a future start date appears as scheduled."
+        limits: "Example: 500 total redemptions and one per customer."
+        status: "Scheduled, expired and exhausted states are calculated automatically."
+        actions: "Archiving preserves history and prevents new redemptions."
+        preview: "The simulation uses the real pricing engine without consuming redemptions."
+        overlaps: "Overlaps are warnings; review priorities before activating."
+        history: "The system retains an audit record of completed actions."

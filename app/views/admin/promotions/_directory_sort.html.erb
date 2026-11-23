@@ -1,0 +1,17 @@
+<% filters = campaign_filters %>
+<% direction = filters[:direction] == 'desc' ? 'desc' : 'asc' %>
+<%= form_with url: admin_promotions_path, method: :get, class: 'promotion-directory-sort', data: { controller: 'promotion-directory' } do %>
+  <% filters.except(:sort, :direction).each do |field, value| %><%= hidden_field_tag field, value, id: nil %><% end %>
+  <%= hidden_field_tag :direction, direction, id: nil %>
+  <%= label_tag :campaign_sort, campaign_text('directory.sort_label') %>
+  <div class="min-w-0" data-controller="delta-select">
+    <%= select_tag :sort, options_for_select(campaign_choices('directory.sort', %w[name code currency starts_at ends_at created_at]), filters[:sort] || 'name'),
+                   id: 'campaign_sort', data: { action: 'change->promotion-directory#sort' } %>
+  </div>
+  <%= link_to admin_promotions_path(filters.merge(direction: direction == 'asc' ? 'desc' : 'asc')),
+              class: 'promotion-sort-direction', title: campaign_text('directory.change_order'),
+              aria: { label: campaign_text("directory.order.#{direction}") } do %>
+    <%= promotion_icon('sort', class: 'size-4') %>
+  <% end %>
+  <noscript><%= button_tag campaign_text('sort_label'), name: nil, class: 'catalog-button' %></noscript>
+<% end %>

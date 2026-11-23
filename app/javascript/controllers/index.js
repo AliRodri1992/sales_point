@@ -236,6 +236,8 @@ application.register("promotion-date", PromotionDateController)
 
 import PromotionLookupController from "./promotion_lookup_controller"
 application.register("promotion-lookup", PromotionLookupController)
+import PromotionDirectoryController from "./promotion_directory_controller"
+application.register("promotion-directory", PromotionDirectoryController)
 
 import ProductQuoteController from "./product_quote_controller"
 application.register("product-quote", ProductQuoteController)

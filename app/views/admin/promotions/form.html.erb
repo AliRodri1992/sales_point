@@ -1,35 +1,35 @@
-<% title = @record.persisted? ? campaign_text('edit', name: @record.name) : campaign_text('new') %>
+<% title = campaign_text(@record.persisted? ? 'editor.edit' : 'editor.new') %>
+<% back_path = @record.persisted? && policy(@record).show? ? admin_promotion_path(@record, campaign_navigation_params) : catalog_back_path(Promotion) %>
 <% content_for :title, title %>
 <div class="catalog-workspace promotion-workspace">
   <header class="catalog-header">
-    <%= render 'module_heading', eyebrow: t('admin.catalog_design.promotions'), title: title %>
-    <%= render 'back_button' %>
+    <%= render 'module_heading', eyebrow: t('admin.catalog_design.commercial'), title: title, intro: campaign_text('editor.intro') %>
+    <%= link_to campaign_text('editor.back'), back_path, class: 'catalog-button' %>
   </header>
   <%= form_with model: [:admin, @record], url: @record.persisted? ? admin_promotion_path(@record, campaign_navigation_params) : admin_promotions_path(campaign_navigation_params),
                 html: { novalidate: true }, class: 'catalog-main promotion-form',
-                data: { controller: 'promotion-editor', action: 'promotion-lookup:pick->promotion-editor#pick',
+                data: { controller: 'promotion-editor',
                         promotion_editor_limit_value: campaign_text('row_limit'),
                         promotion_editor_duplicate_value: campaign_text('already_selected'),
-                        promotion_editor_added_value: campaign_text('added', name: '__NAME__'),
                         promotion_editor_removed_value: campaign_text('removed') } do |form| %>
     <%= catalog_errors(@record) %>
     <div class="promotion-editor-layout">
     <div class="promotion-editor-column">
     <section class="catalog-card !overflow-visible" aria-labelledby="campaign-general-title">
-      <%= render 'section_heading', title: campaign_text('sections.general'), subtitle: campaign_text('general_hint'),
+      <%= render 'section_heading', title: campaign_text('editor.general'), subtitle: campaign_text('editor.general_hint'),
                  id: 'campaign-general-title', icon: 'tag', section: 'general' %>
       <div class="catalog-card-body catalog-fields">
         <div class="col-span-full">
-          <%= catalog_field(form, :name, label: required_field_label(t('admin.catalog_design.name')), maxlength: 100, aria: { required: true }) %>
+          <%= catalog_field(form, :name, label: required_field_label(campaign_text('editor.name')), maxlength: 100, placeholder: campaign_text('editor.name_placeholder'), aria: { required: true }) %>
         </div>
-        <div>
-          <span class="catalog-label"><%= t('admin.catalog_design.code') %></span>
-          <p class="py-2 text-sm text-slate-600"><%= @record.persisted? ? @record.code : campaign_text('generated_code') %></p>
+        <div class="catalog-field">
+          <%= label_tag 'promotion_display_code', t('admin.catalog_design.code') %>
+          <%= text_field_tag nil, @record.persisted? ? @record.code : campaign_text('editor.generated_code'), id: 'promotion_display_code', readonly: true %>
         </div>
         <% if @record.persisted? %>
-          <div>
-            <span class="catalog-label"><%= t('admin.catalog_design.currency') %></span>
-            <p class="py-2 text-sm"><%= @record.currency %></p>
+          <div class="catalog-field">
+            <%= label_tag 'promotion_display_currency', required_field_label(t('admin.catalog_design.currency')) %>
+            <%= text_field_tag nil, @record.currency, id: 'promotion_display_currency', readonly: true %>
             <%= error_message_for(@record, :currency) %>
           </div>
         <% else %>
@@ -42,24 +42,24 @@
     <%= render 'benefits', form: form %>
     <%= render 'conditions', form: form %>
     </div>
-    <div class="promotion-editor-column">
+    <aside class="promotion-editor-column">
     <section class="catalog-card !overflow-visible" aria-labelledby="campaign-validity-title">
-      <%= render 'section_heading', title: campaign_text('sections.validity'), subtitle: campaign_text('date_hint', zone: Time.zone.name),
+      <%= render 'section_heading', title: campaign_text('editor.validity'), subtitle: campaign_text('editor.validity_hint'),
                  id: 'campaign-validity-title', icon: 'calendar', section: 'validity' %>
       <div class="catalog-card-body grid gap-4">
         <% %i[starts_at ends_at].each do |field| %>
           <%= render layout: 'date_picker', locals: { field_id: form.field_id(field), enabled: true } do %>
-            <%= catalog_field(form, field, type: :datetime_local_field, step: 1, value: @record.public_send(field)&.in_time_zone&.strftime('%Y-%m-%dT%H:%M:%S')) %>
+            <%= catalog_field(form, field, label: campaign_text("editor.#{field}"), type: :datetime_local_field, step: 1, value: @record.public_send(field)&.in_time_zone&.strftime('%Y-%m-%dT%H:%M:%S')) %>
           <% end %>
         <% end %>
       </div>
     </section>
     <section class="catalog-card !overflow-visible" aria-labelledby="campaign-limits-title">
-      <%= render 'section_heading', title: campaign_text('sections.limits'), subtitle: campaign_text('limits_hint'),
+      <%= render 'section_heading', title: campaign_text('sections.limits'), subtitle: campaign_text('editor.limits_hint'),
                  id: 'campaign-limits-title', icon: 'users', section: 'limits' %>
       <div class="catalog-card-body grid gap-4">
         <% %i[usage_limit customer_limit].each do |field| %>
-          <%= catalog_field(form, field, type: :number_field, min: 1, step: 1) %>
+          <%= catalog_field(form, field, label: campaign_text("editor.#{field}"), type: :number_field, min: 1, step: 1, placeholder: t('admin.catalog_design.no_limit')) %>
         <% end %>
       </div>
     </section>
@@ -68,12 +68,12 @@
                  id: 'campaign-status-title', icon: 'info', section: 'status' %>
       <div class="catalog-card-body"><%= render 'badge', record: @record %></div>
     </section>
-    </div>
+    </aside>
     </div>
     <footer class="catalog-footer">
-      <%= link_to t('admin.catalog_design.cancel'), @record.persisted? && policy(@record).show? ? admin_promotion_path(@record, campaign_navigation_params) : catalog_back_path(Promotion), class: 'catalog-button' %>
+      <%= link_to t('admin.catalog_design.cancel'), back_path, class: 'catalog-button' %>
       <%= form.button type: :submit, class: 'catalog-button catalog-button-primary', data: { turbo_submits_with: campaign_text('saving') } do %>
-        <%= promotion_icon('check', class: 'size-4') %><%= campaign_text('save') %>
+        <%= promotion_icon('check', class: 'size-4') %><%= campaign_text(@record.persisted? ? 'editor.save_changes' : 'editor.save_draft') %>
       <% end %>
     </footer>
   <% end %>

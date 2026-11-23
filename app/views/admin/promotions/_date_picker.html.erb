@@ -1,11 +1,13 @@
 <% if enabled %>
   <div class="promotion-date" data-controller="promotion-date" data-promotion-date-today-value="<%= Time.zone.today.iso8601 %>"
+       data-promotion-date-placeholder-value="<%= campaign_text('editor.calendar.placeholder') %>"
        data-action="keydown.esc->promotion-date#escape click@document->promotion-date#outside">
     <%= yield %>
     <button type="button" class="promotion-date-trigger catalog-button" hidden data-promotion-date-target="trigger"
             data-action="promotion-date#toggle" aria-expanded="false" aria-haspopup="dialog" aria-controls="<%= field_id %>-calendar"
             data-label="<%= campaign_text('calendar.open') %>"
             aria-label="<%= campaign_text('calendar.open') %>">
+      <span data-promotion-date-target="label"><%= campaign_text('editor.calendar.placeholder') %></span>
       <%= promotion_icon('calendar', class: 'size-5') %>
     </button>
     <div class="promotion-date-panel" id="<%= field_id %>-calendar" data-promotion-date-target="panel" hidden
@@ -20,11 +22,16 @@
         </button>
       </div>
       <div class="promotion-date-grid" data-promotion-date-target="days"></div>
-      <div class="mt-3 flex flex-wrap justify-between gap-2 border-t border-slate-100 pt-3">
-        <button type="button" class="catalog-button" data-action="promotion-date#clear"><%= campaign_text('calendar.clear') %></button>
-        <button type="button" class="catalog-button catalog-button-primary" data-action="promotion-date#today"><%= campaign_text('calendar.today') %></button>
+      <div class="promotion-date-time">
+        <label for="<%= field_id %>-time"><%= campaign_text('editor.calendar.time') %></label>
+        <input type="text" id="<%= field_id %>-time" maxlength="5" placeholder="HH:MM" inputmode="numeric"
+               data-promotion-date-target="time" data-action="input->promotion-date#validateTime">
       </div>
-      <p class="catalog-hint"><%= campaign_text('calendar.time_hint') %></p>
+      <div class="mt-3 flex flex-wrap justify-between gap-2 border-t border-slate-100 pt-3">
+        <button type="button" class="promotion-date-nav" data-action="promotion-date#clear"><%= campaign_text('calendar.clear') %></button>
+        <button type="button" class="promotion-date-nav" data-action="promotion-date#today"><%= campaign_text('calendar.today') %></button>
+        <button type="button" class="catalog-button catalog-button-primary" data-action="promotion-date#apply"><%= campaign_text('editor.calendar.apply') %></button>
+      </div>
     </div>
   </div>
 <% else %>

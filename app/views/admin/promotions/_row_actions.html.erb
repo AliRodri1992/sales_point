@@ -15,6 +15,11 @@
                 aria: { label: "#{t('admin.catalog_design.edit')}: #{record.name}" } do %>
       <%= promotion_icon('edit', class: 'size-4') %>
     <% end %>
+  <% elsif permissions.update? %>
+    <%= button_tag type: 'button', disabled: true, class: 'catalog-list-icon-button', title: campaign_text('directory.edit_unavailable'),
+                   aria: { label: campaign_text('directory.edit_unavailable') } do %>
+      <%= promotion_icon('edit', class: 'size-4') %>
+    <% end %>
   <% end %>
   <% if permissions.destroy? && record.transition_available?('archive') %>
     <%= button_to admin_promotion_path(record, context), method: :delete,
@@ -22,6 +27,11 @@
                   form: { data: { turbo_confirm: campaign_text('confirm.archive', name: record.name) } },
                   data: { tooltip: campaign_text('row_actions.delete') },
                   aria: { label: "#{campaign_text('row_actions.delete')}: #{record.name}" } do %>
+      <%= promotion_icon('trash', class: 'size-4') %>
+    <% end %>
+  <% elsif permissions.destroy? %>
+    <%= button_tag type: 'button', disabled: true, class: 'catalog-list-icon-button catalog-list-icon-button--danger',
+                   title: campaign_text('directory.archive_unavailable'), aria: { label: campaign_text('directory.archive_unavailable') } do %>
       <%= promotion_icon('trash', class: 'size-4') %>
     <% end %>
   <% end %>

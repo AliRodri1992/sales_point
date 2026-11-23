@@ -13,6 +13,7 @@
   <input type="search" id="<%= id %>" autocomplete="off" aria-controls="<%= id %>-results"
          data-promotion-lookup-target="query"
          data-action="input->promotion-lookup#queue keydown.down->promotion-lookup#first keydown.esc->promotion-lookup#close"
+         <% if filter %>placeholder="<%= campaign_text("directory.all.#{kind}") %>"<% end %>
          value="<%= selected&.name if filter %>">
   <% if filter %>
     <%= hidden_field_tag "#{kind}_id", selected&.id, data: { promotion_lookup_target: 'selection' } %>

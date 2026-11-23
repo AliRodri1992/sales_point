@@ -1,0 +1,10 @@
+<% if disabled %>
+  <span class="promotion-pagination-arrow" aria-disabled="true" aria-label="<%= label %>">
+    <%= promotion_icon(icon, class: 'size-4') %>
+  </span>
+<% else %>
+  <%= link_to pagination_url(page, url_options: { controller: controller_path, action: 'index', id: nil, format: nil }),
+              class: 'promotion-pagination-arrow', aria: { label: label }, data: { turbo_frame: frame } do %>
+    <%= promotion_icon(icon, class: 'size-4') %>
+  <% end %>
+<% end %>

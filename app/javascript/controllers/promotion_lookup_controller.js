@@ -67,6 +67,7 @@ export default class extends Controller {
     if (this.hasSelectionTarget) {
       this.selectionTarget.value = item.id
       this.queryTarget.value = item.name
+      this.selectionTarget.dispatchEvent(new Event("change", { bubbles: true }))
     } else {
       this.dispatch("pick", { detail: { kind: this.kindValue, id: String(item.id), name: item.name } })
       this.queryTarget.value = ""

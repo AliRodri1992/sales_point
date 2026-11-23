@@ -1,0 +1,38 @@
+/* Editor-specific spacing and nested fields follow the approved campaign mockup. */
+.promotion-form .catalog-card { border-radius: .75rem; box-shadow: 0 2px 7px #0f172a04; }
+.promotion-form .catalog-card-heading { padding: 1rem 1.25rem; }
+.promotion-form .catalog-card-body { padding: 1.25rem; }
+.promotion-form .catalog-fields { gap: 1rem; }
+.promotion-form .catalog-field label { font-size: .75rem; margin-bottom: .375rem; }
+.promotion-form .catalog-field :is(input:not([type=checkbox]), select, textarea) {
+  min-height: 41px; padding: .5rem .75rem; border-color: #e2e8f0; border-radius: .5rem;
+}
+.promotion-form .catalog-field input[readonly] { background: #fff; color: #334155; }
+.promotion-form .catalog-field input::placeholder { color: #64748b; }
+.promotion-form .catalog-field [aria-invalid="true"] { border-color: #e11d48; }
+.promotion-form .catalog-field :is(input, select):focus { border-color: var(--brand); box-shadow: 0 0 0 3px #05966916; outline: none; }
+.promotion-form .catalog-button { min-height: 41px; border-radius: .5rem; }
+.promotion-form [data-delta-select-generated][aria-haspopup="listbox"] { min-height: 41px; padding: .5rem .75rem; border-radius: .5rem; border-color: #e2e8f0; }
+.promotion-editor-row { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.5fr) auto; align-items: start; gap: .75rem; padding: .75rem; margin-bottom: .75rem; border: 1px solid #e2e8f0; border-radius: .5rem; }
+.promotion-editor-row > * { min-width: 0; }
+.promotion-editor-remove { display: grid; place-items: center; width: 36px; min-height: 36px; margin-top: 1.5rem; border: 1px solid #e2e8f0; border-radius: .5rem; color: #64748b; background: #fff; }
+.promotion-editor-remove:hover { background: #f8fafc; color: #0f172a; }
+.promotion-workspace .promotion-date-enhanced { display: block; position: relative; }
+.promotion-workspace .promotion-date-native { position: absolute !important; width: 1px !important; height: 1px !important; min-height: 0 !important; margin: -1px !important; padding: 0 !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; pointer-events: none !important; }
+.promotion-workspace .promotion-date-trigger { display: flex; justify-content: space-between; width: 100%; margin-top: 0; padding: .5rem .75rem; color: #334155; border-color: #e2e8f0; font-size: .875rem; font-weight: 400; text-align: left; }
+.promotion-workspace .promotion-date-trigger svg { color: var(--brand-on-white); width: 18px; height: 18px; flex-shrink: 0; }
+.promotion-workspace .promotion-date-trigger.is-placeholder { color: #64748b; }
+.promotion-workspace .promotion-date-trigger:hover, .promotion-workspace .promotion-date-trigger[aria-expanded="true"] { border-color: var(--brand); }
+.promotion-workspace .promotion-date-panel { border-color: #e2e8f0; border-radius: .75rem; padding: .75rem; }
+.promotion-date-time { display: flex; align-items: center; justify-content: space-between; gap: .5rem; border-top: 1px solid #f1f5f9; padding-top: .75rem; margin-top: .75rem; font-size: .75rem; font-weight: 600; color: #334155; }
+.promotion-date-time input { width: 5.5rem; min-height: 36px; padding: .5rem; border: 1px solid #e2e8f0; border-radius: .5rem; background: #fff; font-weight: 400; }
+.promotion-workspace .promotion-date-panel .promotion-date-nav { padding: 0 .5rem; }
+.promotion-form .catalog-footer { border: 0; border-top: 1px solid #e2e8f0; border-radius: .75rem; padding: 1rem 1.25rem; }
+@media (min-width: 1024px) {
+  .promotion-form .promotion-editor-layout { grid-template-columns: minmax(0,1.7fr) minmax(270px,1fr); }
+}
+@media (max-width: 740px) {
+  .promotion-editor-row { grid-template-columns: minmax(0,1fr) auto; }
+  .promotion-editor-row > [data-controller="delta-select"] { grid-column: 1 / -1; }
+  .promotion-form .catalog-card-heading, .promotion-form .catalog-card-body { padding: 1rem; }
+}

@@ -41,6 +41,10 @@ on:
       - 'config/locales/commercial_*'
       - 'config/locales/price_lists.*.yml'
       - 'config/locales/promotions.*.yml'
+      - 'config/locales/promotions_*.yml'
+      - 'app/assets/stylesheets/components/promotions_*.css'
+      - 'app/helpers/delta_icons_helper.rb'
+      - 'app/helpers/delta_promotion_icon_shapes.rb'
       - 'config/routes.rb'
       - 'db/migrate/*commercial*'
       - 'db/schema.rb'
@@ -125,6 +129,7 @@ jobs:
             spec/services/products/price_list_retirement_spec.rb \
             spec/requests/admin/commercial_catalog_spec.rb spec/requests/admin/commercial_security_spec.rb \
             spec/requests/admin/commercial_workflows_spec.rb spec/requests/admin/product_commercial_access_spec.rb \
+            spec/requests/admin/promotion_*_spec.rb \
             spec/requests/admin/product_price_history_spec.rb spec/requests/admin/sidebar_spec.rb \
             spec/requests/admin/sidebar_icons_spec.rb spec/helpers/breadcrumbs_helper_spec.rb \
             spec/seeds/commercial_examples_spec.rb

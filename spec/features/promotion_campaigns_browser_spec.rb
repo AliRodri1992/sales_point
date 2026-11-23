@@ -25,21 +25,31 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
     visit new_admin_promotion_path
 
     expect(page).to have_no_field('promotion_code')
+    expect(page).to have_field('promotion_display_code', with: 'Generated on save', readonly: true)
     expect(page).to have_no_select('promotion_status', visible: :all)
-    fill_in 'Search products', with: 'Forest'
-    find('#campaign-product-search-results button', text: 'Forest honey').send_keys(:enter)
-    fill_in 'Search categories', with: 'Seasonal'
-    find('#campaign-category-search-results button', text: 'Seasonal groceries').click
-    within('[data-condition-kind="category"]') { click_button 'Remove row' }
-    click_button 'Add benefit'
+    click_button 'Add condition'
+    within('[data-condition-kind="product"]') do
+      find('[data-condition-value="product"] input[type="search"]').set('Forest')
+      find('[data-condition-value="product"] ul button', text: 'Forest honey').send_keys(:enter)
+    end
+    click_button 'Add condition'
+    within(all('[data-condition-kind="product"]').last) do
+      find('button[aria-haspopup="listbox"]').click
+      find('[role="option"]', text: 'Included category').click
+      find('[data-condition-value="category"] input[type="search"]').set('Seasonal')
+      find('[data-condition-value="category"] ul button', text: 'Seasonal groceries').click
+      click_button 'Remove condition'
+    end
     within('#campaign-benefits') { fill_in 'Value', with: '15' }
-    click_button 'Save campaign'
+    click_button 'Save draft'
 
     expect(page).to have_css('#promotion_name[aria-invalid="true"]')
-    expect(page).to have_css('[data-condition-kind="product"]', text: 'Forest honey')
+    within('[data-condition-kind="product"]') do
+      expect(find('[data-condition-value="product"] input[type="search"]').value).to eq('Forest honey')
+    end
     within('#campaign-benefits') { expect(page).to have_field('Value', with: /15/) }
     fill_in 'promotion_name', with: 'Harvest'
-    click_button 'Save campaign'
+    click_button 'Save draft'
 
     expect(page).to have_css('h1', text: 'Harvest')
     campaign = organization.promotions.find_by!(name: 'Harvest')
@@ -67,7 +77,7 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
     find('summary', text: 'Advanced filters').click
     fill_in 'Search products', with: 'Cedar'
     find('#campaign-product-search-results button', text: 'Cedar soap').click
-    click_button 'Apply filters'
+    click_button 'Search'
     expect(page).to have_current_path(/product_id=#{product.id}/)
     within('#campaign-results') do
       expect(page).to have_link('Soap offer')
@@ -75,6 +85,29 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
     end
     page.refresh
     expect(page).to have_field('Search products', with: 'Cedar soap')
+  end
+
+  scenario 'shows advanced filter counts, sorts matching promotions and clears an empty result' do
+    organization.promotions.create!(name: 'Zulu offer', currency: 'MXN',
+                                    promotion_benefits_attributes: [{ kind: 'percentage', value: 15 }])
+    organization.promotions.create!(name: 'Alpha offer', currency: 'MXN',
+                                    promotion_benefits_attributes: [{ kind: 'percentage', value: 10 }])
+    visit admin_promotions_path(currency: 'MXN', benefit_kind: 'percentage')
+
+    expect(page).to have_css('summary .promotion-advanced-count', exact_text: '2')
+    expect(page).to have_css('.promotion-directory-count', exact_text: '2')
+    expect(page).to have_css('#campaign-results h2', text: 'Promotion')
+    expect(page).to have_css('.promotion-directory-row:first-child', text: 'Alpha offer')
+    click_link 'Ascending order'
+    expect(page).to have_current_path(/direction=desc/)
+    expect(page).to have_css('.promotion-directory-row:first-child', text: 'Zulu offer')
+    fill_in 'Find a promotion', with: 'No matching name'
+    click_button 'Search'
+    expect(page).to have_text('No promotions found')
+    expect(page).to have_css('footer.catalog-list-pagination')
+    click_link 'Clear filters', exact: true
+    expect(page).to have_css('.promotion-directory-count', exact_text: '2')
+    expect(page).to have_no_css('.promotion-advanced-count')
   end
 
   scenario 'opens section help, closes it with Escape and uses the same back button in detail and edit' do
@@ -88,7 +121,9 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
     expect(page).to have_no_css('[data-section-help-panel]', visible: true)
 
     visit edit_admin_promotion_path(campaign)
-    expect(page).to have_link('Back to list', count: 1)
+    expect(page).to have_link('Back', count: 1, href: admin_promotion_path(campaign))
+    expect(page).to have_field('promotion_display_currency', with: 'MXN', readonly: true)
+    expect(page).to have_button('Save changes')
     expect(page).to have_css('[data-controller="delta-select"] select#promotion_combination_mode', visible: :all)
     expect(page).to have_css('[data-controller="promotion-date"] input#promotion_starts_at', visible: :all)
   end
@@ -101,11 +136,12 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
       expect(page).to have_css('[data-date="2027-05-08"][aria-pressed="true"]')
       expect(page).to have_css('[data-date="2027-05-08"]:focus')
       find('[data-date="2027-05-09"]').click
-      expect(find('#promotion_starts_at').value).to eq('2027-05-09T14:22:37')
+      expect(find('#promotion_starts_at', visible: :all).value).to eq('2027-05-09T14:22:37')
+      click_button 'Apply'
       find('button[data-promotion-date-target="trigger"]').click
       expect(page).to have_css('[data-date="2027-05-09"][aria-pressed="true"]')
       click_button 'Clear'
-      expect(find('#promotion_starts_at').value).to be_blank
+      expect(find('#promotion_starts_at', visible: :all).value).to be_blank
     end
   end
 

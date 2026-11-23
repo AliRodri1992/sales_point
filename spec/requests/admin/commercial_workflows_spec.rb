@@ -162,6 +162,20 @@ RSpec.describe 'Independent commercial catalog workflows', type: :request do
     expect(response.body).to include(offer.name)
   end
 
+  it 'finds included and excluded promotion targets and partial customer segments' do
+    category = create(:category, organization:)
+    offer.update!(promotion_conditions_attributes: [{ kind: 'excluded_product', product: },
+                                                    { kind: 'excluded_category', category: },
+                                                    { kind: 'customer_segment', customer_segment: 'Wholesale Trade' }])
+    organization.promotions.create!(name: 'Unrelated promotion', currency: 'MXN')
+
+    get admin_promotions_path, params: { product_id: product.id, category_id: category.id, customer_segment: 'trade' }
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(offer.name)
+    expect(response.body).not_to include('Unrelated promotion')
+  end
+
   it 'shows a scoped promotion overview and the same percentage icon in the sidebar and heading' do
     offer.update!(status: 'active')
     organization.promotions.create!(name: 'Paused campaign', currency: 'MXN', status: 'paused')
@@ -178,7 +192,11 @@ RSpec.describe 'Independent commercial catalog workflows', type: :request do
     expect(sidebar.element_children.map(&:to_html)).to eq(heading.element_children.map(&:to_html))
     expect(sidebar['stroke-width']).to eq('1.7')
     expect(heading['stroke-width']).to eq('1.7')
+    expect(heading['stroke-linecap']).to eq('round')
+    expect(heading['stroke-linejoin']).to eq('round')
     expect(heading.css('circle').size).to eq(2)
+    expect(document.at_css('#promotion-help-filters .promotion-help-example').text).to include('Clear all')
+    expect(document.at_css('.promotion-pagination-arrow[aria-disabled="true"] svg path')['d']).to eq('m15 18-6-6 6-6')
   end
 
   it 'renders the approved prototype metric, benefit and action icons' do

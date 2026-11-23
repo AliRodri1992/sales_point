@@ -1,0 +1,39 @@
+{
+  "ko": {
+    "admin": {
+      "promotion_campaigns": {
+        "directory": {
+          "intro": "캠페인을 관리하고 혜택을 설정하며 유효 기간과 사용 내역을 확인합니다.",
+          "new": "새 프로모션",
+          "search_label": "프로모션 검색",
+          "search_placeholder": "프로모션 이름 또는 코드...",
+          "segment_placeholder": "예: 도매",
+          "showing": "프로모션 %{total}개 중 %{shown}개 표시",
+          "no_results": "검색 결과 없음",
+          "caption": "프로모션 및 할인 목록",
+          "empty_title": "프로모션을 찾을 수 없습니다",
+          "empty_hint": "다른 검색어를 입력하거나 적용된 필터를 지워 보세요.",
+          "clear_filters": "필터 지우기",
+          "clear_all": "모두 지우기",
+          "rows_per_page": "페이지당 행 수",
+          "sort_label": "정렬 기준",
+          "change_order": "정렬 순서 변경",
+          "order": { "asc": "오름차순", "desc": "내림차순" },
+          "sort": { "name": "이름", "code": "코드", "currency": "통화", "starts_at": "시작일", "ends_at": "종료일", "created_at": "생성일" },
+          "columns": { "campaign": "프로모션", "benefit": "혜택", "audience": "대상", "validity": "유효 기간", "usage": "사용", "status": "상태", "actions": "작업" },
+          "filter_labels": { "benefit_kind": "혜택 유형", "validity": "유효 기간", "usage": "사용 가능 여부" },
+          "choices": {
+            "benefit_kind": { "percentage": "할인율", "fixed_amount": "정액 할인" },
+            "validity": { "current": "유효", "upcoming": "예정", "ended": "종료" },
+            "usage": { "available": "사용 가능", "exhausted": "소진됨" }
+          },
+          "all": { "currency": "모든 통화", "benefit_kind": "모든 혜택", "validity": "모든 유효 기간", "usage": "모두", "product": "모든 상품", "category": "모든 카테고리" },
+          "chips": { "search": "검색", "status": "상태", "currency": "통화", "benefit_kind": "혜택", "validity": "유효 기간", "usage": "사용", "customer_segment": "고객 세그먼트", "product_id": "상품", "category_id": "카테고리" },
+          "dates": { "starts_at": "시작", "ends_at": "종료" },
+          "edit_unavailable": "현재 상태에서는 편집할 수 없습니다",
+          "archive_unavailable": "보관된 프로모션"
+        }
+      }
+    }
+  }
+}

@@ -1,9 +1,9 @@
-<div data-campaign-row class="grid items-end gap-3 py-3 sm:grid-cols-[1fr_1fr_auto]" <%= 'hidden' if form.object.marked_for_destruction? %>>
+<div data-campaign-row class="promotion-editor-row promotion-benefit-row" <%= 'hidden' if form.object.marked_for_destruction? %>>
   <%= form.hidden_field :id if form.object.persisted? %>
   <%= form.hidden_field :_destroy, value: form.object.marked_for_destruction? ? 1 : 0 if form.object.persisted? %>
   <div data-controller="delta-select">
-    <%= catalog_select(form, :kind, PromotionBenefit.kinds.keys.map { |kind| [t("admin.catalog_design.benefit_#{kind}"), kind] }, include_blank: false) %>
+    <%= catalog_select(form, :kind, campaign_choices('editor.benefit_kinds', PromotionBenefit.kinds.keys), label: campaign_text('editor.benefit_kind'), include_blank: false) %>
   </div>
   <%= catalog_field(form, :value, type: :number_field, label: required_field_label(t('admin.catalog_design.value')), step: 'any', aria: { required: true }) %>
-  <button type="button" class="catalog-button" data-action="promotion-editor#remove"><%= promotion_icon('x', class: 'size-4') %><%= t('admin.catalog_design.remove') %></button>
+  <button type="button" class="promotion-editor-remove" data-action="promotion-editor#remove" aria-label="<%= campaign_text('editor.remove_benefit') %>"><%= promotion_icon('x', class: 'size-4') %></button>
 </div>

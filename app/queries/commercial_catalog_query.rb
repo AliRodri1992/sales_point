@@ -85,12 +85,25 @@ class CommercialCatalogQuery
       benefits = PromotionBenefit.where(kind: @filters[:benefit_kind])
       scope = scope.where(id: benefits.select(:promotion_id))
     end
-    { product_id: 'product', category_id: 'category', customer_segment: 'customer_segment' }.each do |field, kind|
+    scope = filter_promotion_targets(scope)
+    filter_promotion_segment(scope)
+  end
+
+  def filter_promotion_targets(scope)
+    { product_id: 'product', category_id: 'category' }.each do |field, kind|
       next if @filters[field].blank?
 
-      conditions = PromotionCondition.where(kind:, field => @filters[field])
+      conditions = PromotionCondition.where(kind: [kind, "excluded_#{kind}"], field => @filters[field])
       scope = scope.where(id: conditions.select(:promotion_id))
     end
     scope
+  end
+
+  def filter_promotion_segment(scope)
+    return scope if @filters[:customer_segment].blank?
+
+    segment = "%#{ApplicationRecord.sanitize_sql_like(@filters[:customer_segment].to_s.strip.first(100))}%"
+    conditions = PromotionCondition.where(kind: 'customer_segment').where('customer_segment ILIKE ?', segment)
+    scope.where(id: conditions.select(:promotion_id))
   end
 end

@@ -1,11 +1,16 @@
 /* Promotion screens extend the existing Delta Emerald catalog system. */
 .promotion-workspace { max-width: 1600px; min-width: 0; }
+@media (min-width: 1024px) { .promotion-workspace { padding-inline: 6px; } }
 .promotion-module-icon { display: grid; place-items: center; flex-shrink: 0; width: 54px; height: 54px; border-radius: .75rem; background: var(--brand-light); color: var(--brand-on-white); }
 .promotion-module-icon svg { width: 27px; height: 27px; }
+.promotion-module-heading .promotion-module-icon { margin-top: 5px; }
+.promotion-module-heading .catalog-eyebrow { font-size: 10px; letter-spacing: .14em; margin-bottom: .25rem; }
+.promotion-workspace .promotion-module-heading h1 { font-size: 27px; line-height: 1.25; letter-spacing: -.025em; }
+.promotion-workspace .promotion-module-heading p:not(.catalog-eyebrow) { line-height: 1.6; max-width: none; }
 .promotion-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
 .promotion-metric { display: flex; justify-content: space-between; align-items: center; gap: .75rem; padding: 1.125rem; border: 1px solid #e2e8f0; border-radius: 1rem; background: #fff; min-width: 0; }
-.promotion-metric:hover, .promotion-metric[aria-current="true"] { border-color: var(--brand); }
-.promotion-metric[aria-current="true"] { box-shadow: inset 0 0 0 1px var(--brand); }
+.promotion-metric:hover, .promotion-metric:not([data-campaign-metric="total"])[aria-current="true"] { border-color: var(--brand); }
+.promotion-metric:not([data-campaign-metric="total"])[aria-current="true"] { box-shadow: inset 0 0 0 1px var(--brand); }
 .promotion-metric-label { display: block; font-size: .75rem; font-weight: 600; color: #64748b; overflow-wrap: anywhere; }
 .promotion-metric strong { display: block; margin-top: .375rem; font-family: var(--font-jakarta); font-size: 1.625rem; font-weight: 700; line-height: 1.2; color: #0f172a; font-variant-numeric: tabular-nums; }
 .promotion-metric-icon { display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: .5rem; color: #475569; background: #f1f5f9; }
@@ -41,8 +46,15 @@
 .promotion-help-trigger { display: inline-grid; place-items: center; min-width: 36px; min-height: 36px; color: #64748b; border-radius: 50%; background: transparent; cursor: pointer; }
 .promotion-help-trigger svg { width: 19px; height: 19px; }
 .promotion-help-trigger:hover, .promotion-help-trigger[aria-expanded="true"] { background: var(--brand-light); color: var(--brand-on-white); }
-.promotion-help-panel { position: fixed; z-index: 70; overflow-y: auto; width: min(21rem, calc(100vw - 16px)); border: 1px solid #cbd5e1; border-radius: .875rem; padding: 1rem; background: #fff; box-shadow: 0 12px 30px #0f172a1a; font-size: .8125rem; color: #334155; line-height: 1.55; overflow-wrap: anywhere; text-align: left; }
+.promotion-help-panel { position: fixed; z-index: 110; overflow-y: auto; width: min(21rem, calc(100vw - 16px)); border: 1px solid #a7f3d0; border-radius: .75rem; background: #fff; box-shadow: 0 12px 30px #0f172a1a; font-size: .75rem; color: #475569; line-height: 1.6; overflow-wrap: anywhere; text-align: left; }
 .promotion-help-panel p { color: inherit; font-size: inherit; line-height: inherit; }
+.promotion-help-header { display: flex; gap: .75rem; align-items: center; padding: .75rem 1rem; border-bottom: 1px solid #d1fae5; background: #ecfdf5; color: var(--brand-on-white); }
+.promotion-help-header strong { flex: 1; min-width: 0; font-size: .875rem; color: #064e3b; }
+.promotion-help-close { display: grid; place-items: center; min-width: 28px; height: 28px; border-radius: .5rem; cursor: pointer; }
+.promotion-help-close:hover { background: #d1fae5; }
+.promotion-help-body { padding: 1rem; display: flex; flex-direction: column; gap: .75rem; }
+.promotion-help-panel .promotion-help-eyebrow { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; color: var(--brand-on-white); margin-bottom: .25rem; }
+.promotion-help-example { padding: .5rem .75rem; border-radius: .5rem; border: 1px solid #f1f5f9; background: #f8fafc; }
 .promotion-date { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
 .promotion-date-enhanced { grid-template-columns: minmax(0, 1fr) 44px; gap: .375rem; }
 .promotion-date-enhanced input[type="datetime-local"] { min-width: 0; accent-color: var(--brand); }
@@ -63,8 +75,12 @@
 .promotion-editor-column { display: grid; min-width: 0; gap: 1.25rem; }
 .promotion-status--scheduled { background: #eff6ff; color: #1d4ed8; }
 .promotion-status--paused { background: #fffbeb; color: #92400e; }
-.promotion-status--exhausted, .promotion-status--expired { background: #fff1f2; color: #9f1239; }
+.promotion-status--exhausted { background: #fff7ed; color: #9a3412; }
+.promotion-status--expired { background: #fff1f2; color: #9f1239; }
 .promotion-status-dot { width: .4rem; height: .4rem; border-radius: 50%; background: currentColor; align-self: center; flex-shrink: 0; }
+.promotion-pagination-arrow { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border: 1px solid #cbd5e1; border-radius: .5rem; background: #fff; color: #475569; }
+.promotion-pagination-arrow:not([aria-disabled]):hover { background: var(--brand-light); border-color: var(--brand); color: var(--brand-on-white); }
+.promotion-pagination-arrow[aria-disabled="true"] { border-color: #e2e8f0; color: #94a3b8; cursor: default; }
 @media (max-width: 1279px) {
   .promotion-directory-row td:last-child { grid-column: 1 / -1; }
   .promotion-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -76,6 +92,9 @@
   .promotion-metric strong { font-size: 1.375rem; }
   .promotion-metric-icon { width: 34px; height: 34px; }
   .promotion-module-icon { width: 44px; height: 44px; }
+  .promotion-module-icon svg { width: 23px; height: 23px; }
+  .promotion-workspace .promotion-module-heading h1 { font-size: 24px; }
+  .promotion-module-heading { gap: 11px; }
 }
 @media (max-width: 379px) {
   .promotion-metrics { gap: .5rem; }

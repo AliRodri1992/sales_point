@@ -1,64 +1,52 @@
 <% content_for :title, t('admin.catalog_design.promotions') %>
-<div class="catalog-workspace promotion-workspace">
-  <header class="catalog-header">
+<div class="catalog-workspace promotion-workspace promotion-directory-workspace">
+  <header class="catalog-header promotion-directory-heading">
     <%= render 'module_heading', eyebrow: t('admin.catalog_design.commercial'),
-               title: t('admin.catalog_design.promotions'), intro: campaign_text('index_intro') %>
+               title: t('admin.catalog_design.promotions'), intro: campaign_text('directory.intro') %>
     <% if policy(Promotion).create? %>
       <%= link_to new_admin_promotion_path(campaign_navigation_params), class: 'catalog-button catalog-button-primary' do %>
-        <%= promotion_icon('plus', class: 'size-4') %><%= campaign_text('new') %>
+        <%= promotion_icon('plus', class: 'size-4') %><%= campaign_text('directory.new') %>
       <% end %>
     <% end %>
   </header>
   <%= render 'metrics' %>
   <%= render 'filters' %>
-  <section id="campaign-results" class="catalog-list-directory !overflow-visible" aria-labelledby="campaign-results-title">
-    <header class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-4 py-4 sm:px-5">
-      <div class="flex min-w-0 items-center gap-2">
-        <div>
-          <h2 id="campaign-results-title" class="font-jakarta font-bold"><%= campaign_text('directory_title') %></h2>
-          <p class="text-xs text-slate-600 mt-1"><%= campaign_text('results', count: @total_count) %></p>
+  <section id="campaign-results" class="catalog-list-directory promotion-directory" aria-labelledby="campaign-results-title">
+    <header class="promotion-directory-titlebar">
+      <div class="min-w-0">
+        <div class="promotion-directory-title">
+          <h2 id="campaign-results-title"><%= campaign_text('directory_title') %></h2>
+          <span class="promotion-directory-count" aria-label="<%= campaign_text('results', count: @total_count) %>"><%= number_with_delimiter(@total_count) %></span>
+          <%= render 'section_help', section: 'directory', title: campaign_text('directory_title') %>
         </div>
-        <%= render 'section_help', section: 'directory', title: campaign_text('directory_title') %>
+        <p><%= @total_count.zero? ? campaign_text('directory.no_results') : campaign_text('directory.showing', shown: @records.size, total: @total_count) %></p>
       </div>
-      <% if @records.any? %>
-        <span class="catalog-list-page-count"><%= t('admin.catalog_directory.showing', count: @records.size) %></span>
-      <% end %>
-      <%= form_with url: admin_promotions_path, method: :get, class: 'flex flex-wrap items-center gap-2' do %>
-        <% campaign_filters.except(:sort, :direction).each do |field, value| %><%= hidden_field_tag field, value, id: nil %><% end %>
-        <div class="min-w-0" data-controller="delta-select">
-          <%= label_tag :campaign_sort, campaign_text('sort_label'), class: 'sr-only' %>
-          <%= select_tag :sort, options_for_select(campaign_choices('sort', %w[name code currency starts_at ends_at created_at]), campaign_filters[:sort] || 'name'), id: 'campaign_sort' %>
-        </div>
-        <div class="min-w-0" data-controller="delta-select">
-          <%= label_tag :campaign_direction, campaign_text('order_label'), class: 'sr-only' %>
-          <%= select_tag :direction, options_for_select(campaign_choices('direction', %w[asc desc]), campaign_filters[:direction] || 'asc'), id: 'campaign_direction' %>
-        </div>
-        <%= button_tag name: nil, class: 'catalog-button' do %>
-          <%= promotion_icon('sort', class: 'size-4') %><%= campaign_text('sort_label') %>
-        <% end %>
-      <% end %>
+      <%= render 'directory_sort' %>
     </header>
     <% if @records.any? %>
-      <table class="block w-full text-left xl:table">
-        <thead class="sr-only xl:not-sr-only xl:table-header-group">
-          <tr><% %w[campaign benefit audience validity usage status actions].each do |key| %>
-            <th scope="col" class="px-4 py-3"><%= campaign_text("columns.#{key}") %></th>
+      <table class="promotion-directory-table" role="table">
+        <caption class="sr-only"><%= campaign_text('directory.caption') %></caption>
+        <thead role="rowgroup">
+          <tr role="row"><% %w[campaign benefit audience validity usage status actions].each do |key| %>
+            <th scope="col" role="columnheader"><%= campaign_text("directory.columns.#{key}") %></th>
           <% end %></tr>
         </thead>
-        <tbody class="block divide-y divide-slate-200 xl:table-row-group">
+        <tbody role="rowgroup">
           <% currency_places = campaign_currency_places %>
           <% @records.each do |record| %>
             <%= render 'campaign', record: record, precision: currency_places.fetch(record.currency, 2) %>
           <% end %>
         </tbody>
       </table>
-      <%= render 'admin/shared/catalog_pagination', key: 'promotions', total_pages: @total_pages,
-                 current_page: @current_page, per_page_label: t('admin.products.index.pagination.per_page_label'), frame: '_top' %>
     <% else %>
-      <div class="catalog-card-body text-center">
-        <%= promotion_icon('search', class: 'mx-auto mb-3 size-8 text-[var(--brand-on-white)]') %>
-        <p class="text-sm font-semibold"><%= campaign_text(campaign_filters.slice(*PromotionsHelper::CAMPAIGN_FILTERS).any? ? 'no_matches' : 'empty') %></p>
+      <div class="promotion-directory-empty">
+        <span class="promotion-directory-empty-icon"><%= promotion_icon('search', class: 'size-7') %></span>
+        <h3><%= campaign_text('directory.empty_title') %></h3>
+        <p><%= campaign_text('directory.empty_hint') %></p>
+        <%= link_to campaign_text('directory.clear_filters'), admin_promotions_path(campaign_filters.slice(:sort, :direction, :per_page)), class: 'catalog-button' %>
       </div>
     <% end %>
+    <%= render 'admin/shared/catalog_pagination', key: 'promotions', total_pages: @total_pages,
+               current_page: @current_page, per_page_label: campaign_text('directory.rows_per_page'), frame: '_top' %>
   </section>
 </div>

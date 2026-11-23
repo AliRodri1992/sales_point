@@ -1,0 +1,27 @@
+ko:
+  admin:
+    promotion_campaigns:
+      detail:
+        eyebrow: 프로모션 상세 정보
+        back: 목록으로 돌아가기
+        edit: 프로모션 편집
+        benefit_title: 혜택 및 설정
+        benefit_subtitle: 할인 적용 방식을 정의합니다.
+        benefit_label: 할인 혜택
+        conditions_title: 조건 및 대상
+        conditions_subtitle: 적용 가능한 상품, 카테고리 및 규칙입니다.
+        conditions_label: 조건
+        validity_title: 유효 기간
+        validity_subtitle: 프로모션을 적용할 수 있는 기간입니다.
+        usage_title: 사용 현황 및 한도
+        usage_subtitle: 사용 가능한 혜택 횟수입니다.
+        actions_title: 사용 가능한 작업
+        preview_title: 가격 미리 보기
+        preview_subtitle: 캠페인을 활성화하기 전에 거래를 시뮬레이션합니다.
+        preview_calculate: 가격 계산
+        preview_note: 시뮬레이션은 판매를 기록하거나 프로모션 사용 횟수를 차감하지 않습니다.
+        overlaps_title: 중복 프로모션
+        overlaps_subtitle: 유효 기간이 겹칠 수 있는 다른 프로모션입니다.
+        overlaps_empty: 유효 기간이 겹치는 다른 활성 프로모션이 없습니다.
+        history_title: 변경 이력
+        history_subtitle: 프로모션 변경 및 작업 기록입니다.

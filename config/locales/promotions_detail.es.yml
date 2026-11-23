@@ -1,0 +1,27 @@
+es:
+  admin:
+    promotion_campaigns:
+      detail:
+        eyebrow: Detalle de promoción
+        back: Volver
+        edit: Editar promoción
+        benefit_title: Beneficio y configuración
+        benefit_subtitle: Define cómo se aplica el descuento.
+        benefit_label: Beneficio comercial
+        conditions_title: Condiciones y audiencia
+        conditions_subtitle: Productos, categorías y reglas elegibles.
+        conditions_label: Condiciones
+        validity_title: Vigencia
+        validity_subtitle: Período de aplicación de la promoción.
+        usage_title: Uso y límites
+        usage_subtitle: Disponibilidad de redenciones.
+        actions_title: Acciones disponibles
+        preview_title: Vista previa del precio
+        preview_subtitle: Simula una operación antes de activar la campaña.
+        preview_calculate: Calcular precio
+        preview_note: La simulación no registra una venta ni consume redenciones de la promoción.
+        overlaps_title: Solapamientos
+        overlaps_subtitle: Otras promociones que podrían coincidir en vigencia.
+        overlaps_empty: No se encontraron otras promociones activas con una vigencia coincidente.
+        history_title: Historial
+        history_subtitle: Registro de cambios y acciones de la promoción.

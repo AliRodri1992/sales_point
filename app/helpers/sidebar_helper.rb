@@ -67,9 +67,9 @@ module SidebarHelper
       viewBox: '0 0 24 24',
       fill: 'none',
       stroke: 'currentColor',
-      stroke_width: '1.7',
-      stroke_linecap: 'round',
-      stroke_linejoin: 'round',
+      'stroke-width': '1.7',
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
       class: class_name,
       aria: { hidden: true }
     )

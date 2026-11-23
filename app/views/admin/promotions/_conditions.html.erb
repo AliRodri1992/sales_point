@@ -1,52 +1,32 @@
 <section id="campaign-conditions" class="catalog-card !overflow-visible" aria-labelledby="campaign-conditions-title">
-  <%= render 'section_heading', title: campaign_text('sections.conditions'), subtitle: campaign_text('conditions_hint'),
+  <%= render 'section_heading', title: campaign_text('editor.conditions'), subtitle: campaign_text('editor.conditions_hint'),
              id: 'campaign-conditions-title', icon: 'filter', section: 'conditions' %>
-  <div class="catalog-card-body space-y-5">
-    <% unless @target_lists.nil? %>
-      <div class="catalog-field">
-        <%= form.label :price_list_id, campaign_text('price_list') %>
-        <div class="relative" data-controller="delta-select" data-searchable="true" data-search-placeholder="<%= campaign_text('lookup.lists') %>">
-          <%= form.select :price_list_id, @target_lists.map { |list| ["#{list.code} · #{list.name}", list.id] },
-                          { include_blank: campaign_text('all_lists') },
-                          aria: { invalid: form.object.errors[:price_list].any?, describedby: validation_describedby(form.object, :price_list) } %>
-        </div>
-        <%= error_message_for(form.object, :price_list, label: campaign_text('price_list')) %>
-      </div>
-    <% end %>
-    <div class="grid items-end gap-4 sm:grid-cols-2">
-      <% %w[product category].each do |kind| %>
-        <%= render 'lookup', kind: kind, selected: nil, filter: false %>
-      <% end %>
-    </div>
-    <label class="flex w-fit items-center gap-2 text-sm">
-      <input type="checkbox" data-promotion-editor-target="exclude" class="size-4 accent-[var(--brand-on-white)]">
-      <%= campaign_text('exclude_selections') %>
-    </label>
-    <div class="grid items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
-      <div class="catalog-field">
-        <%= label_tag :campaign_rule, campaign_text('line_rule') %>
-        <div data-controller="delta-select">
-          <%= select_tag :campaign_rule, options_for_select(PromotionsHelper::RULE_FIELDS.keys.map { |kind| [campaign_condition_label(kind), kind] }),
-                         name: nil, data: { promotion_editor_target: 'rule' } %>
-        </div>
-      </div>
-      <button type="button" class="catalog-button" data-action="promotion-editor#addRule" data-promotion-editor-target="addRule">
-        <%= promotion_icon('plus', class: 'size-4') %><%= campaign_text('add_rule') %>
-      </button>
-    </div>
-    <p class="text-sm text-slate-600 empty:hidden" role="status" data-promotion-editor-target="conditionNotice"></p>
+  <div class="catalog-card-body">
     <%= error_message_for(form.object, :promotion_conditions) %>
-    <div class="divide-y divide-slate-100" data-promotion-editor-target="conditions">
+    <div data-promotion-editor-target="conditions">
       <%= form.fields_for :promotion_conditions, include_id: false do |row| %>
         <%= render 'condition_row', form: row %>
       <% end %>
     </div>
-    <% PromotionCondition.kinds.each_key do |kind| %>
-      <template data-condition-template="<%= kind %>">
-        <%= form.fields_for :promotion_conditions, PromotionCondition.new(kind: kind), child_index: 'NEW_RECORD', include_id: false do |row| %>
-          <%= render 'condition_row', form: row %>
-        <% end %>
-      </template>
+    <template data-promotion-editor-target="conditionTemplate">
+      <%= form.fields_for :promotion_conditions, PromotionCondition.new(kind: 'product'), child_index: 'NEW_RECORD', include_id: false do |row| %>
+        <%= render 'condition_row', form: row %>
+      <% end %>
+    </template>
+    <button type="button" class="catalog-button" data-action="promotion-editor#addCondition" data-promotion-editor-target="addCondition">
+      <%= promotion_icon('plus', class: 'size-4') %><%= campaign_text('editor.add_condition') %>
+    </button>
+    <p class="catalog-hint empty:hidden" role="status" data-promotion-editor-target="conditionNotice"></p>
+    <% unless @target_lists.nil? %>
+      <div class="catalog-field mt-4">
+        <%= form.label :price_list_id, campaign_text('editor.price_list') %>
+        <div class="relative" data-controller="delta-select" data-searchable="true" data-search-placeholder="<%= campaign_text('lookup.lists') %>">
+          <%= form.select :price_list_id, @target_lists.map { |list| ["#{list.code} · #{list.name}", list.id] },
+                          { include_blank: campaign_text('editor.all_lists') },
+                          aria: { invalid: form.object.errors[:price_list].any?, describedby: validation_describedby(form.object, :price_list) } %>
+        </div>
+        <%= error_message_for(form.object, :price_list, label: campaign_text('price_list')) %>
+      </div>
     <% end %>
   </div>
 </section>

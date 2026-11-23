@@ -2,7 +2,7 @@
   <% { 'total' => 'tag', 'active' => 'check', 'scheduled' => 'calendar', 'paused' => 'pause' }.each do |state, icon| %>
     <% options = campaign_filters.except(:status) %>
     <% options = options.merge(status: state) unless state == 'total' %>
-    <% selected = state == 'total' ? campaign_filters[:status].blank? : campaign_filters[:status] == state %>
+    <% selected = state != 'total' && campaign_filters[:status] == state %>
     <%= link_to admin_promotions_path(options), class: "promotion-metric promotion-metric--#{state}",
                 data: { campaign_metric: state }, aria: { current: selected ? 'true' : nil } do %>
       <span class="min-w-0">

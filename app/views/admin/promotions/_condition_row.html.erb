@@ -1,20 +1,23 @@
 <% kind = form.object.kind %>
 <% target = PromotionsHelper::TARGET_KINDS[kind] %>
-<div data-campaign-row data-condition-kind="<%= kind %>" class="flex flex-wrap items-end justify-between gap-3 py-3" <%= 'hidden' if form.object.marked_for_destruction? %>>
+<div data-campaign-row data-condition-kind="<%= kind %>" class="promotion-editor-row promotion-condition-row" <%= 'hidden' if form.object.marked_for_destruction? %>>
   <%= form.hidden_field :id if form.object.persisted? %>
   <%= form.hidden_field :_destroy, value: form.object.marked_for_destruction? ? 1 : 0 if form.object.persisted? %>
-  <%= form.hidden_field :kind %>
-  <% if target %>
-    <div class="min-w-0">
-      <p class="catalog-label"><%= campaign_condition_label(kind) %></p>
-      <p class="break-words text-sm" data-selected-label><%= campaign_target_name(form.object, target) || campaign_text('unavailable') %></p>
-      <%= form.hidden_field "#{target}_id", data: { selected_id: true } %>
-      <%= error_message_for(form.object, target, label: campaign_condition_label(kind)) %>
-    </div>
-  <% elsif (field = PromotionsHelper::RULE_FIELDS[kind]) %>
-    <%= catalog_field(form, field, type: field == :customer_segment ? :text_field : :number_field,
-                      label: required_field_label(campaign_condition_label(kind)), **(field == :customer_segment ? { maxlength: 100 } : { step: 'any' })) %>
-  <% end %>
-  <%= error_message_for(form.object, :kind) %>
-  <button type="button" class="catalog-button" data-action="promotion-editor#remove"><%= promotion_icon('x', class: 'size-4') %><%= t('admin.catalog_design.remove') %></button>
+  <div data-controller="delta-select" data-action="change->promotion-editor#changeCondition">
+    <%= catalog_select(form, :kind, campaign_choices('editor.condition_kinds', %w[product category excluded_product excluded_category min_quantity min_subtotal customer_segment]), label: campaign_text('editor.condition_kind'), include_blank: false) %>
+  </div>
+  <div class="promotion-condition-value">
+    <% %i[product category].each do |relation| %>
+      <div data-condition-value="<%= relation %>" <%= 'hidden' unless target == relation %>>
+        <%= render 'condition_target', form: form, relation: relation %>
+      </div>
+    <% end %>
+    <% PromotionsHelper::RULE_FIELDS.each do |rule_kind, field| %>
+      <div data-condition-value="<%= rule_kind %>" <%= 'hidden' unless kind == rule_kind %>>
+        <%= catalog_field(form, field, type: field == :customer_segment ? :text_field : :number_field,
+                          label: required_field_label(t('admin.catalog_design.value')), **(field == :customer_segment ? { maxlength: 100 } : { step: 'any' })) %>
+      </div>
+    <% end %>
+  </div>
+  <button type="button" class="promotion-editor-remove" data-action="promotion-editor#remove" aria-label="<%= campaign_text('editor.remove_condition') %>"><%= promotion_icon('x', class: 'size-4') %></button>
 </div>

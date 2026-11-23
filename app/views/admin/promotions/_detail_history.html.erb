@@ -1,0 +1,20 @@
+<section class="catalog-card !overflow-visible" aria-labelledby="campaign-history-title">
+  <%= render 'section_heading', title: campaign_text('detail.history_title'), subtitle: campaign_text('detail.history_subtitle'),
+             icon: 'clock', id: 'campaign-history-title', section: 'history' %>
+  <div class="catalog-card-body">
+    <% if entries.any? %>
+      <ol class="promotion-detail-history divide-y divide-slate-100">
+        <% entries.each do |entry| %>
+          <li class="flex flex-wrap justify-between gap-2 py-3 text-sm">
+            <div><strong><%= campaign_text("events.#{entry.event.split('.').last}", default: campaign_text('updated')) %></strong>
+              <% if entry.actor %><p class="catalog-hint"><%= entry.actor.display_name %></p><% end %>
+            </div>
+            <time datetime="<%= entry.created_at.iso8601 %>" class="text-xs text-slate-600"><%= campaign_date(entry.created_at, format: :long) %></time>
+          </li>
+        <% end %>
+      </ol>
+    <% else %>
+      <p class="text-sm text-slate-600"><%= campaign_text('no_history') %></p>
+    <% end %>
+  </div>
+</section>

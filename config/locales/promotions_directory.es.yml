@@ -1,0 +1,39 @@
+{
+  "es": {
+    "admin": {
+      "promotion_campaigns": {
+        "directory": {
+          "intro": "Administra campañas, define beneficios y controla su vigencia y redenciones.",
+          "new": "Nueva promoción",
+          "search_label": "Buscar promoción",
+          "search_placeholder": "Nombre o código de promoción...",
+          "segment_placeholder": "Ej. Mayoreo",
+          "showing": "Mostrando %{shown} de %{total} promociones",
+          "no_results": "Sin coincidencias",
+          "caption": "Directorio de promociones y descuentos",
+          "empty_title": "No se encontraron promociones",
+          "empty_hint": "Prueba con otra búsqueda o limpia los filtros aplicados.",
+          "clear_filters": "Limpiar filtros",
+          "clear_all": "Limpiar todo",
+          "rows_per_page": "Filas por página",
+          "sort_label": "Ordenar por",
+          "change_order": "Cambiar orden",
+          "order": { "asc": "Orden ascendente", "desc": "Orden descendente" },
+          "sort": { "name": "Nombre", "code": "Código", "currency": "Moneda", "starts_at": "Fecha de inicio", "ends_at": "Fecha de fin", "created_at": "Fecha de creación" },
+          "columns": { "campaign": "Promoción", "benefit": "Beneficio", "audience": "Audiencia", "validity": "Vigencia", "usage": "Uso", "status": "Estado", "actions": "Acciones" },
+          "filter_labels": { "benefit_kind": "Tipo de beneficio", "validity": "Vigencia", "usage": "Disponibilidad de usos" },
+          "choices": {
+            "benefit_kind": { "percentage": "Porcentaje", "fixed_amount": "Importe fijo" },
+            "validity": { "current": "Vigente", "upcoming": "Próxima", "ended": "Finalizada" },
+            "usage": { "available": "Disponible", "exhausted": "Agotada" }
+          },
+          "all": { "currency": "Todas las monedas", "benefit_kind": "Todos los beneficios", "validity": "Cualquier vigencia", "usage": "Todos", "product": "Todos los productos", "category": "Todas las categorías" },
+          "chips": { "search": "Búsqueda", "status": "Estado", "currency": "Moneda", "benefit_kind": "Beneficio", "validity": "Vigencia", "usage": "Uso", "customer_segment": "Segmento", "product_id": "Producto", "category_id": "Categoría" },
+          "dates": { "starts_at": "Desde", "ends_at": "Hasta" },
+          "edit_unavailable": "No se puede editar en este estado",
+          "archive_unavailable": "Promoción archivada"
+        }
+      }
+    }
+  }
+}

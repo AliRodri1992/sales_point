@@ -20,7 +20,7 @@
         },
         "row_actions": {
           "show": "Mostrar",
-          "delete": "Eliminar (archivar)"
+          "delete": "Eliminar"
         },
         "calendar": {
           "open": "Abrir calendario",
@@ -35,7 +35,7 @@
           "close": "Cerrar ayuda",
           "how_to": "Cómo se usa",
           "status": { "purpose": "La activación se realiza desde el detalle.", "usage": "Las promociones nuevas se guardan como borrador. Consulta el detalle para gestionar las transiciones disponibles." },
-          "filters": { "purpose": "Localiza campañas mediante su nombre, código, estado y condiciones.", "usage": "Elige los filtros, pulsa Aplicar filtros y retira los filtros individuales cuando quieras ampliar la búsqueda." },
+          "filters": { "purpose": "Localiza promociones mediante su nombre, código, estado y condiciones.", "usage": "Escribe el nombre o código, selecciona un estado y abre los filtros avanzados si los necesitas. Pulsa Buscar para aplicar los criterios." },
           "directory": { "purpose": "Consulta las promociones, su vigencia y el uso registrado.", "usage": "Usa las acciones para mostrar, editar o archivar según tus permisos. Archivar conserva el historial." },
           "general": { "purpose": "Identifica la campaña y define la moneda de sus descuentos.", "usage": "Escribe un nombre reconocible. Al guardar se asigna el código automáticamente." },
           "benefit": { "purpose": "Define cuánto se descuenta y cómo se prioriza la promoción.", "usage": "Añade un porcentaje o importe fijo. Configura un tope por línea o prioridad si lo necesitas." },
@@ -64,7 +64,7 @@
           "draft": "Borrador",
           "scheduled": "Programada",
           "active": "Activa",
-          "paused": "En pausa",
+          "paused": "Pausada",
           "exhausted": "Agotada",
           "expired": "Vencida",
           "archived": "Archivada"
@@ -75,8 +75,8 @@
           "one": "%{count} uso",
           "other": "%{count} usos"
         },
-        "all_customers": "Toda la clientela",
-        "open_period": "Sin límite de fechas",
+        "all_customers": "Todos los clientes",
+        "open_period": "Sin vigencia definida",
         "no_benefit": "Sin beneficio configurado",
         "applied_filters": "Filtros aplicados",
         "remove_filter": "Quitar filtro de %{field}, %{value}",
