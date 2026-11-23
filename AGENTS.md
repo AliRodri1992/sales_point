@@ -67,3 +67,11 @@ El hook de Overcommit se instala con `bundle exec overcommit --install` y se fir
 - Todas las pantallas deben respetar la identidad visual **Delta Emerald**, verificando primero los tokens, tipografías, componentes y patrones existentes del repositorio. No inventar ni reemplazar su paleta.
 - Diseño profesional, actual, elegante, sobrio, consistente, responsive y accesible; contemplar estados de carga, vacío, error, éxito, hover, foco y deshabilitado.
 - Iconografía original mediante código SVG inline en HTML/ERB; sin Lucide ni otras librerías de iconos.
+
+## Contrato de activación y revisión de skills
+- Este archivo es la fuente normativa de reglas transversales. Las skills especializadas deben referenciarlo y evitar copiar reglas globales; ante contradicciones prevalece `AGENTS.md`.
+- Seleccionar únicamente las skills pertinentes según superficie modificada, dependencias y riesgo, utilizando `docs/architecture/agent-workflows.md`.
+- Antes de editar, identificar rama y SHA, alcance modular, rutas, acciones, permisos, modelos, vistas, traducciones, pruebas y componentes existentes.
+- En rediseños, comparar antes/después los campos, acciones, catálogos, estados, ayudas, accesibilidad y comportamiento responsive. Ninguna mejora visual autoriza eliminar funcionalidad.
+- Para entregar, revisar diff, secretos, autorizaciones, traducciones y pruebas; vincular evidencia al SHA y distinguir implementado, verificado y cerrado.
+- Si no hay ejecución real de navegador, Docker o CI, declarar explícitamente las verificaciones pendientes.
