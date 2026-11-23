@@ -88,7 +88,7 @@ RSpec.describe 'Admin sidebar', type: :request do
     expect(sidebar.at_css('svg[data-sidebar-icon="commercial"]')).to be_nil
   end
 
-  it 'opens an independent Commercial group and exposes only its authorized link' do
+  it 'renders Commercial as a standalone section with only its authorized direct link' do
     %w[price_lists.access price_lists.index].each do |code|
       permission = create(:permission, code:)
       create(:system_role_permission, system_role: role, permission:)
@@ -98,10 +98,14 @@ RSpec.describe 'Admin sidebar', type: :request do
 
     expect(response).to have_http_status(:ok)
     sidebar = Nokogiri::HTML(response.body).at_css('#adminSidebar')
-    group = sidebar.at_css('svg[data-sidebar-icon="commercial"]').ancestors('details').first
-    expect(group.has_attribute?('open')).to be(true)
+    group = sidebar.at_css('#sidebarCommercial')
+    expect(group).to be_present
     expect(group['data-section-active']).to eq('true')
-    expect(group.at_css('summary')['aria-label']).to be_present
+    expect(group.at_css('#sidebarCommercialLabel').text.strip).to eq(
+      I18n.t('admin.shared.sidebar.commercial')
+    )
+    expect(group.at_css('[role="group"]')['aria-labelledby']).to eq('sidebarCommercialLabel')
+    expect(group.at_css('summary, details, .sidebar-submenu')).to be_nil
     expect(group.at_css("a[href='#{admin_price_lists_path}']")['aria-current']).to eq('page')
     expect(group.at_css("a[href='#{admin_promotions_path}']")).to be_nil
     expect(group.at_css("a[href='#{admin_products_path}']")).to be_nil
@@ -118,9 +122,16 @@ RSpec.describe 'Admin sidebar', type: :request do
       expect(response).to have_http_status(:ok)
       sidebar = Nokogiri::HTML(response.body).at_css('#adminSidebar')
       expect(sidebar.css('nav a[aria-current="page"]').pluck('href')).to eq([path])
-      expect(sidebar.css('nav details[data-section-active="true"] > .sidebar-submenu a[aria-current="page"]')
-                    .pluck('href')).to eq([path])
-      expect(sidebar.css('nav details[data-section-active="true"]').size).to eq(1)
+
+      if path == admin_products_path
+        expect(sidebar.css('nav details[data-section-active="true"] > .sidebar-submenu a[aria-current="page"]')
+                      .pluck('href')).to eq([path])
+        expect(sidebar.at_css('#sidebarCommercial')['data-section-active']).to eq('false')
+      else
+        expect(sidebar.at_css('#sidebarCommercial')['data-section-active']).to eq('true')
+        expect(sidebar.at_css("#sidebarCommercial a[aria-current='page']")['href']).to eq(path)
+        expect(sidebar.css('nav details[data-section-active="true"]')).to be_empty
+      end
     end
   end
 

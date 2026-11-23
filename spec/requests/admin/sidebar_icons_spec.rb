@@ -21,7 +21,7 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
 
     names = %w[
       purchase-orders accounts-payable cash-register
-      demo-requests suppliers commercial price-lists promotions
+      demo-requests suppliers price-lists promotions
     ]
     names.each do |name|
       svg = sidebar.at_css("svg[data-sidebar-icon='#{name}']")
@@ -54,7 +54,7 @@ RSpec.describe 'Admin sidebar navigation icons', type: :request do
     expect(sidebar.at_css('#adminSidebarNavigationLabel').text).to eq(
       I18n.t('admin.shared.sidebar.navigation', locale: :en)
     )
-    expect(sidebar.css('.sidebar-catalog > summary[aria-label]').length).to eq(3)
+    expect(sidebar.css('.sidebar-catalog > summary[aria-label]').length).to eq(2)
     expect(sidebar.at_css("a[href='#{admin_suppliers_path}']")['aria-current']).to eq('false')
     expect(sidebar.to_html).not_to include('data-tooltip="Low stock">8')
   end
