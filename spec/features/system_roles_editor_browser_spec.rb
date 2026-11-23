@@ -109,6 +109,36 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     expect(page).to have_button('Save permissions', disabled: true)
   end
 
+  scenario 'requires confirmation before discarding pending permissions' do
+    visit system_role_path(role)
+    check "permission_#{view_permission.id}"
+    click_button 'Discard changes'
+
+    within 'dialog[open]' do
+      expect(page).to have_text('Discard unsaved changes')
+      click_button 'Keep changes'
+    end
+    expect(page).to have_checked_field("permission_#{view_permission.id}")
+    click_button 'Discard changes'
+    within('dialog[open]') { click_button 'Discard changes' }
+    expect(page).to have_unchecked_field("permission_#{view_permission.id}")
+    expect(role.permissions.reload).to be_empty
+  end
+
+  scenario 'protects unsaved permission changes when returning to the role list' do
+    visit system_role_path(role)
+    check "permission_#{view_permission.id}"
+    click_link 'Back to roles'
+
+    within('dialog[open]') { click_button 'Keep changes' }
+    expect(page).to have_current_path(system_role_path(role))
+    expect(page).to have_checked_field("permission_#{view_permission.id}")
+    click_link 'Back to roles'
+    within('dialog[open]') { click_button 'Discard changes' }
+    expect(page).to have_current_path(system_roles_path)
+    expect(role.permissions.reload).to be_empty
+  end
+
   scenario 'reviews permission differences before persisting them to the authorized history' do
     create(:system_role_permission, system_role: role, permission: view_permission)
     visit system_role_path(role)

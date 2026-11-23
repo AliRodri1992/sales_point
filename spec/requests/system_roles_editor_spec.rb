@@ -42,6 +42,28 @@ RSpec.describe 'System role editor', type: :request do
     expect(group.at_css("#permission_#{permission.id}")).to be_present
   end
 
+  it 'renders resource actions in a real matrix with independent special actions' do
+    special = create(:permission, code: 'suppliers.contacts.set_primary', module_name: 'Proveedores')
+    get system_role_path(role)
+
+    matrix = document.at_css('table[data-permission-matrix]')
+    expect(matrix).to be_present
+    expect(matrix.css('thead th').map(&:text)).to include('Resource', 'Create')
+    expect(matrix.at_css("tbody tr #permission_#{permission.id}")).to be_present
+    expect(document.at_css("[data-permission-special-actions] #permission_#{special.id}")).to be_present
+    expect(document.css("#permission_#{permission.id}").size).to eq(1)
+  end
+
+  it 'integrates the identity and the authorized history into the permissions workspace' do
+    get system_role_path(role)
+
+    editor = document.at_css('[data-permission-workspace]')
+    expect(editor.at_css('#role-identity-title').text).to eq('Operations')
+    expect(editor.at_css('[role="tab"][aria-controls="role-permissions-panel"]')).to be_present
+    expect(editor.at_css('[role="tab"][aria-controls="role-history-panel"]')).to be_present
+    expect(editor.at_css('#role-history-panel #permission-history')).to be_present
+  end
+
   it 'updates role details and permissions together without changing its type or code' do
     patch system_role_path(role), params: {
       system_role: { name: 'New operations', description: 'Updated',
