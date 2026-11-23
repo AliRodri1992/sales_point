@@ -456,15 +456,19 @@ document.addEventListener("turbo:load", () => {
         }
 
         if (wasOpen) {
-            // Allow the native click and inert changes to settle, but never
-            // jump back to the toggle after the user has focused another control.
-            requestAnimationFrame(() => {
+            // A pointer click can blur the former close button *after* the
+            // synchronous restore. Recheck after native click handling and
+            // after the next paint, without stealing a later intentional focus.
+            const restoreFocusIfLost = () => {
                 if (listeners.signal.aborted || sidebar.classList.contains("sidebar-open")) return
                 const focused = document.activeElement
                 if (focused === document.body || focused === document.documentElement || sidebar.contains(focused)) {
                     sidebarToggle?.focus({ preventScroll: true })
                 }
-            })
+            }
+            queueMicrotask(restoreFocusIfLost)
+            requestAnimationFrame(restoreFocusIfLost)
+            window.setTimeout(restoreFocusIfLost, 60)
         }
     }
 
