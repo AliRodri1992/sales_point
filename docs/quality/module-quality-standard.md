@@ -104,3 +104,16 @@ Este estándar complementa `AGENTS.md`, el [checklist de Pull Request](../../.gi
 - **Puerta visual real:** inspeccionar el resultado renderizado antes/después, incluyendo móvil, escritorio, teclado y estados de validación; adjuntar capturas cuando haya acceso. La lectura del ERB/CSS no acredita por sí sola estética, contraste renderizado ni WCAG completo. Registrar **NO PROBADO** cuando falte acceso al navegador.
 
 El criterio de diseño no sustituye ninguna puerta de seguridad o funcionalidad. Para un cambio visual, además de los tests, verificar coherencia con la biblioteca de componentes existente; documentar el motivo de cualquier excepción.
+
+## Anexo: matriz de preservación para rediseños
+Antes de modificar una pantalla, documentar en el expediente del módulo:
+
+| Dimensión | Antes | Después | Evidencia |
+|---|---|---|---|
+| Campos, tipos y catálogos | Inventario de vistas, modelo y origen real | Sin pérdidas no autorizadas | Vistas/modelo/base de datos |
+| Acciones y permisos | Acciones por rol y estado | Contratos conservados | Policies y requests |
+| Validaciones y mensajes | Reglas de servidor y cliente | Equivalentes o cambios justificados | Specs y traducciones |
+| Navegación, filtros y paginación | Parámetros y estados persistidos | Comportamiento conservado | Specs de sistema |
+| UI y accesibilidad | Ayudas, modales, foco y responsive | Estados y teclado comprobados | Capturas y ejecución real |
+
+No copiar reglas de negocio entre módulos por similitud visual. Los catálogos (incluidas monedas) deben proceder de la fuente real configurada. Un inventario estático no acredita una prueba de navegador.
