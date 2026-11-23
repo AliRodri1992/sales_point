@@ -53,8 +53,8 @@
   .promotion-form .promotion-editor-row { gap:.5rem; padding:.625rem; }
 }
 
-/* Condition and value controls belong directly to the section, without an inner box. */
-.promotion-form .promotion-condition-row {
+/* Benefit and condition controls sit directly in their sections, without inner boxes. */
+.promotion-form :is(.promotion-condition-row, .promotion-benefit-row) {
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -62,17 +62,46 @@
   padding: 0;
   margin-bottom: 12px;
 }
-.promotion-form .promotion-condition-row .promotion-editor-remove {
+.promotion-form :is(.promotion-condition-row, .promotion-benefit-row) .promotion-editor-remove {
   border: 0;
   background: transparent;
 }
-.promotion-form .promotion-condition-row .promotion-editor-remove:hover {
+.promotion-form :is(.promotion-condition-row, .promotion-benefit-row) .promotion-editor-remove:hover {
   background: #f1f5f9;
 }
-.promotion-form .promotion-condition-row .promotion-editor-remove:focus-visible {
+.promotion-form :is(.promotion-condition-row, .promotion-benefit-row) .promotion-editor-remove:focus-visible {
   outline: 2px solid #059669;
   outline-offset: 2px;
 }
+
+/* Product/category lookup options float above subsequent rows instead of enlarging
+   the condition row. The parent card deliberately allows visible overflow. */
+.promotion-form .promotion-condition-row:focus-within {
+  position: relative;
+  z-index: 30;
+}
+.promotion-form .promotion-condition-row [data-controller="promotion-lookup"] {
+  position: relative;
+  min-width: 0;
+}
+.promotion-form .promotion-condition-row [data-promotion-lookup-target="results"] {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + .375rem);
+  inset-inline: 0;
+  width: 100%;
+  max-height: min(13rem, 40vh);
+  margin-top: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  box-shadow: 0 12px 28px #0f172a1a;
+}
+.promotion-form .promotion-condition-row [data-promotion-lookup-target="results"] [role="option"] {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 /* Use the editor's actual space, including a partially minimized desktop window. */
 @container promotion-editor (max-width: 740px) {
   .promotion-editor-workspace > .catalog-header {

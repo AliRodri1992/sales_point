@@ -23,7 +23,7 @@
     <%= delta_icon("chevron-down", class: "promotion-lookup-chevron") %>
   </div>
   <%= form.hidden_field "#{relation}_id", data: { promotion_lookup_target: 'selection' } %>
-  <p class="catalog-hint empty:hidden" role="status" data-promotion-lookup-target="status"></p>
+  <p class="sr-only" role="status" data-promotion-lookup-target="status"></p>
   <ul id="<%= field_id %>-results" role="listbox" aria-label="<%= label %>" hidden
       class="mt-2 max-h-52 overflow-y-auto rounded-lg border border-slate-200 bg-white"
       data-promotion-lookup-target="results"

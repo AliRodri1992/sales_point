@@ -67,6 +67,53 @@ RSpec.describe 'Promotion campaigns', type: :feature, js: true do
     expect(page).to have_button('Pause')
   end
 
+  scenario 'keeps product search results floating and uses borderless benefit rows on small screens' do
+    8.times { |index| create(:product, organization:, name: format('Lookup sample %02d', index)) }
+    visit new_admin_promotion_path
+    page.current_window.resize_to(390, 900)
+
+    benefit = find('.promotion-benefit-row')
+    expect(page.evaluate_script(
+      "getComputedStyle(document.querySelector('.promotion-benefit-row')).borderTopWidth"
+    )).to eq('0px')
+    expect(page.evaluate_script(
+      "getComputedStyle(document.querySelector('.promotion-benefit-row')).paddingTop"
+    )).to eq('0px')
+    expect(page.evaluate_script(
+      "getComputedStyle(document.querySelector('.promotion-benefit-row .promotion-editor-remove')).borderTopWidth"
+    )).to eq('0px')
+
+    click_button 'Add condition'
+    condition = find('.promotion-condition-row')
+    initial_height = condition.native.rect.height
+    within(condition) { find('input[type="search"]').set('Lookup sample') }
+    within(condition) { expect(page).to have_css('ul[role="listbox"]:not([hidden]) button', minimum: 8) }
+
+    measurements = page.evaluate_script(<<~JS)
+      (() => {
+        const row = document.querySelector('.promotion-condition-row')
+        const list = row.querySelector('[data-promotion-lookup-target="results"]')
+        const lookup = row.querySelector('[data-controller="promotion-lookup"]')
+        return {
+          position: getComputedStyle(list).position,
+          height: row.getBoundingClientRect().height,
+          dropdownHeight: list.getBoundingClientRect().height,
+          dropdownWidth: list.getBoundingClientRect().width,
+          fieldWidth: lookup.getBoundingClientRect().width,
+          scrollable: list.scrollHeight > list.clientHeight
+        }
+      })()
+    JS
+    expect(measurements['position']).to eq('absolute')
+    expect(measurements['height']).to be_within(2).of(initial_height)
+    expect(measurements['dropdownHeight']).to be <= 208
+    expect(measurements['dropdownWidth']).to be_within(2).of(measurements['fieldWidth'])
+    expect(measurements['scrollable']).to be(true)
+    within(condition) { find('ul[role="listbox"] button', text: 'Lookup sample 00').click }
+    expect(condition.find('input[type="search"]').value).to eq('Lookup sample 00')
+    expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth')).to be(true)
+  end
+
   scenario 'filters by a selected product and retains the applied selection on reload' do
     product = create(:product, organization:, name: 'Cedar soap')
     campaign = organization.promotions.create!(name: 'Soap offer', currency: 'MXN')
