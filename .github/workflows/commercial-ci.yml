@@ -31,6 +31,13 @@ on:
       - 'app/helpers/commercial_breadcrumbs_helper.rb'
       - 'app/helpers/price_lists_helper.rb'
       - 'app/helpers/promotions_helper.rb'
+      - 'app/helpers/application_helper.rb'
+      - 'app/javascript/admin/dashboard.js'
+      - 'app/javascript/admin/sidebar.js'
+      - 'app/views/admin/shared/_sidebar.html.erb'
+      - 'spec/requests/admin/sidebar_spec.rb'
+      - 'spec/features/admin_sidebar_navigation_spec.rb'
+      - 'spec/features/admin_sidebar_interactions_spec.rb'
       - 'config/locales/commercial_*'
       - 'config/locales/price_lists.*.yml'
       - 'config/locales/promotions.*.yml'
@@ -129,4 +136,4 @@ jobs:
         run: |
           bundle exec rspec spec/features/price_lists_workspace_browser_spec.rb \
             spec/features/promotion_campaigns_browser_spec.rb spec/features/commercial_preview_browser_spec.rb \
-            spec/features/admin_sidebar_navigation_spec.rb
+            spec/features/admin_sidebar_navigation_spec.rb spec/features/admin_sidebar_interactions_spec.rb

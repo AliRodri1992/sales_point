@@ -107,6 +107,23 @@ RSpec.describe 'Admin sidebar', type: :request do
     expect(group.at_css("a[href='#{admin_products_path}']")).to be_nil
   end
 
+  it 'highlights only the current catalog or commercial destination' do
+    %w[price_lists.access price_lists.index promotions.access promotions.index].each do |code|
+      permission = create(:permission, code:)
+      create(:system_role_permission, system_role: role, permission:)
+    end
+
+    [admin_products_path, admin_price_lists_path, admin_promotions_path].each do |path|
+      get path
+      expect(response).to have_http_status(:ok)
+      sidebar = Nokogiri::HTML(response.body).at_css('#adminSidebar')
+      expect(sidebar.css('nav a[aria-current="page"]').pluck('href')).to eq([path])
+      expect(sidebar.css('nav details[data-section-active="true"] > .sidebar-submenu a[aria-current="page"]')
+                    .pluck('href')).to eq([path])
+      expect(sidebar.css('nav details[data-section-active="true"]').size).to eq(1)
+    end
+  end
+
   it 'keeps commercial references contextual on the product detail' do
     %w[products.show price_lists.access price_lists.index promotions.access promotions.index].each do |code|
       permission = create(:permission, code:)

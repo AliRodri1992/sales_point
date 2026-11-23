@@ -44,7 +44,7 @@ module ApplicationHelper
   end
 
   SIDEBAR_CONTROLLER_GROUPS = {
-    'products' => %w[price_lists promotions price_change_events product_images],
+    'products' => %w[price_change_events product_images],
     'suppliers' => %w[supplier_addresses supplier_contacts supplier_schedules supplier_documents
                       supplier_bank_accounts supplier_offers supplier_fiscal_information supplier_commercial_data],
     'purchase_orders' => %w[goods_receipts purchase_requests purchase_quotations],

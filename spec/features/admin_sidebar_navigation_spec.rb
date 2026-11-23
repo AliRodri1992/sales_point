@@ -56,6 +56,34 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     expect(page).not_to have_css('#adminSidebar.sidebar-open')
     expect(page).not_to have_css('[inert]')
     expect(find('#sidebarToggle')['aria-expanded']).to eq('false')
+    expect_sidebar_toggle_focused
+  end
+
+  scenario 'moves focus before hiding or disabling either region of the mobile drawer' do
+    page.driver.browser.manage.window.resize_to(375, 812)
+    visit admin_dashboard_path
+    expect(page).to have_css('#sidebarToggle[data-sidebar-ready="true"]')
+    page.execute_script(<<~JS)
+      window.sidebarFocusTransfers = []
+      document.addEventListener('focusin', event => {
+        const drawer = document.getElementById('adminSidebar')
+        if (!drawer.classList.contains('sidebar-open')) return
+        if (['sidebarToggle', 'sidebarCloseButton'].includes(event.target.id)) {
+          window.sidebarFocusTransfers.push([event.target.id, drawer.inert,
+            document.getElementById('adminDashboardContent').inert])
+        }
+      })
+    JS
+
+    find('#sidebarToggle').click
+    expect(page).to have_css('#sidebarCloseButton:focus')
+    find('#sidebarCloseButton').click
+    expect_sidebar_toggle_focused
+    expect(page.evaluate_script('window.sidebarFocusTransfers')).to eq([
+      ['sidebarCloseButton', false, false], ['sidebarToggle', false, false]
+    ])
+    expect(page).to have_css('#adminSidebar[inert]', visible: :all)
+    expect(page).to have_no_css('#adminDashboardContent[inert]', visible: :all)
   end
 
   def horizontal_center(selector)
@@ -149,6 +177,22 @@ RSpec.describe 'Admin sidebar responsive navigation', type: :feature, js: true d
     end
     expect(page).to have_no_css('#adminSidebarFlyout')
     expect(page).to have_css('#sidebarCommercial > summary:focus')
+  end
+
+  scenario 'keeps Products, Price lists and Promotions mutually exclusive during Turbo navigation' do
+    visit admin_products_path
+    expect(page).to have_css("#adminSidebar nav a[href='#{admin_products_path}'][aria-current='page']")
+    find('#sidebarCommercial > summary').click
+    within('#sidebarCommercial') { click_link 'Price lists' }
+    expect(page).to have_current_path(admin_price_lists_path)
+    expect(page).to have_css('#adminSidebar nav a[aria-current="page"]', count: 1)
+    expect(page).to have_css("#adminSidebar nav a[href='#{admin_price_lists_path}'][aria-current='page']")
+    expect(page).to have_no_css("#adminSidebar nav a[href='#{admin_products_path}'][aria-current='page']",
+                                visible: :all)
+    within('#sidebarCommercial') { click_link 'Promotions' }
+    expect(page).to have_current_path(admin_promotions_path)
+    expect(page).to have_css('#adminSidebar nav a[aria-current="page"]', count: 1)
+    expect(page).to have_css("#adminSidebar nav a[href='#{admin_promotions_path}'][aria-current='page']")
   end
 
   scenario 'keeps the sidebar drawer within the viewport across mobile and tablet sizes' do

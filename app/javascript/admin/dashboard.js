@@ -424,9 +424,10 @@ document.addEventListener("turbo:load", () => {
         sidebar.setAttribute("role", "dialog")
         sidebar.setAttribute("aria-modal", "true")
         sidebarToggle?.setAttribute("aria-expanded", "true")
+        // Transfer focus before the background's focused trigger becomes inert.
+        sidebarCloseButton?.focus({ preventScroll: true })
         sidebarContent?.setAttribute("inert", "")
         document.body.classList.add("sidebar-drawer-open")
-        sidebarCloseButton?.focus()
 
         if (sidebarOverlay) {
             sidebarOverlay.classList.add("is-visible")
@@ -438,15 +439,14 @@ document.addEventListener("turbo:load", () => {
         if (!sidebar) return
 
         const wasOpen = sidebar.classList.contains("sidebar-open")
-        sidebar.classList.remove("sidebar-open")
-        // Release the main region and restore keyboard focus before making
-        // the drawer inert. Otherwise Chrome may drop focus to BODY when the
-        // currently focused close button becomes inert.
         sidebarContent?.removeAttribute("inert")
-        if (wasOpen && window.innerWidth < 1024) document.getElementById("sidebarToggle")?.focus({ preventScroll: true })
-        if (window.innerWidth < 1024) sidebar.setAttribute("inert", "")
         sidebar.removeAttribute("role")
         sidebar.removeAttribute("aria-modal")
+        // Both regions must remain focusable until focus leaves the drawer.
+        // Hiding the focused close button first causes a native blur to BODY.
+        if (wasOpen) sidebarToggle?.focus({ preventScroll: true })
+        sidebar.classList.remove("sidebar-open")
+        if (window.innerWidth < 1024) sidebar.setAttribute("inert", "")
         sidebarToggle?.setAttribute("aria-expanded", "false")
         document.body.classList.remove("sidebar-drawer-open")
 
@@ -455,31 +455,16 @@ document.addEventListener("turbo:load", () => {
             sidebarOverlay.setAttribute("aria-hidden", "true")
         }
 
-        if (wasOpen && window.innerWidth < 1024) {
-            document.getElementById("sidebarToggle")?.focus({ preventScroll: true })
-            // Restore focus after the click default action has settled.
-            requestAnimationFrame(() => document.getElementById("sidebarToggle")?.focus({ preventScroll: true }))
-            // When the translated drawer completes its CSS transition, Chrome
-            // can blur the now offscreen close button; recover only if focus
-            // was lost, without stealing it from an intentional next action.
-            const recoverFocusIfLost = () => {
-                if (!sidebar.isConnected || sidebar.classList.contains("sidebar-open") ||
-                    window.innerWidth >= 1024) return
+        if (wasOpen) {
+            // Allow the native click and inert changes to settle, but never
+            // jump back to the toggle after the user has focused another control.
+            requestAnimationFrame(() => {
+                if (listeners.signal.aborted || sidebar.classList.contains("sidebar-open")) return
                 const focused = document.activeElement
-                const focusLost = !focused ||
-                    focused === document.body ||
-                    focused === document.documentElement ||
-                    !focused.isConnected ||
-                    sidebar.contains(focused) ||
-                    sidebarOverlay?.contains(focused)
-                if (focusLost) document.getElementById("sidebarToggle")?.focus({ preventScroll: true })
-            }
-            // Deferring restoration across the CSS transform keeps focus
-            // out of BODY even if Chrome blurs the removed, inert close button
-            // during a busy Turbo navigation. Never override a user's focus.
-            for (const delay of [0, 100, 350, 700, 1500, 3000]) {
-                setTimeout(recoverFocusIfLost, delay)
-            }
+                if (focused === document.body || focused === document.documentElement || sidebar.contains(focused)) {
+                    sidebarToggle?.focus({ preventScroll: true })
+                }
+            })
         }
     }
 
@@ -619,11 +604,6 @@ document.addEventListener("turbo:load", () => {
             event.preventDefault()
             event.stopPropagation()
             closeMobileSidebar()
-            queueMicrotask(() => {
-                if (!sidebar?.classList.contains("sidebar-open") && window.innerWidth < 1024) {
-                    document.getElementById("sidebarToggle")?.focus({ preventScroll: true })
-                }
-            })
         })
     }
 
@@ -1077,22 +1057,4 @@ document.addEventListener("turbo:load", () => {
         }
     )
 
-    /*
-     * ============================================================
-     * Responsive Sidebar
-     * ============================================================
-     */
-
-    onWindow(
-        "resize",
-        () => {
-            if (!sidebar) return
-
-            if (window.innerWidth >= 1024) {
-                closeMobileSidebar()
-                sidebarToggle?.setAttribute("aria-expanded",
-                    String(!sidebar.classList.contains("sidebar-collapsed")))
-            }
-        }
-    )
 })

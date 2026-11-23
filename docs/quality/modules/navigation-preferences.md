@@ -37,6 +37,8 @@ No se han trasladado ni inventado hallazgos en esta apertura. **Esto no signific
 | ID | Prioridad | Clase | Evidencia/causa raíz | Prueba | Estado |
 |---|---|---|---|---|---|
 | — | — | — | Registro inicial; pendiente de auditoría | NO EJECUTADA | PENDIENTE |
+| **NAVIGATION_PREFERENCES-001** | P2 | PROPIO | `ApplicationHelper::SIDEBAR_CONTROLLER_GROUPS` conservaba `price_lists` y `promotions` como hijos de Productos después de separar Comercial. Dos enlaces tenían `aria-current="page"` y se abrían ambas secciones. | `spec/requests/admin/sidebar_spec.rb` y navegación Turbo en `spec/features/admin_sidebar_navigation_spec.rb` | IMPLEMENTADO · pendiente CI |
+| **NAVIGATION_PREFERENCES-002** | P1 | PROPIO | [Commercial CI #45091397702](https://github.com/AliRodri1992/sales_point/actions/runs/45091397702): dos intentos perdieron el foco al cerrar el cajón móvil. `dashboard.js` ocultaba o volvía inerte la región con el elemento enfocado antes de transferir el foco; además había restauraciones temporizadas y dos manejadores de resize. | Cierre por botón, Escape y overlay, transferencia de foco entre regiones y restauración de interacción; specs de navegación y de interacciones del sidebar. | IMPLEMENTADO · pendiente CI |
 
 ## Verificaciones y dictamen
 
