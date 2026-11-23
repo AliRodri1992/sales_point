@@ -364,9 +364,12 @@ RSpec.describe 'Admin clients', type: :request do
   end
 
   it 'saves a nested phone with the same tenant as the client' do
-    post admin_clients_path, params: { client: { code: 'PHONE', name: 'Phone customer',
-                                                phones_attributes: [{ number: '5512345678', country_code: 'MX',
-                                                                     kind: 'mobile' }] } }
+    post admin_clients_path, params: {
+      client: {
+        code: 'PHONE', name: 'Phone customer',
+        phones_attributes: [{ number: '5512345678', country_code: 'MX', kind: 'mobile', primary: true }]
+      }
+    }
 
     expect(response).to redirect_to(admin_clients_path)
     client = organization.clients.find_by!(code: 'PHONE')

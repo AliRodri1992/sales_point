@@ -357,19 +357,21 @@ RSpec.describe 'Categories modal workflows', type: :feature, js: true do
   end
 
   def expect_category_warning_layout
-    expect(page.evaluate_script(<<~JS)).to be(true)
-      (() => {
-        const popup = document.querySelector('.swal2-popup.swal2-icon-warning')
+    expect(page.evaluate_async_script(<<~JS)).to be(true)
+      const done = arguments[arguments.length - 1]
+      const popup = document.querySelector('.swal2-popup.swal2-icon-warning')
+      Promise.allSettled([document.fonts.ready, ...popup.getAnimations().map(animation => animation.finished)])
+        .then(() => requestAnimationFrame(() => requestAnimationFrame(() => {
         const [icon, title, text, button] = ['.swal2-icon', '.swal2-title', '.swal2-html-container', '.swal2-confirm']
           .map(selector => popup.querySelector(selector).getBoundingClientRect())
         const box = popup.getBoundingClientRect()
-        return Math.abs((icon.left + icon.right - box.left - box.right) / 2) < 2 &&
+        done(Math.abs((icon.left + icon.right - box.left - box.right) / 2) < 2 &&
           icon.bottom < title.top && title.bottom < text.top && text.bottom < button.top &&
           box.left >= 0 && box.right <= innerWidth && popup.scrollWidth <= popup.clientWidth &&
           button.height >= 44 && getComputedStyle(popup.querySelector('.swal2-title')).textAlign === 'center' &&
           popup.getAttribute('aria-labelledby') === popup.querySelector('.swal2-title').id &&
-          popup.getAttribute('aria-describedby') === popup.querySelector('.swal2-html-container').id
-      })()
+          popup.getAttribute('aria-describedby') === popup.querySelector('.swal2-html-container').id)
+      })))
     JS
   end
 

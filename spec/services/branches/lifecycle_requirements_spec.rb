@@ -86,8 +86,8 @@ RSpec.describe Branches::LifecycleRequirements do
 
   it 'reports missing setup for a branch before its organization or address is assigned' do
     requirements = described_class.new(branch: Branch.new)
-    expect(requirements.blockers_for(:active)).to contain_exactly(:organization, :address, :currency,
-                                                                 :name, :code, :team)
+    blockers = requirements.blockers_for(:active)
+    expect(blockers).to contain_exactly(:organization, :address, :currency, :name, :code, :team)
     expect(requirements.suspension_blockers).to be_empty
   end
 

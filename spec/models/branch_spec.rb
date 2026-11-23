@@ -227,8 +227,8 @@ RSpec.describe Branch, type: :model do
     create(:terminal, branch:)
 
     expect(branch.update(status: false, operational_status: 'suspended')).to be(false)
-    expect(branch.errors[:status]).to include(I18n.t('admin.branch_workspace.active_team_block'),
-                                             I18n.t('admin.branch_workspace.active_operations_block'))
+    expect(branch.errors[:status]).to include(I18n.t('admin.branch_workspace.active_team_block'))
+    expect(branch.errors[:status]).to include(I18n.t('admin.branch_workspace.active_operations_block'))
     expect(branch.errors[:status]).not_to include(I18n.t('admin.branch_workspace.last_active_block'))
     expect(branch.reload).to be_active
   end

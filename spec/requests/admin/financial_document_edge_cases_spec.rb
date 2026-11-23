@@ -199,6 +199,6 @@ RSpec.describe 'Financial document edge cases', type: :request do
 
     expect(response).to have_http_status(:unprocessable_content)
     options = Nokogiri::HTML(response.body).css('#supplier_payment_supplier_bank_account_id option')
-    expect(options.map { |option| option['value'] }).to eq([''])
+    expect(options.pluck('value')).to eq([''])
   end
 end
