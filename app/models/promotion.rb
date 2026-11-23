@@ -30,6 +30,7 @@ class Promotion < ApplicationRecord
   validate :valid_price_list_target
   validate :validate_condition_combinations
   validate :validate_live_row_limits
+  validate :validate_activation_targets, if: -> { active? && will_save_change_to_status? }
 
   def usage_count
     has_attribute?(:usage_count) ? self[:usage_count].to_i : promotion_redemptions.size
@@ -86,11 +87,32 @@ class Promotion < ApplicationRecord
   end
 
   def activation_content?(_at = nil)
-    promotion_benefits.any? { |benefit| benefit.deleted_at.nil? && !benefit.marked_for_destruction? }
+    live_benefits.any? && activation_targets_available?
+  end
+
+  def activation_targets_available?
+    live_conditions.all? do |condition|
+      target = case condition.kind
+               when 'product', 'excluded_product' then condition.product
+               when 'category', 'excluded_category' then condition.category
+               end
+      next true if %w[min_quantity min_subtotal customer_segment].include?(condition.kind)
+
+      target && target.active? && target.deleted_at.nil? && target.organization_id == organization_id
+    end && (price_list_id.nil? || usable_activation_price_list?)
+  end
+
+  def usable_activation_price_list?
+    price_list && price_list.active? && price_list.deleted_at.nil? &&
+      price_list.organization_id == organization_id && price_list.currency == currency
+  end
+
+  def validate_activation_targets
+    errors.add(:promotion_conditions, :unavailable_target) unless activation_targets_available?
   end
 
   def active_promotion_has_benefits
-    errors.add(:promotion_benefits, :blank) if active? && !activation_content?
+    errors.add(:promotion_benefits, :blank) if active? && live_benefits.empty?
   end
 
   def valid_price_list_target

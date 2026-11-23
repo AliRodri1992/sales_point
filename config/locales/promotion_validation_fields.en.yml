@@ -32,6 +32,7 @@ en:
         promotion:
           attributes:
             promotion_conditions:
+              unavailable_target: "reference products, categories, or price lists that are no longer available."
               too_many: "exceed the permitted maximum (%{count})."
               repeated_rule: "cannot repeat a quantity, subtotal, or segment rule."
               duplicate_target: "cannot repeat the same product or category."

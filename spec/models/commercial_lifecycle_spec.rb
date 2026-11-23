@@ -125,6 +125,34 @@ RSpec.describe Commercial::Lifecycle do
     expect { transition(promotion, 'resume') }.to raise_error(ActiveRecord::RecordInvalid)
   end
 
+  it 'does not reactivate a paused promotion with a retired target' do
+    target = create(:product, organization:)
+    promotion.promotion_benefits.create!(kind: 'percentage', value: 10)
+    promotion.promotion_conditions.create!(kind: 'product', product: target)
+    transition(promotion, 'activate')
+    transition(promotion, 'pause')
+    target.update!(status: 'inactive')
+
+    expect(promotion.reload.transition_available?('resume')).to be(false)
+    expect { transition(promotion, 'resume') }.to raise_error(ActiveRecord::RecordInvalid)
+    expect(promotion.reload).to be_paused
+  end
+
+  it 'rejects activating a draft with an inactive previously associated category' do
+    category = create(:category, organization:)
+    promotion.promotion_benefits.create!(kind: 'fixed_amount', value: 5)
+    promotion.promotion_conditions.create!(kind: 'category', category:)
+    category.update!(status: 'inactive')
+
+    expect(promotion.reload.transition_available?('activate')).to be(false)
+    expect { transition(promotion, 'activate') }.to raise_error(ActiveRecord::RecordInvalid)
+    expect(promotion.reload).to be_draft
+    promotion.status = 'active'
+    expect(promotion).not_to be_valid
+    expect(promotion.errors.details[:promotion_conditions].map { |error| error[:error] })
+      .to include(:unavailable_target)
+  end
+
   it 'duplicates campaign rules as a new draft without reusing redemption or audit history' do
     promotion.promotion_conditions.create!(kind: 'excluded_product', product:)
     promotion.promotion_benefits.create!(kind: 'fixed_amount', value: 5)

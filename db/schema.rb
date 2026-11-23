@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_23_000110) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_23_000200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -1116,6 +1116,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_23_000110) do
     t.datetime "updated_at", null: false
     t.index ["organization_id"], name: "index_promotion_benefits_on_organization_id"
     t.index ["promotion_id"], name: "index_promotion_benefits_on_promotion_id"
+    t.check_constraint "kind::text = ANY (ARRAY['percentage'::character varying, 'fixed_amount'::character varying]::text[])", name: "promotion_benefit_kind_allowed", validate: false
     t.check_constraint "value > 0::numeric AND (kind::text <> 'percentage'::text OR value <= 100::numeric)", name: "promotion_valid_benefit"
   end
 
@@ -1135,6 +1136,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_23_000110) do
     t.index ["organization_id"], name: "index_promotion_conditions_on_organization_id"
     t.index ["product_id"], name: "index_promotion_conditions_on_product_id"
     t.index ["promotion_id"], name: "index_promotion_conditions_on_promotion_id"
+    t.check_constraint "kind::text = ANY (ARRAY['product'::character varying, 'category'::character varying, 'excluded_product'::character varying, 'excluded_category'::character varying, 'min_quantity'::character varying, 'min_subtotal'::character varying, 'customer_segment'::character varying]::text[])", name: "promotion_condition_kind_allowed", validate: false
   end
 
   create_table "promotion_redemptions", force: :cascade do |t|

@@ -32,6 +32,7 @@ ko:
         promotion:
           attributes:
             promotion_conditions:
+              unavailable_target: "더 이상 사용할 수 없는 상품, 카테고리 또는 가격표가 포함되어 있습니다."
               too_many: "허용된 최대 개수(%{count})를 초과했습니다."
               repeated_rule: "수량, 소계 또는 고객 그룹 조건을 중복할 수 없습니다."
               duplicate_target: "동일한 상품 또는 카테고리를 중복할 수 없습니다."
