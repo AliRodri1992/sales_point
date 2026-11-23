@@ -63,3 +63,4 @@ Política: [Estándar modular](../module-quality-standard.md) · [Plantilla ampl
 
 - Doce listas demo de la organización Delta POS, con tres partidas por lista, escalas de cantidad, segmentos y estados efectivos. Códigos deterministas de semillas; la generación automática de las altas normales permanece intacta. Las recargas respetan ediciones y retiros manuales.
 - Se conserva el paginador compartido `admin/shared/catalog_pagination` y se añade el contador de registros de la página utilizado en Productos. Las regresiones cubren navegación, filtros y orden; verificación pendiente del SHA publicado.
+- [Commercial CI #45091060738](https://github.com/AliRodri1992/sales_point/actions/runs/45091060738), SHA `76f0885`: 172 pruebas funcionales (incluidas las semillas) y 22 de navegador, cero fallos. RuboCop detectó ocho observaciones de formato, corregidas en la siguiente revisión; pendiente CI del SHA de corrección.

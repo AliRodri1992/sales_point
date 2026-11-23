@@ -72,3 +72,4 @@ Este registro incorpora **PROMOTIONS-001** como defecto de frontera observado de
 
 - **PROMOTIONS-003 · P2 · PROPIO:** el listado utilizaba `table_pagination`, distinto del pie de catálogos. Se reutiliza `catalog_pagination` dentro del directorio, con Delta Select, enlaces y contador de página. La regresión de petición cubre dos páginas y conservación de filtros y orden. Verificación pendiente de CI del SHA publicado.
 - Doce campañas demo con beneficios porcentuales y monetarios, condiciones sobre productos activos, vigencias, segmentos y límites. Sin redenciones simuladas ni sobrescritura de ediciones manuales.
+- [Commercial CI #45091060738](https://github.com/AliRodri1992/sales_point/actions/runs/45091060738), SHA `76f0885`: 172 pruebas funcionales y 22 de navegador, cero fallos, incluida la navegación y el cambio de tamaño desde móvil. Pendiente CI del SHA de corrección de formato RuboCop.

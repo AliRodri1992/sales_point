@@ -55,9 +55,9 @@ module CommercialExamples
         next if organization.promotions.with_deleted.exists?(code:)
 
         organization.promotions.create!(code:, name: "Demo · #{name}", currency: 'MXN', priority: index + 1,
-                                         **lifecycle_attributes(status), **campaign_limits(index),
-                                         promotion_conditions_attributes: conditions(products, index),
-                                         promotion_benefits_attributes: [{ kind:, value: }])
+                                        **lifecycle_attributes(status), **campaign_limits(index),
+                                        promotion_conditions_attributes: conditions(products, index),
+                                        promotion_benefits_attributes: [{ kind:, value: }])
       end
     end
 
@@ -89,8 +89,8 @@ module CommercialExamples
     end
 
     def campaign_limits(index)
-      { usage_limit: 100 + index * 25, customer_limit: (index % 3) + 1,
-        maximum_discount: 100 + index * 20, combination_mode: index.even? ? 'best_price' : 'exclusive' }
+      { usage_limit: 100 + (index * 25), customer_limit: (index % 3) + 1,
+        maximum_discount: 100 + (index * 20), combination_mode: index.even? ? 'best_price' : 'exclusive' }
     end
 
     def conditions(products, index)

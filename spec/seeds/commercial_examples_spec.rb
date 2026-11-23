@@ -55,7 +55,7 @@ RSpec.describe CommercialExamples, type: :model do
     list.update!(name: 'Customized list')
     campaign.update!(name: 'Customized campaign', deleted_at: Time.current)
 
-    expect { seed_examples }.not_to change { [PriceListItem.count, PromotionCondition.count, PromotionBenefit.count] }
+    expect { seed_examples }.not_to(change { [PriceListItem.count, PromotionCondition.count, PromotionBenefit.count] })
     expect(list.reload.name).to eq('Customized list')
     expect(row.reload.price).to eq(98)
     expect(Promotion.with_deleted.find(campaign.id))
