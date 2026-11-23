@@ -9,6 +9,12 @@
 
 > Este registro es la fuente de verdad de hallazgos del módulo. Lo observado en el código se distingue de las hipótesis y de pruebas pendientes. Un commit documental no equivale a una corrección ni al cierre de la auditoría. Conserva los IDs entre siguientes iteraciones.
 
+## Fidelidad de Administrar permisos / Ver permisos — 2026-11-22
+
+- **SYSTEM_ROLES-014:** adaptación de la última maqueta aprobada `delta-pos-administrar-permisos.zip` a ERB, Tailwind y Stimulus: identidad, asignaciones limitadas a organización, pestañas de permisos e historial autorizado, matriz de recursos y acciones reales, acciones especiales independientes, filtros, contadores, cambios pendientes, revisión y confirmación de descarte. Se mantienen Pundit, dependencias, auditoría, persistencia y ciclo de vida independiente.
+- **RED:** [System Roles CI 45101193517](https://github.com/AliRodri1992/sales_point/actions/runs/45101193517), SHA `abedb714`: 150 ejemplos, cuatro fallos esperados de las regresiones para matriz, identidad/historial, descarte y navegación; RuboCop focalizado aprobado.
+- Compilaciones JS y CSS e I18n estricto ejecutados localmente; verificación de RSpec y RuboCop en CI del SHA de implementación pendiente. No se afirma aceptación final ni revisión visual manual.
+
 ## Administración delegada de permisos — 2026-11-22
 
 - **SYSTEM_ROLES-001 (alcance autorizado de negocio):** el administrador puede administrar los permisos de roles operativos sin asignaciones ajenas a su organización. El superadministrador conserva la edición de datos y las operaciones de alta y ciclo de vida; ambas cuentas mantienen protegidos los roles `administrator` y `super_admin`, y los roles archivados continúan en solo lectura. No se modifica el modelo global de definiciones ni se introduce una autorización multiplataforma.

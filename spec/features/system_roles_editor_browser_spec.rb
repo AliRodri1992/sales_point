@@ -46,9 +46,10 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
 
     visit system_role_path(role)
     expect(page).to have_css('[data-permissions-mode="edit"]')
+    find('.role-editor-details summary').click
     expect(page).to have_field('system_role_name', disabled: true)
     check "permission_#{view_permission.id}"
-    click_button 'Save permissions'
+    click_button 'Review and save'
     within '[role="dialog"]' do
       expect(page).to have_text('suppliers.contacts.view')
       click_button 'Confirm changes'
@@ -64,7 +65,7 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     expect(page).to have_css('[data-permissions-mode="view"]')
     expect(page).to have_css('h1', text: 'View permissions', exact_text: true)
     expect(page).to have_field("permission_#{view_permission.id}", disabled: true)
-    expect(page).to have_no_button('Save permissions', disabled: :all)
+    expect(page).to have_no_button('Review and save', disabled: :all)
     expect(page).to have_no_button('Discard changes', disabled: :all)
     expect(page).to have_no_css('[data-bulk-state]', visible: :all)
 
@@ -100,13 +101,13 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     pending = '[data-role-permissions-target="pending"]'
 
     expect(page).to have_css(pending, text: /\b0\b/)
-    expect(page).to have_button('Save permissions', disabled: true)
+    expect(page).to have_button('Review and save', disabled: true)
     check "permission_#{view_permission.id}"
     expect(page).to have_css(pending, text: /\b1\b/)
-    expect(page).to have_button('Save permissions', disabled: false)
+    expect(page).to have_button('Review and save', disabled: false)
     uncheck "permission_#{view_permission.id}"
     expect(page).to have_css(pending, text: /\b0\b/)
-    expect(page).to have_button('Save permissions', disabled: true)
+    expect(page).to have_button('Review and save', disabled: true)
   end
 
   scenario 'requires confirmation before discarding pending permissions' do
@@ -146,7 +147,7 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     check "permission_#{create_permission.id}"
     expect(page).to have_css('[data-role-permissions-target="pending"]', text: /\b2\b/)
 
-    click_button 'Save permissions'
+    click_button 'Review and save'
     within '[role="dialog"]' do
       expect(page).to have_css('section[aria-labelledby="permission-review-added"] li',
                                text: 'Create supplier contacts suppliers.contacts.create', exact_text: true)
@@ -159,9 +160,11 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     expect(page).to have_unchecked_field("permission_#{view_permission.id}")
     expect(role.permissions.reload).to contain_exactly(view_permission)
 
-    click_button 'Save permissions'
+    click_button 'Review and save'
     click_button 'Confirm changes'
 
+    expect(page).to have_no_css('.swal2-popup', wait: 8)
+    find('#role-history-tab').click
     within '#permission-history' do
       expect(page).to have_text('Added: suppliers.contacts.create')
       expect(page).to have_text('Removed: suppliers.contacts.view')
@@ -174,6 +177,7 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
   scenario 'discards pending permission and metadata changes in place' do
     create(:system_role_permission, system_role: role, permission: view_permission)
     visit system_role_path(role)
+    find('.role-editor-details summary').click
     fill_in 'system_role_name', with: 'Unsaved name'
     fill_in 'system_role_description', with: 'Unsaved description'
     uncheck "permission_#{view_permission.id}"
@@ -181,6 +185,7 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
 
     expect(page).to have_button('Discard changes')
     click_button 'Discard changes'
+    within('dialog[open]') { click_button 'Discard changes' }
 
     expect(page).to have_current_path(system_role_path(role))
     expect(page).to have_field('system_role_name', with: 'Operations')
@@ -211,7 +216,7 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     fill_in 'Search modules or actions', with: 'Sales'
     expect(page).to have_no_css("#permission_#{view_permission.id}")
     check "permission_#{other_permission.id}"
-    click_button 'Save permissions'
+    click_button 'Review and save'
     click_button 'Confirm changes'
     expect(page).to have_css('.swal2-popup')
     expect(page).to have_current_path(system_role_path(role))
@@ -230,7 +235,7 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
 
     visit system_role_path(admin.system_roles.first)
     expect(page).to have_field("permission_#{view_permission.id}", disabled: true)
-    expect(page).to have_no_button('Save permissions')
+    expect(page).to have_no_button('Review and save')
   end
   scenario 'uses accessible switches and enables module access with an action' do
     GranularPermissionCatalog.sync!
@@ -241,7 +246,7 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     check "permission_#{permission.id}"
     expect(page).to have_checked_field("permission_#{access.id}")
     expect(page).to have_css('[data-role-permissions-target="total"]', text: '2')
-    click_button 'Save permissions'
+    click_button 'Review and save'
     click_button 'Confirm changes'
     expect(page).to have_css('.swal2-popup')
     expect(role.permissions.reload).to contain_exactly(permission, access)

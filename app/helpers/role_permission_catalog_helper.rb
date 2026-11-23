@@ -11,6 +11,18 @@ module RolePermissionCatalogHelper
     reactivate block unblock invite resend_invitation publish preview send_test versions
     pause resume duplicate history view_margin authorize_below_cost
   ].freeze
+  MATRIX_ACTIONS = {
+    'access' => %w[access], 'index' => %w[index list], 'show' => %w[show view],
+    'create' => %w[create], 'update' => %w[update edit], 'destroy' => %w[destroy delete]
+  }.freeze
+  WORKSPACE_ICONS = {
+    'dashboard' => 'computer-desktop', 'sales' => 'banknotes', 'cash_register' => 'wallet', 'inventory' => 'cube',
+    'customers' => 'user-group', 'suppliers' => 'truck', 'employees' => 'user-group', 'reports' => 'chart-bar',
+    'products' => 'cube', 'categories' => 'tag', 'units_of_measure' => 'cube', 'branches' => 'building-office-2',
+    'languages' => 'language', 'roles' => 'shield-check', 'users' => 'user-group', 'purchases' => 'banknotes',
+    'accounts_payable' => 'banknotes', 'price_lists' => 'tag', 'promotions' => 'tag',
+    'communication' => 'envelope'
+  }.freeze
 
   def permission_module_key(permission)
     prefix = permission.code.split('.').first
@@ -49,5 +61,30 @@ module RolePermissionCatalogHelper
     permissions.sort_by do |permission|
       [PERMISSION_ACTIONS.index(permission.code.split('.').last) || PERMISSION_ACTIONS.length, permission.code]
     end
+  end
+
+  def matrix_resource_permissions(permissions)
+    MATRIX_ACTIONS.transform_values do |aliases|
+      aliases.filter_map { |action| permissions.find { |permission| permission.code.split('.').last == action } }.first
+    end
+  end
+
+  def permission_workspace_icon(module_key)
+    WORKSPACE_ICONS.fetch(module_key, 'key')
+  end
+
+  def role_workspace_user_count(role)
+    return 0 unless current_organization
+
+    members = current_organization.organization_memberships.where(deleted_at: nil).select(:user_id)
+    assignments = role.user_roles.where(organization: current_organization, deleted_at: nil, user_id: members)
+    assignments.distinct.count(:user_id)
+  end
+
+  def role_workspace_updated_at(role)
+    role_policy = policy(role)
+    return role.updated_at unless role_policy.audit_history? || role_policy.update_permissions?
+
+    [role.updated_at, role.permission_audit_events.maximum(:created_at)].compact.max
   end
 end

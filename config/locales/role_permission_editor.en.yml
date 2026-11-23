@@ -7,7 +7,7 @@ en:
           permissions may include several actions.
         selected: selected
         search: Search modules or actions
-        search_placeholder: E.g. suppliers, create, update…
+        search_placeholder: Search module, action or code…
         results: permissions found
         no_results: No permissions match your search.
         empty: No active permissions are available.
@@ -37,8 +37,8 @@ en:
         confirm_changes: Confirm changes
         saving: Saving…
         new_subtitle: Define the role and its access, organized by module and action.
-        edit_subtitle: Review access and update this role’s details and permissions.
-        edit_permissions_subtitle: Update this role’s permissions. Only a superadministrator can modify its details.
+        edit_subtitle: Configure access to the resources and actions of the selected role.
+        edit_permissions_subtitle: Configure access to the resources and actions of the selected role. Only a superadministrator can modify its details.
         view_permissions: View permissions
         view_subtitle: Review this role’s permissions in read-only mode.
         modules:

@@ -71,7 +71,7 @@ RSpec.describe 'Visible-only bulk permission selection', type: :feature, js: tru
                              text: 'languages.access')
     expect(page).to have_css('[data-role-permissions-target="total"]', text: '2')
 
-    click_button 'Save permissions'
+    click_button 'Review and save'
     click_button 'Confirm changes'
     expect(page).to have_css('.swal2-popup')
     expect(page).to have_current_path(system_role_path(role))
@@ -103,7 +103,7 @@ RSpec.describe 'Visible-only bulk permission selection', type: :feature, js: tru
     expect(page).to have_css("#permission_#{visible.id}", visible: :all)
     expect(page).to have_no_css("#permission_#{hidden_permission.id}")
     click_button 'Grant visible · Suppliers'
-    click_button 'Save permissions'
+    click_button 'Review and save'
     click_button 'Confirm changes'
     expect(page).to have_css('.swal2-popup')
     expect(page).to have_current_path(system_role_path(role))

@@ -41,6 +41,7 @@ RSpec.describe 'Role status review', type: :feature, js: true do
     expect(page.evaluate_script('document.documentElement.scrollWidth <= window.innerWidth + 2')).to be(true)
     confirm_change('Seasonal operation ended')
     expect(role.reload).to be_inactive
+    find('#role-history-tab').click
     expect(page).to have_text('Seasonal operation ended')
     expect(page).to have_link('Archive role')
   end
@@ -51,7 +52,7 @@ RSpec.describe 'Role status review', type: :feature, js: true do
     click_link 'Archive role'
     confirm_change('No current assignments remain')
     expect(role.reload).to be_deprecated
-    expect(page).to have_no_button('Save permissions')
+    expect(page).to have_no_button('Review and save')
     click_link 'Restore as inactive'
     expect(page).to have_text('The role will return as inactive.')
     confirm_change('Review configuration for reuse')

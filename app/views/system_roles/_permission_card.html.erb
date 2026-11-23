@@ -3,15 +3,16 @@
 <% name = permission_name(permission) %>
 <% description = permission_description(permission) %>
 <% prefix, action = permission.code.split('.', 2) %>
+<% matrix = local_assigns.fetch(:matrix, false) %>
 <% access_code = "#{prefix}.access" if action.present? && SystemRoles::PermissionSelection::DEPENDENT_PREFIXES.include?(prefix) %>
 <div class="min-w-0" data-permission-row data-search="<%= [module_label, resource_label, action_label, name, description, permission.code].join(' ') %>">
-  <label for="permission_<%= permission.id %>" class="flex h-full min-h-11 cursor-pointer items-center justify-between gap-2 rounded-lg border border-transparent px-2 py-1.5 transition-colors motion-reduce:transition-none hover:border-slate-200 hover:bg-slate-50 has-[:checked]:border-emerald-100 has-[:checked]:bg-emerald-50 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-emerald-700 has-[:disabled]:cursor-default">
-    <span class="min-w-0 flex-1">
+  <label for="permission_<%= permission.id %>" title="<%= name %> — <%= description %>" class="<%= matrix ? 'role-matrix-switch' : 'role-extra-switch' %>">
+    <span class="<%= matrix ? 'role-matrix-action' : 'min-w-0 flex-1' %>">
       <span class="block break-words text-sm font-semibold leading-5 text-slate-900"><%= action_label %></span>
       <% if name != action_label %>
-        <span class="block break-words text-xs leading-4 text-slate-600"><%= name %></span>
+        <span class="<%= matrix ? 'sr-only' : 'block break-words text-xs leading-4 text-slate-600' %>"><%= name %></span>
       <% end %>
-      <span id="permission_<%= permission.id %>_description" class="block break-words text-xs leading-4 text-slate-600"><%= description %></span>
+      <span id="permission_<%= permission.id %>_description" class="<%= matrix ? 'sr-only' : 'block break-words text-xs leading-4 text-slate-600' %>"><%= description %></span>
     </span>
     <span class="relative inline-flex shrink-0 items-center">
       <%= check_box_tag 'permission_ids[]', permission.id, assigned_ids.include?(permission.id),
@@ -21,8 +22,8 @@
                         data: { role_permissions_target: 'permission', permission_code: permission.code, permission_name: name,
                                 permission_access: access_code, action: 'change->role-permissions#permissionChanged' },
                         class: 'peer sr-only' %>
-      <span aria-hidden="true" class="h-5 w-9 rounded-full bg-slate-500 transition-colors motion-reduce:transition-none peer-checked:bg-emerald-700 peer-disabled:opacity-70"></span>
-      <span aria-hidden="true" class="pointer-events-none absolute left-[3px] size-3.5 rounded-full bg-white shadow-sm transition-transform motion-reduce:transition-none peer-checked:translate-x-4"></span>
+      <span aria-hidden="true" class="role-switch-track"></span>
+      <span aria-hidden="true" class="role-switch-thumb"></span>
     </span>
   </label>
 </div>

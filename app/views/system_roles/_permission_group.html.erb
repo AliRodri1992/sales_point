@@ -1,39 +1,74 @@
 <% module_label = permission_module_label(module_key) %>
 <% resources = permissions.group_by { |permission| permission_resource_key(permission) } %>
-<details open class="group rounded-xl border border-slate-200 bg-white" data-role-permissions-target="group">
-  <summary class="flex min-h-12 cursor-pointer list-none items-center gap-2 rounded-xl bg-slate-50 px-3 py-2.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 [&::-webkit-details-marker]:hidden sm:px-4">
-    <%= delta_icon('chevron-right', class: 'size-4 shrink-0 text-slate-500 group-open:rotate-90') %>
-    <span class="min-w-0 flex-1 break-words font-jakarta text-sm font-bold text-slate-900"><%= module_label %></span>
-    <span class="shrink-0 rounded-full bg-white px-2.5 py-1 text-xs font-semibold tabular-nums text-slate-700">
+<% matrices = resources.transform_values { |items| matrix_resource_permissions(items) } %>
+<details open class="role-editor-group group" data-role-permissions-target="group">
+  <summary class="role-editor-group-header">
+    <span class="role-editor-group-icon"><%= delta_icon(permission_workspace_icon(module_key), class: 'size-5') %></span>
+    <span class="min-w-0 flex-1">
+      <span class="block break-words font-jakarta text-sm font-bold text-slate-900"><%= module_label %></span>
+      <span class="block break-words text-xs text-slate-500"><%= t('admin.system_roles.workspace.group_description', resources: resources.values.map { |items| permission_resource_label(items.first) }.join(' · ')) %></span>
+    </span>
+    <span class="role-editor-group-count">
       <span data-group-count><%= permissions.count { |permission| @assigned_permission_ids.include?(permission.id) } %></span> / <%= permissions.size %>
       <span class="sr-only"><%= t('admin.system_roles.catalog.selected') %></span>
     </span>
+    <%= delta_icon('chevron-right', class: 'size-4 shrink-0 text-slate-500 group-open:rotate-90') %>
   </summary>
   <fieldset class="min-w-0 border-t border-slate-200" <%= 'disabled' if read_only %>>
     <legend class="sr-only"><%= module_label %></legend>
     <% unless read_only %>
-      <div class="flex flex-wrap justify-end gap-x-3 border-b border-slate-200 px-3 sm:px-4">
+      <div class="role-editor-bulk">
         <% %w[grant revoke].each do |state| %>
           <button type="button" data-bulk-state="<%= state %>" data-action="role-permissions#setVisible"
                   aria-label="<%= t('admin.system_roles.catalog.bulk_scope', action: t("admin.system_roles.catalog.#{state}_visible"), module: module_label) %>"
-                  class="min-h-11 break-words rounded-md px-1.5 text-xs font-semibold text-emerald-800 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-default disabled:text-slate-500 disabled:no-underline">
+                  class="min-h-11 rounded-md px-2 text-xs font-semibold text-emerald-800 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-default disabled:text-slate-500 disabled:no-underline">
             <%= t("admin.system_roles.catalog.#{state}_visible") %>
           </button>
         <% end %>
       </div>
     <% end %>
-    <div class="divide-y divide-slate-200">
-      <% resources.each_value do |resource_permissions| %>
-        <div data-permission-resource class="grid gap-x-4 gap-y-1 px-3 py-2.5 sm:px-4 lg:grid-cols-[minmax(0,10rem)_minmax(0,1fr)]">
-          <h3 class="min-w-0 break-words py-2 text-xs font-bold uppercase tracking-wide text-slate-600"><%= permission_resource_label(resource_permissions.first) %></h3>
-          <div class="grid min-w-0 gap-1 sm:grid-cols-2 xl:grid-cols-3">
-            <% sorted_resource_permissions(resource_permissions).each do |permission| %>
-              <%= render 'system_roles/permission_card', permission: permission, assigned_ids: @assigned_permission_ids,
-                         module_label: module_label, read_only: read_only %>
+    <% if matrices.values.any? { |matrix| matrix.values.any? } %>
+      <table class="role-matrix-table" data-permission-matrix>
+        <thead>
+          <tr>
+            <th scope="col"><%= t('admin.system_roles.workspace.resource') %></th>
+            <% RolePermissionCatalogHelper::MATRIX_ACTIONS.each_key do |action| %>
+              <th scope="col"><%= t("admin.system_roles.workspace.actions.#{action}") %></th>
             <% end %>
-          </div>
+          </tr>
+        </thead>
+        <tbody>
+          <% matrices.each do |resource_key, matrix| %>
+            <% next unless matrix.values.any? %>
+            <% items = matrix.values.compact %>
+            <tr data-permission-resource>
+              <th scope="row">
+                <span class="block text-sm font-semibold text-slate-800"><%= permission_resource_label(resources.fetch(resource_key).first) %></span>
+                <span class="block text-xs font-normal text-slate-500"><span data-resource-count><%= items.count { |permission| @assigned_permission_ids.include?(permission.id) } %></span> / <%= items.size %> <%= t('admin.system_roles.catalog.selected') %></span>
+              </th>
+              <% matrix.each_value do |permission| %>
+                <% if permission %>
+                  <td><%= render 'system_roles/permission_card', permission: permission, assigned_ids: @assigned_permission_ids, module_label: module_label, read_only: read_only, matrix: true %></td>
+                <% else %>
+                  <td class="role-matrix-unavailable" aria-label="<%= t('admin.system_roles.workspace.not_available') %>">—</td>
+                <% end %>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+    <% resources.each do |resource_key, items| %>
+      <% special = items - matrices.fetch(resource_key).values.compact %>
+      <% next if special.empty? %>
+      <section class="role-editor-special" data-permission-special-actions data-permission-resource>
+        <h3 class="text-xs font-semibold text-slate-600"><%= t('admin.system_roles.workspace.special_actions', resource: permission_resource_label(items.first)) %></h3>
+        <div class="role-extra-grid">
+          <% sorted_resource_permissions(special).each do |permission| %>
+            <%= render 'system_roles/permission_card', permission: permission, assigned_ids: @assigned_permission_ids, module_label: module_label, read_only: read_only %>
+          <% end %>
         </div>
-      <% end %>
-    </div>
+      </section>
+    <% end %>
   </fieldset>
 </details>

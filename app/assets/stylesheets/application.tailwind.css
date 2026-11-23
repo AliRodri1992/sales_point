@@ -25,6 +25,7 @@
 @import "./components/promotions_directory.css";
 @import "./components/promotions_detail.css";
 @import "./components/promotions_editor.css";
+@import "./components/role_permissions_workspace.css";
 
 @theme {
     --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;

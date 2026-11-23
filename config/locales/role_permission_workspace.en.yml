@@ -1,0 +1,34 @@
+---
+en:
+  admin:
+    system_roles:
+      workspace:
+        context: "Access management"
+        assigned_users:
+          one: "%{count} assigned user"
+          other: "%{count} assigned users"
+        updated: "Last updated: %{date}"
+        tabs: "Role workspace"
+        permissions_tab: "Permissions"
+        history_tab: "History"
+        review_save: "Review and save"
+        read_only_title: "Read-only permissions"
+        saved: "All changes are saved."
+        matrix_title: "Permission matrix"
+        group_description: "%{resources}"
+        resource: "Resource"
+        special_actions: "Special actions · %{resource}"
+        not_available: "Action not available"
+        results_total: "of %{count} permissions visible"
+        pending_breakdown: "%{added} to grant · %{removed} to revoke"
+        discard_title: "Discard unsaved changes"
+        discard_prompt: "Your pending changes to this role will be lost. Continue?"
+        keep_changes: "Keep changes"
+        impact_warning: "When confirmed, these changes may affect users assigned to this role. Review the permissions carefully."
+        actions:
+          access: "Access"
+          index: "List"
+          show: "View"
+          create: "Create"
+          update: "Edit"
+          destroy: "Delete / archive"

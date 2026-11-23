@@ -11,46 +11,21 @@
 <% role_name = system_role_name(@system_role, persisted: true) %>
 <% role_description = system_role_description(@system_role, persisted: true) %>
 <% workspace_title = t(read_only ? 'admin.system_roles.catalog.view_permissions' : 'admin.system_roles.index.manage_permissions') %>
-<% content_for :system_role_breadcrumb_label, role_name %>
+<% content_for :system_role_breadcrumb_label, workspace_title %>
 <% content_for :title, "#{workspace_title} | #{role_name}" %>
 
 <div class="mx-auto max-w-[92rem]" data-permissions-mode="<%= read_only ? 'view' : 'edit' %>">
   <header class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <div class="min-w-0">
-      <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= workspace_title %></h1>
+      <h1 class="font-jakarta text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"><%= workspace_title %></h1>
       <p class="mt-2 max-w-2xl text-sm text-slate-600"><%= t(subtitle_key) %></p>
     </div>
-    <%= link_to system_roles_path, class: 'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 motion-reduce:transition-none' do %>
+    <%= link_to system_roles_path, data: { role_workspace_back: true }, class: 'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 motion-reduce:transition-none' do %>
       <%= delta_icon('arrow-left', class: 'size-4') %><%= t('admin.system_roles.show.back') %>
     <% end %>
   </header>
 
-  <section class="mb-6 flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:gap-4 sm:p-6" aria-labelledby="role-identity-title">
-    <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-      <%= delta_icon(system_role_icon(@system_role), class: 'size-5') %>
-    </div>
-    <div class="min-w-0">
-      <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-        <h2 id="role-identity-title" class="min-w-0 break-words font-jakarta text-xl font-bold tracking-tight text-slate-900"><%= role_name %></h2>
-        <%= render 'system_roles/status_badge', system_role: @system_role %>
-      </div>
-      <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-600">
-        <code class="break-all rounded bg-slate-100 px-1.5 py-0.5 font-mono"><%= @system_role.code %></code>
-        <span class="inline-flex items-center gap-1.5">
-          <%= delta_icon('building-office-2', class: 'size-4 shrink-0') %>
-          <%= t("admin.system_roles.types.#{@system_role.role_type}") %>
-        </span>
-      </div>
-      <% if role_description.present? %>
-        <p class="mt-2 break-words text-sm leading-5 text-slate-600"><%= role_description %></p>
-      <% end %>
-    </div>
-  </section>
-
-  <%= render 'system_roles/lifecycle' %>
-  <%= render 'system_roles/form', read_only: read_only, permissions_only: permissions_only %>
-  <% if role_policy.audit_history? %>
-    <%= render 'system_roles/status_history' %>
-    <%= render 'system_roles/permission_history' %>
-  <% end %>
+  <%= render 'system_roles/form', read_only: read_only, permissions_only: permissions_only,
+             role_name: role_name, role_description: role_description, show_history: role_policy.audit_history? %>
+  <div class="mt-6"><%= render 'system_roles/lifecycle' %></div>
 </div>

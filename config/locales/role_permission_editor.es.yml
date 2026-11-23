@@ -37,9 +37,8 @@ es:
         confirm_changes: Confirmar cambios
         saving: Guardando…
         new_subtitle: Define el rol y sus accesos, organizados por módulo y acción.
-        edit_subtitle: Consulta los accesos y actualiza los datos y permisos de este
-          rol.
-        edit_permissions_subtitle: Actualiza los permisos de este rol. Solo un superadministrador puede modificar sus datos.
+        edit_subtitle: Configura el acceso a los recursos y acciones del rol seleccionado.
+        edit_permissions_subtitle: Configura el acceso a los recursos y acciones del rol seleccionado. Solo un superadministrador puede modificar sus datos.
         view_permissions: Ver permisos
         view_subtitle: Consulta los permisos de este rol en modo de solo lectura.
         modules:

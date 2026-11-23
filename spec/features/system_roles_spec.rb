@@ -67,7 +67,7 @@ RSpec.feature 'SystemRoles', type: :feature do
 
     uncheck "permission_#{enabled.id}"
     check "permission_#{disabled.id}"
-    click_button 'Save permissions'
+    click_button 'Review and save'
 
     expect(role.reload.permissions).to contain_exactly(disabled)
     expect(page).to have_css(

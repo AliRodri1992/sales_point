@@ -55,10 +55,12 @@ RSpec.describe 'System role editor', type: :request do
   end
 
   it 'integrates the identity and the authorized history into the permissions workspace' do
+    create(:user_role, user: admin, system_role: role)
     get system_role_path(role)
 
     editor = document.at_css('[data-permission-workspace]')
     expect(editor.at_css('#role-identity-title').text).to eq('Operations')
+    expect(editor.at_css('.role-editor-meta').text).to include('1 assigned user')
     expect(editor.at_css('[role="tab"][aria-controls="role-permissions-panel"]')).to be_present
     expect(editor.at_css('[role="tab"][aria-controls="role-history-panel"]')).to be_present
     expect(editor.at_css('#role-history-panel #permission-history')).to be_present

@@ -54,6 +54,8 @@ RSpec.describe 'Shared system role tenant isolation', type: :request do
     expect(workspace).to be_present
     expect(workspace.at_css("#permission_#{permission.id}[disabled]")).to be_present
     expect(workspace.css('input[role="switch"]:not([disabled])')).to be_empty
+    expect(workspace.at_css('.role-editor-meta').text).to include('0 assigned users')
+    expect(workspace.at_css('#role-history-tab')).to be_nil
   end
 
   it 'allows editing a role assigned only in its own organization' do

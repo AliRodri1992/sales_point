@@ -7,13 +7,18 @@ export default class extends Controller {
   static targets = [
     "search", "group", "permission", "total", "progress", "empty", "results", "dependencyNotice", "stateFilter",
     "metadata", "pendingCount", "pendingDetails", "discard", "save", "dialog", "added", "addedList", "removed",
-    "removedList", "noPermissionChanges", "reviewDetails"
+    "removedList", "noPermissionChanges", "reviewDetails", "tab", "panel", "tabCount", "pendingBreakdown",
+    "saveCount", "discardDialog", "addedCount", "removedCount"
   ]
-  static values = { dependencyTemplate: String, removedDependencyTemplate: String, savedPermissionIds: Array }
+  static values = {
+    dependencyTemplate: String, removedDependencyTemplate: String, savedPermissionIds: Array,
+    initialTab: String, pendingBreakdownTemplate: String, savedLabel: String
+  }
 
   connect() {
     this.selectFilter("all")
     this.filter()
+    if (this.hasTabTarget) this.activateTab(this.initialTabValue)
     if (this.hasDialogTarget && typeof this.dialogTarget.showModal === "function") {
       this.savedPermissionIds = new Set(this.savedPermissionIdsValue.map(String))
       this.discardTarget.hidden = false
@@ -41,19 +46,85 @@ export default class extends Controller {
     if (this.pendingCountTarget.textContent !== count) this.pendingCountTarget.textContent = count
     this.pendingDetailsTarget.hidden = !details
     const clean = count === "0" && !details
+    this.pendingBreakdownTarget.textContent = clean ? this.savedLabelValue :
+      this.pendingBreakdownTemplateValue.replace("%{added}", added.length).replace("%{removed}", removed.length)
+    this.saveCountTarget.textContent = count
+    this.saveCountTarget.hidden = count === "0"
     this.discardTarget.disabled = clean || this.submitting
     this.saveTarget.disabled = clean || this.submitting
   }
 
   discard() {
     if (this.submitting) return
+    this.pendingDestination = null
+    this.discardDialogTarget.showModal()
+  }
+
+  cancelDiscard(event) {
+    event?.preventDefault()
+    this.pendingDestination = null
+    this.discardDialogTarget.close()
+  }
+
+  isDirty() {
+    if (!this.savedPermissionIds || this.submitting || this.leaving) return false
+    const { added, removed, details } = this.differences()
+    return Boolean(added.length || removed.length || details)
+  }
+
+  guardNavigation(event) {
+    if (!this.isDirty()) return
+    event.preventDefault()
+    this.pendingDestination = event.detail.url
+    if (!this.discardDialogTarget.open) this.discardDialogTarget.showModal()
+  }
+
+  guardUnload(event) {
+    if (!this.isDirty()) return
+    event.preventDefault()
+    event.returnValue = ""
+  }
+
+  confirmDiscard() {
+    const destination = this.pendingDestination
+    this.cancelDiscard()
+    if (destination) {
+      this.leaving = true
+      window.location.assign(destination)
+      return
+    }
 
     this.permissionTargets.forEach(input => { input.checked = this.savedPermissionIds.has(input.value) })
     this.metadataTargets.forEach(input => { input.value = input.dataset.savedValue })
     this.dependencyNoticeTarget.textContent = ""
     this.filter()
     this.refreshPending()
-    this.searchTarget.focus()
+    if (this.searchTarget.offsetParent) this.searchTarget.focus()
+  }
+
+  selectTab(event) {
+    this.activateTab(event.currentTarget.getAttribute("aria-controls"))
+  }
+
+  activateTab(panelId, focus = false) {
+    this.panelTargets.forEach(panel => { panel.hidden = panel.id !== panelId })
+    this.tabTargets.forEach(tab => {
+      const active = tab.getAttribute("aria-controls") === panelId
+      tab.setAttribute("aria-selected", String(active))
+      tab.tabIndex = active ? 0 : -1
+      if (active && focus) tab.focus()
+    })
+    this.refresh()
+  }
+
+  tabKeydown(event) {
+    const index = this.tabTargets.indexOf(event.target)
+    if (index === -1) return
+    const last = this.tabTargets.length - 1
+    const next = { ArrowRight: (index + 1) % (last + 1), ArrowLeft: (index + last) % (last + 1), Home: 0, End: last }[event.key]
+    if (next === undefined) return
+    event.preventDefault()
+    this.activateTab(this.tabTargets[next].getAttribute("aria-controls"), true)
   }
 
   review(event) {
@@ -65,6 +136,8 @@ export default class extends Controller {
     const { added, removed, details } = this.differences()
     this.renderReviewList(this.addedTarget, this.addedListTarget, added)
     this.renderReviewList(this.removedTarget, this.removedListTarget, removed)
+    this.addedCountTarget.textContent = String(added.length)
+    this.removedCountTarget.textContent = String(removed.length)
     this.noPermissionChangesTarget.hidden = added.length + removed.length > 0
     this.reviewDetailsTarget.hidden = !details
     this.dialogTarget.showModal()
@@ -83,7 +156,8 @@ export default class extends Controller {
   }
 
   closeReview() {
-    if (this.dialogTarget.open) this.dialogTarget.close()
+    if (this.hasDialogTarget && this.dialogTarget.open) this.dialogTarget.close()
+    if (this.hasDiscardDialogTarget && this.discardDialogTarget.open) this.cancelDiscard()
   }
 
   confirm() {
@@ -244,11 +318,15 @@ export default class extends Controller {
   refresh() {
     const selected = this.permissionTargets.filter(input => input.checked).length
     this.totalTarget.textContent = String(selected)
+    if (this.hasTabCountTarget) this.tabCountTarget.textContent = String(selected)
     if (this.hasProgressTarget) this.progressTarget.value = selected
 
     this.groupTargets.forEach(group => {
       const selectedInGroup = group.querySelectorAll(`${PERMISSION}:checked`).length
       group.querySelector("[data-group-count]").textContent = String(selectedInGroup)
+      group.querySelectorAll("[data-resource-count]").forEach(count => {
+        count.textContent = String(count.closest("[data-permission-resource]").querySelectorAll(`${PERMISSION}:checked`).length)
+      })
       const grant = group.querySelector("[data-bulk-state='grant']")
       const revoke = group.querySelector("[data-bulk-state='revoke']")
       if (!grant || !revoke) return

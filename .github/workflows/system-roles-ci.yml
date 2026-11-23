@@ -15,8 +15,12 @@ on:
       - 'app/services/system_roles/**'
       - 'app/services/administrator_permission_provisioner.rb'
       - 'app/javascript/controllers/role_permissions_controller.js'
+      - 'app/helpers/role_permission_catalog_helper.rb'
+      - 'app/helpers/delta_icon_shapes.rb'
+      - 'app/assets/stylesheets/components/role_permissions_workspace.css'
       - 'app/views/system_roles/**'
       - 'config/locales/role_permission_editor.*'
+      - 'config/locales/role_permission_workspace.*'
       - 'config/locales/system_role_lifecycle.*'
       - 'db/migrate/*role_permission_audit*'
       - 'db/schema.rb'
@@ -62,6 +66,7 @@ jobs:
             app/models/system_role.rb app/models/system_role_permission_audit_event.rb \
             app/services/system_roles app/services/administrator_permission_provisioner.rb \
             app/policies/system_role_policy.rb \
+            app/helpers/role_permission_catalog_helper.rb app/helpers/delta_icon_shapes.rb \
             app/models/current_organization_access.rb app/models/concerns/user_effective_roles.rb \
             app/models/user.rb app/controllers/application_controller.rb \
             spec/models/system_role_spec.rb spec/models/permission_spec.rb \

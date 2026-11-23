@@ -1,0 +1,34 @@
+---
+es:
+  admin:
+    system_roles:
+      workspace:
+        context: "Gestión de accesos"
+        assigned_users:
+          one: "%{count} usuario asignado"
+          other: "%{count} usuarios asignados"
+        updated: "Última actualización: %{date}"
+        tabs: "Espacio de trabajo del rol"
+        permissions_tab: "Permisos"
+        history_tab: "Historial"
+        review_save: "Revisar y guardar"
+        read_only_title: "Permisos de solo lectura"
+        saved: "Todos los cambios están guardados."
+        matrix_title: "Matriz de permisos"
+        group_description: "%{resources}"
+        resource: "Recurso"
+        special_actions: "Acciones especiales · %{resource}"
+        not_available: "Acción no disponible"
+        results_total: "de %{count} permisos visibles"
+        pending_breakdown: "%{added} por otorgar · %{removed} por revocar"
+        discard_title: "Descartar cambios sin guardar"
+        discard_prompt: "Se perderán los cambios pendientes de este rol. ¿Deseas continuar?"
+        keep_changes: "Conservar cambios"
+        impact_warning: "Al confirmar, estos cambios pueden afectar a los usuarios asignados al rol. Revisa los permisos cuidadosamente."
+        actions:
+          access: "Acceso"
+          index: "Listar"
+          show: "Ver"
+          create: "Crear"
+          update: "Editar"
+          destroy: "Eliminar / archivar"
