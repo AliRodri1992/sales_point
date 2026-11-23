@@ -1,5 +1,13 @@
 <% role_policy = policy(@system_role) %>
-<% read_only = !role_policy.update? %>
+<% read_only = !role_policy.update_permissions? %>
+<% permissions_only = !read_only && !role_policy.update? %>
+<% subtitle_key = if read_only
+                    'admin.system_roles.catalog.view_subtitle'
+                  elsif permissions_only
+                    'admin.system_roles.catalog.edit_permissions_subtitle'
+                  else
+                    'admin.system_roles.catalog.edit_subtitle'
+                  end %>
 <% role_name = system_role_name(@system_role, persisted: true) %>
 <% role_description = system_role_description(@system_role, persisted: true) %>
 <% workspace_title = t(read_only ? 'admin.system_roles.catalog.view_permissions' : 'admin.system_roles.index.manage_permissions') %>
@@ -10,7 +18,7 @@
   <header class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <div class="min-w-0">
       <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= workspace_title %></h1>
-      <p class="mt-2 max-w-2xl text-sm text-slate-600"><%= t(read_only ? 'admin.system_roles.catalog.view_subtitle' : 'admin.system_roles.catalog.edit_subtitle') %></p>
+      <p class="mt-2 max-w-2xl text-sm text-slate-600"><%= t(subtitle_key) %></p>
     </div>
     <%= link_to system_roles_path, class: 'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 motion-reduce:transition-none' do %>
       <%= delta_icon('arrow-left', class: 'size-4') %><%= t('admin.system_roles.show.back') %>
@@ -40,7 +48,7 @@
   </section>
 
   <%= render 'system_roles/lifecycle' %>
-  <%= render 'system_roles/form', read_only: read_only %>
+  <%= render 'system_roles/form', read_only: read_only, permissions_only: permissions_only %>
   <% if role_policy.audit_history? %>
     <%= render 'system_roles/status_history' %>
     <%= render 'system_roles/permission_history' %>

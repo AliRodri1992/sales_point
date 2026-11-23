@@ -38,6 +38,7 @@ en:
         saving: Saving…
         new_subtitle: Define the role and its access, organized by module and action.
         edit_subtitle: Review access and update this role’s details and permissions.
+        edit_permissions_subtitle: Update this role’s permissions. Only a superadministrator can modify its details.
         view_permissions: View permissions
         view_subtitle: Review this role’s permissions in read-only mode.
         modules:

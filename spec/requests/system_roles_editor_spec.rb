@@ -153,12 +153,17 @@ RSpec.describe 'System role editor', type: :request do
   end
 
   it 'forbids non-administrators from creating, viewing and updating roles' do
-    sign_in create(:user)
+    user = create(:user)
+    create(:organization_membership, user:)
+    sign_in user
     get new_system_role_path
     expect(response).to have_http_status(:forbidden)
     get system_role_path(role)
     expect(response).to have_http_status(:forbidden)
     patch system_role_path(role), params: { system_role: { name: 'Changed' } }
     expect(response).to have_http_status(:forbidden)
+    patch permissions_system_role_path(role), params: { permission_ids: [permission.id] }
+    expect(response).to have_http_status(:forbidden)
+    expect(role.permissions.reload).to be_empty
   end
 end

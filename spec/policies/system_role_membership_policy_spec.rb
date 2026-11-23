@@ -58,4 +58,21 @@ RSpec.describe SystemRolePolicy do
       expect(described_class.new(user, build(:system_role)).create?).to be(true)
     end
   end
+
+  it 'allows delegated permission changes only from the administrators own organization' do
+    user = create(:user)
+    first = create(:organization)
+    second = create(:organization)
+    create(:organization_membership, user:, organization: first)
+    create(:organization_membership, user:, organization: second)
+    create(:user_role, user:, organization: first, system_role: create(:system_role, :system, code: 'administrator'))
+    role = create(:system_role)
+
+    CurrentOrganizationAccess.set(organization: second) do
+      expect(described_class.new(user, role).update_permissions?).to be(false)
+    end
+    CurrentOrganizationAccess.set(organization: first) do
+      expect(described_class.new(user, role).update_permissions?).to be(true)
+    end
+  end
 end

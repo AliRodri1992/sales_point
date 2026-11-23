@@ -147,6 +147,16 @@ RSpec.describe 'Role permission privilege boundaries', type: :request do
       expect(Nokogiri::HTML(response.body).at_css('[data-permissions-mode="view"]')).to be_present
     end
 
+    it 'keeps a legacy soft-deleted role read-only even when its status is active' do
+      role.update_column(:deleted_at, Time.current)
+
+      patch permissions_system_role_path(role), params: { permission_ids: [access.id] }
+      expect(response).to have_http_status(:forbidden)
+      expect(role.permissions.reload).to be_empty
+      get system_role_path(role)
+      expect(Nokogiri::HTML(response.body).at_css('[data-permissions-mode="view"]')).to be_present
+    end
+
     it 'preserves permissions and editable workspace after an invalid permission selection' do
       patch permissions_system_role_path(role), params: { permission_ids: [action.id] }
 

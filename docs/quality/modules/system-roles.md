@@ -9,6 +9,12 @@
 
 > Este registro es la fuente de verdad de hallazgos del módulo. Lo observado en el código se distingue de las hipótesis y de pruebas pendientes. Un commit documental no equivale a una corrección ni al cierre de la auditoría. Conserva los IDs entre siguientes iteraciones.
 
+## Administración delegada de permisos — 2026-11-22
+
+- **SYSTEM_ROLES-001 (alcance autorizado de negocio):** el administrador puede administrar los permisos de roles operativos sin asignaciones ajenas a su organización. El superadministrador conserva la edición de datos y las operaciones de alta y ciclo de vida; ambas cuentas mantienen protegidos los roles `administrator` y `super_admin`, y los roles archivados continúan en solo lectura. No se modifica el modelo global de definiciones ni se introduce una autorización multiplataforma.
+- El índice y la vista de detalle consultan `update_permissions?`; el formulario delegado usa exclusivamente `PATCH /system_roles/:id/permissions`, deshabilita los campos de datos y explica el límite en es/en/ko. La autorización específica se comprueba nuevamente dentro del bloqueo del rol; los intentos de editar datos o roles compartidos siguen rechazados. Se mantiene la auditoría de altas y bajas con el actor responsable.
+- **RED:** [System Roles CI 45097053472](https://github.com/AliRodri1992/sales_point/actions/runs/45097053472), SHA `6559a107`, reprodujo cinco fallos esperados de política, tarjeta, petición 403 y navegador; RuboCop del módulo pasó. Se añadieron casos negativos de roles protegidos, multiempresa y metadatos, además de recuperación 422. Auditoría I18n local estricta: 300 archivos, cero hallazgos de paridad completa. La verificación de la implementación final está pendiente de CI.
+
 ## Mejoras del editor — 2026-11-23
 
 - La vista de edición y la de consulta comparten la matriz de permisos y conservan las decisiones de Pundit. En la lista de roles se evalúa la política para cada tarjeta de la página. El costo de las consultas de política crece con las tarjetas paginadas y permite conservar la comprobación de aislamiento de cada rol.

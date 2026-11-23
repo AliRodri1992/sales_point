@@ -70,7 +70,7 @@ class SystemRolesController < ApplicationController
 
   def update_permissions
     authorize @system_role, :update_permissions?
-    save_permissions(change_permissions: true)
+    save_permissions(change_permissions: true, authorization: :update_permissions?)
   end
 
   def destroy
@@ -80,10 +80,10 @@ class SystemRolesController < ApplicationController
 
   private
 
-  def save_permissions(attributes: {}, change_permissions: false)
+  def save_permissions(attributes: {}, change_permissions: false, authorization: :update?)
     @assigned_permission_ids = change_permissions ? selected_permission_ids : @system_role.permissions.available.ids
     @system_role.with_lock do
-      authorize @system_role, :update?
+      authorize @system_role, authorization
       @system_role.update!(attributes)
       replace_permissions if change_permissions
     end
@@ -97,8 +97,10 @@ class SystemRolesController < ApplicationController
   def render_invalid_update(attributes)
     @system_role.assign_attributes(attributes.merge(status: @system_role.status_in_database))
     load_permissions
-    load_status_history
-    load_permission_history
+    if policy(@system_role).audit_history?
+      load_status_history
+      load_permission_history
+    end
     render :show, status: :unprocessable_content
   end
 
