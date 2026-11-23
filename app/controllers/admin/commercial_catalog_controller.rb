@@ -65,15 +65,12 @@ module Admin
     end
 
     def authorize_commercial_action
-      if %w[products_lookup categories_lookup].include?(action_name)
-        permissions = policy(resource_class)
-        raise Pundit::NotAuthorizedError unless permissions.index? || permissions.show? ||
-                                                permissions.create? || permissions.update?
-      elsif (action = permission_action)
-        authorize(@record || resource_class, "#{action}?")
-      else
-        head :bad_request
-      end
+      return authorize_lookup if %w[products_lookup categories_lookup].include?(action_name)
+
+      action = permission_action
+      return head :bad_request unless action
+
+      authorize(@record || resource_class, "#{action}?")
     end
 
     def permission_action

@@ -12,6 +12,13 @@ module Admin
 
     private
 
+    def authorize_lookup
+      permissions = policy(resource_class)
+      return if permissions.index? || permissions.show? || permissions.create? || permissions.update?
+
+      raise Pundit::NotAuthorizedError
+    end
+
     def render_commercial_preview
       output = CommercialPreview.new(record: @record, organization: current_organization, inputs: preview_params).call
       output[:promotion] = nil unless policy(Promotion).show?
