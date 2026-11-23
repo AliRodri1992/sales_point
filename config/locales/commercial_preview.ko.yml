@@ -23,6 +23,19 @@ ko:
       subtotal: 소계
       discount: 할인
       total: 최종 합계
+      reasons:
+        organization: "다른 조직의 프로모션입니다."
+        usage_limit: "전체 사용 한도에 도달했습니다."
+        customer_required: "이 프로모션을 사용하려면 고객을 지정하세요."
+        customer_limit: "이 고객의 사용 한도에 도달했습니다."
+        product: "포함된 상품이 아닙니다."
+        category: "포함된 카테고리가 아닙니다."
+        excluded_product: "제외된 상품입니다."
+        excluded_category: "제외된 카테고리입니다."
+        min_quantity: "최소 수량을 충족하지 않습니다."
+        min_subtotal: "최소 소계를 충족하지 않습니다."
+        customer_segment: "고객 그룹이 일치하지 않습니다."
+        no_discount: "선택한 조건에서 할인액이 없습니다."
       overlaps: 상업 규칙 중복 가능성
       overlaps_hint: 최대 다섯 개의 활성 규칙이 유효 기간을 공유합니다. 적용할 규칙을 확인하려면 가격을 미리 계산하세요.
       priority: "우선순위: %{value}"

@@ -124,7 +124,7 @@ export default class extends Controller {
       if (request !== this.quoteRequest || request.signal.aborted) return
       this.amountTargets.forEach(target => { target.textContent = `${data[target.dataset.amount]} ${data.currency}` })
       this.summaryTarget.hidden = false
-      this.statusTarget.textContent = ""
+      this.statusTarget.textContent = data.explanation || ""
     } catch (error) {
       if (error.name !== "AbortError") this.statusTarget.textContent = error.message || this.errorValue
     } finally {

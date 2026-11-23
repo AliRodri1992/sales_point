@@ -121,6 +121,16 @@ RSpec.describe 'Independent commercial catalog workflows', type: :request do
     expect(organization.promotions).to be_empty
   end
 
+  it 'explains an ineligible draft preview without consuming a promotion' do
+    offer.promotion_conditions.create!(kind: 'min_quantity', quantity: 3)
+    expect do
+      get preview_admin_promotion_path(offer), params: { product_id: product.id, quantity: 1 }
+    end.not_to change(PromotionRedemption, :count)
+    expect(response).to have_http_status(:ok)
+    expect(response.parsed_body).to include('promotion' => nil,
+                                            'explanation' => 'The minimum quantity is not met.')
+  end
+
   it 'previews one draft campaign without creating a redemption and rejects foreign options' do
     expect do
       get preview_admin_promotion_path(offer), params: { product_id: product.id, quantity: 2 }

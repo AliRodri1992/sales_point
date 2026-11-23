@@ -23,6 +23,19 @@ en:
       subtotal: Subtotal
       discount: Discount
       total: Final total
+      reasons:
+        organization: "The promotion belongs to another organization."
+        usage_limit: "The total redemption limit has been reached."
+        customer_required: "Select a customer to use this promotion."
+        customer_limit: "This customer reached the redemption limit."
+        product: "The product is not included."
+        category: "The category is not included."
+        excluded_product: "The product is excluded."
+        excluded_category: "The category is excluded."
+        min_quantity: "The minimum quantity is not met."
+        min_subtotal: "The minimum subtotal is not met."
+        customer_segment: "The customer segment does not match."
+        no_discount: "The promotion provides no discount for this selection."
       overlaps: Potential commercial overlap
       overlaps_hint: Up to five active records share a validity window. Test the price to confirm which rule applies.
       priority: "Priority: %{value}"

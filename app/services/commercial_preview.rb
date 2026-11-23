@@ -11,8 +11,15 @@ class CommercialPreview
     product = @organization.products.available.find(@inputs.fetch(:product_id, nil))
     options = line_options(product).merge(selected_catalog)
     quote = Products::Quote.new(product:, **options).preview
-    quote.to_h.slice(:unit_price, :subtotal, :discount, :total, :quantity, :currency)
-         .merge(promotion: quote.promotion&.name, price_list: quote.price_list_item&.price_list&.name)
+    output = quote.to_h.slice(:unit_price, :subtotal, :discount, :total, :quantity, :currency)
+                  .merge(promotion: quote.promotion&.name, price_list: quote.price_list_item&.price_list&.name)
+    if @record.is_a?(Promotion) && quote.promotion.nil?
+      eligibility = Products::PromotionEligibility.new(@record, product:, quantity: quote.base_units,
+                                                      subtotal: quote.subtotal, segment: @inputs[:customer_segment],
+                                                      customer: @inputs[:customer_reference])
+      output[:explanation] = I18n.t("admin.commercial_preview.reasons.#{eligibility.rejection_reason || :no_discount}")
+    end
+    output
   end
 
   private

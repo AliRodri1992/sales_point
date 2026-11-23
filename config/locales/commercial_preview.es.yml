@@ -23,6 +23,19 @@ es:
       subtotal: Subtotal
       discount: Descuento
       total: Total final
+      reasons:
+        organization: "La promoción corresponde a otra organización."
+        usage_limit: "Se alcanzó el límite total de usos."
+        customer_required: "Identifica al cliente para aplicar esta promoción."
+        customer_limit: "El cliente alcanzó su límite de usos."
+        product: "El producto no está incluido."
+        category: "La categoría no está incluida."
+        excluded_product: "El producto está excluido."
+        excluded_category: "La categoría está excluida."
+        min_quantity: "No se cumple la cantidad mínima."
+        min_subtotal: "No se cumple el subtotal mínimo."
+        customer_segment: "El segmento de cliente no coincide."
+        no_discount: "La promoción no genera descuento para esta selección."
       overlaps: Posible coincidencia comercial
       overlaps_hint: Hasta cinco registros activos comparten una vigencia. Simula el precio para confirmar qué regla aplica.
       priority: "Prioridad: %{value}"
