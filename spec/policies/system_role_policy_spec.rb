@@ -53,14 +53,14 @@ RSpec.describe SystemRolePolicy do
       create(:user_role, user:, system_role: create(:system_role, :system, code: 'administrator'))
     end
 
-    it 'can view roles but cannot manage global privileges' do
+    it 'can manage permissions without managing role metadata or lifecycle' do
       policy = described_class.new(user, record)
       expect(policy.index?).to be(true)
       expect(policy.show?).to be(true)
       expect(policy.create?).to be(false)
       expect(policy.update?).to be(false)
       expect(policy.change_status?).to be(false)
-      expect(policy.update_permissions?).to be(false)
+      expect(policy.update_permissions?).to be(true)
     end
   end
 

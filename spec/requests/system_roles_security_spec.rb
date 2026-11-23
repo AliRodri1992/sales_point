@@ -73,23 +73,87 @@ RSpec.describe 'Role permission privilege boundaries', type: :request do
     end.not_to change(SystemRolePermissionAuditEvent, :count)
   end
 
-  it 'prevents tenant administrators from changing shared global roles' do
-    administrator = create(:user, :english)
-    create(:organization_membership, user: administrator)
-    create(:user_role, user: administrator, system_role: create(:system_role, :system, code: 'administrator'))
-    sign_in administrator
+  context 'when signed in as an administrator' do
+    let(:administrator) { create(:user, :english) }
+    let(:organization) { create(:organization) }
+    let(:administrator_role) { create(:system_role, :system, code: 'administrator') }
 
-    get system_roles_path
-    expect(response).to have_http_status(:ok)
-    expect(response.body).not_to include('href="/system_roles/new"')
-    get system_role_path(role)
-    expect(response).to have_http_status(:ok)
-    expect(response.body).not_to include('Permission change history', 'Status history')
-    post system_roles_path, params: { system_role: { name: 'Unauthorized', role_type: 'system' } }
-    expect(response).to have_http_status(:forbidden)
-    patch permissions_system_role_path(role), params: { permission_ids: [access.id] }
-    expect(response).to have_http_status(:forbidden)
-    get status_review_system_role_path(role, target: 'inactive')
-    expect(response).to have_http_status(:forbidden)
+    before do
+      create(:organization_membership, user: administrator, organization:)
+      create(:user_role, user: administrator, system_role: administrator_role, organization:)
+      create(:user_role, user: administrator, system_role: role, organization:)
+      sign_in administrator
+    end
+
+    it 'offers an editable permission workspace with protected role details' do
+      get system_roles_path
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      card = document.at_css("[data-role-card][href='#{system_role_path(role)}']")
+      expect(card.text).to include('Manage permissions')
+      [administrator_role, super_role].each do |protected_role|
+        card = document.at_css("[data-role-card][href='#{system_role_path(protected_role)}']")
+        expect(card.text).to include('View permissions')
+      end
+      expect(response.body).not_to include('href="/system_roles/new"')
+
+      get system_role_path(role)
+      workspace = Nokogiri::HTML(response.body).at_css('[data-permissions-mode="edit"]')
+      expect(workspace).to be_present
+      expect(workspace.at_css("form[action='#{permissions_system_role_path(role)}']")).to be_present
+      expect(workspace.at_css('fieldset[disabled] #system_role_name')).to be_present
+      expect(workspace.at_css("#permission_#{access.id}:not([disabled])")).to be_present
+      expect(response.body).not_to include('Permission change history', 'Status history')
+    end
+
+    it 'persists local permissions and audits the administrator without changing metadata' do
+      patch permissions_system_role_path(role), params: {
+        permission_ids: [access.id, action.id], system_role: { name: 'Unauthorized', status: 'inactive' }
+      }
+
+      expect(response).to redirect_to(system_role_path(role))
+      expect(role.reload).to have_attributes(name: 'Operations', status: 'active')
+      expect(role.permissions).to contain_exactly(access, action)
+      expect(role.permission_audit_events.last.actor).to eq(administrator)
+    end
+
+    it 'does not allow direct role metadata, creation or lifecycle changes' do
+      post system_roles_path, params: { system_role: { name: 'Unauthorized', role_type: 'system' } }
+      expect(response).to have_http_status(:forbidden)
+      patch system_role_path(role), params: { system_role: { name: 'Unauthorized' } }
+      expect(response).to have_http_status(:forbidden)
+      get status_review_system_role_path(role, target: 'inactive')
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'blocks changes to either protected role' do
+      [super_role, administrator_role].each do |protected_role|
+        patch permissions_system_role_path(protected_role), params: { permission_ids: [] }
+        expect(response).to have_http_status(:forbidden)
+        expect(protected_role.permissions.reload).to include(access, action)
+      end
+    end
+
+    it 'blocks edits to roles used by another organization' do
+      other = create(:organization)
+      foreign_user = create(:user)
+      create(:organization_membership, user: foreign_user, organization: other)
+      create(:user_role, user: foreign_user, system_role: role, organization: other)
+
+      patch permissions_system_role_path(role), params: { permission_ids: [access.id] }
+      expect(response).to have_http_status(:forbidden)
+      expect(role.permissions.reload).to be_empty
+      get system_role_path(role)
+      expect(Nokogiri::HTML(response.body).at_css('[data-permissions-mode="view"]')).to be_present
+    end
+
+    it 'preserves permissions and editable workspace after an invalid permission selection' do
+      patch permissions_system_role_path(role), params: { permission_ids: [action.id] }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('[data-permissions-mode="edit"] #system_role_permission_ids_error')).to be_present
+      expect(role.permissions.reload).to be_empty
+    end
   end
 end

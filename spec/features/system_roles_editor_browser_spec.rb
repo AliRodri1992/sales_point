@@ -37,6 +37,27 @@ RSpec.describe 'Grouped role permissions', type: :feature, js: true do
     expect(page).to have_unchecked_field("permission_#{view_permission.id}")
   end
 
+  scenario 'allows an administrator to review and save local permission switches' do
+    administrator = create(:user, :english)
+    create(:organization_membership, user: administrator)
+    create(:user_role, user: administrator, system_role: create(:system_role, :system, code: 'administrator'))
+    create(:user_role, user: administrator, system_role: role)
+    login_as(administrator, scope: :user)
+
+    visit system_role_path(role)
+    expect(page).to have_css('[data-permissions-mode="edit"]')
+    expect(page).to have_field('system_role_name', disabled: true)
+    check "permission_#{view_permission.id}"
+    click_button 'Save permissions'
+    within '[role="dialog"]' do
+      expect(page).to have_text('suppliers.contacts.view')
+      click_button 'Confirm changes'
+    end
+    expect(page).to have_text('The role permissions were saved.')
+    expect(role.permissions.reload).to contain_exactly(view_permission)
+    expect(role.permission_audit_events.last.actor).to eq(administrator)
+  end
+
   scenario 'opens a protected role in the read-only permissions workspace' do
     visit system_role_path(admin.system_roles.first)
 
