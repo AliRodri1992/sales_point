@@ -1,6 +1,7 @@
 <% content_for :title, @product.persisted? ? t('admin.products.edit.label') : t('admin.products.new.title') %>
-<header class="catalog-header">
-  <div><p class="catalog-eyebrow"><%= t('admin.catalog_design.product_workspace') %></p><h1><%= @product.persisted? ? t('admin.products.edit.label') : t('admin.products.new.title') %></h1><p><%= t('admin.catalog_design.product_intro') %></p></div>
-  <%= link_to t('admin.catalog_design.back'), catalog_back_path(Product), class: 'catalog-button', data: { turbo_frame: '_top' } %>
+<div class="catalog-workspace products-v9-workspace"><header class="catalog-header products-v9-header">
+  <div class="products-v9-heading"><span class="products-v9-heading-icon" aria-hidden="true"><%= delta_icon('cube', class: 'size-6') %></span><div><p class="catalog-eyebrow"><%= t('admin.catalog_design.product_workspace') %></p><h1><%= @product.persisted? ? t('admin.products.edit.label') : t('admin.products.new.title') %></h1><p><%= t('admin.catalog_design.product_intro') %></p></div></div>
+  <%= link_to t('admin.catalog_design.back'), catalog_back_path(Product), class: 'catalog-button products-v9-back', data: { turbo_frame: '_top' } %>
 </header>
 <%= render 'form', product: @product %>
+</div>

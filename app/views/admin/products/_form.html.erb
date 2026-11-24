@@ -1,9 +1,11 @@
-<%= form_with model: [:admin, product], multipart: true, html: { novalidate: true }, data: { turbo: false, controller: 'product-upload nested-catalog', action: 'submit->product-upload#guardSubmit input->nested-catalog#refreshLinks', product_upload_url_value: admin_product_images_path(product_id: product.persisted? ? product.id : nil), product_upload_locale_value: I18n.locale, product_upload_busy_value: t('admin.catalog_design.image_uploading'), product_upload_error_value: t('admin.catalog_design.image_upload_error'), product_upload_ready_value: t('admin.catalog_design.image_ready') }, class: 'catalog-layout' do |form| %>
-  <div class="catalog-main">
-    <%= catalog_errors(product) %>
-    <nav class="catalog-nav" aria-label="<%= t('admin.catalog_design.sections') %>"><% %w[identity pricing classification variants presentations barcodes].each do |section| %><a href="#product-<%= section %>"><%= t("admin.catalog_design.#{section}") %></a><% end %></nav>
+<%= form_with model: [:admin, product], multipart: true, html: { novalidate: true }, data: { turbo: false, controller: 'product-upload nested-catalog', action: 'submit->product-upload#guardSubmit input->nested-catalog#refreshLinks', product_upload_url_value: admin_product_images_path(product_id: product.persisted? ? product.id : nil), product_upload_locale_value: I18n.locale, product_upload_busy_value: t('admin.catalog_design.image_uploading'), product_upload_error_value: t('admin.catalog_design.image_upload_error'), product_upload_ready_value: t('admin.catalog_design.image_ready') }, class: 'catalog-layout products-v9-editor' do |form| %>
+
+  <div class="products-v9-editor-columns">
+    <div class="products-v9-editor-column products-v9-editor-column--details">
+      <%= catalog_errors(product) %>
     <section class="catalog-card" id="product-identity">
       <%= catalog_heading(t('admin.catalog_design.identity'), t('admin.catalog_design.product_identity_hint'), icon: 'cube') %>
+      <%= render 'section_help', section: 'identity', title: t('admin.catalog_design.identity'), hint: t('admin.catalog_design.product_identity_hint') %>
       <div class="catalog-card-body catalog-fields">
         <%= catalog_field(form, :name, label: required_field_label(t('admin.products.form.name')), maxlength: 100) %>
         <%= catalog_field(form, :code, label: required_field_label(t('admin.products.form.code')), maxlength: 50, autocomplete: 'off') %>
@@ -12,16 +14,9 @@
         <div class="catalog-full"><%= catalog_field(form, :description, type: :text_area, label: t('admin.products.form.description'), maxlength: 500, rows: 3) %></div>
       </div>
     </section>
-    <section class="catalog-card" id="product-pricing">
-      <%= catalog_heading(t('admin.catalog_design.pricing'), t('admin.catalog_design.pricing_hint'), icon: 'currency-dollar') %>
-      <div class="catalog-card-body catalog-fields">
-        <%= catalog_field(form, :price, type: :number_field, label: required_field_label(t('admin.products.form.price')), min: 0, max: '9999999999.99', step: '0.01', inputmode: 'decimal') %>
-        <%= catalog_field(form, :cost, type: :number_field, label: t('admin.products.form.cost'), min: 0, max: '9999999999.99', step: '0.01', inputmode: 'decimal') %>
-        <% if product.persisted? %><div class="catalog-full"><%= catalog_field(form, :price_change_reason, type: :text_area, maxlength: 1000, rows: 2) %><p class="catalog-hint"><%= t('admin.catalog_design.price_approval_hint') %></p></div><% end %>
-      </div>
-    </section>
     <section class="catalog-card" id="product-classification">
       <%= catalog_heading(t('admin.catalog_design.classification'), t('admin.catalog_design.classification_hint'), icon: 'squares-2x2') %>
+      <%= render 'section_help', section: 'classification', title: t('admin.catalog_design.classification'), hint: t('admin.catalog_design.classification_hint') %>
       <div class="catalog-card-body catalog-fields">
         <%= catalog_select(form, :category_id, catalog_reference_choices(current_organization.categories.available.order(:name), product.category_id), label: t('admin.products.form.category')) %>
         <%= catalog_select(form, :tracking_mode, Product.tracking_modes.keys.map { |mode| [t("admin.catalog_design.tracking_#{mode}"), mode] }, label: t('admin.catalog_design.tracking_mode'), include_blank: false) %>
@@ -29,9 +24,38 @@
         <%= catalog_select(form, :sat_tax_id, catalog_reference_choices(SatTax.active.for_products.order(:code), product.sat_tax_id), label: t('admin.products.form.sat_tax')) %>
       </div>
     </section>
+
+    </div>
+    <div class="products-v9-editor-column products-v9-editor-column--media">
+    <section class="catalog-card"><%= catalog_heading(t('admin.catalog_design.product_image'), t('admin.catalog_design.image_hint'), icon: 'photo') %>
+      <%= render 'section_help', section: 'photo', title: t('admin.catalog_design.product_image'), hint: t('admin.catalog_design.image_hint') %><div class="catalog-card-body">
+      <div class="catalog-media products-v9-photo"><% if product.image.attached? && product.image.blob.persisted? %><%= image_tag product.image, alt: product.name %><% else %><%= delta_icon('photo', class: 'size-12 text-emerald-700') %><% end %></div>
+      <%= hidden_field_tag 'product[image_signed_id]', product_image_form_token(product), data: { product_upload_target: 'signedId' } %>
+      <div data-product-upload-target="dashboard" hidden></div>
+      <div data-product-upload-target="fallback" class="catalog-field"><%= form.label :image, t('admin.catalog_design.product_image') %><%= form.file_field :image, accept: 'image/jpeg,image/png,image/webp', data: { product_upload_target: 'input' } %></div>
+      <p class="catalog-hint"><%= t('admin.catalog_design.image_hint') %></p><p role="status" aria-live="polite" class="catalog-hint" data-product-upload-target="status" tabindex="-1"></p><%= error_message_for(product, :image) %>
+    </div></section>
+    <section class="catalog-card" id="product-pricing">
+      <%= catalog_heading(t('admin.catalog_design.pricing'), t('admin.catalog_design.pricing_hint'), icon: 'currency-dollar') %>
+      <%= render 'section_help', section: 'pricing', title: t('admin.catalog_design.pricing'), hint: t('admin.catalog_design.pricing_hint') %>
+      <div class="catalog-card-body catalog-fields">
+        <%= catalog_field(form, :price, type: :number_field, label: required_field_label(t('admin.products.form.price')), min: 0, max: '9999999999.99', step: '0.01', inputmode: 'decimal') %>
+        <%= catalog_field(form, :cost, type: :number_field, label: t('admin.products.form.cost'), min: 0, max: '9999999999.99', step: '0.01', inputmode: 'decimal') %>
+        <% if product.persisted? %><div class="catalog-full"><%= catalog_field(form, :price_change_reason, type: :text_area, maxlength: 1000, rows: 2) %><p class="catalog-hint"><%= t('admin.catalog_design.price_approval_hint') %></p></div><% end %>
+      </div>
+    </section>
+    <section class="catalog-card products-v9-visibility">
+      <%= catalog_heading(t('admin.products.form.status'), t('admin.catalog_design.featured_hint'), icon: 'eye') %>
+      <%= render 'section_help', section: 'visibility', title: t('admin.products.form.status'), hint: t('admin.catalog_design.featured_hint') %>
+      <div class="catalog-card-body"><div class="catalog-field"><%= form.label :status, t('admin.products.form.status') %><%= form.select :status, Product.statuses.keys.map { |status| [t("admin.products.statuses.#{status}"), status] } %></div><label class="catalog-toggle mt-4"><%= form.check_box :featured %><span><strong><%= t('admin.products.form.featured') %></strong><small><%= t('admin.catalog_design.featured_hint') %></small></span></label><div class="mt-4"><%= catalog_field(form, :position, type: :number_field, label: t('admin.products.form.position'), min: 0, step: 1) %></div></div></section>
+    <div class="catalog-notice"><%= t('admin.catalog_design.product_help') %></div>
+
+    </div>
+  </div>
+  <div class="products-v9-editor-extra">
     <% { variants: :product_variants, presentations: :product_presentations, barcodes: :product_barcodes }.each do |section, association| %>
       <section class="catalog-card" id="product-<%= section %>">
-        <%= catalog_heading(t("admin.catalog_design.#{section}"), t("admin.catalog_design.#{section}_hint"), icon: section == :barcodes ? 'qr-code' : 'cube') %>
+        <%= catalog_heading(t("admin.catalog_design.#{section}"), t("admin.catalog_design.#{section}_hint"), icon: section == :barcodes ? 'qr-code' : 'cube') %> <%= render 'section_help', section: "product-#{section}", title: t("admin.catalog_design.#{section}"), hint: t("admin.catalog_design.#{section}_hint") %>
         <div class="catalog-card-body" data-nested-catalog-group>
           <div data-nested-catalog-rows><%= form.fields_for association, product.public_send(association).reject { |row| row.respond_to?(:primary?) && row.primary? } do |nested| %><%= render 'commercial_row', form: nested, section: section %><% end %></div>
           <template data-nested-catalog-template><%= form.fields_for association, association.to_s.classify.constantize.new, child_index: 'NEW_RECORD' do |nested| %><%= render 'commercial_row', form: nested, section: section %><% end %></template>
@@ -39,17 +63,7 @@
         </div>
       </section>
     <% end %>
-    <footer class="catalog-footer"><%= link_to t('admin.catalog_design.cancel'), catalog_back_path(Product), class: 'catalog-button' %><%= form.submit product.persisted? ? t('admin.products.form.update') : t('admin.products.form.create'), class: 'catalog-button catalog-button-primary', data: { product_upload_target: 'submit' } %></footer>
+
   </div>
-  <aside class="catalog-aside">
-    <section class="catalog-card"><%= catalog_heading(t('admin.catalog_design.product_image'), t('admin.catalog_design.image_hint'), icon: 'photo') %><div class="catalog-card-body">
-      <% if product.image.attached? && product.image.blob.persisted? %><div class="catalog-media mb-4"><%= image_tag product.image, alt: product.name %></div><% end %>
-      <%= hidden_field_tag 'product[image_signed_id]', product_image_form_token(product), data: { product_upload_target: 'signedId' } %>
-      <div data-product-upload-target="dashboard" hidden></div>
-      <div data-product-upload-target="fallback" class="catalog-field"><%= form.label :image, t('admin.catalog_design.product_image') %><%= form.file_field :image, accept: 'image/jpeg,image/png,image/webp', data: { product_upload_target: 'input' } %></div>
-      <p class="catalog-hint"><%= t('admin.catalog_design.image_hint') %></p><p role="status" aria-live="polite" class="catalog-hint" data-product-upload-target="status" tabindex="-1"></p><%= error_message_for(product, :image) %>
-    </div></section>
-    <section class="catalog-card catalog-card-body"><div class="catalog-field"><%= form.label :status, t('admin.products.form.status') %><%= form.select :status, Product.statuses.keys.map { |status| [t("admin.products.statuses.#{status}"), status] } %></div><label class="catalog-toggle mt-4"><%= form.check_box :featured %><span><strong><%= t('admin.products.form.featured') %></strong><small><%= t('admin.catalog_design.featured_hint') %></small></span></label><div class="mt-4"><%= catalog_field(form, :position, type: :number_field, label: t('admin.products.form.position'), min: 0, step: 1) %></div></section>
-    <div class="catalog-notice"><%= t('admin.catalog_design.product_help') %></div>
-  </aside>
+    <footer class="catalog-footer"><%= link_to t('admin.catalog_design.cancel'), catalog_back_path(Product), class: 'catalog-button' %><%= form.submit product.persisted? ? t('admin.products.form.update') : t('admin.products.form.create'), class: 'catalog-button catalog-button-primary', data: { product_upload_target: 'submit' } %></footer>
 <% end %>

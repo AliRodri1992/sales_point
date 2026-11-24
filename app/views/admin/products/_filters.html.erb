@@ -12,10 +12,10 @@
    } %>
 <% active_filters = filter_labels.select { |_key, (_label, value)| value.present? } %>
 <% advanced_count = active_filters.keys.count { |key| !%w[search status].include?(key) } %>
-<section class="products-filter-panel" aria-labelledby="products-filters-heading">
+<section class="products-filter-panel products-v9-filter-panel" aria-labelledby="products-filters-heading">
   <div class="products-filter-panel__heading">
     <div>
-      <h2 id="products-filters-heading"><%= t('admin.catalog_design.product_filters_title') %></h2>
+      <div class="products-v9-filter-heading-row"><h2 id="products-filters-heading"><%= t('admin.catalog_design.product_filters_title') %></h2><%= render 'section_help', section: 'filters', title: t('admin.catalog_design.product_filters_title'), hint: t('admin.catalog_design.product_filters_hint') %></div>
       <p><%= t('admin.catalog_design.product_filters_hint') %></p>
     </div>
     <% if active_filters.any? %>
@@ -23,7 +23,7 @@
     <% end %>
   </div>
   <%= form_with url: admin_products_path, method: :get,
-                class: 'products-filters',
+                class: 'products-filters products-v9-filters',
                 data: { turbo_frame: '_top', controller: 'products-search',
                         action: 'submit->products-search#cancelSearch change->products-search#cancelSearch' } do %>
     <% if Admin::ProductsListing::SORTABLE_COLUMNS.include?(params[:sort]) %>
@@ -35,8 +35,9 @@
     <% if TablePagePreference::OPTIONS.map(&:to_s).include?(params[:per_page].to_s) %>
       <%= hidden_field_tag :per_page, params[:per_page] %>
     <% end %>
-    <div class="products-filters__primary">
-      <div class="products-filters__field products-filters__search">
+
+    <div class="products-v9-filter-grid">
+<div class="products-filters__field products-filters__search">
         <%= label_tag :products_search, t('admin.catalog_design.search') %>
         <div class="products-filters__search-control">
           <%= delta_icon('magnifying-glass', class: 'size-4') %>
@@ -55,9 +56,7 @@
               ], params[:status].presence || 'all'), id: 'products_status' %>
         </div>
       </div>
-    </div>
-
-    <details class="products-filters__advanced" <%= 'open' if advanced_count.positive? %>>
+<details class="products-filters__advanced" <%= 'open' if advanced_count.positive? %>>
       <summary>
         <span class="products-filters__advanced-symbol" aria-hidden="true"><%= delta_icon('adjustments-horizontal', class: 'size-5') %></span>
         <span class="products-filters__advanced-copy">
@@ -67,6 +66,11 @@
         <% if advanced_count.positive? %><span class="products-filters__advanced-count"><%= advanced_count %></span><% end %>
         <%= delta_icon('chevron-down', class: 'size-4 products-filters__chevron') %>
       </summary>
+    </details>
+    <%= button_tag type: :submit, name: nil, class: 'catalog-button catalog-button-primary products-v9-filter-submit' do %>
+      <%= delta_icon('magnifying-glass', class: 'size-4', aria: { hidden: true }) %>
+      <%= t('admin.catalog_design.search') %>
+    <% end %>
       <div class="products-filters__advanced-panel">
         <div class="products-filters__groups">
           <fieldset class="products-filters__group">
@@ -124,36 +128,29 @@
           </fieldset>
         </div>
       </div>
-    </details>
 
-    <footer class="products-filters__footer">
-      <p class="products-filters__apply-hint"><%= delta_icon('information-circle', class: 'size-4', aria: { hidden: true }) %><span><%= t('admin.products.filters.apply_hint') %></span></p>
-      <div class="products-filters__actions">
-        <%= link_to t('admin.catalog_design.clear'), admin_products_path, class: 'products-filters__clear', data: { turbo_frame: '_top' } %>
-        <%= button_tag type: :submit, name: nil, class: 'catalog-button catalog-button-primary products-filters__apply' do %>
-          <%= delta_icon('funnel', class: 'size-4', aria: { hidden: true }) %>
-          <%= t('admin.catalog_design.filter') %>
-        <% end %>
-      </div>
-    </footer>
+    </div>
     <p class="products-filters__error" data-products-search-target="error" role="alert" hidden>
       <%= t('admin.catalog_design.product_filter_request_error') %>
     </p>
+
   <% end %>
+
 
   <% if active_filters.any? %>
     <nav class="products-filter-chips" aria-label="<%= t('admin.catalog_design.product_active_filters') %>">
       <span class="products-filter-chips__label"><%= t('admin.catalog_design.product_active_filters') %></span>
       <% active_filters.each do |key, (label, value)| %>
         <%= link_to admin_products_path(request.query_parameters.except(key, 'page')),
-                    class: 'products-filter-chip', data: { turbo_frame: '_top' },
+                    class: 'products-filter-chip promotion-filter-chip', data: { turbo_frame: '_top' },
                     aria: { label: t('admin.catalog_design.product_remove_filter', filter: "#{label}: #{value}") } do %>
           <span><%= label %>: <%= value %></span>
           <%= delta_icon('x-mark', class: 'size-3.5') %>
         <% end %>
       <% end %>
       <%= link_to t('admin.catalog_design.product_clear_all'), admin_products_path,
-                  class: 'products-filter-chips__clear', data: { turbo_frame: '_top' } %>
+                  class: 'products-filter-chips__clear promotion-filter-clear', data: { turbo_frame: '_top' } %>
     </nav>
   <% end %>
 </section>
+

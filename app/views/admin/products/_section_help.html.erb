@@ -1,0 +1,26 @@
+<%# Shared visual and keyboard behavior with the Promociones help control. %>
+<div class="promotion-help products-v9-help" data-controller="promotion-help"
+     data-action="keydown.esc->promotion-help#escape click@document->promotion-help#outside">
+  <button type="button" class="promotion-help-trigger"
+          data-promotion-help-target="trigger" data-action="promotion-help#toggle"
+          aria-label="<%= t('admin.catalog_design.product_help') %>: <%= title %>"
+          aria-expanded="false" aria-controls="products-help-<%= section %>" aria-haspopup="dialog">
+    <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.75-2.5 2-2.5 4"/><path d="M12 17h.01"/>
+    </svg>
+  </button>
+  <div id="products-help-<%= section %>" class="promotion-help-panel"
+       data-promotion-help-target="panel" role="dialog" aria-modal="false"
+       aria-labelledby="products-help-title-<%= section %>" hidden>
+    <div class="promotion-help-header">
+      <%= delta_icon('information-circle', class: 'size-5 shrink-0') %>
+      <strong id="products-help-title-<%= section %>"><%= title %></strong>
+      <button type="button" class="promotion-help-close" data-action="promotion-help#closeAndFocus"
+              aria-label="<%= t('admin.catalog_design.cancel') %>">
+        <%= delta_icon('x-mark', class: 'size-4') %>
+      </button>
+    </div>
+    <div class="promotion-help-body"><p><%= hint %></p></div>
+  </div>
+</div>

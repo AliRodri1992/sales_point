@@ -5,7 +5,7 @@
 <% stock_totals = Inventory.where(organization_id: current_organization&.id, product_id: product_rows.map(&:id)).group(:product_id).sum(:stock) %>
 <% filtered = request.query_parameters.slice('search', 'status', 'category_id', 'featured', 'tracking_mode', 'stock_status', 'min_price', 'max_price').values.any? { |value| value.present? && value != 'all' } %>
 
-<section class="catalog-list-directory products-directory" aria-labelledby="products-directory-title">
+<section class="catalog-list-directory products-directory products-v9-directory" aria-labelledby="products-directory-title">
   <header class="catalog-list-directory-heading">
     <div>
       <h2 id="products-directory-title"><%= t('admin.products.index.card_title') %></h2>
