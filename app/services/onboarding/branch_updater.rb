@@ -24,12 +24,7 @@ module Onboarding
       )
 
       branch.assign_attributes(attributes)
-      return false unless branch.save!(context: :onboardingstep2)
-
-      address = branch.address
-      return true unless address
-
-      address.save!(context: :onboardingstep2)
+      branch.save!
     end
   end
 end
