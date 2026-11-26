@@ -3,14 +3,27 @@
 <% options = onboarding_field_options(form, attribute, label:, required:, error_attribute:) %>
 <% options[:name] = local_assigns[:name] if local_assigns[:name] %>
 <% options[:data].merge!(local_assigns.fetch(:data, {})) %>
-<div class="onboarding-field" data-field-key="<%= attribute %>">
-  <%= form.label attribute, for: options[:id] do %><%= label %><span class="onboarding-required text-rose-600" aria-hidden="true" data-onboarding-required><%= '*' if required %></span><% end %>
+<div class="onboarding-field" data-field-key="<%= attribute %>" <%= tag.attributes(local_assigns.fetch(:wrapper_data, {})) %>>
+  <%= form.label attribute, for: options[:id] do %><% if local_assigns[:country_labels] %><span data-country-label data-country-label-mx="<%= country_labels[:mx] %>" data-country-label-other="<%= country_labels[:other] %>"><%= label %></span><% else %><%= label %><% end %><span class="onboarding-required text-rose-600" aria-hidden="true" data-onboarding-required><%= '*' if required %></span><% end %>
+  <% options[:list] = 'onboarding-neighborhoods' if attribute == :neighborhood && local_assigns[:postal_assist] %>
   <% if local_assigns[:collection] %>
     <div class="relative" data-controller="delta-select" data-country-flags="<%= attribute == :country_id %>">
       <%= form.select attribute, collection, { include_blank: local_assigns.fetch(:prompt, t('admin.onboarding_ui.select_option')), selected: local_assigns.fetch(:selected, form.object.respond_to?(attribute) ? form.object.public_send(attribute) : nil) }, options %>
     </div>
   <% else %>
     <%= form.public_send(local_assigns.fetch(:type, :text_field), attribute, **options, autocomplete: local_assigns.fetch(:autocomplete, 'off')) %>
+  <% end %>
+  <% if attribute == :postal_code && local_assigns[:postal_assist] %>
+    <p class="onboarding-field-hint" data-supplier-postal-assist-target="status" aria-live="polite"></p>
+  <% elsif attribute == :neighborhood && local_assigns[:postal_assist] %>
+    <datalist id="onboarding-neighborhoods" data-supplier-postal-assist-target="neighborhoods"></datalist>
+    <div class="mt-2 hidden" data-controller="delta-select" data-searchable="true"
+         data-search-placeholder="<%= t('admin.supplier_details.postal_search_neighborhood') %>"
+         data-supplier-postal-assist-target="choicesWrapper">
+      <select aria-label="<%= t('admin.supplier_details.postal_choose_neighborhood') %>"
+              data-supplier-postal-assist-target="choices"
+              data-action="change->supplier-postal-assist#chooseNeighborhood"></select>
+    </div>
   <% end %>
   <%= render 'field_errors', object: form.object, attribute: error_attribute, label:, id: "#{options[:id]}_error" %>
 </div>
