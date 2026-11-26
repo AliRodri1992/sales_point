@@ -47,6 +47,38 @@ RSpec.describe 'Onboarding scoped interface', type: :request do
     expect(response).to redirect_to(admin_onboarding_path(step: 3))
   end
 
+  it 'saves branch details and exits without changing the operational status' do
+    country = create(:country, iso_alpha2: 'HK', iso_alpha3: 'HKG', iso_numeric: '344')
+    branch = create(:branch, organization:, operational_state: 'preparing')
+    patch admin_onboarding_path(step: 2), params: {
+      destination: 'dashboard',
+      branch: { name: 'Updated branch',
+                address_attributes: { id: branch.address.id, street: 'Queens Road',
+                                      city: 'Hong Kong', country_id: country.id } }
+    }
+
+    expect(response).to redirect_to(admin_dashboard_path)
+    expect(branch.reload.name).to eq('Updated branch')
+    expect(branch).to be_preparing
+    expect(branch.address.reload.street).to eq('Queens Road')
+  end
+
+  it 'retains invalid branch input without rendering a duplicate error banner' do
+    country = create(:country, iso_alpha2: 'HK', iso_alpha3: 'HKG', iso_numeric: '344')
+    patch admin_onboarding_path(step: 2), params: {
+      branch: { name: 'AB', address_attributes: { street: 'Queens Road',
+                                                city: 'Hong Kong', country_id: country.id } }
+    }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('.onboarding-page')['data-onboarding-error-value']).to be_present
+    expect(document.css('.onboarding-feedback')).to be_empty
+    expect(document.at_css('#branch_name')['value']).to eq('AB')
+    expect(document.at_css('#branch_name')['aria-invalid']).to eq('true')
+    expect(organization.branches).to be_empty
+  end
+
   it 'does not accept a recovery intent on the wrong step' do
     expect do
       patch admin_onboarding_path(step: 1, intent: 'team'), params: {
