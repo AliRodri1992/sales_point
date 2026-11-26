@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 import { Turbo } from "@hotwired/turbo-rails"
 
 export default class extends Controller {
-  static targets = ["form", "feedback", "address"]
+  static targets = ["form", "address"]
   static values = { error: String, copy: Object }
 
   connect() {
@@ -119,7 +119,7 @@ export default class extends Controller {
     const field = scope.querySelector('[data-onboarding-field][aria-invalid="true"]')
     const target = field?.tagName === "SELECT"
       ? field.closest('[data-controller~="delta-select"]')?.querySelector('button[aria-haspopup="listbox"]') || field
-      : field || scope.querySelector(".onboarding-field-error:not(.hidden)") || this.feedbackTarget
+      : field || scope.querySelector(".onboarding-field-error:not(.hidden)") || this.element.querySelector("#onboarding-step-title")
     if (!target.matches("input,select,button,textarea")) target.setAttribute("tabindex", "-1")
     target.focus()
   }
@@ -154,7 +154,6 @@ export default class extends Controller {
     this.submitting = true
     this.notified = false
     this.submitter = event.detail.formSubmission.submitter
-    this.feedbackTarget.classList.add("hidden")
   }
 
   submitEnd(event) {
@@ -181,8 +180,6 @@ export default class extends Controller {
   showError(message) {
     if (this.notified) return
     this.notified = true
-    this.feedbackTarget.textContent = message
-    this.feedbackTarget.classList.remove("hidden")
     window.Swal?.fire({ toast: true, icon: "error", position: "top-end", title: message,
       showConfirmButton: false, showCloseButton: true, closeButtonAriaLabel: this.copyValue.close,
       didClose: () => { if (this.submitter?.isConnected) this.submitter.focus() } })
