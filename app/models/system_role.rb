@@ -31,7 +31,7 @@ class SystemRole < ApplicationRecord
   validates :code,
             presence: true,
             length: { maximum: 50 },
-            format: { with: /\A[a-z0-9_]+\z/ },
+            format: { with: /\A[a-z0-9_]+\z/, allow_blank: true },
             uniqueness: true
 
   validates :role_type, presence: true

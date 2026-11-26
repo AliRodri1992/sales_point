@@ -32,6 +32,22 @@ RSpec.describe SystemRole, type: :model do
     expect(duplicate.errors[:name]).to be_present
   end
 
+  it 'shows only the required error when a role code is missing or blank' do
+    [nil, '', '   '].each do |blank_code|
+      role = build(:system_role, name: nil, code: blank_code)
+
+      expect(role).not_to be_valid
+      expect(role.errors.details[:code].map { |error| error.fetch(:error) }).to eq([:blank])
+    end
+  end
+
+  it 'shows only the format error when a nonblank role code contains invalid characters' do
+    role = build(:system_role, name: 'Control de inventario', code: 'invalid-code')
+
+    expect(role).not_to be_valid
+    expect(role.errors.details[:code].map { |error| error.fetch(:error) }).to eq([:invalid])
+  end
+
   it 'generates a valid code for names in non-Latin scripts' do
     role = build(:system_role, name: '매장 관리자', code: nil)
     expect(role).to be_valid

@@ -131,6 +131,18 @@ RSpec.describe 'System roles directory redesign', type: :request do
     expect(response).to redirect_to(system_role_path(role))
   end
 
+  it 'renders a single required message for an empty code in the New Role modal' do
+    post system_roles_path,
+         params: { role_modal: '1', permission_ids: [''],
+                   system_role: { name: '', code: '', role_type: 'system', status: 'inactive' } },
+         headers: { 'ACCEPT' => 'text/vnd.turbo-stream.html' }
+
+    expect(response).to have_http_status(:unprocessable_content)
+    expect(response.body.scan('data-validation-attribute="code"').size).to eq(1)
+    expect(response.body).to include('id="system_role_code_error"')
+    expect(SystemRole.where(code: '')).not_to exist
+  end
+
   it 're-renders validation errors inside the Turbo modal without persisting the role' do
     post system_roles_path,
          params: { role_modal: '1', permission_ids: [''],

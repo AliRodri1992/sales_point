@@ -9,6 +9,10 @@
 
 > Este registro es la fuente de verdad de hallazgos del módulo. Lo observado en el código se distingue de las hipótesis y de pruebas pendientes. Un commit documental no equivale a una corrección ni al cierre de la auditoría. Conserva los IDs entre siguientes iteraciones.
 
+## Mensajes de validación del código de rol — 2026-11-26
+
+- **SYSTEM_ROLES-017 · CORRECCIÓN IMPLEMENTADA (CI pendiente):** en el alta Nuevo rol, un código vacío disparaba simultáneamente el error de presencia y el de formato. El validador de formato ahora se omite cuando el valor está en blanco; se mantiene la obligatoriedad, unicidad, longitud máxima y restricción de caracteres para códigos no vacíos. Pruebas de modelo contemplan `nil`, vacío, espacios y formato inválido; una prueba de solicitud Turbo asegura un solo mensaje de error en la modal. No se modifican permisos ni componentes visuales.
+
 ## Alta de roles para ambos perfiles administrativos — 2026-11-26
 
 - **SYSTEM_ROLES-016 · IMPLEMENTADO (CI pendiente):** nueva semilla idempotente `db/seeds/role_creation_permissions.rb` para `roles.create`, asignada a `administrator` y `super_admin` mediante el provisionador auditado de permisos administrativos. Se carga desde `db/seeds.rb` después del catálogo base y se puede ejecutar individualmente con `bin/rails runner "load Rails.root.join('db/seeds/role_creation_permissions.rb'); RoleCreationPermissionSeeds.seed!"`.
