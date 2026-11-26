@@ -30,11 +30,6 @@
       <h2 id="onboarding-step-title" tabindex="-1"><%= onboarding_current_title(@step) %></h2>
       <p><%= @step == 5 ? t('admin.onboarding_ui.review_help') : @step == 3 ? t('admin.onboarding_ui.terminal_intro') : t("admin.onboarding.steps.#{@step}.help") %></p>
     </header>
-    <% if @onboarding_error %>
-      <div class="onboarding-feedback" role="alert" tabindex="-1" data-onboarding-target="feedback"><%= @onboarding_error %></div>
-    <% else %>
-      <div class="onboarding-feedback hidden" role="alert" tabindex="-1" data-onboarding-target="feedback"></div>
-    <% end %>
 
     <% if @step == 3 && @terminals.empty? %>
       <%= render 'terminal_recovery' %>
