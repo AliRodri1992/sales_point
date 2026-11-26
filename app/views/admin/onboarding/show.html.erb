@@ -37,7 +37,7 @@
       <% if @step == 5 && @employees.empty? %><%= render 'team_recovery' %><% end %>
       <%= form_with url: admin_onboarding_path(step: @step), method: :patch, id: 'onboarding-form',
         html: { novalidate: true }, data: { onboarding_target: 'form', action: 'submit->onboarding#submit turbo:submit-start->onboarding#submitStart turbo:submit-end->onboarding#submitEnd turbo:before-fetch-response->onboarding#beforeResponse turbo:fetch-request-error->onboarding#requestError' } do |form| %>
-        <% if @step < 5 %><p class="onboarding-required-note"><%= t('admin.onboarding_ui.required_help') %></p><% end %>
+        <% if @step < 5 %><p class="onboarding-required-note"><%= onboarding_required_note %></p><% end %>
         <%= render "step_#{@step}", form: %>
         <div class="onboarding-actions">
           <%= link_to t('admin.onboarding.back'), @step == 1 ? admin_dashboard_path : admin_onboarding_path(step: @step - 1), class: 'onboarding-secondary' %>
