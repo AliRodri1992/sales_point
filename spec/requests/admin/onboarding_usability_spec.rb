@@ -67,7 +67,7 @@ RSpec.describe 'Onboarding scoped interface', type: :request do
     country = create(:country, iso_alpha2: 'HK', iso_alpha3: 'HKG', iso_numeric: '344')
     patch admin_onboarding_path(step: 2), params: {
       branch: { name: 'AB', address_attributes: { street: 'Queens Road',
-                                                city: 'Hong Kong', country_id: country.id } }
+                                                  city: 'Hong Kong', country_id: country.id } }
     }
 
     expect(response).to have_http_status(:unprocessable_content)
