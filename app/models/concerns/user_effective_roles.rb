@@ -8,6 +8,10 @@ module UserEffectiveRoles
     scope.exists?
   end
 
+  def organization_role?(codes, organization:)
+    effective_role_assignments(organization:).where(branch_id: nil).exists?(system_roles: { code: codes })
+  end
+
   def permission?(permission_code, organization: CurrentOrganizationAccess.organization)
     effective_permission_scope(organization:).exists?(permissions: { code: permission_code, status: 'active' })
   end

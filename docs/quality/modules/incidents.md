@@ -2,7 +2,7 @@
 
 ## Alcance
 
-Footer del dashboard, alta, lista personal, detalle, descarga de evidencia y seguimiento administrativo dentro de la organización activa. El formulario abre una pestaña independiente para preservar la operación de origen. El folio comparte una secuencia diaria entre organizaciones y usa la zona horaria global configurada en Rails.
+Footer del dashboard, alta, lista personal, bandeja de organización para soporte y administradores, detalle, descarga de evidencia y seguimiento administrativo dentro de la organización activa. El formulario abre una pestaña independiente para preservar la operación de origen. El folio comparte una secuencia diaria entre organizaciones y usa la zona horaria global configurada en Rails.
 
 ## Integración con GitHub
 

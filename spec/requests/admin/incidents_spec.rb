@@ -53,6 +53,17 @@ RSpec.describe 'Incident reporting', type: :request do
     expect(response).to have_http_status(:unprocessable_content)
   end
 
+  it 'restricts the organization inbox to organization-wide staff' do
+    report = Incident.create!(organization: organization, reporter: create(:user), description: 'Other operator')
+    get admin_incidents_path(view: 'team')
+    expect(response.body).not_to include(report.folio)
+
+    role = create(:system_role, :system, code: 'support')
+    create(:user_role, system_role: role, user: user, organization: organization)
+    get admin_incidents_path(view: 'team')
+    expect(response.body).to include(report.folio)
+  end
+
   it 'hides reports from other organizations' do
     incident = Incident.create!(organization: create(:organization), reporter: create(:user),
                                 description: 'Other store')

@@ -14,6 +14,7 @@
   <div class="flex items-center justify-between"><h2 class="font-jakarta text-lg font-bold"><%= t('incidents.data') %></h2>
     <%= render 'help', section: 'data', title: t('incidents.data') %></div>
   <div role="alert" tabindex="-1" class="text-rose-700" data-incident-form-target="error"><%= @incident.errors.full_messages.to_sentence %></div>
+  <small><b class="text-rose-600">*</b> <%= t('incidents.required') %></small>
   <div class="mt-4 grid gap-4 sm:grid-cols-2">
     <%= render 'dropdown', field: :affected_module, selected: @incident.affected_module, options: Incident::SCREENS.keys.map { |key| [incident_module_label(key), key] } %>
     <div data-incident-form-target="screens">
@@ -40,7 +41,7 @@
   <% %w[xlsx pdf docx csv mp4 txt].each do |kind| %>
     <template data-kind="<%= kind %>"><%= render 'icon', kind: kind %></template>
   <% end %>
-  <div class="mt-5 flex items-center justify-between gap-3"><small><b class="text-rose-600">*</b> <%= t('incidents.required') %></small>
+  <div class="mt-5 flex items-center justify-end gap-3">
     <%= form.submit t('incidents.send'), class: 'min-h-11 cursor-pointer rounded-xl bg-emerald-700 px-4 font-semibold text-white hover:bg-emerald-800 disabled:opacity-50' %></div>
 <% end %>
 <aside class="incident-card"><div class="flex items-center justify-between"><h2 class="font-jakarta text-lg font-bold"><%= t('incidents.context') %></h2><%= render 'help', section: 'context', title: t('incidents.context') %></div>

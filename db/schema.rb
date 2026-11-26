@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_26_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_26_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -585,6 +585,73 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_26_000002) do
     t.index ["purchase_order_id"], name: "index_goods_receipts_on_purchase_order_id"
     t.index ["received_by_id"], name: "index_goods_receipts_on_received_by_id"
     t.check_constraint "(actual_freight_amount IS NULL OR actual_freight_amount >= 0::numeric) AND (actual_insurance_amount IS NULL OR actual_insurance_amount >= 0::numeric) AND extra_expenses_amount >= 0::numeric AND additional_discount_amount >= 0::numeric", name: "chk_goods_receipts_actual_costs"
+  end
+
+  create_table "incident_daily_counters", primary_key: "day", id: :date, force: :cascade do |t|
+    t.integer "sequence", null: false
+  end
+
+  create_table "incident_events", force: :cascade do |t|
+    t.bigint "incident_id", null: false
+    t.bigint "actor_id", null: false
+    t.string "kind", null: false
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["actor_id"], name: "index_incident_events_on_actor_id"
+    t.index ["incident_id"], name: "index_incident_events_on_incident_id"
+  end
+
+  create_table "incident_types", force: :cascade do |t|
+    t.string "code", null: false
+    t.boolean "active", null: false, default: true
+    t.datetime "deleted_at"
+    t.index ["code"], name: "index_incident_types_on_code", unique: true
+  end
+
+  create_table "incidents", force: :cascade do |t|
+    t.bigint "organization_id", null: false
+    t.bigint "reporter_id", null: false
+    t.bigint "branch_id"
+    t.bigint "assignee_id"
+    t.bigint "resolved_by_id"
+    t.bigint "duplicate_of_id"
+    t.string "folio", limit: 21, null: false
+    t.string "origin_path"
+    t.string "origin_screen"
+    t.string "affected_module"
+    t.string "affected_screen"
+    t.string "reporter_role"
+    t.string "category"
+    t.uuid "submission_key"
+    t.text "description", null: false
+    t.text "expected_result"
+    t.boolean "blocks_operation"
+    t.string "frequency"
+    t.datetime "occurred_at"
+    t.string "operation_reference"
+    t.string "request_reference"
+    t.string "app_version"
+    t.string "status", default: "reported", null: false
+    t.string "priority"
+    t.text "resolution"
+    t.datetime "resolved_at"
+    t.string "github_state", default: "pending", null: false
+    t.bigint "github_issue_number"
+    t.string "github_issue_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["assignee_id"], name: "index_incidents_on_assignee_id"
+    t.index ["branch_id"], name: "index_incidents_on_branch_id"
+    t.index ["duplicate_of_id"], name: "index_incidents_on_duplicate_of_id"
+    t.index ["folio"], name: "index_incidents_on_folio", unique: true
+    t.index ["organization_id"], name: "index_incidents_on_organization_id"
+    t.index ["organization_id", "reporter_id", "created_at"], name: "idx_on_organization_id_reporter_id_created_at_fe5ffedf4c"
+    t.index ["organization_id", "reporter_id", "submission_key"], name: "idx_on_organization_id_reporter_id_submission_key_dd72d06316", unique: true
+    t.index ["reporter_id"], name: "index_incidents_on_reporter_id"
+    t.index ["resolved_by_id"], name: "index_incidents_on_resolved_by_id"
   end
 
   create_table "inventories", force: :cascade do |t|
@@ -2570,6 +2637,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_26_000002) do
   add_foreign_key "goods_receipts", "organizations"
   add_foreign_key "goods_receipts", "purchase_orders"
   add_foreign_key "goods_receipts", "users", column: "received_by_id"
+  add_foreign_key "incident_events", "incidents"
+  add_foreign_key "incident_events", "users", column: "actor_id"
+  add_foreign_key "incidents", "branches"
+  add_foreign_key "incidents", "incident_types", column: "category", primary_key: "code"
+  add_foreign_key "incidents", "incidents", column: "duplicate_of_id"
+  add_foreign_key "incidents", "organizations"
+  add_foreign_key "incidents", "users", column: "assignee_id"
+  add_foreign_key "incidents", "users", column: "reporter_id"
+  add_foreign_key "incidents", "users", column: "resolved_by_id"
   add_foreign_key "inventories", "branches"
   add_foreign_key "inventories", "organizations"
   add_foreign_key "inventories", "products"
@@ -2774,58 +2850,4 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_26_000002) do
   add_foreign_key "user_status_events", "users", column: "actor_id"
   add_foreign_key "users", "employees"
   add_foreign_key "users", "languages"
-  create_table :incident_daily_counters, id: false do |t|
-    t.date :day, primary_key: true
-    t.integer :sequence, null: false
-  end
-
-  create_table :incident_types do |t|
-    t.string :code, null: false, index: { unique: true }
-    t.boolean :active, null: false, default: true
-  end
-
-  create_table :incidents do |t|
-    t.references :organization, null: false, foreign_key: true
-    t.references :reporter, null: false, foreign_key: { to_table: :users }
-    t.references :branch, foreign_key: true
-    t.references :assignee, foreign_key: { to_table: :users }
-    t.references :resolved_by, foreign_key: { to_table: :users }
-    t.references :duplicate_of, foreign_key: { to_table: :incidents }
-    t.string :folio, limit: 21, null: false, index: { unique: true }
-    t.string :origin_path
-    t.string :origin_screen
-    t.string :affected_module
-    t.string :affected_screen
-    t.string :reporter_role
-    t.string :category
-    t.uuid :submission_key
-    t.index %i[organization_id reporter_id submission_key], unique: true
-    t.text :description, null: false
-    t.text :expected_result
-    t.boolean :blocks_operation
-    t.string :frequency
-    t.datetime :occurred_at
-    t.string :operation_reference
-    t.string :request_reference
-    t.string :app_version
-    t.string :status, default: 'reported', null: false
-    t.string :priority
-    t.text :resolution
-    t.datetime :resolved_at
-    t.string :github_state, default: 'pending', null: false
-    t.bigint :github_issue_number
-    t.string :github_issue_url
-    t.timestamps
-    t.index %i[organization_id reporter_id created_at]
-  end
-
-  create_table :incident_events do |t|
-    t.references :incident, null: false, foreign_key: true
-    t.references :actor, null: false, foreign_key: { to_table: :users }
-    t.string :kind, null: false
-    t.text :body
-    t.timestamps
-  end
-
-  add_foreign_key :incidents, :incident_types, column: :category, primary_key: :code
 end

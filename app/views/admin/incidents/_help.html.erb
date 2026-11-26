@@ -13,7 +13,7 @@
       <%= image_tag('deltin/portrait.svg', class: 'size-8', alt: 'Deltín') %>
       <strong id="promotion-help-title-<%= section %>"><%= title %></strong>
       <button type="button" class="promotion-help-close" data-action="promotion-help#closeAndFocus"
-              aria-label="<%= t('incidents.close') %>"><%= helpers.promotion_icon('x', class: 'size-4') %></button>
+              aria-label="<%= t('incidents.close') %>"><%= promotion_icon('x', class: 'size-4') %></button>
     </div>
     <div class="promotion-help-body">
       <p class="font-semibold text-slate-800"><%= t("incidents.help.#{section}.purpose") %></p>

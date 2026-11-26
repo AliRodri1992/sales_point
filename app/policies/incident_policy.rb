@@ -1,4 +1,6 @@
 class IncidentPolicy < ApplicationPolicy
+  MANAGEMENT_ROLES = (SystemRole::ADMINISTRATIVE_CODES + ['support']).freeze
+
   def create?
     user.present? && record.reporter_id == user.id
   end
@@ -8,6 +10,6 @@ class IncidentPolicy < ApplicationPolicy
   end
 
   def manage?
-    user.admin? && user.organizations.exists?(record.organization_id)
+    record.organization.present? && user.organization_role?(MANAGEMENT_ROLES, organization: record.organization)
   end
 end

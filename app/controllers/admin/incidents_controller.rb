@@ -10,8 +10,11 @@ module Admin
 
     def index
       @page = [params[:page].to_i, 1].max
-      @incidents = tenant.where(reporter: current_user).order(created_at: :desc, id: :desc)
-                         .offset((@page - 1) * 25).limit(26).to_a
+      @can_manage = policy(tenant.new).manage?
+      @team = @can_manage && params[:view] == 'team'
+      scope = @team ? tenant : tenant.where(reporter: current_user)
+      @incidents = scope.order(created_at: :desc, id: :desc)
+                        .offset((@page - 1) * 25).limit(26).to_a
       @more = @incidents.size > 25
       @incidents.pop if @more
     end
@@ -44,14 +47,7 @@ module Admin
       existing = previous_submission
       return registration_response(existing) if existing
 
-      @incident.assign_attributes(params.expect(incident: REPORT_FIELDS))
-      attach_uploads
-      if @incident.save
-        enqueue_sync
-        registration_response(@incident)
-      else
-        invalid_registration
-      end
+      persist_registration
     rescue ActiveRecord::RecordNotUnique
       raise unless @incident.submission_key
 
@@ -69,8 +65,17 @@ module Admin
 
     private
 
+    def persist_registration
+      @incident.assign_attributes(params.expect(incident: REPORT_FIELDS))
+      attach_uploads
+      return invalid_registration unless @incident.save
+
+      enqueue_sync
+      registration_response(@incident)
+    end
+
     def registration_response(record)
-      flash[:notice] = t('incidents.created')
+      flash.update(notice: t('incidents.created'))
       respond_to do |format|
         format.html { redirect_to admin_incident_path(record) }
         format.json { render json: { url: admin_incident_path(record) }, status: :created }

@@ -7,6 +7,8 @@ require 'json'
 
 module Incidents
   class Github
+    class Rejected < IOError; end
+
     REPOSITORY = 'AliRodri1992/sales_point'
     SETTINGS = %w[INCIDENT_GITHUB_APP_ID INCIDENT_GITHUB_INSTALLATION_ID INCIDENT_GITHUB_PRIVATE_KEY].freeze
 
@@ -22,8 +24,8 @@ module Incidents
 
     def existing(folio)
       query = URI.encode_www_form(q: "repo:#{REPOSITORY} is:issue in:title #{folio}")
-      request(:get, "/search/issues?#{query}", @token).fetch('items')
-                                                 .find { |item| item['title'].start_with?("[#{folio}]") }
+      items = request(:get, "/search/issues?#{query}", @token).fetch('items')
+      items.find { |item| item['title'].start_with?("[#{folio}]") }
     end
 
     def create_issue(incident)
@@ -60,7 +62,10 @@ module Incidents
       message['User-Agent'] = 'DeltaPOS-Incidents'
       message['Content-Type'] = 'application/json'
       message.body = payload.to_json if payload
-      response = Net::HTTP.start(uri.host, uri.port, use_ssl: true, open_timeout: 5, read_timeout: 12) { |http| http.request(message) }
+      response = Net::HTTP.start(uri.host, uri.port, use_ssl: true, open_timeout: 5, read_timeout: 12) do |http|
+        http.request(message)
+      end
+      raise Rejected, "GitHub HTTP #{response.code}" if response.is_a?(Net::HTTPClientError)
       raise IOError, "GitHub HTTP #{response.code}" unless response.is_a?(Net::HTTPSuccess)
 
       JSON.parse(response.body)

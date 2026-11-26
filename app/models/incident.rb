@@ -46,9 +46,7 @@ class Incident < ApplicationRecord
     with_lock do
       assign_attributes(attributes)
       self.assignee = actor
-      self.resolved_by = actor if status_changed? && status == 'resolved'
-      self.resolved_at = Time.current if status_changed? && status == 'resolved'
-      self.resolved_by = self.resolved_at = nil unless status == 'resolved'
+      update_resolution_actor(actor) if status_changed?
       save!
       incident_events.create!(actor: actor, kind: status, body: resolution)
     end
@@ -60,10 +58,16 @@ class Incident < ApplicationRecord
 
   private
 
+  def update_resolution_actor(actor)
+    self.resolved_by = actor if status == 'resolved'
+    self.resolved_at = Time.current if status == 'resolved'
+    self.resolved_by = self.resolved_at = nil unless status == 'resolved'
+  end
+
   def check_screen
-    if affected_screen.present? && SCREENS.fetch(affected_module, []).exclude?(affected_screen)
-      errors.add(:affected_screen, :invalid)
-    end
+    return unless affected_screen.present? && SCREENS.fetch(affected_module, []).exclude?(affected_screen)
+
+    errors.add(:affected_screen, :invalid)
   end
 
   def check_files
