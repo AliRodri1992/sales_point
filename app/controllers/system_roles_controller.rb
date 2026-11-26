@@ -3,6 +3,8 @@
 class SystemRolesController < ApplicationController
   include TableListingPagination
   include SystemRoles::History
+  include SystemRoles::Directory
+  include SystemRoles::Creation
 
   layout 'admin_dashboard'
 
@@ -13,20 +15,7 @@ class SystemRolesController < ApplicationController
 
   def index
     authorize SystemRole
-    @archived = params[:filter] == 'archived'
-    @role_search = params[:search].to_s.strip.slice(0, 100)
-    @role_type = params[:role_type].presence_in(%w[system branch])
-    @role_sort = params[:sort].presence_in(%w[name code recent]) || 'name'
-
-    scope = @archived ? SystemRole.deprecated : SystemRole.available
-    @system_roles = paginate_table_listing(sort_directory(filter_directory(scope)), table_key: 'system_roles')
-    @role_metrics = {
-      total: SystemRole.available.count + SystemRole.deprecated.count,
-      active: SystemRole.available.active.count,
-      protected: SystemRole.available.where(code: SystemRole::ADMINISTRATIVE_CODES).count,
-      archived: SystemRole.deprecated.count
-    }
-    @new_system_role = SystemRole.new(status: :inactive, role_type: :system) if policy(SystemRole).create?
+    load_directory
   end
 
   def show
@@ -55,26 +44,12 @@ class SystemRolesController < ApplicationController
   def create
     @system_role = SystemRole.new(system_role_params)
     authorize @system_role
-    @assigned_permission_ids = selected_permission_ids
-    validate_initial_status!
-
-    SystemRole.transaction do
-      @system_role.save!
-      replace_permissions
-    end
+    persist_role_creation!
 
     notify_system_role(current_user, @system_role, 'created')
     redirect_to system_role_path(@system_role), flash: { swal_message: t('.success') }
   rescue ActiveRecord::RecordInvalid
-    @system_role.status = :inactive
-    load_permissions
-    if params[:role_modal] == '1' && request.format.turbo_stream?
-      render turbo_stream: turbo_stream.replace(
-        'new-role-dialog', partial: 'system_roles/create_modal', locals: { role: @system_role, open: true }
-      ), status: :unprocessable_content
-    else
-      render :new, status: :unprocessable_content
-    end
+    render_creation_errors
   end
 
   def update
@@ -127,24 +102,6 @@ class SystemRolesController < ApplicationController
     ).call!
   end
 
-  def filter_directory(scope)
-    scope = scope.where(role_type: @role_type) if @role_type
-    return scope if @role_search.blank?
-
-    pattern = "%#{ActiveRecord::Base.sanitize_sql_like(@role_search)}%"
-    scope.where(
-      'system_roles.name ILIKE :pattern OR system_roles.code ILIKE :pattern ' \
-      'OR system_roles.description ILIKE :pattern', pattern:
-    )
-  end
-
-  def sort_directory(scope)
-    case @role_sort
-    when 'code' then scope.order(:code, :id)
-    when 'recent' then scope.order(updated_at: :desc, id: :desc)
-    else scope.order(:name, :id)
-    end
-  end
 
   def load_permissions
     @permissions = Permission.available.to_a
