@@ -9,8 +9,18 @@ Rails.application.configure do
   # Do not eager load code on boot.
   config.eager_load = false
 
-  # Show full error reports.
-  config.consider_all_requests_local = true
+  # Allow only the explicitly configured tunnel hostname.
+  tunnel_host = ENV.fetch('TUNNEL_HOST', '').strip
+  if tunnel_host.present?
+    unless tunnel_host.match?(/\A(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\z/i)
+      raise ArgumentError, 'TUNNEL_HOST must be a hostname without scheme, port or wildcard'
+    end
+
+    config.hosts << tunnel_host
+  end
+
+  # Do not expose detailed error reports when a tunnel is configured.
+  config.consider_all_requests_local = tunnel_host.blank?
 
   # Enable server timing.
   config.server_timing = true

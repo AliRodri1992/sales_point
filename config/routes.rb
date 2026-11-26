@@ -247,7 +247,8 @@ Rails.application.routes.draw do
 
   get 'up' => 'rails/health#show', as: :rails_health_check
 
-  mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
+  # Keep development email previews unavailable while a public tunnel is configured.
+  mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development? && ENV['TUNNEL_HOST'].blank?
 
   authenticate :user, ->(u) { u.admin? } do
     mount Sidekiq::Web => '/sidekiq'
