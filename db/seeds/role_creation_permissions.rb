@@ -3,7 +3,7 @@
 # Backfill the dedicated New Role permission for both administrative profiles.
 # This file is safe to load independently or through db/seeds.rb.
 module RoleCreationPermissionSeeds
-  PERMISSION_CODE = 'roles.create'.freeze
+  PERMISSION_CODE = 'roles.create'
 
   def self.seed!
     permission = Permission.find_or_initialize_by(code: PERMISSION_CODE)
