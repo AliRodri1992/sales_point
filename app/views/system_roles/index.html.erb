@@ -162,8 +162,8 @@
     <% else %>
       <div class="role-directory-empty" role="status">
         <span class="role-directory-empty-icon"><%= delta_icon('magnifying-glass', class: 'size-6') %></span>
-        <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t("#{d}.roles.empty_title") %></h3>
-        <p class="text-sm text-slate-500"><%= t("#{d}.roles.empty_hint") %></p>
+        <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t(@archived ? 'admin.system_roles.lifecycle.empty_archived_title' : "#{d}.roles.empty_title") %></h3>
+        <p class="text-sm text-slate-500"><%= t(@archived ? 'admin.system_roles.lifecycle.empty_archived_hint' : "#{d}.roles.empty_hint") %></p>
         <%= link_to t("#{d}.filters.clear"), system_roles_path(filter: @archived ? 'archived' : nil), class: 'catalog-button' %>
       </div>
     <% end %>

@@ -27,6 +27,7 @@ RSpec.feature 'System roles directory interface', type: :feature, js: true do
       click_button 'Create role'
     end
 
+    expect(page).to have_current_path(%r{\A/system_roles/\d+\z}, wait: 10)
     role = SystemRole.find_by!(code: 'shift_leader')
     expect(role).to be_inactive
     expect(page).to have_current_path(system_role_path(role))

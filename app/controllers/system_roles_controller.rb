@@ -102,7 +102,6 @@ class SystemRolesController < ApplicationController
     ).call!
   end
 
-
   def load_permissions
     @permissions = Permission.available.to_a
   end
