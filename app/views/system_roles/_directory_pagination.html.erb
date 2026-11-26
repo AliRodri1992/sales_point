@@ -1,0 +1,38 @@
+<% d = 'admin.system_roles.directory' %>
+<footer class="catalog-list-pagination role-directory-pagination">
+  <div class="catalog-list-pagination-size">
+    <label for="system_roles_per_page"><%= t("#{d}.pagination.rows") %></label>
+    <div class="relative" data-controller="delta-select">
+      <%= select_tag :per_page, options_for_select(TablePagePreference::OPTIONS, @per_page || TablePagePreference::DEFAULT),
+            id: 'system_roles_per_page',
+            data: { controller: 'table-page-size', table_page_size_key_value: 'system_roles',
+                    action: 'change->table-page-size#apply' } %>
+    </div>
+    <span aria-live="polite"><%= t('admin.catalog_directory.page', page: @current_page, total: @total_pages) %></span>
+  </div>
+  <nav class="catalog-list-pagination-links" aria-label="<%= t('admin.catalog_directory.pagination') %>">
+    <% if @current_page > 1 %>
+      <%= link_to system_roles_path(request.query_parameters.merge('page' => @current_page - 1)),
+                  class: 'role-directory-page-arrow', aria: { label: t('admin.pagination.prev') } do %>
+        <%= delta_icon('chevron-left', class: 'size-4') %>
+      <% end %>
+    <% else %>
+      <span class="role-directory-page-arrow" aria-disabled="true" aria-label="<%= t('admin.pagination.prev') %>">
+        <%= delta_icon('chevron-left', class: 'size-4') %>
+      </span>
+    <% end %>
+    <%= safe_join(windowed_page_links(@current_page, @total_pages, frame: '_top',
+                                     window: 1, url_options: { controller: controller_path, action: 'index',
+                                                               id: nil, format: nil }), ' ') %>
+    <% if @current_page < @total_pages %>
+      <%= link_to system_roles_path(request.query_parameters.merge('page' => @current_page + 1)),
+                  class: 'role-directory-page-arrow', aria: { label: t('admin.pagination.next') } do %>
+        <%= delta_icon('chevron-right', class: 'size-4') %>
+      <% end %>
+    <% else %>
+      <span class="role-directory-page-arrow" aria-disabled="true" aria-label="<%= t('admin.pagination.next') %>">
+        <%= delta_icon('chevron-right', class: 'size-4') %>
+      </span>
+    <% end %>
+  </nav>
+</footer>

@@ -1,0 +1,103 @@
+<% d = 'admin.system_roles.directory' %>
+<dialog id="new-role-dialog" class="role-create-dialog" aria-labelledby="new-role-dialog-title"
+        aria-describedby="new-role-dialog-intro" data-controller="system-role-create"
+        data-system-role-create-open-value="<%= open %>"
+        data-system-role-create-count-template-value="<%= t("#{d}.modal.chars", count: '__COUNT__') %>"
+        data-action="click->system-role-create#closeOnBackdrop close->system-role-create#closed turbo:before-cache@document->system-role-create#closeForCache">
+  <%= form_with model: role, url: system_roles_path, method: :post,
+                html: { novalidate: true, class: 'role-create-form' },
+                data: { action: 'submit->system-role-create#submitting' } do |form| %>
+    <%= hidden_field_tag :role_modal, '1' %>
+    <%= hidden_field_tag 'permission_ids[]', '' %>
+    <%= form.hidden_field :status, value: 'inactive' %>
+
+    <header class="role-create-header">
+      <span class="role-create-header-icon"><%= delta_icon('shield-check', class: 'size-6') %></span>
+      <div class="min-w-0 flex-1">
+        <p class="role-create-eyebrow"><%= t("#{d}.modal.eyebrow") %></p>
+        <h2 id="new-role-dialog-title" class="font-jakarta text-xl font-bold text-slate-900 sm:text-2xl"><%= t("#{d}.modal.title") %></h2>
+        <p id="new-role-dialog-intro" class="mt-1 text-xs leading-5 text-slate-500"><%= t("#{d}.modal.intro") %></p>
+      </div>
+      <button type="button" class="role-create-dismiss" data-action="system-role-create#close"
+              aria-label="<%= t("#{d}.modal.close") %>"><%= delta_icon('x-mark', class: 'size-5') %></button>
+    </header>
+
+    <div class="role-create-content">
+      <% role.errors[:base].uniq.each do |message| %>
+        <p class="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700" role="alert"><%= message %></p>
+      <% end %>
+      <section class="role-create-section" aria-labelledby="role-create-identity-heading">
+        <div class="role-create-section-heading">
+          <span class="role-create-section-icon"><%= delta_icon('pencil-square', class: 'size-4') %></span>
+          <h3 id="role-create-identity-heading" class="font-jakarta text-sm font-bold text-slate-900"><%= t("#{d}.modal.identity") %></h3>
+          <%= render 'system_roles/directory_help', section: 'identity', title: t("#{d}.modal.identity") %>
+        </div>
+        <p class="role-create-section-hint"><%= t("#{d}.modal.identity_hint") %></p>
+        <div class="role-create-fields">
+          <div class="role-create-field">
+            <%= form.label :name do %><%= t('admin.system_roles.new.fields.name') %><span class="text-rose-600" aria-hidden="true"> *</span><% end %>
+            <%= form.text_field :name, maxlength: 50, autocomplete: 'off',
+                class: "role-create-input #{'role-create-input--invalid' if role.errors[:name].any?}",
+                placeholder: t('admin.system_roles.new.fields.name_placeholder'),
+                aria: { invalid: role.errors[:name].any?, describedby: role.errors[:name].any? ? 'system_role_name_error' : nil },
+                data: { system_role_create_target: 'name', action: 'input->system-role-create#nameChanged' } %>
+            <%= error_message_for(role, :name, label: t('admin.system_roles.new.fields.name')) %>
+          </div>
+          <div class="role-create-field">
+            <%= form.label :code, t('admin.system_roles.form.code_label') %>
+            <%= form.text_field :code, maxlength: 50, autocomplete: 'off',
+                class: "role-create-input #{'role-create-input--invalid' if role.errors[:code].any?}",
+                placeholder: 'supervisor_de_caja', spellcheck: false,
+                aria: { invalid: role.errors[:code].any?, describedby: role.errors[:code].any? ? 'system_role_code_error' : 'role-create-code-hint' },
+                data: { system_role_create_target: 'code', action: 'input->system-role-create#codeChanged' } %>
+            <p id="role-create-code-hint" class="role-create-field-hint"><%= t("#{d}.modal.code_hint") %></p>
+            <%= error_message_for(role, :code, label: t('admin.system_roles.form.code_label')) %>
+          </div>
+          <div class="role-create-field role-create-field--full">
+            <%= form.label :description, t('admin.system_roles.new.fields.description') %>
+            <%= form.text_area :description, rows: 3, maxlength: 500,
+                class: 'role-create-input role-create-textarea',
+                placeholder: t('admin.system_roles.new.fields.description_placeholder'),
+                data: { system_role_create_target: 'description', action: 'input->system-role-create#descriptionChanged' } %>
+            <div class="mt-1 flex justify-end"><span class="text-xs text-slate-400" data-system-role-create-target="counter"><%= t("#{d}.modal.chars", count: role.description.to_s.length) %></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="role-create-section" aria-labelledby="role-create-security-heading">
+        <div class="role-create-section-heading">
+          <span class="role-create-section-icon"><%= delta_icon('shield-check', class: 'size-4') %></span>
+          <h3 id="role-create-security-heading" class="font-jakarta text-sm font-bold text-slate-900"><%= t("#{d}.modal.security") %></h3>
+          <%= render 'system_roles/directory_help', section: 'security', title: t("#{d}.modal.security") %>
+        </div>
+        <p class="role-create-section-hint"><%= t("#{d}.modal.security_hint") %></p>
+        <div class="role-create-fields">
+          <div class="role-create-field">
+            <%= form.label :role_type do %><%= t('admin.system_roles.new.fields.type') %><span class="text-rose-600" aria-hidden="true"> *</span><% end %>
+            <div class="relative" data-controller="delta-select">
+              <%= form.select :role_type,
+                  [[t('admin.system_roles.types.system'), 'system'], [t('admin.system_roles.types.branch'), 'branch']], {},
+                  class: 'role-create-input',
+                  aria: { invalid: role.errors[:role_type].any?, describedby: role.errors[:role_type].any? ? 'system_role_role_type_error' : nil } %>
+            </div>
+            <%= error_message_for(role, :role_type, label: t('admin.system_roles.new.fields.type')) %>
+          </div>
+          <div class="role-create-field">
+            <p class="role-create-field-label"><%= t('admin.system_roles.new.fields.status') %></p>
+            <span class="role-create-status"><span class="role-create-status-dot"></span><%= t('admin.system_roles.statuses.inactive') %></span>
+            <p class="role-create-field-hint"><%= t("#{d}.modal.status_hint") %></p>
+            <%= error_message_for(role, :status, label: t('admin.system_roles.new.fields.status')) %>
+          </div>
+        </div>
+        <div class="role-create-notice"><%= delta_icon('information-circle', class: 'size-5 shrink-0') %><p><%= t("#{d}.modal.after_hint") %></p></div>
+      </section>
+    </div>
+
+    <footer class="role-create-footer">
+      <button type="button" class="role-create-cancel" data-action="system-role-create#close"><%= t("#{d}.modal.cancel") %></button>
+      <%= form.button type: :submit, class: 'role-create-submit' do %>
+        <%= delta_icon('check', class: 'size-4') %><%= t("#{d}.modal.create") %>
+      <% end %>
+    </footer>
+  <% end %>
+</dialog>

@@ -1,0 +1,71 @@
+---
+en:
+  admin:
+    system_roles:
+      directory:
+        eyebrow: "Administration"
+        stats:
+          total: "Registered roles"
+          active: "Active roles"
+          protected: "Protected roles"
+          archived: "Archived roles"
+        filters:
+          title: "Search filters"
+          search: "Find a role"
+          placeholder: "Role name, code or description…"
+          type: "Role type"
+          all_types: "All types"
+          system: "System role"
+          branch: "Branch role"
+          sort: "Sort by"
+          sort_name: "Name (A–Z)"
+          sort_code: "Code (A–Z)"
+          sort_recent: "Last updated"
+          apply: "Search"
+          clear: "Clear filters"
+          remove: "Remove %{name} filter"
+        roles:
+          title: "Explore roles"
+          shown: "Showing %{shown} of %{total} roles"
+          empty_title: "No roles found"
+          empty_hint: "Try a different search or clear filters to see available roles."
+          search_chip: "Search"
+          type_chip: "Type"
+          archived_hint: "Archived roles are read-only and cannot grant new permissions."
+        pagination:
+          rows: "Rows per page"
+        help:
+          how_to: "How to use"
+          example: "Practical example"
+          mascot_alt: "Deltín, the Delta POS assistant"
+          filters:
+            purpose: "Find a role without browsing every card."
+            usage: "Enter a name, code, or description. Filter by system or branch role and change the sort order. Filters apply to the real catalog."
+            example: "Example: search for “cashier” and choose “System role” to find its permissions."
+          roles:
+            purpose: "Each card shows the role identity, status and permitted action."
+            usage: "Choose “Manage permissions” when authorized. Protected or shared roles offer “View permissions”. Archived roles remain read-only."
+            example: "Example: open Cashier to configure access, or Administrator to inspect its protected permissions."
+          identity:
+            purpose: "Give the new role a clear, unique identity."
+            usage: "Provide a descriptive name. A code is suggested automatically and can be edited before creating the role. Use lowercase letters, numbers and underscores."
+            example: "Example: “Cash supervisor” generates “cash_supervisor”."
+          security:
+            purpose: "Define the role assignment scope and follow least privilege."
+            usage: "Choose the role type. New roles are always inactive; next configure permissions and review activation."
+            example: "Example: choose “Branch role” for operational staff assigned to a branch."
+        modal:
+          eyebrow: "Administration / Roles and permissions"
+          title: "New role"
+          intro: "Create a role with a clear identity, then configure permissions and activate access."
+          identity: "Role identity"
+          identity_hint: "Main fields for recognizing this role."
+          security: "Scope and security"
+          security_hint: "Choose the type and review the initial status."
+          code_hint: "Lowercase letters, numbers and underscores only. Maximum 50 characters."
+          status_hint: "New roles start inactive. Review permissions before activation."
+          after_hint: "After creation, configure the permission matrix and review activation."
+          cancel: "Cancel"
+          create: "Create role"
+          close: "Close New role dialog"
+          chars: "%{count} / 500 characters"

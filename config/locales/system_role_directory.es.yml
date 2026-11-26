@@ -1,0 +1,71 @@
+---
+es:
+  admin:
+    system_roles:
+      directory:
+        eyebrow: "Administración"
+        stats:
+          total: "Roles registrados"
+          active: "Roles activos"
+          protected: "Roles protegidos"
+          archived: "Roles archivados"
+        filters:
+          title: "Filtros de búsqueda"
+          search: "Buscar rol"
+          placeholder: "Nombre, código o descripción del rol…"
+          type: "Tipo de rol"
+          all_types: "Todos los tipos"
+          system: "Rol del sistema"
+          branch: "Rol de sucursal"
+          sort: "Ordenar por"
+          sort_name: "Nombre (A–Z)"
+          sort_code: "Código (A–Z)"
+          sort_recent: "Última actualización"
+          apply: "Buscar"
+          clear: "Limpiar filtros"
+          remove: "Quitar filtro %{name}"
+        roles:
+          title: "Explorar roles"
+          shown: "Mostrando %{shown} de %{total} roles"
+          empty_title: "No encontramos roles"
+          empty_hint: "Prueba con otra búsqueda o elimina los filtros para ver los roles disponibles."
+          search_chip: "Búsqueda"
+          type_chip: "Tipo"
+          archived_hint: "Los roles archivados son de consulta y no pueden conceder permisos nuevos."
+        pagination:
+          rows: "Filas por página"
+        help:
+          how_to: "Cómo utilizarlo"
+          example: "Ejemplo práctico"
+          mascot_alt: "Deltín, asistente de Delta POS"
+          filters:
+            purpose: "Encuentra el rol que necesitas sin recorrer todas las tarjetas."
+            usage: "Escribe un nombre, código o descripción. Puedes filtrar por rol del sistema o de sucursal y cambiar el orden. Los filtros se aplican sobre el catálogo real."
+            example: "Ejemplo: escribe «cajero» y selecciona «Rol del sistema» para localizar sus permisos."
+          roles:
+            purpose: "Cada tarjeta muestra la identidad, el estado y la acción autorizada para el rol."
+            usage: "Selecciona «Administrar permisos» cuando tengas autorización. Los roles protegidos o compartidos se consultan con «Ver permisos». Los roles archivados permanecen de solo lectura."
+            example: "Ejemplo: abre Cajero para configurar accesos, o Administrador para consultar sus permisos protegidos."
+          identity:
+            purpose: "Identifica el nuevo rol de manera clara y única."
+            usage: "Escribe un nombre descriptivo. El código se propone automáticamente y puedes corregirlo antes de crear el rol. Utiliza letras minúsculas, números y guiones bajos."
+            example: "Ejemplo: «Supervisor de caja» genera «supervisor_de_caja»."
+          security:
+            purpose: "Define dónde podrá asignarse el rol y conserva el principio de mínimo privilegio."
+            usage: "Selecciona el tipo de rol. Los nuevos roles se crean siempre inactivos; después se configuran los permisos y se revisa su activación."
+            example: "Ejemplo: elige «Rol de sucursal» si el rol se asignará al personal operativo de una sucursal."
+        modal:
+          eyebrow: "Administración / Roles y permisos"
+          title: "Nuevo rol"
+          intro: "Crea un rol con una identidad clara. Después configura sus permisos y activa el acceso."
+          identity: "Identificación del rol"
+          identity_hint: "Datos principales para reconocer este rol en el sistema."
+          security: "Alcance y seguridad"
+          security_hint: "Define el tipo y verifica el estado de creación."
+          code_hint: "Solo minúsculas, números y guiones bajos. Máximo 50 caracteres."
+          status_hint: "Los nuevos roles se crean inactivos. La activación requiere revisar sus permisos."
+          after_hint: "Después de crearlo podrás configurar la matriz de permisos y solicitar su activación."
+          cancel: "Cancelar"
+          create: "Crear rol"
+          close: "Cerrar ventana Nuevo rol"
+          chars: "%{count} / 500 caracteres"

@@ -1,30 +1,125 @@
 <% content_for :title, t('admin.system_roles.index.page_title') %>
+<% d = 'admin.system_roles.directory' %>
+<div class="role-directory-workspace catalog-workspace mx-auto max-w-[92rem]" data-controller="system-role-directory">
+  <header class="catalog-header role-directory-heading">
+    <div class="min-w-0">
+      <p class="catalog-eyebrow"><%= t("#{d}.eyebrow") %></p>
+      <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl"><%= t('admin.system_roles.index.title') %></h1>
+      <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-500"><%= t('admin.system_roles.index.subtitle') %></p>
+    </div>
+    <% if policy(SystemRole).create? %>
+      <button type="button" class="catalog-button catalog-button-primary role-directory-create" data-action="click->system-role-directory#openCreate" aria-haspopup="dialog" aria-controls="new-role-dialog">
+        <%= delta_icon('plus', class: 'size-4') %>
+        <%= t('admin.system_roles.index.new') %>
+      </button>
+    <% end %>
+  </header>
 
-<div class="mx-auto max-w-[92rem]">
-  <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-    <div>
-      <h1 class="font-jakarta text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-        <%= t('admin.system_roles.index.title') %>
-      </h1>
-      <p class="mt-1 max-w-2xl text-sm text-slate-500">
-        <%= t('admin.system_roles.index.subtitle') %>
-      </p>
+  <section class="role-directory-stats" aria-label="<%= t("#{d}.stats.total") %>">
+    <% [
+      ['total', 'shield-check', 'slate'],
+      ['active', 'check-circle', 'emerald'],
+      ['protected', 'key', 'blue'],
+      ['archived', 'clock', 'amber']
+    ].each do |metric, icon, tone| %>
+      <div class="role-directory-stat role-directory-stat--<%= tone %>">
+        <div class="min-w-0">
+          <span class="role-directory-stat-label"><%= t("#{d}.stats.#{metric}") %></span>
+          <strong class="role-directory-stat-number"><%= number_with_delimiter(@role_metrics.fetch(metric.to_sym)) %></strong>
+        </div>
+        <span class="role-directory-stat-icon"><%= delta_icon(icon, class: 'size-5') %></span>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="catalog-card role-directory-filters" aria-labelledby="role-directory-filters-heading">
+    <div class="role-directory-panel-heading">
+      <div class="flex min-w-0 items-center gap-2">
+        <span class="text-emerald-700"><%= delta_icon('magnifying-glass', class: 'size-4') %></span>
+        <h2 id="role-directory-filters-heading" class="font-jakarta text-sm font-bold text-slate-900"><%= t("#{d}.filters.title") %></h2>
+        <%= render 'system_roles/directory_help', section: 'filters', title: t("#{d}.filters.title") %>
+      </div>
+    </div>
+    <%= form_with url: system_roles_path, method: :get, class: 'role-directory-filter-form', role: 'search',
+                  data: { system_role_directory_target: 'filterForm' } do %>
+      <%= hidden_field_tag :filter, 'archived' if @archived %>
+      <div class="role-directory-search role-directory-field">
+        <%= label_tag :role_search, t("#{d}.filters.search") %>
+        <div class="role-directory-search-wrap">
+          <%= delta_icon('magnifying-glass', class: 'size-4') %>
+          <%= search_field_tag :search, @role_search, id: 'role_search', maxlength: 100,
+                               placeholder: t("#{d}.filters.placeholder"), autocomplete: 'off' %>
+        </div>
+      </div>
+      <div class="role-directory-field">
+        <%= label_tag :role_type, t("#{d}.filters.type") %>
+        <div class="relative" data-controller="delta-select">
+          <%= select_tag :role_type, options_for_select([
+            [t("#{d}.filters.all_types"), ''],
+            [t("#{d}.filters.system"), 'system'],
+            [t("#{d}.filters.branch"), 'branch']
+          ], @role_type), id: 'role_type', data: { action: 'change->system-role-directory#submitFilters' } %>
+        </div>
+      </div>
+      <div class="role-directory-field">
+        <%= label_tag :role_sort, t("#{d}.filters.sort") %>
+        <div class="relative" data-controller="delta-select">
+          <%= select_tag :sort, options_for_select([
+            [t("#{d}.filters.sort_name"), 'name'],
+            [t("#{d}.filters.sort_code"), 'code'],
+            [t("#{d}.filters.sort_recent"), 'recent']
+          ], @role_sort), id: 'role_sort', data: { action: 'change->system-role-directory#submitFilters' } %>
+        </div>
+      </div>
+      <%= button_tag type: :submit, class: 'catalog-button catalog-button-primary role-directory-search-button' do %>
+        <%= delta_icon('magnifying-glass', class: 'size-4') %><%= t("#{d}.filters.apply") %>
+      <% end %>
+    <% end %>
+
+    <% if @role_search.present? || @role_type.present? %>
+      <div class="role-directory-chips" aria-label="<%= t("#{d}.filters.title") %>">
+        <% if @role_search.present? %>
+          <%= link_to system_roles_path(request.query_parameters.except('search', 'page')),
+                      class: 'role-directory-chip', aria: { label: t("#{d}.filters.remove", name: t("#{d}.roles.search_chip")) } do %>
+            <span><%= t("#{d}.roles.search_chip") %>: <%= @role_search %></span><%= delta_icon('x-mark', class: 'size-3') %>
+          <% end %>
+        <% end %>
+        <% if @role_type.present? %>
+          <%= link_to system_roles_path(request.query_parameters.except('role_type', 'page')),
+                      class: 'role-directory-chip', aria: { label: t("#{d}.filters.remove", name: t("#{d}.roles.type_chip")) } do %>
+            <span><%= t("#{d}.roles.type_chip") %>: <%= t("#{d}.filters.#{@role_type}") %></span><%= delta_icon('x-mark', class: 'size-3') %>
+          <% end %>
+        <% end %>
+        <%= link_to t("#{d}.filters.clear"), system_roles_path(request.query_parameters.except('search', 'role_type', 'page')),
+                    class: 'text-xs font-semibold text-emerald-700 underline underline-offset-2 hover:text-emerald-900' %>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="role-directory-results" aria-labelledby="role-directory-results-heading">
+    <div class="role-directory-results-heading">
+      <div class="min-w-0">
+        <div class="flex flex-wrap items-center gap-2">
+          <h2 id="role-directory-results-heading" class="font-jakarta text-lg font-bold text-slate-900"><%= t("#{d}.roles.title") %></h2>
+          <span class="role-directory-count"><%= number_with_delimiter(@total_count) %></span>
+          <%= render 'system_roles/directory_help', section: 'roles', title: t("#{d}.roles.title") %>
+        </div>
+        <p class="mt-1 text-xs text-slate-500"><%= t("#{d}.roles.shown", shown: @system_roles.size, total: @total_count) %></p>
+      </div>
+      <nav class="role-directory-tabs" aria-label="<%= t('admin.system_roles.lifecycle.filter_label') %>">
+        <% [false, true].each do |archived| %>
+          <% target = request.query_parameters.except('page', 'filter') %>
+          <% target['filter'] = 'archived' if archived %>
+          <%= link_to system_roles_path(target), aria: { current: @archived == archived ? 'page' : nil },
+                      class: "role-directory-tab #{@archived == archived ? 'role-directory-tab--active' : ''}" do %>
+            <%= t(archived ? 'admin.system_roles.lifecycle.archived' : 'admin.system_roles.lifecycle.available') %>
+            <span><%= number_with_delimiter(archived ? @role_metrics[:archived] : (@role_metrics[:total] - @role_metrics[:archived])) %></span>
+          <% end %>
+        <% end %>
+      </nav>
     </div>
 
-    <% if policy(SystemRole).create? %>
-    <%= link_to new_system_role_path,
-                class: 'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 motion-reduce:transition-none' do %>
-      <%= delta_icon('plus', class: 'size-4') %>
-      <%= t('admin.system_roles.index.new') %>
-    <% end %>
-    <% end %>
-  </div>
-
-  <nav class="mb-5 flex flex-wrap gap-2" aria-label="<%= t('admin.system_roles.lifecycle.filter_label') %>">
-    <% [false, true].each do |archived| %>
-      <%= link_to t(archived ? 'admin.system_roles.lifecycle.archived' : 'admin.system_roles.lifecycle.available'), system_roles_path(filter: archived ? 'archived' : nil), aria: { current: @archived == archived ? 'page' : nil }, class: "inline-flex min-h-11 items-center rounded-xl border px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 #{@archived == archived ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'}" %>
-    <% end %>
-  </nav>
+    <% if @system_roles.any? %>
   <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
     <% @system_roles.each do |system_role| %>
       <%= link_to system_role_path(system_role), data: { role_card: true },
@@ -64,19 +159,16 @@
     <% end %>
   </div>
 
-  <%= render 'admin/shared/table_pagination', table_key: 'system_roles' %>
-
-  <% if @system_roles.empty? %>
-    <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center">
-      <div class="mx-auto flex size-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-        <%= delta_icon('shield-check', class: 'size-6') %>
+    <% else %>
+      <div class="role-directory-empty" role="status">
+        <span class="role-directory-empty-icon"><%= delta_icon('magnifying-glass', class: 'size-6') %></span>
+        <h3 class="font-jakarta text-base font-bold text-slate-900"><%= t("#{d}.roles.empty_title") %></h3>
+        <p class="text-sm text-slate-500"><%= t("#{d}.roles.empty_hint") %></p>
+        <%= link_to t("#{d}.filters.clear"), system_roles_path(filter: @archived ? 'archived' : nil), class: 'catalog-button' %>
       </div>
-      <h2 class="mt-4 font-jakarta text-base font-bold text-slate-900">
-        <%= t(@archived ? 'admin.system_roles.lifecycle.empty_archived_title' : 'admin.system_roles.index.empty_title') %>
-      </h2>
-      <p class="mt-1 text-sm text-slate-500">
-        <%= t(@archived ? 'admin.system_roles.lifecycle.empty_archived_hint' : 'admin.system_roles.index.empty_subtitle') %>
-      </p>
-    </div>
-  <% end %>
+    <% end %>
+    <%= render 'system_roles/directory_pagination' %>
+  </section>
+
+  <%= render 'system_roles/create_modal', role: @new_system_role, open: false if @new_system_role %>
 </div>

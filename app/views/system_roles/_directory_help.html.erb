@@ -1,0 +1,33 @@
+<% d = "admin.system_roles.directory.help" %>
+<div class="promotion-help role-directory-help" data-controller="promotion-help"
+     data-action="keydown.esc->promotion-help#escape click@document->promotion-help#outside">
+  <button type="button" class="promotion-help-trigger" aria-label="<%= t("#{d}.#{section}.purpose") %>"
+          aria-expanded="false" aria-controls="role-help-<%= section %>" aria-haspopup="dialog"
+          data-promotion-help-target="trigger" data-action="promotion-help#toggle">
+    <%= delta_icon('question-circle', class: 'size-5') %>
+  </button>
+  <div id="role-help-<%= section %>" class="promotion-help-panel" role="dialog" aria-modal="false"
+       aria-labelledby="role-help-title-<%= section %>" data-promotion-help-target="panel" hidden>
+    <div class="promotion-help-header">
+      <%= delta_icon('question-circle', class: 'size-5 shrink-0') %>
+      <strong id="role-help-title-<%= section %>"><%= title %></strong>
+      <button type="button" class="promotion-help-close" aria-label="<%= t('admin.promotion_campaigns.help.close') %>"
+              data-action="promotion-help#closeAndFocus"><%= delta_icon('x-mark', class: 'size-4') %></button>
+    </div>
+    <div class="promotion-help-body">
+      <div class="role-directory-help-intro">
+        <div class="min-w-0 flex-1">
+          <p class="font-semibold text-slate-800"><%= t("#{d}.#{section}.purpose") %></p>
+        </div>
+        <%= image_tag 'deltin/waving.svg', alt: t("#{d}.mascot_alt"),
+                      class: 'role-directory-help-mascot', width: 68, height: 68, loading: 'lazy' %>
+      </div>
+      <div>
+        <p class="promotion-help-eyebrow"><%= t("#{d}.how_to") %></p>
+        <p><%= t("#{d}.#{section}.usage") %></p>
+      </div>
+      <p class="promotion-help-example"><strong><%= t("#{d}.example") %>:</strong>
+        <%= t("#{d}.#{section}.example") %></p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+---
+ko:
+  admin:
+    system_roles:
+      directory:
+        eyebrow: "관리"
+        stats:
+          total: "등록된 역할"
+          active: "활성 역할"
+          protected: "보호된 역할"
+          archived: "보관된 역할"
+        filters:
+          title: "검색 필터"
+          search: "역할 검색"
+          placeholder: "역할 이름, 코드 또는 설명…"
+          type: "역할 유형"
+          all_types: "모든 유형"
+          system: "시스템 역할"
+          branch: "지점 역할"
+          sort: "정렬 기준"
+          sort_name: "이름 (가나다)"
+          sort_code: "코드 (오름차순)"
+          sort_recent: "최근 수정"
+          apply: "검색"
+          clear: "필터 지우기"
+          remove: "%{name} 필터 제거"
+        roles:
+          title: "역할 찾아보기"
+          shown: "전체 %{total}개 중 %{shown}개 표시"
+          empty_title: "일치하는 역할이 없습니다"
+          empty_hint: "검색어를 바꾸거나 필터를 지워 다시 확인하세요."
+          search_chip: "검색"
+          type_chip: "유형"
+          archived_hint: "보관된 역할은 읽기 전용이며 새로운 권한을 부여할 수 없습니다."
+        pagination:
+          rows: "페이지당 행 수"
+        help:
+          how_to: "사용 방법"
+          example: "사용 예시"
+          mascot_alt: "Delta POS 도우미 델틴"
+          filters:
+            purpose: "모든 카드를 보지 않고 필요한 역할을 찾으세요."
+            usage: "이름, 코드 또는 설명을 입력하세요. 시스템/지점 역할로 필터링하고 정렬을 변경할 수 있습니다."
+            example: "예: “cashier”를 검색하고 “시스템 역할”을 선택합니다."
+          roles:
+            purpose: "각 카드에는 역할 식별 정보, 상태 및 허용된 작업이 표시됩니다."
+            usage: "권한이 있으면 권한 관리를 선택합니다. 보호되거나 공유된 역할은 권한 보기만 허용됩니다. 보관된 역할은 읽기 전용입니다."
+            example: "예: 계산원 역할의 접근 권한을 설정하거나 관리자 역할의 보호된 권한을 확인합니다."
+          identity:
+            purpose: "새 역할을 명확하고 고유하게 식별하세요."
+            usage: "설명적인 이름을 입력하세요. 코드가 자동 제안되며 생성 전에 수정할 수 있습니다. 소문자, 숫자 및 밑줄만 사용하세요."
+            example: "예: “Cash supervisor” → “cash_supervisor”."
+          security:
+            purpose: "역할의 할당 범위를 정의하고 최소 권한 원칙을 따르세요."
+            usage: "역할 유형을 선택하세요. 새 역할은 항상 비활성으로 생성되며 이후 권한을 구성하고 활성화를 검토합니다."
+            example: "예: 지점 직원에게 할당할 역할이면 지점 역할을 선택하세요."
+        modal:
+          eyebrow: "관리 / 역할 및 권한"
+          title: "새 역할"
+          intro: "역할을 생성한 뒤 권한을 구성하고 접근을 활성화하세요."
+          identity: "역할 식별"
+          identity_hint: "역할을 알아보기 위한 기본 정보입니다."
+          security: "범위 및 보안"
+          security_hint: "역할 유형을 선택하고 초기 상태를 확인하세요."
+          code_hint: "영문 소문자, 숫자, 밑줄만 허용됩니다. 최대 50자입니다."
+          status_hint: "새 역할은 비활성으로 생성됩니다. 활성화 전에 권한을 검토하세요."
+          after_hint: "생성 후 권한 매트릭스를 구성하고 활성화를 검토할 수 있습니다."
+          cancel: "취소"
+          create: "역할 생성"
+          close: "새 역할 창 닫기"
+          chars: "%{count} / 500자"

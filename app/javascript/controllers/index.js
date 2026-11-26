@@ -206,6 +206,12 @@ application.register("email-branding", EmailBrandingController)
 import EmailSenderController from "./email_sender_controller"
 application.register("email-sender", EmailSenderController)
 
+import SystemRoleDirectoryController from "./system_role_directory_controller"
+application.register("system-role-directory", SystemRoleDirectoryController)
+
+import SystemRoleCreateController from "./system_role_create_controller"
+application.register("system-role-create", SystemRoleCreateController)
+
 import RolePermissionsController from "./role_permissions_controller"
 application.register("role-permissions", RolePermissionsController)
 
