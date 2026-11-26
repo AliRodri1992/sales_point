@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Incident < ApplicationRecord
-  CATEGORIES = %w[function data display access performance other].freeze
   FREQUENCIES = %w[first intermittent always].freeze
   SCREENS = {
     'admin/dashboard' => %w[index], 'system_roles' => %w[index show new edit],
@@ -17,7 +16,8 @@ class Incident < ApplicationRecord
     'pdf' => %w[application/pdf], 'csv' => %w[text/csv text/plain], 'txt' => %w[text/plain],
     'mp4' => %w[video/mp4], 'xls' => %w[application/vnd.ms-excel],
     'xlsx' => %w[application/vnd.openxmlformats-officedocument.spreadsheetml.sheet],
-    'doc' => %w[application/msword], 'docx' => %w[application/vnd.openxmlformats-officedocument.wordprocessingml.document]
+    'doc' => %w[application/msword],
+    'docx' => %w[application/vnd.openxmlformats-officedocument.wordprocessingml.document]
   }.freeze
 
   belongs_to :organization
@@ -31,11 +31,28 @@ class Incident < ApplicationRecord
   validates :description, presence: true, length: { maximum: 8000 }
   validates :expected_result, length: { maximum: 4000 }
   validates :operation_reference, length: { maximum: 160 }
-  validates :category, inclusion: { in: CATEGORIES }, allow_blank: true
+  normalizes :category, with: ->(value) { value.presence }
+  validates :category, inclusion: { in: ->(_) { IncidentType.available.pluck(:code) } }, allow_blank: true, on: :create
   validates :frequency, inclusion: { in: FREQUENCIES }, allow_blank: true
   validates :affected_module, inclusion: { in: SCREENS.keys }, allow_blank: true
-  validate :check_screen_and_files
+  validates :status, inclusion: { in: %w[reported reviewing resolved] }
+  validates :priority, inclusion: { in: %w[low normal high] }, allow_blank: true
+  validates :resolution, presence: true, if: -> { status == 'resolved' }
+  validate :check_screen
+  validate :check_files
   before_create :allocate_folio
+
+  def record_followup!(actor, attributes)
+    with_lock do
+      assign_attributes(attributes)
+      self.assignee = actor
+      self.resolved_by = actor if status_changed? && status == 'resolved'
+      self.resolved_at = Time.current if status_changed? && status == 'resolved'
+      self.resolved_by = self.resolved_at = nil unless status == 'resolved'
+      save!
+      incident_events.create!(actor: actor, kind: status, body: resolution)
+    end
+  end
 
   def to_param
     folio
@@ -43,10 +60,13 @@ class Incident < ApplicationRecord
 
   private
 
-  def check_screen_and_files
-    if affected_screen.present? && !SCREENS.fetch(affected_module, []).include?(affected_screen)
+  def check_screen
+    if affected_screen.present? && SCREENS.fetch(affected_module, []).exclude?(affected_screen)
       errors.add(:affected_screen, :invalid)
     end
+  end
+
+  def check_files
     attachments.each do |file|
       extension = file.filename.extension.to_s.downcase
       errors.add(:attachments, :invalid) unless FORMATS.fetch(extension, []).include?(file.content_type)
@@ -65,6 +85,6 @@ class Incident < ApplicationRecord
       errors.add(:folio, :invalid)
       throw :abort
     end
-    self.folio = format('Inc%s%06d', timestamp.strftime('%Y%m%d%H%M'), sequence)
+    self.folio = format('Inc%<minute>s%<count>06d', minute: timestamp.strftime('%Y%m%d%H%M'), count: sequence)
   end
 end

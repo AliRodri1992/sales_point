@@ -24,5 +24,9 @@
   <div class="mb-6 flex items-center gap-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
     <%= delta_icon('exclamation-circle', class: 'size-5 shrink-0') %>
     <%= flash[:alert] %>
+    <% if flash[:incident_origin].present? && current_user && current_organization %>
+      <%= link_to t('incidents.report'), new_admin_incident_path(origin: flash[:incident_origin]), target: '_blank',
+                  rel: 'noopener', class: 'ml-auto font-semibold underline' %>
+    <% end %>
   </div>
 <% end %>

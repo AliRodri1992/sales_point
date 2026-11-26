@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["screens", "catalog", "picker", "count", "gallery", "tile", "error"]
+  static targets = ["screens", "catalog", "picker", "count", "gallery", "tile", "error", "operation"]
   static values = { failure: String, remove: String }
 
   connect() {
@@ -9,6 +9,7 @@ export default class extends Controller {
     this.urls = []
     this.catalog = JSON.parse(this.catalogTarget.textContent)
     this.refreshScreens()
+    this.refreshOperation()
   }
 
   disconnect() {
@@ -16,6 +17,7 @@ export default class extends Controller {
   }
 
   moduleChanged(event) {
+    if (event.target.name === "incident[affected_screen]") this.refreshOperation()
     if (event.target.name !== "incident[affected_module]") return
     const screen = this.screensTarget.querySelector("input")
     screen.value = ""
@@ -30,6 +32,19 @@ export default class extends Controller {
       option.hidden = !allowed.includes(option.dataset.optionValue)
       option.disabled = option.hidden
     })
+  }
+
+  refreshOperation() {
+    const field = this.element.elements.namedItem("incident[operation_reference]")
+    const screen = this.element.elements.namedItem("incident[affected_screen]").value
+    const mod = this.element.elements.namedItem("incident[affected_module]").value
+    const hide = screen === "new" && ["system_roles", "admin/products", "admin/users"].includes(mod)
+    this.operationTarget.hidden = hide
+    field.disabled = hide
+    const labels = JSON.parse(this.operationTarget.dataset.labels)
+    field.placeholder = labels[mod] || labels.default
+    const example = this.element.querySelector("[data-incident-example]")
+    if (example) example.textContent = example.dataset[mod === "system_roles" ? "role" : "general"]
   }
 
   pick() { this.pickerTarget.click() }

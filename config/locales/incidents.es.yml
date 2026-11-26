@@ -85,7 +85,7 @@
         "data": {
           "purpose": "Describe el problema que observaste.",
           "usage": "Selecciona dónde ocurrió y describe el resultado.",
-          "example": "Al guardar un rol vacío aparecieron dos errores."
+          "example": "Ejemplo: al guardar aparecieron dos mensajes de error."
         },
         "files": {
           "purpose": "Agrega evidencias que ayuden a identificar el problema.",
@@ -97,7 +97,14 @@
           "usage": "Si ocurrió en otro lugar, cambia el módulo y la pantalla afectados.",
           "example": "Puedes reportar un problema de Productos desde el panel de control."
         }
-      }
+      },
+      "references": {
+        "default": "Folio o referencia, si existe",
+        "admin/products": "Código o SKU del producto",
+        "admin/supplier_payments": "Referencia del pago",
+        "admin/purchase_orders": "Folio de la orden de compra"
+      },
+      "role_example": "Al guardar un rol vacío aparecieron dos errores."
     }
   }
 }

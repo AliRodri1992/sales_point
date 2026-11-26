@@ -1,5 +1,6 @@
 <% content_for :title, @incident.folio %>
 <article class="incident-card mx-auto max-w-4xl">
+<p role="alert" class="text-rose-700"><%= @incident.errors.full_messages.to_sentence %></p>
 <h1 class="font-jakarta text-2xl font-bold"><%= @incident.folio %></h1>
 <p class="my-2 font-semibold text-emerald-700"><%= t("incidents.choices.#{@incident.status}") %></p>
 <p class="whitespace-pre-wrap break-words"><%= @incident.description %></p>

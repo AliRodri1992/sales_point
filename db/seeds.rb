@@ -828,3 +828,5 @@ load Rails.root.join('db/seeds/email_catalog.rb')
 
 # Independent actions for the administration catalogs and commercial modules.
 GranularPermissionCatalog.sync!
+
+IncidentType::DEFAULT_CODES.each { |code| IncidentType.find_or_create_by!(code: code) }

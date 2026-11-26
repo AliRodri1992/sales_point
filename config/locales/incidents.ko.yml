@@ -85,7 +85,7 @@
         "data": {
           "purpose": "발견한 문제를 설명하세요.",
           "usage": "발생 위치와 결과를 입력하세요.",
-          "example": "빈 역할을 저장할 때 오류 두 개가 표시됐습니다."
+          "example": "예: 저장할 때 오류 메시지가 두 개 표시됐습니다."
         },
         "files": {
           "purpose": "문제를 이해하는 데 도움이 되는 자료를 첨부하세요.",
@@ -97,7 +97,14 @@
           "usage": "다른 위치에서 발생했다면 모듈과 화면을 변경하세요.",
           "example": "대시보드에서 상품 문제를 신고할 수 있습니다."
         }
-      }
+      },
+      "references": {
+        "default": "관련 번호 또는 참조",
+        "admin/products": "상품 코드 또는 SKU",
+        "admin/supplier_payments": "지급 참조",
+        "admin/purchase_orders": "구매 주문 번호"
+      },
+      "role_example": "빈 역할을 저장할 때 오류 두 개가 표시됐습니다."
     }
   }
 }

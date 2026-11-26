@@ -10,14 +10,16 @@ class IncidentGithubJob < ApplicationJob
     should_create = false
     incident.with_lock do
       return if incident.github_issue_number
+
       if incident.github_state == 'pending'
         incident.update!(github_state: 'sending')
         should_create = true
       end
     end
-    issue = should_create ? client.create(incident) : client.existing(incident.folio)
+    issue = should_create ? client.create_issue(incident) : client.existing(incident.folio)
     raise IOError, 'Issue awaiting reconciliation' unless issue
 
-    incident.update!(github_state: 'synced', github_issue_number: issue.fetch('number'), github_issue_url: issue.fetch('html_url'))
+    incident.update!(github_state: 'synced', github_issue_number: issue.fetch('number'),
+                     github_issue_url: issue.fetch('html_url'))
   end
 end

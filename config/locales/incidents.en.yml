@@ -85,7 +85,7 @@
         "data": {
           "purpose": "Describe the problem you noticed.",
           "usage": "Select where it happened and describe the outcome.",
-          "example": "Saving an empty role showed two errors."
+          "example": "Example: saving showed two errors."
         },
         "files": {
           "purpose": "Add evidence that helps identify the problem.",
@@ -97,7 +97,14 @@
           "usage": "Change the affected module and screen if the problem happened elsewhere.",
           "example": "You can report a product issue from the dashboard."
         }
-      }
+      },
+      "references": {
+        "default": "Folio or reference if available",
+        "admin/products": "Product code or SKU",
+        "admin/supplier_payments": "Payment reference",
+        "admin/purchase_orders": "Purchase order number"
+      },
+      "role_example": "Saving an empty role showed two errors."
     }
   }
 }

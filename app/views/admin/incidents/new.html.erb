@@ -10,6 +10,7 @@
   data: { controller: 'incident-form', turbo: false, action: 'submit->incident-form#submit change->incident-form#moduleChanged',
     incident_form_failure_value: t('incidents.failed'), incident_form_remove_value: t('incidents.remove') } do |form| %>
   <%= hidden_field_tag :origin, params[:origin] %>
+  <%= form.hidden_field :submission_key %>
   <div class="flex items-center justify-between"><h2 class="font-jakarta text-lg font-bold"><%= t('incidents.data') %></h2>
     <%= render 'help', section: 'data', title: t('incidents.data') %></div>
   <div role="alert" tabindex="-1" class="text-rose-700" data-incident-form-target="error"><%= @incident.errors.full_messages.to_sentence %></div>
@@ -21,13 +22,13 @@
     <%= tag.script Incident::SCREENS.to_json.html_safe, type: 'application/json', data: { incident_form_target: 'catalog' } %>
     <div class="sm:col-span-2"><%= form.label :description, class: 'incident-label' do %><%= t('incidents.fields.description') %> <span class="text-rose-600">*</span><% end %>
       <%= form.text_area :description, required: true, maxlength: 8000, rows: 3, class: 'incident-input' %></div>
-    <% { category: Incident::CATEGORIES, frequency: Incident::FREQUENCIES }.each do |field, keys| %>
+    <% { category: IncidentType.available.pluck(:code), frequency: Incident::FREQUENCIES }.each do |field, keys| %>
       <%= render 'dropdown', field: field, selected: @incident.public_send(field), options: keys.map { |key| [t("incidents.choices.#{key}"), key] } %>
     <% end %>
     <%= render 'dropdown', field: :blocks_operation, selected: @incident.blocks_operation, options: [[t('incidents.continued'), 'false'], [t('incidents.blocked'), 'true']] %>
     <div><%= form.label :occurred_at, t('incidents.fields.occurred_at'), class: 'incident-label' %><%= form.datetime_local_field :occurred_at, class: 'incident-input' %></div>
     <div class="sm:col-span-2"><%= form.label :expected_result, t('incidents.fields.expected_result'), class: 'incident-label' %><%= form.text_area :expected_result, rows: 2, maxlength: 4000, class: 'incident-input' %></div>
-    <div class="sm:col-span-2"><%= form.label :operation_reference, t('incidents.fields.operation_reference'), class: 'incident-label' %><%= form.text_field :operation_reference, maxlength: 160, class: 'incident-input' %></div>
+    <div class="sm:col-span-2" data-incident-form-target="operation" data-labels="<%= t('incidents.references').to_json %>"><%= form.label :operation_reference, t('incidents.fields.operation_reference'), class: 'incident-label' %><%= form.text_field :operation_reference, maxlength: 160, class: 'incident-input' %></div>
   </div>
   <div class="my-4 flex items-center gap-2"><strong><%= t('incidents.files') %> (<span data-incident-form-target="count">0</span>)</strong>
     <%= render 'help', section: 'files', title: t('incidents.files') %>

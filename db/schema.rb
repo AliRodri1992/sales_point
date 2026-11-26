@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_26_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_26_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -2779,6 +2779,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_26_000001) do
     t.integer :sequence, null: false
   end
 
+  create_table :incident_types do |t|
+    t.string :code, null: false, index: { unique: true }
+    t.boolean :active, null: false, default: true
+  end
+
   create_table :incidents do |t|
     t.references :organization, null: false, foreign_key: true
     t.references :reporter, null: false, foreign_key: { to_table: :users }
@@ -2793,6 +2798,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_26_000001) do
     t.string :affected_screen
     t.string :reporter_role
     t.string :category
+    t.uuid :submission_key
+    t.index %i[organization_id reporter_id submission_key], unique: true
     t.text :description, null: false
     t.text :expected_result
     t.boolean :blocks_operation
@@ -2820,4 +2827,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_26_000001) do
     t.timestamps
   end
 
+  add_foreign_key :incidents, :incident_types, column: :category, primary_key: :code
 end

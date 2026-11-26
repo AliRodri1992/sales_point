@@ -1,7 +1,8 @@
 module IncidentsHelper
   def report_incident_path(failure: false)
+    return_path = request.path if %w[GET HEAD].include?(request.request_method)
     origin = { screen: "#{controller_path}##{action_name}", user_id: current_user.id,
-               organization_id: current_organization.id, path: (request.path if request.get?),
+               organization_id: current_organization.id, path: return_path,
                request_id: (request.request_id if failure) }
     token = Rails.application.message_verifier(:incident_origin).generate(origin, expires_in: 12.hours)
     new_admin_incident_path(origin: token)

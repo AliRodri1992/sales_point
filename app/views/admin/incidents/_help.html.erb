@@ -21,7 +21,7 @@
         <p class="promotion-help-eyebrow"><%= t('incidents.how') %></p>
         <p><%= t("incidents.help.#{section}.usage") %></p>
       </div>
-      <p class="promotion-help-example"><%= t("incidents.help.#{section}.example") %></p>
+      <p class="promotion-help-example" <% if section == 'data' %>data-incident-example data-role="<%= t('incidents.role_example') %>" data-general="<%= t('incidents.help.data.example') %>"<% end %>><%= t("incidents.help.#{section}.example") %></p>
     </div>
   </div>
 </div>

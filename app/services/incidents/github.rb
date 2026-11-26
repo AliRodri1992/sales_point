@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'net/http'
 require 'openssl'
 require 'base64'
@@ -13,23 +15,18 @@ module Incidents
     end
 
     def initialize
-      now = Time.now.to_i
-      header = encode({ alg: 'RS256', typ: 'JWT' }.to_json)
-      claims = encode({ iat: now - 60, exp: now + 540, iss: ENV.fetch(SETTINGS.first) }.to_json)
-      data = "#{header}.#{claims}"
-      key = OpenSSL::PKey::RSA.new(ENV.fetch(SETTINGS.last).gsub('\\n', "\n"))
-      jwt = "#{data}.#{encode(key.sign('SHA256', data))}"
       installation = Integer(ENV.fetch(SETTINGS.second))
-      @token = request(:post, "/app/installations/#{installation}/access_tokens", jwt,
+      @token = request(:post, "/app/installations/#{installation}/access_tokens", installation_jwt,
                        { repositories: ['sales_point'], permissions: { issues: 'write' } }).fetch('token')
     end
 
     def existing(folio)
       query = URI.encode_www_form(q: "repo:#{REPOSITORY} is:issue in:title #{folio}")
-      request(:get, "/search/issues?#{query}", @token).fetch('items').find { |item| item['title'].start_with?("[#{folio}]") }
+      request(:get, "/search/issues?#{query}", @token).fetch('items')
+                                                 .find { |item| item['title'].start_with?("[#{folio}]") }
     end
 
-    def create(incident)
+    def create_issue(incident)
       # The repository receives a neutral summary. Customer text and evidence stay in Delta POS.
       title = "[#{incident.folio}] #{incident.affected_module.presence || 'Delta POS'}"
       body = "Folio: #{incident.folio}\nMódulo: #{incident.affected_module}\nPantalla: #{incident.affected_screen}"
@@ -41,6 +38,15 @@ module Incidents
     end
 
     private
+
+    def installation_jwt
+      now = Time.now.to_i
+      header = encode({ alg: 'RS256', typ: 'JWT' }.to_json)
+      claims = encode({ iat: now - 60, exp: now + 540, iss: ENV.fetch(SETTINGS.first) }.to_json)
+      data = "#{header}.#{claims}"
+      key = OpenSSL::PKey::RSA.new(ENV.fetch(SETTINGS.last).gsub('\\n', "\n"))
+      "#{data}.#{encode(key.sign('SHA256', data))}"
+    end
 
     def encode(value)
       Base64.urlsafe_encode64(value, padding: false)

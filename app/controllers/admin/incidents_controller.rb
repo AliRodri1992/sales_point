@@ -1,5 +1,8 @@
 module Admin
   class IncidentsController < ApplicationController
+    REPORT_FIELDS = %i[description expected_result category frequency blocks_operation affected_module affected_screen
+                       operation_reference occurred_at].freeze
+
     layout 'admin_dashboard'
     before_action :authenticate_user!
     before_action { head :forbidden unless current_organization }
@@ -7,7 +10,8 @@ module Admin
 
     def index
       @page = [params[:page].to_i, 1].max
-      @incidents = tenant.where(reporter: current_user).order(created_at: :desc, id: :desc).offset((@page - 1) * 25).limit(26).to_a
+      @incidents = tenant.where(reporter: current_user).order(created_at: :desc, id: :desc)
+                         .offset((@page - 1) * 25).limit(26).to_a
       @more = @incidents.size > 25
       @incidents.pop if @more
     end
@@ -25,6 +29,7 @@ module Admin
     def new
       @incident = build_incident
       authorize @incident
+      @incident.submission_key = SecureRandom.uuid
       mod, screen = @incident.origin_screen.to_s.split('#', 2)
       return unless Incident::SCREENS.key?(mod)
 
@@ -35,41 +40,42 @@ module Admin
     def create
       @incident = build_incident
       authorize @incident
-      @incident.assign_attributes(params.require(:incident).permit(:description, :expected_result, :category,
-        :frequency, :blocks_operation, :affected_module, :affected_screen, :operation_reference, :occurred_at))
-      uploads = Array(params.dig(:incident, :attachments)).grep(ActionDispatch::Http::UploadedFile)
-      @incident.attachments.attach(uploads) if uploads.any?
+      @incident.submission_key = submission_key
+      existing = previous_submission
+      return registration_response(existing) if existing
+
+      @incident.assign_attributes(params.expect(incident: REPORT_FIELDS))
+      attach_uploads
       if @incident.save
         enqueue_sync
-        flash[:notice] = t('incidents.created')
-        respond_to do |format|
-          format.html { redirect_to admin_incident_path(@incident), notice: t('incidents.created') }
-          format.json { render json: { url: admin_incident_path(@incident) }, status: :created }
-        end
+        registration_response(@incident)
       else
-        respond_to do |format|
-          format.html { render :new, status: :unprocessable_content }
-          format.json { render json: { errors: @incident.errors.full_messages }, status: :unprocessable_content }
-        end
+        invalid_registration
       end
+    rescue ActiveRecord::RecordNotUnique
+      raise unless @incident.submission_key
+
+      registration_response(tenant.find_by!(reporter: current_user, submission_key: @incident.submission_key))
     end
 
     def update
       authorize @incident, :manage?
-      changes = params.require(:incident).permit(:status, :priority, :resolution)
-      return head :unprocessable_content unless %w[reported reviewing resolved].include?(changes[:status])
-      return head :unprocessable_content if changes[:status] == 'resolved' && changes[:resolution].blank?
-
-      @incident.with_lock do
-        resolved = changes[:status] == 'resolved'
-        @incident.update!(changes.merge(resolved_by: resolved ? current_user : nil, resolved_at: resolved ? Time.current : nil,
-                                        assignee: current_user))
-        @incident.incident_events.create!(actor: current_user, kind: @incident.status, body: @incident.resolution)
-      end
+      changes = params.expect(incident: %i[status priority resolution])
+      @incident.record_followup!(current_user, changes)
       redirect_to admin_incident_path(@incident)
+    rescue ActiveRecord::RecordInvalid
+      render :show, status: :unprocessable_content
     end
 
     private
+
+    def registration_response(record)
+      flash[:notice] = t('incidents.created')
+      respond_to do |format|
+        format.html { redirect_to admin_incident_path(record) }
+        format.json { render json: { url: admin_incident_path(record) }, status: :created }
+      end
+    end
 
     def enqueue_sync
       IncidentGithubJob.perform_later(@incident.id) if Incidents::Github.configured?
@@ -85,10 +91,37 @@ module Admin
       @incident = tenant.find_by!(folio: params[:id])
     end
 
+    def attach_uploads
+      uploads = Array(params.dig(:incident, :attachments)).grep(ActionDispatch::Http::UploadedFile)
+      @incident.attachments.attach(uploads) if uploads.any?
+    end
+
+    def submission_key
+      key = params.dig(:incident, :submission_key).to_s
+      key if key.match?(/\A[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\z/i)
+    end
+
+    def previous_submission
+      tenant.find_by(reporter: current_user, submission_key: @incident.submission_key) if @incident.submission_key
+    end
+
+    def invalid_registration
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_content }
+        format.json { render json: { errors: @incident.errors.full_messages }, status: :unprocessable_content }
+      end
+    end
+
+    def origin_context
+      token = Rails.application.message_verifier(:incident_origin).verified(params[:origin].to_s)
+      context = token&.with_indifferent_access || {}
+      return {} unless context[:user_id] == current_user.id && context[:organization_id] == current_organization.id
+
+      context
+    end
+
     def build_incident
-      context = Rails.application.message_verifier(:incident_origin).verified(params[:origin].to_s)
-      context = context&.with_indifferent_access || {}
-      context = {} unless context[:user_id] == current_user.id && context[:organization_id] == current_organization.id
+      context = origin_context
       tenant.new(reporter: current_user, branch: current_branch, reporter_role: current_user.display_role_name,
                  origin_screen: context[:screen], origin_path: context[:path], request_reference: context[:request_id],
                  app_version: ENV['RELEASE_SHA'].presence)
