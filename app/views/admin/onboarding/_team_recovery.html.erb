@@ -3,6 +3,7 @@
   <p class="onboarding-profile-email"><%= current_user.email %></p>
   <%= form_with url: admin_onboarding_path(step: 5, intent: 'team'), method: :patch, html: { novalidate: true },
     data: { onboarding_target: 'form', action: 'submit->onboarding#submit turbo:submit-start->onboarding#submitStart turbo:submit-end->onboarding#submitEnd turbo:before-fetch-response->onboarding#beforeResponse turbo:fetch-request-error->onboarding#requestError' } do |form| %>
+    <p class="onboarding-required-note"><%= onboarding_required_note %></p>
     <%= fields_for :recovery, @team_member do |fields| %><div class="onboarding-field-grid"><% %i[first_name last_name].each do |attribute| %><%= render 'field', form: fields, attribute:, label: t("admin.onboarding_ui.recovery.#{attribute}") %><% end %></div><% end %>
     <%= render 'field_errors', object: @team_member, attribute: :base, label: '', id: 'onboarding-team-error' %>
     <%= form.button t('admin.onboarding_ui.recovery.create_team'), class: 'onboarding-secondary', data: { turbo_submits_with: t('admin.onboarding_ui.saving') } %>
