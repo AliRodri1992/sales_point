@@ -5,6 +5,10 @@ module Admin
     STEP_SECTIONS = { 1 => %i[company fiscal], 2 => [:branches], 3 => [:terminals], 4 => [:payments] }.freeze
     SECTION_STEPS = { company: 1, fiscal: 1, branches: 2, terminals: 3, payments: 4, migration: 5, team: 5 }.freeze
 
+    def onboarding_required_note
+      safe_join(t('admin.onboarding_ui.required_help').split('*', -1), tag.span('*', class: 'text-rose-600 font-semibold'))
+    end
+
     def onboarding_step_complete?(step, progress)
       sections = progress[:sections].reject { |item| item[:status] == 'not_applicable' }
       keys = STEP_SECTIONS[step]
