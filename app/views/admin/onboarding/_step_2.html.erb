@@ -20,12 +20,24 @@
     <fieldset class="onboarding-fieldset" data-onboarding-target="address">
       <legend><%= t('admin.onboarding_ui.address_title') %></legend>
       <p class="onboarding-field-hint"><%= t('admin.onboarding_ui.address_help') %></p>
-      <div class="onboarding-field-grid">
-        <%= render 'field', form: address, attribute: :country_id, error_attribute: :country, label: t('admin.onboarding.fields.country'), collection: onboarding_countries %>
-        <%= render 'field', form: address, attribute: :postal_code, label: t('admin.onboarding.fields.postal_code'), autocomplete: 'postal-code', required: country_required.include?(:postal_code) %>
-        <%= render 'field', form: address, attribute: :street, label: t('admin.onboarding.fields.street'), autocomplete: 'address-line1' %>
-        <% %i[exterior_number interior_number neighborhood city state].each do |attribute| %>
-          <%= render 'field', form: address, attribute:, label: t("admin.onboarding.fields.#{attribute}"), required: attribute == :city || country_required.include?(attribute) %>
+      <div class="onboarding-field-grid" data-controller="supplier-country-fields supplier-postal-assist"
+           data-action="input->supplier-country-fields#rememberDraft input->supplier-postal-assist#input change->supplier-country-fields#update change->supplier-postal-assist#input"
+           data-supplier-country-fields-state-required-codes-value="<%= Addresses::CountryRules::STATE_REQUIRED.to_json %>"
+           data-supplier-postal-assist-url-value="<%= postal_suggestions_admin_branches_path %>"
+           data-supplier-postal-assist-choice-placeholder-value="<%= t('admin.supplier_details.postal_choose_neighborhood') %>"
+           data-supplier-postal-assist-loading-value="<%= t('admin.supplier_details.address_form.postal_loading') %>"
+           data-supplier-postal-assist-available-value="<%= t('admin.supplier_details.address_form.postal_available') %>"
+           data-supplier-postal-assist-not-found-value="<%= t('admin.supplier_details.address_form.postal_not_found') %>"
+           data-supplier-postal-assist-unavailable-value="<%= t('admin.supplier_details.address_form.postal_unavailable') %>">
+        <%= render 'field', form: address, attribute: :country_id, error_attribute: :country, label: t('admin.onboarding.fields.country'), collection: onboarding_countries, data: { supplier_postal_field: 'country_id' } %>
+        <% %i[postal_code state city neighborhood street exterior_number interior_number].each do |attribute| %>
+          <% localized = %i[postal_code state city neighborhood].include?(attribute) %>
+          <% labels = localized ? %i[mx other].index_with { |kind| t("admin.supplier_details.address_form.country_labels.#{attribute}.#{kind}") } : nil %>
+          <% label = labels ? labels[address.object.country&.iso_alpha2 == 'MX' ? :mx : :other] : t("admin.onboarding.fields.#{attribute}") %>
+          <% wrapper = attribute == :postal_code ? { 'data-country-postal-wrapper' => true } : attribute == :neighborhood ? { 'data-address-field' => 'neighborhood' } : {} %>
+          <%= render 'field', form: address, attribute:, label:, country_labels: labels, wrapper_data: wrapper,
+                     required: %i[street city].include?(attribute) || country_required.include?(attribute),
+                     data: { supplier_postal_field: attribute }, postal_assist: true %>
         <% end %>
       </div>
     </fieldset>
