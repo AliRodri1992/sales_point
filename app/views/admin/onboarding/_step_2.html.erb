@@ -8,7 +8,7 @@
       <% options[:data].merge!(international_phone_target: 'input', country_code: phone.country_code.presence || 'MX') %>
       <div class="onboarding-field">
         <%= phone_fields.hidden_field :id if phone.persisted? %><%= phone_fields.hidden_field :kind %><%= phone_fields.hidden_field :primary %><%= phone_fields.hidden_field :country_code %>
-        <%= phone_fields.label :number, label %>
+        <%= phone_fields.label :number, phone.persisted? ? required_field_label(label) : label, for: options[:id] %>
         <div data-controller="international-phone"><%= phone_fields.telephone_field :number, **options, autocomplete: 'tel' %></div>
         <p class="onboarding-field-hint"><%= t('admin.onboarding_ui.phone_help') %></p>
         <%= render 'field_errors', object: phone, attribute: :number, label:, id: "#{options[:id]}_error" %>
@@ -16,15 +16,16 @@
     <% end %>
   </div>
   <%= fields.fields_for :address do |address| %>
+    <% country_required = Addresses::CountryRules.new(address.object.country&.iso_alpha2).required_fields %>
     <fieldset class="onboarding-fieldset" data-onboarding-target="address">
       <legend><%= t('admin.onboarding_ui.address_title') %></legend>
       <p class="onboarding-field-hint"><%= t('admin.onboarding_ui.address_help') %></p>
       <div class="onboarding-field-grid">
         <%= render 'field', form: address, attribute: :country_id, error_attribute: :country, label: t('admin.onboarding.fields.country'), collection: onboarding_countries %>
-        <%= render 'field', form: address, attribute: :postal_code, label: t('admin.onboarding.fields.postal_code'), autocomplete: 'postal-code', required: false %>
+        <%= render 'field', form: address, attribute: :postal_code, label: t('admin.onboarding.fields.postal_code'), autocomplete: 'postal-code', required: country_required.include?(:postal_code) %>
         <%= render 'field', form: address, attribute: :street, label: t('admin.onboarding.fields.street'), autocomplete: 'address-line1' %>
         <% %i[exterior_number interior_number neighborhood city state].each do |attribute| %>
-          <%= render 'field', form: address, attribute:, label: t("admin.onboarding.fields.#{attribute}"), required: attribute == :city %>
+          <%= render 'field', form: address, attribute:, label: t("admin.onboarding.fields.#{attribute}"), required: attribute == :city || country_required.include?(attribute) %>
         <% end %>
       </div>
     </fieldset>
