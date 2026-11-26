@@ -22,6 +22,29 @@ RSpec.describe 'Onboarding scoped interface', type: :request do
     expect(document.at_css('[role="progressbar"]')).to be_present
   end
 
+  it 'renders a red required-field legend and marks mandatory company fields' do
+    get admin_onboarding_path(step: 1)
+    document = Nokogiri::HTML(response.body)
+
+    expect(document.at_css('.onboarding-required-note .text-rose-600').text).to eq('*')
+    expect(document.at_css('label[for="organization_name"] .text-rose-600').text).to eq('*')
+    expect(document.at_css('#organization_name')['required']).to be_present
+  end
+
+  it 'marks country-specific address requirements without marking optional fields' do
+    create(:branch, organization:, operational_state: 'preparing')
+    get admin_onboarding_path(step: 2)
+    document = Nokogiri::HTML(response.body)
+
+    %w[country_id street exterior_number neighborhood city state postal_code].each do |attribute|
+      field = document.at_css("[data-field-key=\"#{attribute}\"]")
+      expect(field.at_css('[data-onboarding-required]').text).to eq('*')
+      expect(field.at_css('[data-onboarding-field]')['required']).to be_present
+    end
+    expect(document.at_css('[data-field-key="interior_number"] [data-onboarding-required]').text).to be_empty
+    expect(document.at_css('[data-field-key="interior_number"] input')['required']).to be_nil
+  end
+
   it 'associates server validation with the control and retains select enhancement after 422' do
     patch admin_onboarding_path(step: 1), params: {
       organization: { name: '', tax_id: organization.tax_id, business_sector: 'grocery',
