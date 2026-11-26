@@ -9,11 +9,13 @@ Rails.application.configure do
   # Do not eager load code on boot.
   config.eager_load = false
 
-  # Allow only the explicitly configured tunnel hostname.
+  # Opt in to Cloudflare Quick Tunnels or an exact tunnel hostname.
   tunnel_host = ENV.fetch('TUNNEL_HOST', '').strip
-  if tunnel_host.present?
+  if tunnel_host == '*.trycloudflare.com'
+    config.hosts << /\A[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.trycloudflare\.com\z/i
+  elsif tunnel_host.present?
     unless tunnel_host.match?(/\A(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\z/i)
-      raise ArgumentError, 'TUNNEL_HOST must be a hostname without scheme, port or wildcard'
+      raise ArgumentError, 'TUNNEL_HOST must be a hostname or *.trycloudflare.com'
     end
 
     config.hosts << tunnel_host
