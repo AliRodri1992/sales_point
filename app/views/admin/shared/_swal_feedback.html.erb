@@ -6,5 +6,9 @@
   data-swal-flash-title-value="<%= swal_title %>"
   data-swal-flash-confirm-label-value="<%= swal_confirm_label %>"
   data-swal-flash-presentation-value="<%= local_assigns[:swal_presentation] %>"
+  <% if current_user && current_organization && swal_icon.to_s == 'error' && swal_mode.to_s == 'modal' && response.status != 422 %>
+    data-swal-flash-report-url-value="<%= report_incident_path(failure: true) %>"
+    data-swal-flash-report-label-value="<%= t('incidents.report') %>"
+  <% end %>
   class="hidden"
 ></div>

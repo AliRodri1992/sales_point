@@ -1,0 +1,8 @@
+<% colors = { 'xlsx' => '#00724e', 'pdf' => '#be333c', 'docx' => '#2458aa', 'csv' => '#087687', 'mp4' => '#7546ad', 'txt' => '#475569' } %>
+<svg viewBox="0 0 64 72" fill="none" aria-hidden="true" style="color:<%= colors.fetch(kind) %>">
+  <path d="M12 4h27l14 15v43a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6V10a6 6 0 0 1 6-6Z" fill="currentColor" fill-opacity=".12" stroke="currentColor"/>
+  <path d="M39 4v15h14" fill="currentColor" opacity=".3"/>
+  <path d="<%= { 'xlsx' => 'M15 20h22v14H15z M15 27h22 M23 20v14', 'pdf' => 'M15 35q20-32 10-18t15 16q-5-10-25 2z', 'docx' => 'M16 21h16m-16 6h24m-24 6h20', 'csv' => 'M15 21h6m4 0h5m4 0h5m-24 7h6m4 0h5m4 0h5', 'mp4' => 'M20 17l17 11-17 10z', 'txt' => 'M15 21h21m-21 7h24m-24 7h15' }.fetch(kind) %>" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="10" y="44" width="46" height="18" rx="4" fill="currentColor"/>
+  <text x="33" y="57" text-anchor="middle" fill="white" font-family="sans-serif" font-weight="bold" font-size="12"><%= kind.upcase %></text>
+</svg>

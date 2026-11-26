@@ -1,0 +1,103 @@
+{
+  "ko": {
+    "incidents": {
+      "group": "장애 신고",
+      "new": "새 장애 신고",
+      "report": "문제 신고",
+      "mine": "내 신고",
+      "data": "신고 내용",
+      "context": "신고 환경",
+      "files": "첨부 파일",
+      "remove": "제거",
+      "attach": "파일 첨부",
+      "send": "신고 제출",
+      "required": "필수 입력",
+      "created": "신고가 등록되었습니다",
+      "failed": "전송을 확인할 수 없습니다. 다시 시도하기 전에 내 신고를 확인하세요.",
+      "blocked": "계속할 수 없었음",
+      "continued": "계속할 수 있었음",
+      "select": "선택",
+      "empty": "등록된 신고가 없습니다.",
+      "next": "다음",
+      "prev": "이전",
+      "origin": "신고 시작 화면",
+      "organization": "조직",
+      "branch": "현재 지점",
+      "resolution": "답변 또는 해결 내용",
+      "back": "원래 화면으로 돌아가기",
+      "save": "변경 저장",
+      "how": "사용 방법",
+      "close": "도움말 닫기",
+      "help_label": "%{title} 도움말",
+      "fields": {
+        "description": "어떤 문제가 발생했나요?",
+        "expected_result": "예상 결과",
+        "affected_module": "관련 모듈",
+        "affected_screen": "관련 화면",
+        "category": "신고 유형 (선택)",
+        "frequency": "빈도 (선택)",
+        "blocks_operation": "작업 영향 (선택)",
+        "occurred_at": "발생 일시 (선택)",
+        "operation_reference": "관련 작업 또는 기록 (선택)",
+        "status": "상태",
+        "priority": "우선순위"
+      },
+      "choices": {
+        "first": "처음",
+        "intermittent": "간헐적",
+        "always": "매번",
+        "function": "기능",
+        "data": "잘못된 정보",
+        "display": "화면 표시",
+        "access": "접근 권한",
+        "performance": "지연 또는 멈춤",
+        "other": "기타 문제",
+        "reported": "접수됨",
+        "reviewing": "검토 중",
+        "resolved": "해결됨",
+        "normal": "보통",
+        "low": "낮음",
+        "high": "높음"
+      },
+      "screens": {
+        "index": "목록",
+        "show": "상세",
+        "new": "등록",
+        "edit": "수정"
+      },
+      "modules": {
+        "dashboard": "대시보드",
+        "products": "상품",
+        "system_roles": "역할 및 권한",
+        "promotions": "프로모션",
+        "categories": "카테고리",
+        "price_lists": "가격표",
+        "clients": "고객",
+        "branches": "지점",
+        "users": "사용자",
+        "suppliers": "공급업체",
+        "inventories": "지점 재고",
+        "inventory_overview": "재고",
+        "purchase_orders": "구매 주문",
+        "supplier_payments": "공급업체 지급"
+      },
+      "help": {
+        "data": {
+          "purpose": "발견한 문제를 설명하세요.",
+          "usage": "발생 위치와 결과를 입력하세요.",
+          "example": "빈 역할을 저장할 때 오류 두 개가 표시됐습니다."
+        },
+        "files": {
+          "purpose": "문제를 이해하는 데 도움이 되는 자료를 첨부하세요.",
+          "usage": "전송하기 전에 미리보기를 확인하고 불필요한 파일을 제거하세요.",
+          "example": "예: 오류 화면과 PDF 영수증."
+        },
+        "context": {
+          "purpose": "이 정보는 자동으로 기록됩니다.",
+          "usage": "다른 위치에서 발생했다면 모듈과 화면을 변경하세요.",
+          "example": "대시보드에서 상품 문제를 신고할 수 있습니다."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+<% content_for :title, t('incidents.mine') %>
+<div class="incident-card"><header class="mb-4 flex items-center justify-between"><h1 class="font-jakarta text-2xl font-bold"><%= t('incidents.mine') %></h1><%= link_to t('incidents.new'), new_admin_incident_path, class: 'incident-secondary' %></header>
+<% if @incidents.empty? %><p><%= t('incidents.empty') %></p><% end %>
+<ul class="divide-y divide-slate-200"><% @incidents.each do |incident| %><li class="flex flex-wrap items-center justify-between gap-2 py-3"><%= link_to incident.folio, admin_incident_path(incident), class: 'font-semibold text-emerald-700 underline' %><span><%= incident.description.truncate(70) %></span><span><%= t("incidents.choices.#{incident.status}") %></span></li><% end %></ul>
+<nav class="flex gap-3"><%= link_to '←', admin_incidents_path(page: @page - 1), aria: { label: t('incidents.prev') } if @page > 1 %><%= link_to '→', admin_incidents_path(page: @page + 1), aria: { label: t('incidents.next') } if @more %></nav></div>

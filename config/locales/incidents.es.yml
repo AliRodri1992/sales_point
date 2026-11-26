@@ -1,0 +1,103 @@
+{
+  "es": {
+    "incidents": {
+      "group": "Incidencias",
+      "new": "Nueva Incidencia",
+      "report": "Reportar un problema",
+      "mine": "Mis incidencias",
+      "data": "Datos de la incidencia",
+      "context": "Contexto del reporte",
+      "files": "Archivos adjuntos",
+      "remove": "Quitar",
+      "attach": "Adjuntar archivos",
+      "send": "Enviar incidencia",
+      "required": "Campo obligatorio",
+      "created": "Incidencia registrada",
+      "failed": "No se pudo confirmar el envío. Revisa Mis incidencias antes de reintentar.",
+      "blocked": "No pude continuar",
+      "continued": "Pude continuar",
+      "select": "Seleccionar",
+      "empty": "Aún no tienes incidencias.",
+      "next": "Siguiente",
+      "prev": "Anterior",
+      "origin": "Reporte abierto desde",
+      "organization": "Organización",
+      "branch": "Sucursal activa",
+      "resolution": "Respuesta o resolución",
+      "back": "Volver a la pantalla de origen",
+      "save": "Guardar seguimiento",
+      "how": "Cómo usarlo",
+      "close": "Cerrar ayuda",
+      "help_label": "Ayuda de %{title}",
+      "fields": {
+        "description": "¿Qué ocurrió?",
+        "expected_result": "Resultado esperado",
+        "affected_module": "Módulo afectado",
+        "affected_screen": "Pantalla afectada",
+        "category": "Tipo de incidencia (opcional)",
+        "frequency": "Frecuencia (opcional)",
+        "blocks_operation": "Impacto en la operación (opcional)",
+        "occurred_at": "¿Cuándo ocurrió? (opcional)",
+        "operation_reference": "Operación o registro relacionado (opcional)",
+        "status": "Estado",
+        "priority": "Prioridad"
+      },
+      "choices": {
+        "first": "Primera vez",
+        "intermittent": "Intermitente",
+        "always": "Cada vez que lo intento",
+        "function": "Funcionamiento",
+        "data": "Información incorrecta",
+        "display": "Diseño o visualización",
+        "access": "Acceso o permisos",
+        "performance": "Lentitud o bloqueo",
+        "other": "Otro problema",
+        "reported": "Reportada",
+        "reviewing": "En revisión",
+        "resolved": "Resuelta",
+        "normal": "Normal",
+        "low": "Baja",
+        "high": "Alta"
+      },
+      "screens": {
+        "index": "Listado",
+        "show": "Detalle",
+        "new": "Alta",
+        "edit": "Edición"
+      },
+      "modules": {
+        "dashboard": "Panel de control",
+        "products": "Productos",
+        "system_roles": "Roles y permisos",
+        "promotions": "Promociones",
+        "categories": "Categorías",
+        "price_lists": "Listas de precios",
+        "clients": "Clientes",
+        "branches": "Sucursales",
+        "users": "Usuarios",
+        "suppliers": "Proveedores",
+        "inventories": "Inventarios de sucursal",
+        "inventory_overview": "Inventario",
+        "purchase_orders": "Órdenes de compra",
+        "supplier_payments": "Pagos a proveedores"
+      },
+      "help": {
+        "data": {
+          "purpose": "Describe el problema que observaste.",
+          "usage": "Selecciona dónde ocurrió y describe el resultado.",
+          "example": "Al guardar un rol vacío aparecieron dos errores."
+        },
+        "files": {
+          "purpose": "Agrega evidencias que ayuden a identificar el problema.",
+          "usage": "Revisa las miniaturas y quita los archivos incorrectos antes de enviar.",
+          "example": "Ejemplo: captura del error y comprobante PDF."
+        },
+        "context": {
+          "purpose": "Este contexto se registra automáticamente.",
+          "usage": "Si ocurrió en otro lugar, cambia el módulo y la pantalla afectados.",
+          "example": "Puedes reportar un problema de Productos desde el panel de control."
+        }
+      }
+    }
+  }
+}

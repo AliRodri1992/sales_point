@@ -260,3 +260,6 @@ application.register("branch-transition", BranchTransitionController)
 import BranchAddressController from "./branch_address_controller"
 application.register("branch-address", BranchAddressController)
 
+
+import IncidentFormController from "./incident_form_controller"
+application.register("incident-form", IncidentFormController)

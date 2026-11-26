@@ -1,0 +1,23 @@
+<% content_for :title, @incident.folio %>
+<article class="incident-card mx-auto max-w-4xl">
+<h1 class="font-jakarta text-2xl font-bold"><%= @incident.folio %></h1>
+<p class="my-2 font-semibold text-emerald-700"><%= t("incidents.choices.#{@incident.status}") %></p>
+<p class="whitespace-pre-wrap break-words"><%= @incident.description %></p>
+<dl class="my-5 grid gap-3 sm:grid-cols-2">
+<% { affected_module: (@incident.affected_module.present? && incident_module_label(@incident.affected_module)),
+     affected_screen: (@incident.affected_screen.present? && t("incidents.screens.#{@incident.affected_screen}")),
+     category: (@incident.category.present? && t("incidents.choices.#{@incident.category}")),
+     frequency: (@incident.frequency.present? && t("incidents.choices.#{@incident.frequency}")),
+     blocks_operation: (@incident.blocks_operation.nil? ? nil : t(@incident.blocks_operation ? 'incidents.blocked' : 'incidents.continued')),
+     expected_result: @incident.expected_result, operation_reference: @incident.operation_reference,
+     occurred_at: (@incident.occurred_at && l(@incident.occurred_at, format: :short)) }.each do |key, value| %>
+<% if value.present? %><div><dt class="text-xs text-slate-500"><%= t("incidents.fields.#{key}") %></dt><dd><%= value %></dd></div><% end %><% end %></dl>
+<ul><% @incident.attachments.each do |file| %><li><%= link_to file.filename, attachment_admin_incident_path(@incident, attachment_id: file.id), class: 'text-emerald-700 underline' %></li><% end %></ul>
+<% @incident.incident_events.order(:created_at).each do |event| %><p class="my-2"><%= l(event.created_at, format: :short) %> · <%= event.actor.display_name %> · <%= t("incidents.choices.#{event.kind}") %> <%= event.body %></p><% end %>
+<% if policy(@incident).manage? %>
+<%= link_to 'GitHub', @incident.github_issue_url, class: 'incident-secondary' if @incident.github_issue_url.present? %>
+<%= form_with model: @incident, url: admin_incident_path(@incident), class: 'my-5 grid gap-3' do |form| %>
+<%= render 'dropdown', field: :status, selected: @incident.status, options: %w[reported reviewing resolved].map { |key| [t("incidents.choices.#{key}"), key] } %>
+<%= render 'dropdown', field: :priority, selected: @incident.priority, options: %w[low normal high].map { |key| [t("incidents.choices.#{key}"), key] } %>
+<%= form.label :resolution, t('incidents.resolution') %><%= form.text_area :resolution, class: 'incident-input' %><%= form.submit t('incidents.save'), class: 'incident-secondary' %><% end %><% end %>
+<div class="mt-5 flex flex-wrap gap-3"><%= link_to t('incidents.back'), @incident.origin_path, class: 'incident-secondary' if @incident.reporter_id == current_user.id && @incident.origin_path.to_s.match?(%r{\A/(?!/)}) %><%= link_to t('incidents.mine'), admin_incidents_path, class: 'incident-secondary' %></div></article>

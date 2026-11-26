@@ -1,0 +1,27 @@
+<div class="promotion-help" data-controller="promotion-help"
+     data-action="keydown.esc->promotion-help#escape click@document->promotion-help#outside">
+  <button type="button" class="promotion-help-trigger" data-section-help-trigger
+          data-promotion-help-target="trigger" data-action="promotion-help#toggle"
+          aria-label="<%= t('incidents.help_label', title: title) %>" aria-expanded="false"
+          aria-controls="promotion-help-<%= section %>" aria-haspopup="dialog">
+    <%= promotion_icon('help', class: 'size-5') %>
+  </button>
+  <div id="promotion-help-<%= section %>" class="promotion-help-panel" data-section-help-panel
+       data-promotion-help-target="panel" role="dialog" aria-modal="false"
+       aria-labelledby="promotion-help-title-<%= section %>" hidden>
+    <div class="promotion-help-header">
+      <%= image_tag('deltin/portrait.svg', class: 'size-8', alt: 'Deltín') %>
+      <strong id="promotion-help-title-<%= section %>"><%= title %></strong>
+      <button type="button" class="promotion-help-close" data-action="promotion-help#closeAndFocus"
+              aria-label="<%= t('incidents.close') %>"><%= helpers.promotion_icon('x', class: 'size-4') %></button>
+    </div>
+    <div class="promotion-help-body">
+      <p class="font-semibold text-slate-800"><%= t("incidents.help.#{section}.purpose") %></p>
+      <div>
+        <p class="promotion-help-eyebrow"><%= t('incidents.how') %></p>
+        <p><%= t("incidents.help.#{section}.usage") %></p>
+      </div>
+      <p class="promotion-help-example"><%= t("incidents.help.#{section}.example") %></p>
+    </div>
+  </div>
+</div>

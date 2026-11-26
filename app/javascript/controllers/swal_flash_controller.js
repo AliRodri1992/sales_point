@@ -5,6 +5,8 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
     static values = {
         message: String,
+        reportUrl: String,
+        reportLabel: String,
         title: String,
         confirmLabel: String,
         presentation: String,
@@ -22,7 +24,17 @@ export default class extends Controller {
         const categoryWarning = modal && this.presentationValue === "category-in-use"
         const focusTarget = this.focusSelectorValue ? document.querySelector(this.focusSelectorValue) : null
         focusTarget?.focus()
+        let reportLink
+        if (this.hasReportUrlValue && new URL(this.reportUrlValue, location.origin).origin === location.origin) {
+            reportLink = document.createElement("a")
+            reportLink.href = this.reportUrlValue
+            reportLink.textContent = this.reportLabelValue
+            reportLink.target = "_blank"
+            reportLink.rel = "noopener"
+            reportLink.className = "font-semibold text-emerald-700 underline"
+        }
         window.Swal.fire({
+            ...(reportLink ? { footer: reportLink } : {}),
             toast: !modal,
             icon: this.iconValue,
             position: modal ? "center" : "top-end",

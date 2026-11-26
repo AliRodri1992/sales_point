@@ -89,3 +89,5 @@ Consulta primero el [estándar de calidad modular](../module-quality-standard.md
 | Integración Productos | PRODUCTS-028: falta bloqueo común para impedir asociación concurrente a categoría retirada. | [Expediente de Productos](products.md) |
 
 Esta actualización no certifica el cierre de ningún módulo vecino; sus hallazgos se limitan a contratos observados desde Categorías.
+
+[Incidencias](incidents.md) · Registro, seguimiento y sincronización con GitHub.

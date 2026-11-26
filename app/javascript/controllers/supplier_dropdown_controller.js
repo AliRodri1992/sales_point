@@ -131,8 +131,14 @@ export default class extends Controller {
   sync() {
     if (!this.hasValueTarget || !this.hasLabelTarget) return
     const options = Array.from(this.element.querySelectorAll("button[data-option-value]"))
-    const selected = options.find((option) => option.dataset.optionValue === this.valueTarget.value) || options[0]
-    if (!selected) return
+    const selected = options.find((option) => option.dataset.optionValue === this.valueTarget.value) || (this.element.dataset.emptyLabel ? null : options[0])
+    if (!selected) {
+      if (this.element.dataset.emptyLabel) {
+        this.labelTarget.textContent = this.element.dataset.emptyLabel
+        options.forEach(option => option.setAttribute("aria-selected", "false"))
+      }
+      return
+    }
 
     this.labelTarget.textContent = selected.querySelector("[data-option-label]")?.textContent.trim() || ""
     options.forEach((option) => option.setAttribute("aria-selected", String(option === selected)))
@@ -147,7 +153,7 @@ export default class extends Controller {
   navigate(event) {
     if (!this.hasValueTarget || !["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return
 
-    const options = Array.from(this.element.querySelectorAll("button[data-option-value]"))
+    const options = Array.from(this.element.querySelectorAll("button[data-option-value]:not([disabled])"))
     if (options.length === 0) return
 
     const current = options.indexOf(document.activeElement)

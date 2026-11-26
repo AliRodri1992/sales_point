@@ -1,0 +1,103 @@
+{
+  "en": {
+    "incidents": {
+      "group": "Incidents",
+      "new": "New incident",
+      "report": "Report a problem",
+      "mine": "My incidents",
+      "data": "Incident details",
+      "context": "Report context",
+      "files": "Attachments",
+      "remove": "Remove",
+      "attach": "Attach files",
+      "send": "Submit incident",
+      "required": "Required field",
+      "created": "Incident recorded",
+      "failed": "Could not confirm submission. Check My incidents before retrying.",
+      "blocked": "I could not continue",
+      "continued": "I could continue",
+      "select": "Select",
+      "empty": "You have no incidents yet.",
+      "next": "Next",
+      "prev": "Previous",
+      "origin": "Report opened from",
+      "organization": "Organization",
+      "branch": "Active branch",
+      "resolution": "Response or resolution",
+      "back": "Return to original screen",
+      "save": "Save update",
+      "how": "How to use it",
+      "close": "Close help",
+      "help_label": "Help for %{title}",
+      "fields": {
+        "description": "What happened?",
+        "expected_result": "Expected result",
+        "affected_module": "Affected module",
+        "affected_screen": "Affected screen",
+        "category": "Incident type (optional)",
+        "frequency": "Frequency (optional)",
+        "blocks_operation": "Operational impact (optional)",
+        "occurred_at": "When did it happen? (optional)",
+        "operation_reference": "Related operation or record (optional)",
+        "status": "Status",
+        "priority": "Priority"
+      },
+      "choices": {
+        "first": "First time",
+        "intermittent": "Intermittent",
+        "always": "Every attempt",
+        "function": "Functionality",
+        "data": "Incorrect information",
+        "display": "Appearance",
+        "access": "Access or permissions",
+        "performance": "Slow or unresponsive",
+        "other": "Other problem",
+        "reported": "Reported",
+        "reviewing": "Under review",
+        "resolved": "Resolved",
+        "normal": "Normal",
+        "low": "Low",
+        "high": "High"
+      },
+      "screens": {
+        "index": "List",
+        "show": "Details",
+        "new": "New",
+        "edit": "Edit"
+      },
+      "modules": {
+        "dashboard": "Dashboard",
+        "products": "Products",
+        "system_roles": "Roles and permissions",
+        "promotions": "Promotions",
+        "categories": "Categories",
+        "price_lists": "Price lists",
+        "clients": "Customers",
+        "branches": "Branches",
+        "users": "Users",
+        "suppliers": "Suppliers",
+        "inventories": "Branch inventory",
+        "inventory_overview": "Inventory",
+        "purchase_orders": "Purchase orders",
+        "supplier_payments": "Supplier payments"
+      },
+      "help": {
+        "data": {
+          "purpose": "Describe the problem you noticed.",
+          "usage": "Select where it happened and describe the outcome.",
+          "example": "Saving an empty role showed two errors."
+        },
+        "files": {
+          "purpose": "Add evidence that helps identify the problem.",
+          "usage": "Review previews and remove unwanted files before submitting.",
+          "example": "Example: an error screenshot and a PDF receipt."
+        },
+        "context": {
+          "purpose": "This context is recorded automatically.",
+          "usage": "Change the affected module and screen if the problem happened elsewhere.",
+          "example": "You can report a product issue from the dashboard."
+        }
+      }
+    }
+  }
+}

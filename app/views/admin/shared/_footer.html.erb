@@ -10,6 +10,10 @@
       <% else %>
         <span class="max-w-64 text-center sm:text-left"><%= t('admin.shared.footer.terms_unavailable') %></span>
       <% end %>
+      <% if current_user && current_organization && controller_path != 'admin/incidents' %>
+        <%= link_to t('incidents.report'), report_incident_path, target: '_blank', rel: 'noopener',
+                    class: 'inline-flex min-h-11 items-center rounded px-1 font-semibold text-emerald-700 hover:underline focus-visible:outline-2' %>
+      <% end %>
       <span>v1.0.0</span>
     </div>
   </div>

@@ -193,6 +193,12 @@
       "entry_route": "/",
       "kind": "public",
       "record": "docs/quality/modules/public-pages.md"
+    },
+    {
+      "slug": "incidents",
+      "entry_route": "/admin/incidents",
+      "kind": "module",
+      "record": "docs/quality/modules/incidents.md"
     }
   ],
   "admin_resource_owners": {
@@ -223,6 +229,7 @@
     "supplier_payments": "supplier-payments",
     "supplier_credit_notes": "supplier-credit-notes",
     "suppliers": "suppliers",
-    "units_of_measure": "units-of-measure"
+    "units_of_measure": "units-of-measure",
+    "incidents": "incidents"
   }
 }

@@ -17,6 +17,9 @@ Rails.application.routes.draw do
   get '/home/index', to: 'home#index'
   get '/dashboard/index', to: 'dashboard#index'
   namespace :admin do
+    resources :incidents, only: %i[index new create show update] do
+      member { get 'attachments/:attachment_id', action: :attachment, as: :attachment }
+    end
     patch 'organizations/:id/select', to: 'organization_selections#update', as: :select_organization
     resources :email_templates, only: %i[index show new create edit destroy] do
       member do

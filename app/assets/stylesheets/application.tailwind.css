@@ -4,6 +4,7 @@
 @import "./fonts.css";
 @import "./gridstack.css";
 /* Components */
+@import "./components/incidents.css";
 @import "./components/themes.css";
 @import "./components/deltin.css";
 @import "./components/sweetalert.css";
