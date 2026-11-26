@@ -2,9 +2,9 @@
 <% if @branch.persisted? && @branch.status? %>
   <%= form_with url: admin_onboarding_path(step: 3, intent: 'terminal'), method: :patch, html: { novalidate: true },
     data: { onboarding_target: 'form', action: 'submit->onboarding#submit turbo:submit-start->onboarding#submitStart turbo:submit-end->onboarding#submitEnd turbo:before-fetch-response->onboarding#beforeResponse turbo:fetch-request-error->onboarding#requestError' } do |form| %>
-    <p class="onboarding-required-note"><%= onboarding_required_note %></p>
     <%= fields_for :recovery, @new_terminal do |fields| %><%= render 'field', form: fields, attribute: :name, label: t('admin.onboarding.fields.terminal_name') %><% end %>
     <%= render 'field_errors', object: @new_terminal, attribute: :base, label: '', id: 'onboarding-recovery-error' %>
+    <p class="onboarding-required-note"><%= onboarding_required_note %></p>
     <div class="onboarding-actions"><%= link_to t('admin.onboarding.back'), admin_onboarding_path(step: 2), class: 'onboarding-secondary' %><%= form.button t('admin.onboarding_ui.recovery.create_terminal'), class: 'onboarding-primary', data: { turbo_submits_with: t('admin.onboarding_ui.saving') } %></div>
   <% end %>
 <% else %>
