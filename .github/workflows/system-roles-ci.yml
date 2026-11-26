@@ -36,6 +36,9 @@ on:
       - 'spec/services/system_roles/**'
       - 'spec/features/system_role*'
       - 'spec/seeds/full_seed_repeatability_spec.rb'
+      - 'spec/seeds/role_creation_permissions_spec.rb'
+      - 'db/seeds.rb'
+      - 'db/seeds/role_creation_permissions.rb'
       - 'docs/quality/modules/system-roles.md'
 
 permissions:
@@ -85,7 +88,8 @@ jobs:
             spec/features/system_roles_spec.rb spec/features/system_roles_directory_browser_spec.rb spec/features/system_roles_editor_browser_spec.rb \
             spec/features/system_role_statuses_browser_spec.rb \
             spec/features/system_role_filtered_permissions_browser_spec.rb \
-            spec/seeds/full_seed_repeatability_spec.rb
+            spec/seeds/full_seed_repeatability_spec.rb spec/seeds/role_creation_permissions_spec.rb \
+            db/seeds/role_creation_permissions.rb
 
   roles_specs:
     name: Roles requests, policies, services and real browser flows
@@ -155,5 +159,5 @@ jobs:
             spec/features/system_roles_spec.rb spec/features/system_roles_directory_browser_spec.rb spec/features/system_roles_editor_browser_spec.rb \
             spec/features/system_role_statuses_browser_spec.rb \
             spec/features/system_role_filtered_permissions_browser_spec.rb
-      - name: Verify seed repeatability after superadmin policy change
-        run: bundle exec rspec spec/seeds/full_seed_repeatability_spec.rb
+      - name: Verify administrative role seed repeatability
+        run: bundle exec rspec spec/seeds/role_creation_permissions_spec.rb spec/seeds/full_seed_repeatability_spec.rb

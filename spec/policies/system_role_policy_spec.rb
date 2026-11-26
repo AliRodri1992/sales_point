@@ -62,6 +62,34 @@ RSpec.describe SystemRolePolicy do
       expect(policy.change_status?).to be(false)
       expect(policy.update_permissions?).to be(true)
     end
+
+    it 'allows New Role with the dedicated seed permission, but still forbids lifecycle changes' do
+      create(:permission, code: 'roles.create')
+      policy = described_class.new(user, record)
+
+      expect(user.permission?('roles.create')).to be(true)
+      expect(policy.create?).to be(true)
+      expect(policy.new?).to be(true)
+      expect(policy.update?).to be(false)
+      expect(policy.change_status?).to be(false)
+    end
+  end
+
+  context 'when a nonadministrator is assigned the creation permission' do
+    let(:user) { create(:user) }
+
+    before do
+      create(:organization_membership, user:)
+      cashier = create(:system_role, :system, code: 'cashier')
+      create(:user_role, user:, system_role: cashier)
+      permission = create(:permission, code: 'roles.create')
+      create(:system_role_permission, system_role: cashier, permission:)
+    end
+
+    it 'never authorizes creation through the permission alone' do
+      expect(user.permission?('roles.create')).to be(true)
+      expect(described_class.new(user, record).create?).to be(false)
+    end
   end
 
   context 'when the user is not an administrator' do

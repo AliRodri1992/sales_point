@@ -604,6 +604,8 @@ SeedConsole.report('Monedas por país', CountryCurrency)
 SeedConsole.track('Roles', SystemRole) { seed_system_roles }
 SeedConsole.track('Permisos', Permission) { seed_permissions }
 SeedConsole.track('Asignación de permisos') { assign_default_role_permissions }
+require_relative 'seeds/role_creation_permissions'
+SeedConsole.track('Permiso Nuevo rol', Permission) { RoleCreationPermissionSeeds.seed! }
 SeedConsole.track('Usuario administrador', User) { seed_admin_user }
 
 require_relative 'seeds/supplier_examples'

@@ -10,7 +10,7 @@ class SystemRolePolicy < ApplicationPolicy
   end
 
   def create?
-    global_manager?
+    global_manager? || (admin? && user.permission?('roles.create'))
   end
 
   def update?
