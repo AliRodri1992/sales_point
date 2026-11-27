@@ -36,7 +36,7 @@ RSpec.describe 'Products module browser flows', type: :feature, js: true do
       find('input[name$="[units]"]').set('6')
     end
 
-    click_button 'Add barcode'
+    click_button 'Add another barcode'
     selected_immediately = {}
     within('#product-barcodes [data-nested-catalog-row]') do
       find('input[name$="[value]"]').set('LARGE-BOX-42')

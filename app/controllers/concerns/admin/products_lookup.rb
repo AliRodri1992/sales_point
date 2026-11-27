@@ -38,10 +38,20 @@ module Admin
 
     def handle_destroy_error(exception)
       Rails.logger.error "Error deleting product #{params[:id]}: #{exception.message}"
-      origin = { user_id: current_user.id, organization_id: current_organization.id, screen: 'admin/products#show',
-                 request_id: request.request_id, path: admin_products_path }
-      flash[:incident_origin] = Rails.application.message_verifier(:incident_origin).generate(origin, expires_in: 12.hours)
+      flash[:incident_origin] = Rails.application.message_verifier(:incident_origin).generate(
+        product_incident_origin, expires_in: 12.hours
+      )
       redirect_back_or_to(admin_products_path, alert: t('admin.products.destroy_failed'))
+    end
+
+    def product_incident_origin
+      {
+        user_id: current_user.id,
+        organization_id: current_organization.id,
+        screen: 'admin/products#show',
+        request_id: request.request_id,
+        path: admin_products_path
+      }
     end
   end
 end

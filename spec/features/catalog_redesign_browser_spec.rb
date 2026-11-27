@@ -22,7 +22,8 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
 
   scenario 'uploads a product image locally through Uppy and saves nested commercial options' do
     visit new_admin_product_path
-    expect(page).to have_css('.uppy-Dashboard-inner', count: 1, wait: 20)
+    expect(page).to have_css('.uppy-Dashboard-inner', count: 1, visible: :all, wait: 20)
+    expect(page).to have_css('#product-image-editor .products-e-photo-stage')
     fill_in 'product_name', with: 'Browser coffee'
     fill_in 'product_code', with: 'BROWSER-COFFEE'
     fill_in 'product_price', with: 99
@@ -37,9 +38,8 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
       find('input[name$="[name]"]').set('Box of six')
       find('input[name$="[units]"]').set('6')
     end
-    attach_file(Rails.root.join('app/assets/images/favicon-32x32.png'), make_visible: true) do
-      find('.uppy-Dashboard-browse').click
-    end
+    attach_file('product-photo-picker', Rails.root.join('app/assets/images/favicon-32x32.png'),
+                make_visible: true)
     expect(page).to have_css('[data-product-upload-target="status"]', text: 'Image ready to save.', wait: 20)
     field_widths = page.all('#product-variants .catalog-field').map do |field|
       page.evaluate_script('arguments[0].getBoundingClientRect().width', field)
@@ -53,6 +53,37 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     expect(record.product_presentations.sole.units).to eq(6)
   end
 
+
+  scenario 'keeps panorama E sections full width before and after adding commercial records' do
+    page.current_window.resize_to(1440, 900)
+    visit new_admin_product_path
+
+    expect(page).to have_css('.products-e-editor .products-e-gallery', count: 1)
+    expect(page).to have_css('.products-e-twins > .catalog-card', count: 2)
+    expect(page).to have_css('.products-e-section-help', minimum: 8)
+
+    ids = %w[product-variants product-presentations product-barcodes]
+    before_widths = ids.map do |id|
+      page.evaluate_script("document.getElementById('#{id}').getBoundingClientRect().width")
+    end
+
+    click_button 'Add variant'
+    click_button 'Add presentation'
+    click_button 'Add another barcode'
+
+    ids.each_with_index do |id, index|
+      expect(page).to have_css("##{id} [data-nested-catalog-row]", count: 1)
+      current_width = page.evaluate_script("document.getElementById('#{id}').getBoundingClientRect().width")
+      expect(current_width).to be_within(1).of(before_widths[index])
+    end
+
+    within('#product-identity') do
+      find('.promotion-help-trigger').click
+      expect(page).to have_css('.promotion-help-panel:not([hidden]) .products-e-help-avatar')
+      find('.promotion-help-close').click
+    end
+  end
+
   scenario 'lets a new barcode select a new variant or presentation before first save' do
     visit new_admin_product_path
     click_button 'Add variant'
@@ -63,7 +94,7 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     within('#product-presentations [data-nested-catalog-row]') do
       find('input[name$="[name]"]').set('Fresh box')
     end
-    click_button 'Add barcode'
+    click_button 'Add another barcode'
 
     within('#product-barcodes [data-nested-catalog-row]') do
       expect(page).to have_css('select[name$="[product_variant_id]"] option',
