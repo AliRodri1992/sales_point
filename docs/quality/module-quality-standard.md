@@ -29,6 +29,7 @@
 | Dimensión | Comprobación |
 |---|---|
 | Estado y navegación | Carga, vacío, error de red/401/403/404/422, éxito, reintento, atrás/adelante, paginación y filtros cuando existan |
+| Paginación sin datos | Con cero resultados en la tabla o directorio filtrado, no renderizar paginación, contador de páginas ni selector «Filas por página»; conservar el estado vacío y los filtros disponibles |
 | Formularios | Reglas **del modelo/servidor**, campos obligatorios con asterisco rojo, mensajes individuales debajo del campo con formato «nombreCampo mensajeValidación», sin `required` HTML5 como sustituto y sin resumen duplicado de errores |
 | Acceso e integridad | Autenticación, Pundit, aislamiento por organización, cambios concurrentes, estados prohibidos, soft delete y auditoría si aplican |
 | Componentes | Identidad visual Delta POS, dropdowns propios sin radios internos, consistencia en botones, tooltips y confirmaciones SweetAlert2 según uso actual |

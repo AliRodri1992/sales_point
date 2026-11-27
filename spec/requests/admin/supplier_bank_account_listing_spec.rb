@@ -100,6 +100,16 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(account.primary).to be(false)
   end
 
+  it 'hides bank pagination if filters do not match any account' do
+    bank_account(bank_name: 'Example Bank')
+
+    get admin_supplier_bank_accounts_path(supplier, q: 'not-a-matching-account')
+
+    expect(response).to have_http_status(:ok)
+    expect(document.at_css('[data-bank-accounts-empty]')).to be_present
+    expect(document.at_css('[data-bank-accounts-pagination]')).to be_nil
+  end
+
   it 'shows the reusable illustration and a registration action when no accounts exist' do
     get admin_supplier_bank_accounts_path(supplier)
 
@@ -107,6 +117,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.at_css('[data-bank-accounts-add-tile]')).to be_present
     expect(document.text).to include('No bank accounts registered yet')
     expect(document.at_css("a[href='#{new_admin_supplier_bank_account_path(supplier)}']")).to be_present
+    expect(document.at_css('[data-bank-accounts-pagination]')).to be_nil
     expect(document.css('[data-supplier-bank-accounts-target="card"]')).to be_empty
   end
 
@@ -121,6 +132,7 @@ RSpec.describe 'Supplier bank accounts list', type: :request do
     expect(document.at_css('[data-supplier-bank-accounts-target="list"]')['class']).to include('xl:grid-cols-3')
     cards = document.css('[data-supplier-bank-accounts-target="card"]')
     expect(cards.length).to eq(2)
+    expect(document.at_css('[data-bank-accounts-pagination]')).to be_present
     expect(document.text).to include('Example Bank', 'Another Bank')
     expect(document.text).not_to include('Vendor Finance')
     expect(document.text).to include(primary.masked_number)

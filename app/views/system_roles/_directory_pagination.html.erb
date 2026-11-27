@@ -1,3 +1,4 @@
+<% if @total_count.to_i.positive? %>
 <% d = 'admin.system_roles.directory' %>
 <footer class="catalog-list-pagination role-directory-pagination">
   <div class="catalog-list-pagination-size">
@@ -36,3 +37,4 @@
     <% end %>
   </nav>
 </footer>
+<% end %>

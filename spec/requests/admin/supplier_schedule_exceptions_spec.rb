@@ -13,6 +13,13 @@ RSpec.describe 'Supplier schedule exceptions', type: :request do
     sign_in user
   end
 
+  it 'hides exception pagination when the supplier has no exceptions' do
+    get admin_supplier_schedules_path(supplier)
+
+    expect(response).to have_http_status(:ok)
+    expect(Nokogiri::HTML(response.body).at_css('[data-supplier-exceptions-pagination]')).to be_nil
+  end
+
   it 'paginates exceptions and allows bulk archiving and restoration' do
     exceptions = Array.new(23) do |index|
       supplier.supplier_schedule_exceptions.create!(
@@ -21,6 +28,7 @@ RSpec.describe 'Supplier schedule exceptions', type: :request do
     end
     get admin_supplier_schedules_path(supplier)
     expect(Nokogiri::HTML(response.body).css('input[name="exception_ids[]"]').size).to eq(20)
+    expect(Nokogiri::HTML(response.body).at_css('[data-supplier-exceptions-pagination]')).to be_present
     get admin_supplier_schedules_path(supplier, page: 2)
     expect(Nokogiri::HTML(response.body).css('input[name="exception_ids[]"]').size).to eq(3)
 

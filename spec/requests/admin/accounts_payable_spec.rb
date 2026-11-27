@@ -34,15 +34,20 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
     invoice.reload
   end
 
-  it 'renders the finance dashboards with no records' do
-    get admin_account_payables_path
-    expect(response).to have_http_status(:ok)
-    get admin_supplier_invoices_path
-    expect(response).to have_http_status(:ok)
-    get admin_supplier_payments_path
-    expect(response).to have_http_status(:ok)
-    get admin_supplier_credit_notes_path
-    expect(response).to have_http_status(:ok)
+  it 'renders empty finance dashboards without pagination or rows-per-page controls' do
+    [
+      [admin_account_payables_path, '[data-account-payables-pagination]'],
+      [admin_supplier_invoices_path, '[data-financial-pagination]'],
+      [admin_supplier_payments_path, '[data-financial-pagination]'],
+      [admin_supplier_credit_notes_path, '[data-financial-pagination]']
+    ].each do |path, pagination|
+      get path
+
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css(pagination)).to be_nil
+      expect(document.at_css('select[name="per_page"]')).to be_nil
+    end
   end
 
   it 'renders forms for invoices, payments, credits and bank accounts' do
@@ -91,6 +96,7 @@ RSpec.describe 'Accounts payable finance screens', type: :request do
     get admin_account_payables_path
     expect(response).to have_http_status(:ok)
     expect(Nokogiri::HTML(response.body).at_css('table tbody').text).to include('—')
+    expect(Nokogiri::HTML(response.body).at_css('[data-account-payables-pagination]')).to be_present
 
     get admin_supplier_invoice_path(invoice)
     expect(response).to have_http_status(:ok)

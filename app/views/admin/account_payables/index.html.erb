@@ -60,7 +60,8 @@
     </table>
     <% if @payables.empty? %><p class="p-8 text-center text-sm text-slate-500"><%= t('admin.accounts_payable.empty') %></p><% end %>
   </div>
-  <nav class="flex flex-wrap items-center justify-between gap-3 text-sm text-slate-600" aria-label="Payables pages">
+  <% if @total_payables.positive? %>
+  <nav data-account-payables-pagination class="flex flex-wrap items-center justify-between gap-3 text-sm text-slate-600" aria-label="Payables pages">
     <div class="flex flex-wrap items-center gap-3">
       <% if @total_payables.positive? %>
         <label for="payables-per-page"><%= t('admin.general_settings.unit') %></label>
@@ -83,5 +84,6 @@
       <% end %>
     </div>
   </nav>
+  <% end %>
 </section>
 

@@ -29,9 +29,11 @@ RSpec.describe 'Supplier financial listing filters', type: :request do
     expect(response).to have_http_status(:ok)
     expect(page.css('[data-financial-table="invoices"] tbody tr').size).to eq(1)
     expect(page.text).to include('FOLIO-SEARCH-483')
+    expect(page.at_css('[data-financial-pagination]')).to be_present
 
     get admin_supplier_invoices_path, params: { q: 'SEARCH-483', status: 'posted' }
     expect(page.css('[data-financial-table="invoices"] tbody tr')).to be_empty
+    expect(page.at_css('[data-financial-pagination]')).to be_nil
     expect(page.at_css('select[name="status"] option[selected]')['value']).to eq('posted')
   end
 
@@ -47,6 +49,7 @@ RSpec.describe 'Supplier financial listing filters', type: :request do
 
     get admin_supplier_payments_path, params: { q: 'nonexistent-value' }
     expect(page.css('[data-financial-table="payments"] tbody tr')).to be_empty
+    expect(page.at_css('[data-financial-pagination]')).to be_nil
     expect(page.at_css("a[href='#{admin_supplier_payments_path}']")).to be_present
   end
 
@@ -63,5 +66,6 @@ RSpec.describe 'Supplier financial listing filters', type: :request do
 
     get admin_supplier_credit_notes_path, params: { q: 'CREDIT-UX-321', status: 'posted' }
     expect(page.css('[data-financial-table="credits"] tbody tr')).to be_empty
+    expect(page.at_css('[data-financial-pagination]')).to be_nil
   end
 end

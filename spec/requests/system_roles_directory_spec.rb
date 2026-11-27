@@ -41,6 +41,16 @@ RSpec.describe 'System roles directory redesign', type: :request do
     expect(page.at_css('select[name="role_type"] option[selected]')['value']).to eq('branch')
   end
 
+  it 'hides role pagination and page size when no roles match the filters' do
+    get system_roles_path, params: { search: 'delta_pos_no_matching_role_zzz' }
+
+    expect(response).to have_http_status(:ok)
+    document = Nokogiri::HTML(response.body)
+    expect(document.at_css('.role-directory-empty')).to be_present
+    expect(document.at_css('footer.role-directory-pagination')).to be_nil
+    expect(document.at_css('#system_roles_per_page')).to be_nil
+  end
+
   it 'escapes SQL wildcard characters in the search query' do
     create(:system_role, name: 'Warehouse Operations', code: 'warehouse_operations')
 

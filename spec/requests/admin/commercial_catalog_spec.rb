@@ -13,6 +13,17 @@ RSpec.describe 'Commercial catalog administration', type: :request do
     sign_in administrator
   end
 
+  it 'does not show pagination or page-size controls for empty price lists and promotions' do
+    [admin_price_lists_path, admin_promotions_path].each do |path|
+      get path
+
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('footer.catalog-list-pagination')).to be_nil
+      expect(document.at_css('select[name="per_page"]')).to be_nil
+    end
+  end
+
   it 'creates variants, conversions and alternate codes in the same product request' do
     post admin_products_path, params: { product: {
       name: 'Shirt', code: 'SHIRT', price: 100,

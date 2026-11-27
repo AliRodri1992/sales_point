@@ -1,3 +1,4 @@
+<% if local_assigns.fetch(:total_count, @total_count).to_i.positive? %>
 <% current_page = (local_assigns[:current_page] || params[:page].to_i).clamp(1, total_pages) %>
 <% legacy_class = local_assigns[:legacy_class] %>
 <footer class="catalog-list-pagination <%= legacy_class %>">
@@ -20,3 +21,4 @@
     </nav>
   <% end %>
 </footer>
+<% end %>

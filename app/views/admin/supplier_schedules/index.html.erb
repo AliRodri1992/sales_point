@@ -146,7 +146,8 @@
         <% end %>
       <% end %>
     <% end %>
-    <nav class="flex items-center justify-between text-sm text-slate-600" aria-label="<%= t('admin.supplier_ui.exception_pages') %>">
+    <% if @exceptions_total.positive? %>
+    <nav data-supplier-exceptions-pagination class="flex items-center justify-between text-sm text-slate-600" aria-label="<%= t('admin.supplier_ui.exception_pages') %>">
       <span><%= @exceptions_page %> / <%= @exceptions_pages %></span>
       <div class="flex gap-2">
         <% if @exceptions_page > 1 %>
@@ -161,6 +162,7 @@
         <% end %>
       </div>
     </nav>
+    <% end %>
   </section>
   <% if @schedules.empty? %>
     <div class="flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center"><span class="flex size-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700"><%= delta_icon('calendar-days', class: 'size-7') %></span><p class="mt-4 font-jakarta text-base font-bold text-slate-900"><%= t('admin.supplier_ui.empty_schedules_title') %></p><p class="mt-2 max-w-md text-sm leading-6 text-slate-500"><%= t('admin.supplier_ui.empty_schedules_description') %></p></div>

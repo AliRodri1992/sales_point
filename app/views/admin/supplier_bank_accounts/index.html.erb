@@ -104,7 +104,8 @@
       </div>
     <% end %>
 
-    <nav class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-sm text-slate-500"
+    <% if @accounts_total.positive? %>
+    <nav data-bank-accounts-pagination class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 text-sm text-slate-500"
          aria-label="<%= t('admin.bank_cards.pagination') %>">
       <span><%= t('admin.bank_cards.range', from: @accounts_total.zero? ? 0 : (@accounts_page - 1) * 8 + 1,
                   to: [@accounts_page * 8, @accounts_total].min, total: @accounts_total) %></span>
@@ -124,5 +125,6 @@
         <% end %>
       </div>
     </nav>
+    <% end %>
   </div>
 </section>

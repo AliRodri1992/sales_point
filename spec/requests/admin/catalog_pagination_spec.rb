@@ -59,6 +59,18 @@ RSpec.describe 'Catalog pagination links', type: :request do
     expect(active_page(response.body)).to eq('2')
   end
 
+  it 'omits pagination and rows per page when category and product filters return no data' do
+    [admin_categories_path, admin_products_path].each do |path|
+      get path, params: { search: 'delta_pos_no_matching_catalog_record_zzz' }
+
+      expect(response).to have_http_status(:ok)
+      document = Nokogiri::HTML(response.body)
+      expect(document.at_css('.catalog-list-empty-state')).to be_present
+      expect(document.at_css('footer.catalog-list-pagination')).to be_nil
+      expect(document.at_css('select[name="per_page"]')).to be_nil
+    end
+  end
+
   it 'marks the current products page' do
     get admin_products_path(per_page: 5)
     expect(active_page(response.body)).to eq('1')
