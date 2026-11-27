@@ -87,11 +87,11 @@ RSpec.describe 'Products module browser flows', type: :feature, js: true do
     page.current_window.resize_to(390, 844)
     visit admin_products_path
 
-    expect(page).to have_css('.products-filters__actions .products-filters__apply')
+    expect(page).to have_css('.products-v9-filter-grid .products-v9-filter-submit')
     find('details.products-filters__advanced summary').click
     fill_in 'products_min_price', with: '200'
     fill_in 'products_max_price', with: '100'
-    click_button 'Apply filters'
+    click_button 'Search'
 
     expect(page).to have_css('#products_price_range_error', visible: true)
     expect(page).to have_css('#products_min_price[aria-invalid="true"]')

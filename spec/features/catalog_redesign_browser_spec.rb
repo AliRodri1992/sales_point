@@ -53,7 +53,6 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     expect(record.product_presentations.sole.units).to eq(6)
   end
 
-
   scenario 'keeps panorama E sections full width before and after adding commercial records' do
     page.current_window.resize_to(1440, 900)
     visit new_admin_product_path
@@ -139,7 +138,7 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     wrapper.find('button[aria-haspopup="listbox"]').click
     wrapper.find('[role="option"]', text: 'Beverages', exact_text: true).click
 
-    click_button 'Apply filters'
+    click_button 'Search'
     expect(page).to have_current_path(/category_id=#{first_category.id}/)
     expect(page).to have_css('details.products-filters__advanced[open]')
     expect(page).to have_css('#admin_products_list', text: 'Catalog orange tea')
@@ -164,7 +163,7 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     page.current_window.resize_to(390, 844)
     visit admin_products_path
 
-    expect(page).to have_css('.products-filters__footer .products-filters__actions')
+    expect(page).to have_css('.products-v9-filter-grid .products-v9-filter-submit')
     expect(page).to have_css('details.products-filters__advanced:not([open])')
     find('details.products-filters__advanced summary').click
     expect(page).to have_css('fieldset.products-filters__group', count: 3)
@@ -181,7 +180,7 @@ RSpec.describe 'Catalog redesign workflows', type: :feature, js: true do
     wrapper = find('#products_category', visible: :all).find(:xpath, '..')
     wrapper.find('button[aria-haspopup="listbox"]').click
     wrapper.find('[role="option"]', text: 'Drinkware', exact_text: true).click
-    click_button 'Apply filters'
+    click_button 'Search'
 
     expect(page).to have_current_path(/category_id=#{category.id}/)
     expect(page.current_url).to include('sort=products.price', 'direction=desc', 'per_page=5')

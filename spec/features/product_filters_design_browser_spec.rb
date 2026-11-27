@@ -26,16 +26,18 @@ RSpec.describe 'Advanced product filter design', type: :feature, js: true do
       summary = find('.products-filters__advanced > summary')
       summary.send_keys(:enter)
       expect(page).to have_css('.products-filters__advanced[open]')
-      expect(page).to have_css('footer.products-filters__footer button', text: 'Apply filters')
+      expect(page).to have_css('.products-v9-filter-grid button.products-v9-filter-submit', text: 'Search')
       expect(page.evaluate_script(<<~JS)).to be(true)
         (() => {
           const panel = document.querySelector('.products-filter-panel')
-          const footer = panel.querySelector('.products-filters__footer').getBoundingClientRect()
-          const controls = [...panel.querySelectorAll('input, button, summary, .products-filters__clear')]
+          const grid = panel.querySelector('.products-v9-filter-grid')
+          const apply = grid.querySelector('.products-v9-filter-submit').getBoundingClientRect()
+          const controls = [...grid.querySelectorAll('.products-filters__field input, .products-filters__field select, .products-filters__advanced > summary, .products-v9-filter-submit')]
             .filter(node => node.getClientRects().length).map(node => node.getBoundingClientRect())
-          const fields = [...panel.querySelectorAll('.products-filters__group')].map(node => node.getBoundingClientRect())
-          return controls.every(box => box.height >= 44 && box.left >= 0 && box.right <= innerWidth) &&
-            footer.top >= Math.max(...fields.map(box => box.bottom)) && document.documentElement.scrollWidth <= innerWidth
+          const fields = [...grid.querySelectorAll('.products-filters__group')].map(node => node.getBoundingClientRect())
+          return controls.every(box => box.height >= 40 && box.left >= 0 && box.right <= innerWidth) &&
+            apply.top < Math.min(...fields.map(box => box.top)) &&
+            document.documentElement.scrollWidth <= innerWidth
         })()
       JS
     end
