@@ -456,13 +456,13 @@ RSpec.describe 'Admin::Products', type: :request do
   end
 
   describe 'advanced product filters' do
-    it 'renders an expandable filter panel with a compact apply action' do
+    it 'renders an expandable filter panel with a compact search action' do
       get admin_products_path
       document = Nokogiri::HTML(response.body)
       expect(document.at_css('details.products-filters__advanced')).to be_present
-      button = document.at_css('button.products-filters__apply')
+      button = document.at_css('button.products-v9-filter-submit')
       expect(button).to be_present
-      expect(button['class']).to include('products-filters__apply')
+      expect(button['class']).to include('products-v9-filter-submit')
     end
 
     it 'combines category, tracking, featured and price filters within this organization' do
@@ -530,28 +530,28 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(query['status']).to eq('active')
     end
 
-    it 'groups advanced filters semantically and places actions after all filter controls' do
+    it 'groups advanced filters semantically within the compact product filter grid' do
       get admin_products_path
 
       document = Nokogiri::HTML(response.body)
-      footer = document.at_css('form.products-filters > footer.products-filters__footer')
-      expect(footer.at_css('.products-filters__actions button.products-filters__apply')).to be_present
-      groups = document.css('details.products-filters__advanced fieldset.products-filters__group')
+      grid = document.at_css('form.products-filters .products-v9-filter-grid')
+      expect(grid.at_css('button.products-v9-filter-submit')).to be_present
+      groups = document.css('.products-filters__advanced-panel fieldset.products-filters__group')
       expect(groups.size).to eq(3)
       expect(groups.map { |group| group.css('select, input').size }).to eq([2, 2, 2])
       expect(groups.last.at_css('.products-filters__currency').text).to eq('MXN')
       expect(groups.map { |group| group.at_css('legend').text }).to all(be_present)
     end
 
-    it 'offers branded, searchable category choices and leaves Apply as a compact button' do
+    it 'offers branded, searchable category choices and keeps Search compact' do
       get admin_products_path
 
       document = Nokogiri::HTML(response.body)
       category = document.at_css('#products_category')
       expect(category.parent['data-controller']).to include('delta-select')
       expect(category.parent['data-searchable']).to eq('true')
-      button = document.at_css('button.products-filters__apply')
-      expect(button['class']).to include('products-filters__apply')
+      button = document.at_css('button.products-v9-filter-submit')
+      expect(button['class']).to include('products-v9-filter-submit')
       expect(button['type']).to eq('submit')
     end
 
@@ -577,7 +577,7 @@ RSpec.describe 'Admin::Products', type: :request do
       expect(form.at_css('input[name="sort"]')['value']).to eq('products.price')
       expect(form.at_css('input[name="direction"]')['value']).to eq('desc')
       expect(form.at_css('input[name="per_page"]')['value']).to eq('5')
-      expect(form.at_css('button.products-filters__apply')['name']).to be_nil
+      expect(form.at_css('button.products-v9-filter-submit')['name']).to be_nil
     end
 
     it 'does not propagate invalid sorting values through the filters form' do
