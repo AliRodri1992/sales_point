@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Fotografía del producto">
+<circle cx="120" cy="119" r="88" fill="#D1FAE5" opacity=".75"/>
+<path d="M62 179c30 12 89 13 116 0" stroke="#A7F3D0" stroke-width="7" stroke-linecap="round"/>
+<path d="M73 76l47-24 48 24v92l-48 24-47-24z" fill="#fff" stroke="#047857" stroke-width="3" stroke-linejoin="round"/>
+<path d="M73 76l47 24 48-24M120 100v92" fill="none" stroke="#047857" stroke-width="3" stroke-linejoin="round"/>
+<path d="M97 64l48 25v28l-14-7-11 7v-17L73 76" fill="#A7F3D0" stroke="#047857" stroke-width="2.5" stroke-linejoin="round"/>
+<rect x="84" y="120" width="26" height="35" rx="3" fill="#ECFDF5" stroke="#047857" stroke-width="2"/>
+<path d="M90 130h14M90 137h14M90 144h10M148 136h7M148 144h7M148 152h7" stroke="#059669" stroke-width="2" stroke-linecap="round"/>
+</svg>

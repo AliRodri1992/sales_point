@@ -1,26 +1,41 @@
-<%# Shared visual and keyboard behavior with the Promociones help control. %>
-<div class="promotion-help products-v9-help" data-controller="promotion-help"
+<%# The contextual help uses the same Stimulus controller and layout as Promociones. %>
+<% example = local_assigns.fetch(:example, hint) %>
+<div class="promotion-help products-v9-help products-e-section-help"
+     data-controller="promotion-help"
      data-action="keydown.esc->promotion-help#escape click@document->promotion-help#outside">
-  <button type="button" class="promotion-help-trigger"
+  <button type="button" class="promotion-help-trigger" data-section-help-trigger
           data-promotion-help-target="trigger" data-action="promotion-help#toggle"
-          aria-label="<%= t('admin.catalog_design.product_help') %>: <%= title %>"
-          aria-expanded="false" aria-controls="products-help-<%= section %>" aria-haspopup="dialog">
-    <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8"
-         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.75-2.5 2-2.5 4"/><path d="M12 17h.01"/>
-    </svg>
+          aria-label="<%= title %>" aria-expanded="false"
+          aria-controls="products-help-<%= section %>" aria-haspopup="dialog">
+    <%= delta_icon('question-mark-circle', class: 'size-5') %>
   </button>
-  <div id="products-help-<%= section %>" class="promotion-help-panel"
+  <div id="products-help-<%= section %>" class="promotion-help-panel" data-section-help-panel
        data-promotion-help-target="panel" role="dialog" aria-modal="false"
        aria-labelledby="products-help-title-<%= section %>" hidden>
     <div class="promotion-help-header">
-      <%= delta_icon('information-circle', class: 'size-5 shrink-0') %>
+      <%= delta_icon('question-mark-circle', class: 'size-5 shrink-0') %>
       <strong id="products-help-title-<%= section %>"><%= title %></strong>
       <button type="button" class="promotion-help-close" data-action="promotion-help#closeAndFocus"
-              aria-label="<%= t('admin.catalog_design.cancel') %>">
+              aria-label="<%= t('admin.products.gallery_e.close_help') %>">
         <%= delta_icon('x-mark', class: 'size-4') %>
       </button>
     </div>
-    <div class="promotion-help-body"><p><%= hint %></p></div>
+    <div class="promotion-help-body">
+      <div class="products-e-help-intro">
+        <%= image_tag 'deltin/portrait.svg', alt: '', class: 'products-e-help-avatar' %>
+        <div>
+          <strong><%= t('admin.products.gallery_e.help_by') %></strong>
+          <p class="font-semibold text-slate-800"><%= hint %></p>
+        </div>
+      </div>
+      <div>
+        <p class="promotion-help-eyebrow"><%= t('admin.products.gallery_e.help_how') %></p>
+        <p><%= hint %></p>
+      </div>
+      <p class="promotion-help-example">
+        <strong class="products-e-help-example-label"><%= t('admin.products.gallery_e.help_example') %>:</strong>
+        <%= example %>
+      </p>
+    </div>
   </div>
 </div>

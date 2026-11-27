@@ -7,11 +7,13 @@ import English from "@uppy/locales/lib/en_US.js"
 import Korean from "@uppy/locales/lib/ko_KR.js"
 
 export default class extends Controller {
-  static targets = ["dashboard", "fallback", "input", "signedId", "status", "submit"]
+  static targets = ["dashboard", "fallback", "input", "signedId", "status", "submit", "photoStage", "picker", "remove", "choose"]
   static values = { url: String, locale: String, busy: String, error: String, ready: String }
 
   connect() {
     this.originalImage = this.signedIdTarget.value
+    this.originalPhotoMarkup = this.hasPhotoStageTarget ? this.photoStageTarget.innerHTML : ""
+    this.previewUrl = null
     try {
       this.uppy = new Uppy({
         autoProceed: true,
@@ -48,7 +50,101 @@ export default class extends Controller {
     }
   }
 
-  disconnect() { this.uppy?.destroy() }
+
+  disconnect() {
+    this.uppy?.destroy()
+    this.revokePreview()
+  }
+
+  choosePhoto() {
+    if (this.uploading) return
+    if (this.uppy && this.hasPickerTarget) this.pickerTarget.click()
+    else if (this.hasInputTarget) this.inputTarget.click()
+  }
+
+  fileChosen(event) {
+    const file = event.target.files?.[0]
+    if (!file) return
+    this.receivePhoto(file, event.target)
+    if (event.target !== this.inputTarget) event.target.value = ""
+  }
+
+  fallbackChosen(event) {
+    const file = event.target.files?.[0]
+    if (!file) return
+    this.receivePhoto(file, event.target)
+  }
+
+  dragOver(event) {
+    event.preventDefault()
+    if (event.dataTransfer) event.dataTransfer.dropEffect = "copy"
+  }
+
+  dropPhoto(event) {
+    event.preventDefault()
+    const file = event.dataTransfer?.files?.[0]
+    if (file) this.receivePhoto(file)
+  }
+
+  receivePhoto(file, sourceInput) {
+    const allowed = ["image/jpeg", "image/png", "image/webp"].includes(file.type)
+    if (!allowed || file.size > 5 * 1024 * 1024) {
+      this.statusTarget.textContent = this.errorValue
+      return
+    }
+
+    if (this.uppy) {
+      // Keep the application's signed-upload flow; the custom gallery is only its visual surface.
+      this.uppy.cancelAll()
+      try {
+        this.uppy.addFile({ name: file.name, type: file.type, data: file, source: "product-gallery" })
+      } catch (_error) {
+        this.uploadFailed()
+        return
+      }
+    } else if (this.hasInputTarget && sourceInput !== this.inputTarget) {
+      // Native multipart fallback when Uppy cannot initialize.
+      try {
+        const transfer = new DataTransfer()
+        transfer.items.add(file)
+        this.inputTarget.files = transfer.files
+      } catch (_error) {
+        this.statusTarget.textContent = this.errorValue
+        return
+      }
+    }
+
+    this.revokePreview()
+    if (this.hasPhotoStageTarget) {
+      this.previewUrl = URL.createObjectURL(file)
+      const image = document.createElement("img")
+      image.src = this.previewUrl
+      image.alt = file.name
+      this.photoStageTarget.replaceChildren(image)
+    }
+    if (this.hasRemoveTarget) this.removeTarget.disabled = false
+    if (this.hasChooseTarget) this.chooseTarget.dataset.photoSelected = "true"
+  }
+
+  removePhoto() {
+    if (this.uploading) return
+    this.uppy?.cancelAll()
+    if (this.hasInputTarget) this.inputTarget.value = ""
+    if (this.hasPickerTarget) this.pickerTarget.value = ""
+    this.signedIdTarget.value = this.originalImage
+    this.revokePreview()
+    if (this.hasPhotoStageTarget) this.photoStageTarget.innerHTML = this.originalPhotoMarkup
+    if (this.hasRemoveTarget) this.removeTarget.disabled = true
+    if (this.hasChooseTarget) delete this.chooseTarget.dataset.photoSelected
+    this.statusTarget.textContent = ""
+    this.failed = false
+  }
+
+  revokePreview() {
+    if (this.previewUrl) URL.revokeObjectURL(this.previewUrl)
+    this.previewUrl = null
+  }
+
 
   guardSubmit(event) {
     if (!this.uploading && !this.failed) return
