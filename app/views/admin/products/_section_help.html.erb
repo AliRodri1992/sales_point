@@ -7,13 +7,13 @@
           data-promotion-help-target="trigger" data-action="promotion-help#toggle"
           aria-label="<%= title %>" aria-expanded="false"
           aria-controls="products-help-<%= section %>" aria-haspopup="dialog">
-    <%= delta_icon('question-mark-circle', class: 'size-5') %>
+    <%= delta_icon('information-circle', class: 'size-5') %>
   </button>
   <div id="products-help-<%= section %>" class="promotion-help-panel" data-section-help-panel
        data-promotion-help-target="panel" role="dialog" aria-modal="false"
        aria-labelledby="products-help-title-<%= section %>" hidden>
     <div class="promotion-help-header">
-      <%= delta_icon('question-mark-circle', class: 'size-5 shrink-0') %>
+      <%= delta_icon('information-circle', class: 'size-5 shrink-0') %>
       <strong id="products-help-title-<%= section %>"><%= title %></strong>
       <button type="button" class="promotion-help-close" data-action="promotion-help#closeAndFocus"
               aria-label="<%= t('admin.products.gallery_e.close_help') %>">
